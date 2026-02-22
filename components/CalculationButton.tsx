@@ -7,7 +7,7 @@
  */
 
 import React, { useState, useCallback } from 'react';
-import { TouchableOpacity, Text, View, ActivityIndicator, StyleSheet } from 'react-native';
+import { TouchableOpacity, Text, View, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import { useCalculator } from '../lib/inheritance/hooks';
 import { MadhhabType, HeirsData, EstateData } from '../lib/inheritance/types';
 
@@ -39,29 +39,68 @@ export function CalculationButton({
 
       // التحقق من صحة البيانات
       if (!madhab) {
-        setLocalError('الرجاء اختيار المذهب');
-        onCalculationComplete?.(false, 'الرجاء اختيار المذهب');
+        const msg = 'يجب اختيار المذهب الفقهي أولاً';
+        setLocalError(msg);
+        Alert.alert(
+          'تحقق من البيانات',
+          msg,
+          [{ text: 'حسناً' }]
+        );
+        onCalculationComplete?.(false, msg);
         return;
       }
 
       if (Object.keys(heirs).length === 0) {
-        setLocalError('الرجاء إضافة الورثة');
-        onCalculationComplete?.(false, 'الرجاء إضافة الورثة');
+        const msg = 'يجب إضافة واحد على الأقل من الورثة';
+        setLocalError(msg);
+        Alert.alert(
+          'المزيد من المعلومات مطلوبة',
+          msg + '\n\nتأكد من إضافة جميع الورثة في قسم "إضافة الوارثون"',
+          [{ text: 'حسناً' }]
+        );
+        onCalculationComplete?.(false, msg);
         return;
       }
 
       if (estate.total <= 0) {
-        setLocalError('التركة يجب أن تكون أكبر من صفر');
-        onCalculationComplete?.(false, 'التركة يجب أن تكون أكبر من صفر');
+        const msg = 'قيمة التركة يجب أن تكون أكبر من صفر';
+        setLocalError(msg);
+        Alert.alert(
+          'بيانات غير صحيحة',
+          msg + '\n\nأدخل المبلغ الإجمالي للتركة في قسم "بيانات التركة"',
+          [{ text: 'حسناً' }]
+        );
+        onCalculationComplete?.(false, msg);
         return;
       }
 
       // تنفيذ الحساب
-      await calculateWithMethod(madhab, heirs);
-      onCalculationComplete?.(true);
+      const result = await calculateWithMethod(madhab, heirs);
+      if (result && result.success) {
+        Alert.alert(
+          'نجح الحساب',
+          'تم حساب توزيع الميراث بنجاح. انظر النتائج أدناه.',
+          [{ text: 'حسناً' }]
+        );
+        onCalculationComplete?.(true);
+      } else {
+        const errorMsg = result?.error || 'فشل الحساب';
+        setLocalError(errorMsg);
+        Alert.alert(
+          'خطأ في الحساب',
+          errorMsg,
+          [{ text: 'حسناً' }]
+        );
+        onCalculationComplete?.(false, errorMsg);
+      }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'حدث خطأ في الحساب';
+      const errorMessage = err instanceof Error ? err.message : 'حدث خطأ غير متوقع في الحساب';
       setLocalError(errorMessage);
+      Alert.alert(
+        'خطأ',
+        errorMessage,
+        [{ text: 'حسناً' }]
+      );
       onCalculationComplete?.(false, errorMessage);
     }
   }, [madhab, heirs, estate, calculateWithMethod, onCalculationComplete]);

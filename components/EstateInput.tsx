@@ -7,7 +7,7 @@
  */
 
 import React, { useState, useCallback, useMemo } from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import { useCalculator } from '../lib/inheritance/hooks';
 import { EstateData } from '../lib/inheritance/types';
 import { EstateValidator } from '../lib/validation/InputValidator';
@@ -137,6 +137,32 @@ export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps)
         />
       </View>
 
+      {/* تكاليف الجنازة */}
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>تكاليف الجنازة (اختياري)</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Funeral Costs (Optional)"
+          placeholderTextColor="#999"
+          value={funeral}
+          onChangeText={handleFuneralChange}
+          keyboardType="decimal-pad"
+        />
+      </View>
+
+      {/* الديون */}
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>الديون (اختياري)</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Debts (Optional)"
+          placeholderTextColor="#999"
+          value={debts}
+          onChangeText={handleDebtsChange}
+          keyboardType="decimal-pad"
+        />
+      </View>
+
       {/* الوصية */}
       <View style={styles.inputGroup}>
         <Text style={styles.label}>الوصية (اختياري)</Text>
@@ -150,38 +176,48 @@ export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps)
         />
       </View>
 
-      {/* Validation Errors */}
-      {validationResult && validationResult.errors.length > 0 && (
-        <View style={[styles.feedbackContainer, styles.feedbackErrorContainer]}>
-          {validationResult.errors.map((error, index) => (
-            <View key={`error-${index}`} style={styles.feedbackItem}>
-              <Text style={styles.feedbackIcon}>❌</Text>
-              <View style={styles.feedbackText}>
-                <Text style={styles.feedbackUserMessage}>{error.userMessage}</Text>
-                {error.suggestion && (
-                  <Text style={styles.feedbackSuggestion}>{error.suggestion}</Text>
-                )}
-              </View>
+      {/* Validation Feedback */}
+      {validationResult && (
+        <>
+          {validationResult.errors.length > 0 && (
+            <View style={styles.validationContainer}>
+              {validationResult.errors.map((error, index) => (
+                <View key={`error-${index}`} style={styles.errorItem}>
+                  <Text style={styles.errorIcon}>❌</Text>
+                  <View style={styles.errorContent}>
+                    <Text style={styles.errorMessage}>{error.userMessage}</Text>
+                    {error.suggestion && (
+                      <Text style={styles.errorSuggestion}>{error.suggestion}</Text>
+                    )}
+                  </View>
+                </View>
+              ))}
             </View>
-          ))}
-        </View>
-      )}
+          )}
+          
+          {validationResult.warnings.length > 0 && (
+            <View style={styles.warningContainer}>
+              {validationResult.warnings.map((warning, index) => (
+                <View key={`warning-${index}`} style={styles.warningItem}>
+                  <Text style={styles.warningIcon}>⚠️</Text>
+                  <View style={styles.warningContent}>
+                    <Text style={styles.warningMessage}>{warning.userMessage}</Text>
+                    {warning.suggestion && (
+                      <Text style={styles.warningSuggestion}>{warning.suggestion}</Text>
+                    )}
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
 
-      {/* Validation Warnings */}
-      {validationResult && validationResult.warnings.length > 0 && (
-        <View style={[styles.feedbackContainer, styles.feedbackWarningContainer]}>
-          {validationResult.warnings.map((warning, index) => (
-            <View key={`warning-${index}`} style={styles.feedbackItem}>
-              <Text style={styles.feedbackIcon}>⚠️</Text>
-              <View style={styles.feedbackText}>
-                <Text style={styles.feedbackUserMessage}>{warning.userMessage}</Text>
-                {warning.suggestion && (
-                  <Text style={styles.feedbackSuggestion}>{warning.suggestion}</Text>
-                )}
-              </View>
+          {validationResult.isValid && validationResult.errors.length === 0 && (
+            <View style={styles.successContainer}>
+              <Text style={styles.successIcon}>✓</Text>
+              <Text style={styles.successMessage}>تم التحقق من البيانات بنجاح</Text>
             </View>
-          ))}
-        </View>
+          )}
+        </>
       )}
 
       {/* ملخص التركة */}
@@ -242,53 +278,91 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     textAlign: 'right'
   },
-  errorText: {
-    fontSize: 12,
-    color: '#d32f2f',
-    marginBottom: 12,
-    textAlign: 'right'
+  validationContainer: {
+    marginVertical: 12
   },
-  feedbackContainer: {
-    borderRadius: 6,
-    padding: 12,
-    marginVertical: 8,
-    marginHorizontal: 0
-  },
-  feedbackErrorContainer: {
+  errorItem: {
+    flexDirection: 'row',
     backgroundColor: '#ffebee',
     borderLeftWidth: 4,
-    borderLeftColor: '#d32f2f'
-  },
-  feedbackWarningContainer: {
-    backgroundColor: '#fff3e0',
-    borderLeftWidth: 4,
-    borderLeftColor: '#f57c00'
-  },
-  feedbackItem: {
-    flexDirection: 'row',
+    borderLeftColor: '#d32f2f',
+    borderRadius: 6,
+    padding: 12,
     marginBottom: 8
   },
-  feedbackIcon: {
-    fontSize: 16,
-    marginRight: 8,
-    marginTop: 2
+  errorIcon: {
+    fontSize: 18,
+    marginRight: 12
   },
-  feedbackText: {
+  errorContent: {
     flex: 1
   },
-  feedbackUserMessage: {
+  errorMessage: {
     fontSize: 13,
     fontWeight: '500',
-    color: '#333',
+    color: '#d32f2f',
     textAlign: 'right',
     marginBottom: 4
   },
-  feedbackSuggestion: {
+  errorSuggestion: {
     fontSize: 12,
-    color: '#666',
+    color: '#999',
     textAlign: 'right',
-    fontStyle: 'italic',
-    marginTop: 2
+    fontStyle: 'italic'
+  },
+  warningContainer: {
+    marginVertical: 12
+  },
+  warningItem: {
+    flexDirection: 'row',
+    backgroundColor: '#fff3e0',
+    borderLeftWidth: 4,
+    borderLeftColor: '#f57c00',
+    borderRadius: 6,
+    padding: 12,
+    marginBottom: 8
+  },
+  warningIcon: {
+    fontSize: 18,
+    marginRight: 12
+  },
+  warningContent: {
+    flex: 1
+  },
+  warningMessage: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#f57c00',
+    textAlign: 'right',
+    marginBottom: 4
+  },
+  warningSuggestion: {
+    fontSize: 12,
+    color: '#999',
+    textAlign: 'right',
+    fontStyle: 'italic'
+  },
+  successContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#e8f5e9',
+    borderLeftWidth: 4,
+    borderLeftColor: '#4caf50',
+    borderRadius: 6,
+    padding: 12,
+    marginVertical: 12,
+    alignItems: 'center'
+  },
+  successIcon: {
+    fontSize: 18,
+    color: '#4caf50',
+    marginRight: 12
+  },
+  successMessage: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#4caf50',
+    textAlign: 'right',
+    flex: 1
   },
   summary: {
     backgroundColor: '#e3f2fd',

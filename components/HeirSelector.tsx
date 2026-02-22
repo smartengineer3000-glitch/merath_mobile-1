@@ -14,7 +14,9 @@ import {
   ScrollView,
   StyleSheet,
   Modal,
-  Alert
+  Alert,
+  TextInput,
+  ActivityIndicator
 } from 'react-native';
 import { useHeirs } from '../lib/inheritance/hooks';
 import type { HeirsData, HeirType } from '../lib/inheritance/types';
@@ -49,6 +51,8 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
   const [selectedCount, setSelectedCount] = useState(1);
   const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
   const [modalError, setModalError] = useState<string | null>(null);
+  const [editingHeirType, setEditingHeirType] = useState<HeirType | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Convert array heirs to HeirsData object
   const heirsArray = (heirs as any) || [];
@@ -64,13 +68,19 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
 
   const handleAddHeir = useCallback(() => {
     try {
+      setIsLoading(true);
+      
       if (!selectedHeirType) {
-        setModalError('يجب اختيار نوع الوارث');
+        const errorMsg = 'يجب اختيار نوع الوارث';
+        setModalError(errorMsg);
+        Alert.alert('خطأ', errorMsg);
         return;
       }
 
       if (selectedCount < 1 || selectedCount > 100) {
-        setModalError('العدد يجب أن يكون بين 1 و 100');
+        const errorMsg = 'العدد يجب أن يكون بين 1 و 100';
+        setModalError(errorMsg);
+        Alert.alert('خطأ', errorMsg);
         return;
       }
 
@@ -85,21 +95,35 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
       if (validation.isValid) {
         onHeirsChange?.(newHeirs);
         setModalError(null);
-        setShowModal(false);
+        setEditingHeirType(null);
+        
+        // Show success alert
+        const heirLabel = HEIR_TYPES.find(h => h.key === selectedHeirType)?.label || selectedHeirType;
+        Alert.alert(
+          'نجح',
+          `تم ${editingHeirType ? 'تحديث' : 'إضافة'} ${heirLabel} بنجاح`,
+          [{ text: 'حسناً', onPress: () => setShowModal(false) }]
+        );
       } else {
-        // Show first error in modal
+        // Show first error in modal and alert
         const firstError = validation.errors[0];
         setModalError(firstError.userMessage);
+        Alert.alert('خطأ في التحقق', firstError.userMessage);
       }
     } catch (err) {
-      setModalError(err instanceof Error ? err.message : 'خطأ في إضافة الوارث');
+      const errorMsg = err instanceof Error ? err.message : 'خطأ في إضافة الوارث';
+      setModalError(errorMsg);
+      Alert.alert('خطأ', errorMsg);
+    } finally {
+      setIsLoading(false);
     }
-  }, [selectedHeirType, selectedCount, safeHeirs, onHeirsChange]);
+  }, [selectedHeirType, selectedCount, safeHeirs, onHeirsChange, editingHeirType]);
 
   const handleRemoveHeir = useCallback((heirType: HeirType) => {
+    const heirLabel = HEIR_TYPES.find(h => h.key === heirType)?.label || heirType;
     Alert.alert(
       'تأكيد الحذف',
-      'هل تريد حذف هذا الوارث؟',
+      `هل تريد حذف ${heirLabel}؟`,
       [
         { text: 'إلغاء', onPress: () => {} },
         {
@@ -113,11 +137,23 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
             setValidationResult(validation);
             
             onHeirsChange?.(newHeirs);
+            Alert.alert('نجح', `تم حذف ${heirLabel} بنجاح`);
           }
         }
       ]
     );
   }, [safeHeirs, onHeirsChange]);
+
+  const handleEditHeir = useCallback((heirType: HeirType) => {
+    const currentCount = safeHeirs[heirType] || 1;
+    const heirLabel = HEIR_TYPES.find(h => h.key === heirType)?.label || heirType;
+    
+    setEditingHeirType(heirType);
+    setSelectedHeirType(heirType);
+    setSelectedCount(currentCount);
+    setModalError(null);
+    setShowModal(true);
+  }, [safeHeirs]);
 
   const handleClearAll = useCallback(() => {
     Alert.alert(
@@ -186,6 +222,9 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
         onPress={() => {
           setShowModal(true);
           setModalError(null);
+          setEditingHeirType(null);
+          setSelectedHeirType('son');
+          setSelectedCount(1);
         }}
       >
         <Text style={styles.addButtonText}>+ إضافة وارث</Text>
@@ -209,12 +248,20 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
                       <Text style={styles.heirCount}>العدد: {count}</Text>
                     </View>
                   </View>
-                  <TouchableOpacity
-                    style={styles.deleteButton}
-                    onPress={() => handleRemoveHeir(heirType)}
-                  >
-                    <Text style={styles.deleteButtonText}>✕</Text>
-                  </TouchableOpacity>
+                  <View style={styles.heirActions}>
+                    <TouchableOpacity
+                      style={styles.editButton}
+                      onPress={() => handleEditHeir(heirType)}
+                    >
+                      <Text style={styles.editButtonText}>✎</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.deleteButton}
+                      onPress={() => handleRemoveHeir(heirType)}
+                    >
+                      <Text style={styles.deleteButtonText}>✕</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               );
             })}
@@ -251,9 +298,15 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>إضافة وارث جديد</Text>
-              <TouchableOpacity onPress={() => setShowModal(false)}>
-                <Text style={styles.modalCloseButton}>✕</Text>
+            <Text style={styles.modalTitle}>
+              {editingHeirType ? 'تعديل وارث' : 'إضافة وارث جديد'}
+            </Text>
+            <TouchableOpacity 
+              onPress={() => {
+                setShowModal(false);
+                setEditingHeirType(null);
+              }}
+            >
               </TouchableOpacity>
             </View>
 
@@ -265,36 +318,61 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
                   key={heirType.key}
                   style={[
                     styles.heirTypeButton,
-                    selectedHeirType === heirType.key && styles.heirTypeButtonSelected
+                    selectedHeirType === heirType.key && styles.heirTypeButtonSelected,
+                    editingHeirType && editingHeirType !== heirType.key && styles.heirTypeButtonDisabled
                   ]}
-                  onPress={() => setSelectedHeirType(heirType.key)}
+                  onPress={() => !editingHeirType && setSelectedHeirType(heirType.key)}
+                  disabled={editingHeirType !== null && editingHeirType !== heirType.key}
                 >
                   <Text style={styles.heirTypeEmoji}>{heirType.emoji}</Text>
-                  <Text style={styles.heirTypeLabel}>{heirType.label}</Text>
+                  <Text style={[
+                    styles.heirTypeLabel,
+                    editingHeirType && editingHeirType !== heirType.key && { opacity: 0.5 }
+                  ]}>
+                    {heirType.label}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
 
-            {/* اختيار العدد */}
-            <Text style={styles.modalLabel}>اختر العدد:</Text>
-            <View style={styles.countSelector}>
-              {[1, 2, 3, 4, 5].map(count => (
-                <TouchableOpacity
-                  key={count}
-                  style={[
-                    styles.countButton,
-                    selectedCount === count && styles.countButtonSelected
-                  ]}
-                  onPress={() => setSelectedCount(count)}
-                >
-                  <Text style={[
-                    styles.countButtonText,
-                    selectedCount === count && styles.countButtonTextSelected
-                  ]}>
-                    {count}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+            {/* اختيار العدد - Dynamic Number Input */}
+            <Text style={styles.modalLabel}>اختر العدد (1-100):</Text>
+            <View style={styles.countInputContainer}>
+              <TouchableOpacity
+                style={styles.decrementButton}
+                onPress={() => setSelectedCount(Math.max(1, selectedCount - 1))}
+                disabled={selectedCount <= 1}
+              >
+                <Text style={styles.decrementButtonText}>−</Text>
+              </TouchableOpacity>
+              
+              <TextInput
+                style={styles.countInput}
+                placeholder="العدد"
+                placeholderTextColor="#999"
+                value={selectedCount.toString()}
+                onChangeText={(text) => {
+                  const num = parseInt(text) || 0;
+                  if (num >= 1 && num <= 100) {
+                    setSelectedCount(num);
+                  }
+                }}
+                keyboardType="number-pad"
+                maxLength={3}
+              />
+              
+              <TouchableOpacity
+                style={styles.incrementButton}
+                onPress={() => setSelectedCount(Math.min(100, selectedCount + 1))}
+                disabled={selectedCount >= 100}
+              >
+                <Text style={styles.incrementButtonText}>+</Text>
+              </TouchableOpacity>
+            </View>
+            
+            {/* Display current selection */}
+            <View style={styles.selectedCountDisplay}>
+              <Text style={styles.selectedCountText}>العدد المختار: {selectedCount}</Text>
             </View>
 
             {/* Modal Error Message */}
@@ -311,16 +389,24 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
                 onPress={() => {
                   setShowModal(false);
                   setModalError(null);
+                  setEditingHeirType(null);
                 }}
               >
                 <Text style={styles.cancelButtonText}>إلغاء</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={styles.confirmButton}
+                style={[styles.confirmButton, isLoading && styles.confirmButtonDisabled]}
                 onPress={handleAddHeir}
+                disabled={isLoading}
               >
-                <Text style={styles.confirmButtonText}>تأكيد</Text>
+                {isLoading ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={styles.confirmButtonText}>
+                    {editingHeirType ? 'تحديث' : 'تأكيد'}
+                  </Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>
@@ -394,6 +480,23 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'right',
     marginTop: 2
+  },
+  heirActions: {
+    flexDirection: 'row',
+    gap: 6
+  },
+  editButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#e3f2fd',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  editButtonText: {
+    color: '#1976d2',
+    fontSize: 16,
+    fontWeight: 'bold'
   },
   deleteButton: {
     width: 32,
@@ -500,6 +603,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#e3f2fd',
     borderColor: '#1976d2'
   },
+  heirTypeButtonDisabled: {
+    opacity: 0.5
+  },
   heirTypeEmoji: {
     fontSize: 20,
     marginLeft: 8
@@ -510,32 +616,69 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'right'
   },
-  countSelector: {
+  countInputContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 12
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+    gap: 8
   },
-  countButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#f5f5f5',
+  decrementButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#ff7043',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#ddd'
+    borderColor: '#e64a19'
   },
-  countButtonSelected: {
-    backgroundColor: '#1976d2',
-    borderColor: '#1976d2'
+  decrementButtonText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff'
   },
-  countButtonText: {
+  countInput: {
+    width: 80,
+    height: 44,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#1976d2',
+    paddingHorizontal: 12,
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#333',
+    backgroundColor: '#f5f5f5'
+  },
+  incrementButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#4caf50',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#388e3c'
+  },
+  incrementButtonText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff'
+  },
+  selectedCountDisplay: {
+    backgroundColor: '#e3f2fd',
+    borderRadius: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    marginBottom: 12,
+    alignItems: 'center'
+  },
+  selectedCountText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#333'
-  },
-  countButtonTextSelected: {
-    color: '#fff'
+    color: '#1976d2',
+    textAlign: 'center'
   },
   errorContainer: {
     backgroundColor: '#ffebee',
@@ -632,6 +775,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#1976d2',
     borderRadius: 6,
     alignItems: 'center'
+  },
+  confirmButtonDisabled: {
+    backgroundColor: '#ccc',
+    opacity: 0.6
   },
   confirmButtonText: {
     fontSize: 13,

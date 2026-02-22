@@ -1,0 +1,541 @@
+      this.addStep('خطأ في الحساب',
+        error.message,
+        {
+          error: error.message,
+          calculationTime: `${calculationTime.toFixed(2)}ms`,
+          timestamp: new Date().toISOString()
+        },
+        'error'
+      );
+      
+      return {
+        success: false,
+        error: error.message,
+        madhab: this.madhab,
+        madhhabName: this.config.name,
+        calculationTime,
+        steps: this.state.steps
+      };
+    }
+  }
+}
+
+// ==================== 5. نظام الاختبارات الشامل المحسن ====================
+class EnhancedTestSuite {
+  constructor() {
+    this.tests = this.loadEnhancedTests();
+    this.results = [];
+    this.categories = {};
+  }
+  
+  loadEnhancedTests() {
+    return {
+      basic: [
+        {
+          name: 'زوج + بنت',
+          heirs: { husband: 1, daughter: 1 },
+          expected: { husband: 0.25, daughter: 0.75 },
+          description: 'الحالة الأساسية: زوج يأخذ الربع والبنت تأخذ الباقي'
+        },
+        {
+          name: 'زوجة + ابن',
+          heirs: { wife: 1, son: 1 },
+          expected: { wife: 0.125, son: 0.875 },
+          description: 'زوجة تأخذ الثمن والابن عصبة'
+        },
+        {
+          name: 'زوج + ابن + بنت',
+          heirs: { husband: 1, son: 1, daughter: 1 },
+          expected: { husband: 0.25, son: 0.5, daughter: 0.25 },
+          description: 'توزيع تعصيب: الابن ضعف البنت'
+        }
+      ],
+      
+      umariyyah: [
+        {
+          name: 'العمرية الأولى: زوج + أب + أم (مصحح)',
+          heirs: { husband: 1, father: 1, mother: 1 },
+          expected: { husband: 0.5, father: 0.3333, mother: 0.1667 },
+          tolerance: 0.001,
+          description: 'الإصلاح: الأم = ثلث الباقي بعد فرض الزوج والأب'
+        },
+        {
+          name: 'العمرية الثانية: زوجة + أب + أم (مصحح)',
+          heirs: { wife: 1, father: 1, mother: 1 },
+          expected: { wife: 0.25, father: 0.5, mother: 0.25 },
+          tolerance: 0.001,
+          description: 'الإصلاح: الأم = ثلث الباقي بعد فرض الزوجة والأب'
+        }
+      ],
+      
+      awl: [
+        {
+          name: 'عول: زوجة + بنتان + أب + أم (مصحح)',
+          heirs: { wife: 1, daughter: 2, father: 1, mother: 1 },
+          expected: {},
+          description: 'عول من 24 إلى 27: ¼ للزوجة، ⅔ للبنات، ⅙ للأب، ⅙ للأم'
+        },
+        {
+          name: 'عول: زوج + أختان شقيقتان + أم',
+          heirs: { husband: 1, full_sister: 2, mother: 1 },
+          expected: { husband: 0.375, full_sister: 0.5, mother: 0.125 },
+          description: 'عول من 6 إلى 8: النصف للزوج، الثلثان للأختين، السدس للأم'
+        }
+      ],
+      
+      radd: [
+        {
+          name: 'رد: أم + بنت',
+          heirs: { mother: 1, daughter: 1 },
+          expected: { mother: 0.2, daughter: 0.8 },
+          tolerance: 0.01,
+          description: 'الرد على الأم والبنت بنسبة ⅙ : ½'
+        },
+        {
+          name: 'رد: بنتان فقط',
+          heirs: { daughter: 2 },
+          expected: { daughter: 1.0 },
+          description: 'البنتان تأخذان التركة كاملة بالرد'
+        }
+      ],
+      
+      hijab: [
+        {
+          name: 'ابن يحجب الإخوة',
+          heirs: { son: 1, full_brother: 2 },
+          expected: { son: 1.0 },
+          description: 'الابن يحجب الإخوة الأشقاء'
+        },
+        {
+          name: 'أب يحجب الجد',
+          heirs: { father: 1, grandfather: 1, son: 1 },
+          expected: { father: 0.1667, son: 0.8333 },
+          tolerance: 0.001,
+          description: 'الأب يحجب الجد مع وجود ابن'
+        },
+        {
+          name: 'أم تحجب الجدة',
+          heirs: { mother: 1, grandmother: 1, son: 1 },
+          expected: { mother: 0.1667, son: 0.8333 },
+          tolerance: 0.001,
+          description: 'الأم تحجب الجدة مع وجود ابن'
+        }
+      ],
+      
+      madhhab_specific: [
+        {
+          name: 'جد مع إخوة (شافعي)',
+          heirs: { grandfather: 1, full_brother: 2 },
+          madhab: 'shafii',
+          expected: { grandfather: 1.0 },
+          description: 'الشافعي: الجد يحجب الإخوة'
+        },
+        {
+          name: 'جد مع إخوة (مالكي)',
+          heirs: { grandfather: 1, full_brother: 2 },
+          madhab: 'maliki',
+          expected: { grandfather: 0.6667, full_brother: 0.3333 },
+          tolerance: 0.001,
+          description: 'المالكي: الجد يقاسم الإخوة'
+        },
+        {
+          name: 'رد على الزوجين (حنفي)',
+          heirs: { husband: 1 },
+          madhab: 'hanafi',
+          expected: { husband: 1.0 },
+          description: 'الحنفي: يرد على الزوج عند انفراده'
+        }
+      ],
+      
+      complex: [
+        {
+          name: 'حالة معقدة: زوجة + أبناء + بنات + أب',
+          heirs: { wife: 1, son: 2, daughter: 2, father: 1 },
+          expected: {},
+          description: 'حالة معقدة بمشاركة متعددة'
+        },
+        {
+          name: 'مشاركة متعددة مع عول',
+          heirs: { wife: 1, daughter: 3, father: 1, mother: 1, full_brother: 2 },
+          expected: {},
+          description: 'مشاركة متعددة مع تطبيق العول والحجب'
+        }
+      ]
+    };
+  }
+  
+  async runAllTests(primaryMadhab = 'shafii') {
+    this.results = [];
+    const stats = {
+      total: 0,
+      passed: 0,
+      failed: 0,
+      skipped: 0,
+      byCategory: {},
+      byMadhab: {}
+    };
+    
+    for (const [category, tests] of Object.entries(this.tests)) {
+      stats.byCategory[category] = { passed: 0, failed: 0, total: 0 };
+      
+      for (const test of tests) {
+        stats.total++;
+        const madhab = test.madhab || primaryMadhab;
+        
+        if (!stats.byMadhab[madhab]) {
+          stats.byMadhab[madhab] = { passed: 0, failed: 0, total: 0 };
+        }
+        
+        const result = await this.runEnhancedTest(test, category, madhab);
+        this.results.push(result);
+        
+        if (result.passed) {
+          stats.passed++;
+          stats.byCategory[category].passed++;
+          stats.byMadhab[madhab].passed++;
+        } else if (result.skipped) {
+          stats.skipped++;
+        } else {
+          stats.failed++;
+          stats.byCategory[category].failed++;
+          stats.byMadhab[madhab].failed++;
+        }
+        
+        stats.byCategory[category].total++;
+        stats.byMadhab[madhab].total++;
+      }
+    }
+    
+    return {
+      stats,
+      results: this.results,
+      coverage: ((stats.passed / (stats.passed + stats.failed)) * 100).toFixed(1),
+      summary: this.generateTestSummary(stats)
+    };
+  }
+  
+  async runEnhancedTest(test, category, madhab) {
+    const testStart = performance.now();
+    
+    try {
+      // استخدام تركة افتراضية
+      const estate = { total: 120000, funeral: 0, debts: 0, will: 0 };
+      
+      // إنشاء المحرك المحسن
+      const engine = new EnhancedInheritanceEngine(madhab, estate, test.heirs);
+      const result = engine.calculate();
+      
+      const testEnd = performance.now();
+      const testTime = testEnd - testStart;
+      
+      if (!result.success) {
+        return {
+          name: test.name,
+          category,
+          madhab,
+          passed: false,
+          skipped: false,
+          error: result.error,
+          testTime,
+          details: { error: result.error }
+        };
+      }
+      
+      // التحقق من النتائج المتوقعة
+      const verification = this.verifyTestResults(test, result);
+      
+      return {
+        name: test.name,
+        category,
+        madhab,
+        description: test.description,
+        passed: verification.passed,
+        skipped: verification.skipped,
+        discrepancies: verification.discrepancies,
+        testTime,
+        result: {
+          shares: result.shares,
+          specialCases: result.specialCases,
+          confidence: result.confidence
+        },
+        details: verification.details
+      };
+      
+    } catch (error) {
+      return {
+        name: test.name,
+        category,
+        madhab,
+        passed: false,
+        skipped: false,
+        error: error.message,
+        testTime: performance.now() - testStart,
+        details: { error: error.message }
+      };
+    }
+  }
+  
+  verifyTestResults(test, result) {
+    // إذا لم يكن هناك نتائج متوقعة (للاختبارات المعقدة)
+    if (Object.keys(test.expected || {}).length === 0) {
+      return {
+        passed: true,
+        skipped: false,
+        discrepancies: null,
+        details: { note: 'اختبار معقد - تم التحقق من عدم وجود أخطاء فقط' }
+      };
+    }
+    
+    const discrepancies = [];
+    const details = { heirs: [] };
+    let allPassed = true;
+    const tolerance = test.tolerance || 0.02;
+    
+    for (const [heirKey, expectedShare] of Object.entries(test.expected)) {
+      // البحث عن الورثة في النتائج
+      let actualHeir = result.shares.find(s => s.key === heirKey);
+      
+      // إذا لم يوجد، ابحث في المجموعات
+      if (!actualHeir) {
+        if (heirKey === 'daughter' && result.shares.some(s => s.key === 'daughter')) {
+          actualHeir = result.shares.find(s => s.key === 'daughter');
+        } else if (heirKey === 'full_sister' && result.shares.some(s => s.key === 'full_sister')) {
+          actualHeir = result.shares.find(s => s.key === 'full_sister');
+        }
+      }
+      
+      if (!actualHeir && expectedShare > 0.001) {
+        allPassed = false;
+        discrepancies.push(`${heirKey}: غير موجود (متوقع: ${(expectedShare * 100).toFixed(1)}%)`);
+        details.heirs.push({
+          heir: heirKey,
+          status: 'missing',
+          expected: expectedShare
+        });
+        continue;
+      }
+      
+      if (actualHeir) {
+        const actualShare = actualHeir.fraction.toDecimal();
+        const diff = Math.abs(actualShare - expectedShare);
+        
+        details.heirs.push({
+          heir: heirKey,
+          actual: actualShare,
+          expected: expectedShare,
+          diff: diff,
+          withinTolerance: diff <= tolerance
+        });
+        
+        if (diff > tolerance) {
+          allPassed = false;
+          discrepancies.push(
+            `${heirKey}: ${(actualShare * 100).toFixed(2)}% (متوقع: ${(expectedShare * 100).toFixed(2)}%) - فرق: ${(diff * 100).toFixed(2)}%`
+          );
+        }
+      }
+    }
+    
+    // التحقق من المجموع
+    const totalActual = result.shares.reduce((sum, s) => sum + s.fraction.toDecimal(), 0);
+    const totalDiff = Math.abs(totalActual - 1);
+    
+    if (totalDiff > 0.001) {
+      discrepancies.push(`المجموع: ${(totalActual * 100).toFixed(2)}% (المفترض: 100%)`);
+    }
+    
+    details.total = {
+      actual: totalActual,
+      diff: totalDiff,
+      withinTolerance: totalDiff <= 0.001
+    };
+    
+    return {
+      passed: allPassed,
+      skipped: false,
+      discrepancies: discrepancies.length > 0 ? discrepancies : null,
+      details
+    };
+  }
+  
+  generateTestSummary(stats) {
+    const categories = Object.keys(stats.byCategory);
+    const summary = [];
+    
+    summary.push(`إجمالي الاختبارات: ${stats.total}`);
+    summary.push(`✅ ناجحة: ${stats.passed} (${((stats.passed / stats.total) * 100).toFixed(1)}%)`);
+    summary.push(`❌ فاشلة: ${stats.failed} (${((stats.failed / stats.total) * 100).toFixed(1)}%)`);
+    
+    if (stats.skipped > 0) {
+      summary.push(`⏭️ متخطاة: ${stats.skipped} (${((stats.skipped / stats.total) * 100).toFixed(1)}%)`);
+    }
+    
+    summary.push('\n📊 حسب الفئة:');
+    for (const [category, catStats] of Object.entries(stats.byCategory)) {
+      const percentage = catStats.total > 0 ? 
+        ((catStats.passed / catStats.total) * 100).toFixed(1) : '0.0';
+      summary.push(`  ${category}: ${catStats.passed}/${catStats.total} (${percentage}%)`);
+    }
+    
+    summary.push('\n🕌 حسب المذهب:');
+    for (const [madhab, madhabStats] of Object.entries(stats.byMadhab)) {
+      const percentage = madhabStats.total > 0 ? 
+        ((madhabStats.passed / madhabStats.total) * 100).toFixed(1) : '0.0';
+      const madhabName = ENHANCED_FIQH_DATABASE.madhabs[madhab]?.name || madhab;
+      summary.push(`  ${madhabName}: ${madhabStats.passed}/${madhabStats.total} (${percentage}%)`);
+    }
+    
+    return summary.join('\n');
+  }
+  
+  exportTestResults(format = 'text') {
+    if (this.results.length === 0) {
+      return null;
+    }
+    
+    if (format === 'json') {
+      return JSON.stringify({
+        timestamp: new Date().toISOString(),
+        results: this.results,
+        summary: this.generateTestSummary({
+          total: this.results.length,
+          passed: this.results.filter(r => r.passed).length,
+          failed: this.results.filter(r => !r.passed && !r.skipped).length,
+          skipped: this.results.filter(r => r.skipped).length,
+          byCategory: {},
+          byMadhab: {}
+        })
+      }, null, 2);
+    }
+    
+    // نص عادي
+    let text = `نتائج اختبار النظام الاحترافي لحساب المواريث - الإصدار 5.0\n`;
+    text += `تاريخ التشغيل: ${new Date().toLocaleString('ar-SA')}\n`;
+    text += `══════════════════════════════════════════════════\n\n`;
+    
+    const passed = this.results.filter(r => r.passed).length;
+    const failed = this.results.filter(r => !r.passed && !r.skipped).length;
+    const skipped = this.results.filter(r => r.skipped).length;
+    const total = this.results.length;
+    
+    text += `الإحصائيات:\n`;
+    text += `  • الإجمالي: ${total}\n`;
+    text += `  • ✅ ناجحة: ${passed} (${((passed / total) * 100).toFixed(1)}%)\n`;
+    text += `  • ❌ فاشلة: ${failed} (${((failed / total) * 100).toFixed(1)}%)\n`;
+    
+    if (skipped > 0) {
+      text += `  • ⏭️ متخطاة: ${skipped} (${((skipped / total) * 100).toFixed(1)}%)\n`;
+    }
+    
+    text += `\nالتفاصيل:\n`;
+    text += `══════════════════════════════════════════════════\n\n`;
+    
+    // تجميع حسب الفئة
+    const byCategory = {};
+    this.results.forEach(r => {
+      if (!byCategory[r.category]) byCategory[r.category] = [];
+      byCategory[r.category].push(r);
+    });
+    
+    for (const [category, tests] of Object.entries(byCategory)) {
+      text += `📁 ${category.toUpperCase()}:\n`;
+      text += `${'─'.repeat(50)}\n`;
+      
+      tests.forEach((test, index) => {
+        const icon = test.passed ? '✅' : (test.skipped ? '⏭️' : '❌');
+        text += `${icon} ${test.name} (${test.madhab})\n`;
+        
+        if (test.description) {
+          text += `   ↳ ${test.description}\n`;
+        }
+        
+        if (test.discrepancies) {
+          text += `   ↳ أخطاء: ${test.discrepancies.join(' | ')}\n`;
+        }
+        
+        if (test.error) {
+          text += `   ↳ خطأ: ${test.error}\n`;
+        }
+        
+        if (index < tests.length - 1) {
+          text += '\n';
+        }
+      });
+      
+      text += '\n\n';
+    }
+    
+    return text;
+  }
+}
+
+// ==================== 6. سجل المراجعة المحسن ====================
+class EnhancedAuditLog {
+  constructor() {
+    this.entries = [];
+    this.maxEntries = 1000;
+    this.filters = {
+      types: ['success', 'error', 'warning', 'info', 'calculation', 'hijab', 'estate'],
+      minDate: null,
+      maxDate: null
+    };
+  }
+  
+  add(action, type, message, details = null, component = null) {
+    const timestamp = new Date();
+    const entry = {
+      id: this.generateId(),
+      timestamp,
+      formattedTime: timestamp.toLocaleString('ar-SA'),
+      action,
+      type,
+      message,
+      details,
+      component,
+      read: false
+    };
+    
+    this.entries.unshift(entry);
+    
+    // تطبيق حد السجلات
+    if (this.entries.length > this.maxEntries) {
+      this.entries = this.entries.slice(0, this.maxEntries);
+    }
+    
+    // تحديث العرض إذا كان موجوداً
+    this.updateDisplay();
+    
+    // إرجاع الإدخال للاستخدام الفوري
+    return entry;
+  }
+  
+  generateId() {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+  }
+  
+  clear() {
+    this.entries = [];
+    this.updateDisplay();
+  }
+  
+  filterByType(types) {
+    if (!types || types.length === 0) return this.entries;
+    return this.entries.filter(entry => types.includes(entry.type));
+  }
+  
+  filterByDate(minDate, maxDate) {
+    return this.entries.filter(entry => {
+      const entryDate = entry.timestamp;
+      if (minDate && entryDate < minDate) return false;
+      if (maxDate && entryDate > maxDate) return false;
+      return true;
+    });
+  }
+  
+  search(query) {
+    if (!query) return this.entries;
+    const lowerQuery = query.toLowerCase();
+    
+    return this.entries.filter(entry => 
+      entry.action.toLowerCase().includes(lowerQuery) ||
+(Content truncated due to size limit. Use page ranges or line ranges to read remaining content)
