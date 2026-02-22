@@ -83,7 +83,7 @@ const config: ExpoConfig = {
     favicon: "./assets/favicon.png",
   },
   plugins: [
-    "expo-router",
+    // expo-router plugin removed - using traditional navigation instead
   ],
   experiments: {
     typedRoutes: true,
