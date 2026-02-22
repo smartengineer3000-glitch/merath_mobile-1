@@ -247,10 +247,35 @@ export class InheritanceCalculationEngine {
       }
     }
 
-    // الابن والعصبات الأخرى
-    if (heirs['son'] && heirs['son'] > 0) {
-      // سيتم حساب حصة الابن كعصبة
-      shares.set('son', new FractionClass(1, 1)); // placeholder
+    // الابن والعصبات الأخرى - حساب الباقي (العصبة)
+    // Calculate total of fixed provisions first
+    let totalProvisions = new FractionClass(0, 1);
+    for (const [key, fraction] of shares) {
+      totalProvisions = totalProvisions.add(fraction);
+    }
+
+    // Calculate remainder for asaba heirs
+    const asabaRemainder = new FractionClass(1, 1).subtract(totalProvisions);
+
+    // Distribute asaba remainder among male heirs
+    // Sons and brothers divide remainder by number, with each male getting equal share
+    if (asabaRemainder.toDecimal() > 0.0001) {
+      if (heirs['son'] && heirs['son'] > 0) {
+        // Sons divide the remainder equally
+        const sonShare = asabaRemainder.divide(heirs['son']);
+        shares.set('son', sonShare);
+      } else if (heirs['full_brother'] && heirs['full_brother'] > 0) {
+        // Full brothers divide remainder if no sons
+        const brotherShare = asabaRemainder.divide(heirs['full_brother']);
+        shares.set('full_brother', brotherShare);
+      } else if (heirs['half_brother_paternal'] && heirs['half_brother_paternal'] > 0) {
+        // Half-paternal brothers if no full brothers
+        const brotherShare = asabaRemainder.divide(heirs['half_brother_paternal']);
+        shares.set('half_brother_paternal', brotherShare);
+      } else if (heirs['father'] && heirs['father'] > 0) {
+        // Father gets remainder if no sons/brothers
+        shares.set('father', asabaRemainder);
+      }
     }
 
     this.addStep(
