@@ -223,7 +223,10 @@ support documents/
 - **ID:** 2c2de43d-16e9-4c3f-88b6-be678d534494
 - **Owner:** smartengineer
 
-> Note: EAS builds require that the active Expo account has appropriate permissions for the project owner. The current environment is logged in as `smartengineer`.
+- **ID:** a524145d-db5e-41df-ac7b-94b4334a3cf5
+- **Owner:** redme9phone
+
+> Note: EAS builds require that the active Expo account has appropriate permissions for the project owner. Update: project details changed to the `redme9phone` owner.
 
 ### Tomorrow (Feb 24)
 - [ ] Integrate enhanced engine (1 hour)
