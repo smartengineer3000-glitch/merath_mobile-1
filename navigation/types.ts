@@ -25,6 +25,7 @@ export type RootStackParamList = {
 export type TabParamList = {
   Calculator: undefined;
   History: undefined;
+  AuditTrail: undefined;
   Settings: undefined;
   About: undefined;
 };

@@ -13,10 +13,10 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
-  Modal,
   Alert,
+  Modal,
   TextInput,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import { useHeirs } from '../lib/inheritance/hooks';
 import type { HeirsData, HeirType } from '../lib/inheritance/types';
@@ -27,6 +27,56 @@ export interface HeirSelectorProps {
   onHeirsChange?: (heirs: HeirsData) => void;
 }
 
+// Heir categories as per original HTML
+const HEIR_CATEGORIES = [
+  {
+    name: '🤝 الأزواج (Spouses)',
+    heirs: [
+      { key: 'husband' as HeirType, label: 'الزوج', emoji: '💍' },
+      { key: 'wife' as HeirType, label: 'الزوجة', emoji: '💍' },
+    ]
+  },
+  {
+    name: '👨‍👩‍👧 الأصول (Ascendants)',
+    heirs: [
+      { key: 'father' as HeirType, label: 'الأب', emoji: '👨' },
+      { key: 'mother' as HeirType, label: 'الأم', emoji: '👩' },
+      { key: 'grandfather' as HeirType, label: 'الجد', emoji: '👴' },
+      { key: 'grandmother' as HeirType, label: 'الجدة', emoji: '👵' },
+    ]
+  },
+  {
+    name: '👶 الفروع (Descendants)',
+    heirs: [
+      { key: 'son' as HeirType, label: 'الابن', emoji: '👦' },
+      { key: 'daughter' as HeirType, label: 'البنت', emoji: '👧' },
+    ]
+  },
+  {
+    name: '👯 الحواشي (Siblings)',
+    heirs: [
+      { key: 'full_brother' as HeirType, label: 'الأخ الشقيق', emoji: '👨‍🤝‍👨' },
+      { key: 'full_sister' as HeirType, label: 'الأخت الشقيقة', emoji: '👩‍🤝‍👩' },
+      { key: 'half_brother_paternal' as HeirType, label: 'الأخ لأب', emoji: '👨' },
+      { key: 'half_sister_paternal' as HeirType, label: 'الأخت لأب', emoji: '👩' },
+      { key: 'half_brother_maternal' as HeirType, label: 'الأخ لأم', emoji: '👨' },
+      { key: 'half_sister_maternal' as HeirType, label: 'الأخت لأم', emoji: '👩' },
+    ]
+  },
+  {
+    name: '👨‍👦 الأقارب البعداء (Extended Family)',
+    heirs: [
+      { key: 'nephew_from_brother' as HeirType, label: 'ابن أخ/أخت', emoji: '👶' },
+      { key: 'niece_from_brother' as HeirType, label: 'ابنة أخ/أخت', emoji: '👧' },
+      { key: 'uncle_paternal' as HeirType, label: 'العم', emoji: '🧔' },
+      { key: 'uncle_maternal' as HeirType, label: 'الخال', emoji: '🧔' },
+      { key: 'aunt_paternal' as HeirType, label: 'العمة', emoji: '👵' },
+      { key: 'aunt_maternal' as HeirType, label: 'الخالة', emoji: '👵' },
+    ]
+  }
+];
+
+// Flat array for backwards compatibility
 const HEIR_TYPES: { key: HeirType; label: string; emoji: string }[] = [
   { key: 'husband', label: 'الزوج', emoji: '💍' },
   { key: 'wife', label: 'الزوجة', emoji: '💍' },
@@ -75,9 +125,8 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
   }, [heirsArray]);
 
   const handleAddHeir = useCallback(() => {
+    // kept for compatibility with modal editing (not primary in alternate UI)
     try {
-      setIsLoading(true);
-      
       if (!selectedHeirType) {
         const errorMsg = 'يجب اختيار نوع الوارث';
         setModalError(errorMsg);
@@ -92,31 +141,24 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
         return;
       }
 
-      // Use hook API to add or update
       if (editingHeirType) {
-        // find heir id
         const existing = heirsArray.find(h => h.key === editingHeirType);
         if (existing) {
           const ok = updateHeir(existing.id, { count: selectedCount });
           if (ok) {
             setModalError(null);
-            const heirLabel = HEIR_TYPES.find(h => h.key === editingHeirType)?.label || editingHeirType;
-            Alert.alert('نجح', `تم تحديث ${heirLabel} بنجاح`, [{ text: 'حسناً', onPress: () => setShowModal(false) }]);
+            Alert.alert('نجح', 'تم التحديث');
           } else {
             setModalError('فشل في تحديث الوارث');
             Alert.alert('خطأ', 'فشل في تحديث الوارث');
           }
-        } else {
-          setModalError('الوارث المطلوب للتحديث غير موجود');
-          Alert.alert('خطأ', 'الوارث المطلوب للتحديث غير موجود');
         }
       } else {
         const gender = ['husband','son','father','grandfather','full_brother','half_brother_paternal','half_brother_maternal','nephew_from_brother','uncle_paternal','uncle_maternal'].includes(selectedHeirType) ? 'male' : 'female';
         const ok = addHeir({ type: selectedHeirType as string, gender: gender as 'male'|'female', count: selectedCount });
         if (ok) {
           setModalError(null);
-          const heirLabel = HEIR_TYPES.find(h => h.key === selectedHeirType)?.label || selectedHeirType;
-          Alert.alert('نجح', `تم إضافة ${heirLabel} بنجاح`, [{ text: 'حسناً', onPress: () => setShowModal(false) }]);
+          Alert.alert('نجح', 'تم الإضافة');
         } else {
           setModalError('فشل في إضافة الوارث (مكرر أو غير صالح)');
           Alert.alert('خطأ', 'فشل في إضافة الوارث (مكرر أو غير صالح)');
@@ -126,10 +168,88 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
       const errorMsg = err instanceof Error ? err.message : 'خطأ في إضافة الوارث';
       setModalError(errorMsg);
       Alert.alert('خطأ', errorMsg);
-    } finally {
-      setIsLoading(false);
     }
   }, [selectedHeirType, selectedCount, safeHeirs, onHeirsChange, editingHeirType]);
+
+  // Helper: determine gender for heir type
+  const genderFor = useCallback((key: HeirType) => {
+    return ['husband','son','father','grandfather','full_brother','half_brother_paternal','half_brother_maternal','nephew_from_brother','uncle_paternal','uncle_maternal'].includes(key) ? 'male' : 'female';
+  }, []);
+
+  // Validation rules enforcement when changing counts inline
+  const validateChange = useCallback((key: HeirType, newCount: number, currentMap: HeirsData) => {
+    // Cannot be negative or over 100
+    if (newCount < 0 || newCount > 100) return 'العدد يجب أن يكون بين 0 و 100.';
+    
+    // MUST have only 1 husband (max)
+    if (key === 'husband' && newCount > 1) {
+      return '❌ خطأ: يمكن أن يكون هناك زوج واحد فقط (الحد الأقصى 1)';
+    }
+    
+    // Cannot have both husband and wife
+    if (key === 'husband' && newCount > 0 && (currentMap['wife'] || 0) > 0) {
+      return 'لا يمكن إضافة الزوج بينما هناك زوجات مسجلات. أزل الزوجات أولاً.';
+    }
+    if (key === 'wife' && newCount > 0 && (currentMap['husband'] || 0) > 0) {
+      return 'لا يمكن إضافة زوجة مع وجود زوج مسجل. أزل الزوج أولاً.';
+    }
+    
+    // Wife max 4
+    if (key === 'wife' && newCount > 4) {
+      return '❌ خطأ: الحد الأقصى للزوجات هو 4 (قال تعالى: فانكحوا ما طاب لكم من النساء...)';
+    }
+    
+    // Single-count limits for parents/grandparents
+    const singleCountHeirs = ['husband', 'father', 'mother', 'grandfather', 'grandmother'];
+    if (singleCountHeirs.includes(key) && newCount > 1) {
+      return `❌ خطأ: يمكن أن يكون هناك ${key === 'husband' ? 'زوج' : 'واحد'} فقط من هذا النوع`;
+    }
+    
+    return null;
+  }, []);
+
+  const handleIncrement = useCallback((heirKey: HeirType) => {
+    const existing = heirsArray.find(h => h.key === heirKey);
+    const currentMap: HeirsData = { ...safeHeirs };
+    const currentCount = existing ? existing.count : 0;
+    const newCount = currentCount + 1;
+
+    const validationMsg = validateChange(heirKey, newCount, currentMap);
+    if (validationMsg) {
+      Alert.alert('غير مسموح', validationMsg);
+      return;
+    }
+
+    if (existing) {
+      updateHeir(existing.id, { count: newCount });
+    } else {
+      addHeir({ type: heirKey, gender: genderFor(heirKey) as 'male'|'female', count: 1 });
+    }
+  }, [heirsArray, safeHeirs, addHeir, updateHeir, validateChange, genderFor]);
+
+  const handleDecrement = useCallback((heirKey: HeirType) => {
+    const existing = heirsArray.find(h => h.key === heirKey);
+    if (!existing) return;
+    const currentMap: HeirsData = { ...safeHeirs };
+    const newCount = Math.max(0, existing.count - 1);
+
+    const validationMsg = validateChange(heirKey, newCount, currentMap);
+    if (validationMsg) {
+      Alert.alert('غير مسموح', validationMsg);
+      return;
+    }
+
+    if (newCount === 0) {
+      // remove if more than one type exists
+      if (heirsArray.length > 1) {
+        removeHeir(existing.id);
+      } else {
+        Alert.alert('غير مسموح', 'يجب أن يبقى وارث واحد على الأقل');
+      }
+    } else {
+      updateHeir(existing.id, { count: newCount });
+    }
+  }, [heirsArray, safeHeirs, removeHeir, updateHeir, validateChange]);
 
   const handleRemoveHeir = useCallback((heirType: HeirType) => {
     const heirLabel = HEIR_TYPES.find(h => h.key === heirType)?.label || heirType;
@@ -201,7 +321,6 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
 
   return (
     <View style={styles.container}>
-      {/* الزر الرئيسي لإضافة الوارثون */}
       {/* Validation Errors/Warnings */}
       {validationResult && validationResult.errors.length > 0 && (
         <View style={[styles.feedbackContainer, styles.feedbackErrorContainer]}>
@@ -235,78 +354,73 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
         </View>
       )}
 
-      {/* الزر الرئيسي لإضافة الوارثون */}
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => {
-          setShowModal(true);
-          setModalError(null);
-          setEditingHeirType(null);
-          setSelectedHeirType('son');
-          setSelectedCount(1);
-        }}
-      >
-        <Text style={styles.addButtonText}>+ إضافة وارث</Text>
-      </TouchableOpacity>
+      {/* Grouped Heir Selection */}
+      <View style={styles.groupedHeirstContainer}>
+        <Text style={styles.heirstitle}>إضافة الوارثون (مرتبة بالفئات)</Text>
+        <ScrollView style={styles.groupedHeirstScrollView}>
+          {HEIR_CATEGORIES.map((category, catIndex) => (
+            <View key={`category-${catIndex}`} style={styles.categorySection}>
+              <View style={styles.categoryHeader}>
+                <Text style={styles.categoryName}>{category.name}</Text>
+              </View>
+              {category.heirs.map((heir) => {
+                const existing = heirsArray.find(h => h.key === heir.key);
+                const count = existing ? existing.count : 0;
+                return (
+                  <View key={heir.key} style={styles.heirRow}>
+                    <View style={styles.heirRowLeft}>
+                      <Text style={styles.heirEmoji}>{heir.emoji}</Text>
+                      <Text style={styles.heirName}>{heir.label}</Text>
+                    </View>
+                    <View style={styles.heirRowRight}>
+                      <TouchableOpacity
+                        style={[styles.smallBtn, count > 0 && styles.smallBtnActive]}
+                        onPress={() => handleDecrement(heir.key)}
+                        disabled={count === 0}
+                      >
+                        <Text style={styles.smallBtnText}>−</Text>
+                      </TouchableOpacity>
+                      <View style={styles.countDisplay}>
+                        <Text style={styles.countText}>{count}</Text>
+                      </View>
+                      <TouchableOpacity
+                        style={[styles.smallBtn, count > 0 && styles.smallBtnActive]}
+                        onPress={() => handleIncrement(heir.key)}
+                      >
+                        <Text style={styles.smallBtnText}>+</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
+          ))}
+        </ScrollView>
+      </View>
 
-      {/* قائمة الوارثون الحاليين */}
-      {heirEntries.length > 0 ? (
-        <View style={styles.heirsListContainer}>
-          <Text style={styles.heirsListTitle}>الوارثون المضافون:</Text>
-          <ScrollView style={styles.heirsList} scrollEnabled={true}>
+      {/* Summary Section */}
+      <View style={styles.summarySection}>
+        <Text style={styles.summaryLabel}>الوارثون المضافون: {heirEntries.length} نوع، الإجمالي: {totalHeirs}</Text>
+        {heirEntries.length > 0 && (
+          <ScrollView style={styles.addedHeirsList}>
             {heirEntries.map(([heirTypeStr, count]: [string, number | undefined]) => {
               const heirType = heirTypeStr as HeirType;
               const heirLabel = HEIR_TYPES.find(h => h.key === heirType)?.label || heirTypeStr;
               const emoji = HEIR_TYPES.find(h => h.key === heirType)?.emoji || '👤';
               return (
-                <View key={heirTypeStr} style={styles.heirItem}>
-                  <View style={styles.heirInfo}>
-                    <Text style={styles.heirEmoji}>{emoji}</Text>
-                    <View style={styles.heirDetails}>
-                      <Text style={styles.heirLabel}>{heirLabel}</Text>
-                      <Text style={styles.heirCount}>العدد: {count}</Text>
-                    </View>
-                  </View>
-                  <View style={styles.heirActions}>
-                    <TouchableOpacity
-                      style={styles.editButton}
-                      onPress={() => handleEditHeir(heirType)}
-                    >
-                      <Text style={styles.editButtonText}>✎</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.deleteButton}
-                      onPress={() => handleRemoveHeir(heirType)}
-                    >
-                      <Text style={styles.deleteButtonText}>✕</Text>
-                    </TouchableOpacity>
-                  </View>
+                <View key={heirTypeStr} style={styles.summaryItem}>
+                  <Text>{emoji} {heirLabel}: {count}</Text>
                 </View>
               );
             })}
           </ScrollView>
-
-          {/* إحصائيات */}
-          <View style={styles.statsContainer}>
-            <Text style={styles.statsText}>إجمالي الوارثون: {totalHeirs}</Text>
-            <Text style={styles.statsText}>عدد الأنواع: {heirEntries.length}</Text>
-          </View>
-
-          {/* زر مسح الكل */}
-          {heirEntries.length > 0 && (
-            <TouchableOpacity
-              style={styles.clearButton}
-              onPress={handleClearAll}
-            >
-              <Text style={styles.clearButtonText}>مسح الكل</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      ) : (
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyStateText}>لم يتم إضافة أي وارثون بعد</Text>
-        </View>
-      )}
+        )}
+        {heirEntries.length > 0 && (
+          <TouchableOpacity style={styles.clearAllBtn} onPress={handleClearAll}>
+            <Text style={styles.clearAllBtnText}>🗑️ مسح الكل</Text>
+          </TouchableOpacity>
+        )}
+      </View>
 
       {/* الـ Modal لإضافة وارث جديد */}
       <Modal
@@ -699,9 +813,195 @@ const styles = StyleSheet.create({
     color: '#1976d2',
     textAlign: 'center'
   },
-  errorContainer: {
-    backgroundColor: '#ffebee',
+  inlineGridContainer: {
+    marginVertical: 8
+  },
+  inlineGrid: {
+    maxHeight: 220,
     borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    padding: 8,
+    backgroundColor: '#fff'
+  },
+  gridItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0'
+  },
+  gridLeft: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  gridRight: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  smallButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#f5f5f5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 6
+  },
+  smallButtonText: {
+    fontSize: 20,
+    color: '#333',
+    fontWeight: '600'
+  },
+  countBadge: {
+    minWidth: 44,
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: '#e3f2fd',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  countBadgeText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1976d2'
+  },
+  // Grouped Heirs Styles
+  groupedHeirstContainer: {
+    marginVertical: 12,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    overflow: 'hidden'
+  },
+  heirstitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#333',
+    backgroundColor: '#f5f5f5',
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    textAlign: 'right'
+  },
+  groupedHeirstScrollView: {
+    maxHeight: 400
+  },
+  categorySection: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0'
+  },
+  categoryHeader: {
+    backgroundColor: '#e8f5e9',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#c8e6c9'
+  },
+  categoryName: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#2e7d32',
+    textAlign: 'right'
+  },
+  heirRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#f0f0f0'
+  },
+  heirRowLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1
+  },
+  heirName: {
+    fontSize: 13,
+    color: '#333',
+    fontWeight: '500',
+    flex: 1,
+    textAlign: 'right'
+  },
+  heirRowRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8
+  },
+  smallBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ddd'
+  },
+  smallBtnActive: {
+    backgroundColor: '#4caf50',
+    borderColor: '#388e3c'
+  },
+  smallBtnText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333'
+  },
+  countDisplay: {
+    minWidth: 40,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: 6,
+    backgroundColor: '#e3f2fd',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  countText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1976d2'
+  },
+  summarySection: {
+    marginVertical: 12,
+    padding: 12,
+    backgroundColor: '#fff9c4',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#fbc02d'
+  },
+  summaryLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#f57f17',
+    marginBottom: 8,
+    textAlign: 'right'
+  },
+  addedHeirsList: {
+    maxHeight: 120,
+    marginBottom: 8
+  },
+  summaryItem: {
+    fontSize: 12,
+    color: '#333',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    textAlign: 'right'
+  },
+  clearAllBtn: {
+    backgroundColor: '#d32f2f',
+    paddingVertical: 10,
+    borderRadius: 6,
+    alignItems: 'center'
+  },
+  clearAllBtnText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 13
+  },
+  errorContainer: {
     padding: 10,
     marginBottom: 12,
     borderWidth: 1,

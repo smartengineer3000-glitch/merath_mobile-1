@@ -6,7 +6,7 @@
  * تنسيق وتنظيم جميع المكونات معاً
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   View,
   ScrollView,
@@ -16,7 +16,8 @@ import {
   SafeAreaView,
   StatusBar,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  Alert
 } from 'react-native';
 import EstateInput from '../components/EstateInput';
 import HeirSelector from '../components/HeirSelector';
@@ -24,6 +25,7 @@ import MadhhabSelector from '../components/MadhhabSelector';
 import CalculationButton from '../components/CalculationButton';
 import ResultsDisplay from '../components/ResultsDisplay';
 import CalculationHistory from '../components/CalculationHistory';
+import type { EstateData, HeirsData, MadhhabType } from '../lib/inheritance/types';
 
 export interface CalculatorScreenProps {
   onNavigate?: (screen: string) => void;
@@ -38,14 +40,56 @@ type ScreenMode = 'calculator' | 'history';
 export function CalculatorScreen({ onNavigate }: CalculatorScreenProps) {
   const [screenMode, setScreenMode] = useState<ScreenMode>('calculator');
   const [selectedHistoryEntry, setSelectedHistoryEntry] = useState<string | null>(null);
+  
+  // State for calculation inputs
+  const [estateData, setEstateData] = useState<EstateData>({ total: 0, funeral: 0, debts: 0, will: 0 });
+  const [heirsData, setHeirsData] = useState<HeirsData>({});
+  const [madhab, setMadhab] = useState<MadhhabType>('hanafi');
+
+  // Check if calculation is possible
+  const canCalculate = useMemo(() => {
+    const hasEstate = estateData && estateData.total > 0;
+    const hasHeirs = heirsData && Object.values(heirsData).some(count => count && count > 0);
+    return hasEstate && hasHeirs;
+  }, [estateData, heirsData]);
 
   const handleHistoryEntrySelect = useCallback((entryId: string) => {
     setSelectedHistoryEntry(entryId);
-    // في تطبيق حقيقي، سيتم الانتقال إلى عرض التفاصيل
   }, []);
 
   const handleCalculationComplete = useCallback(() => {
-    // التمرير السلس للنتائج
+    // Smooth transition to results
+  }, []);
+
+  const handleEstateChange = useCallback((estate: EstateData) => {
+    setEstateData(estate);
+  }, []);
+
+  const handleHeirsChange = useCallback((heirs: HeirsData) => {
+    setHeirsData(heirs);
+  }, []);
+
+  const handleMadhhabChange = useCallback((newMadhab: MadhhabType) => {
+    setMadhab(newMadhab);
+  }, []);
+
+  const handleResetAll = useCallback(() => {
+    Alert.alert(
+      'مسح النموذج',
+      'هل تريد مسح جميع البيانات المدخلة وإعادة تعيين الحاسبة؟',
+      [
+        { text: 'إلغاء', onPress: () => {} },
+        {
+          text: 'مسح',
+          onPress: () => {
+            setEstateData({ total: 0, funeral: 0, debts: 0, will: 0 });
+            setHeirsData({});
+            setMadhab('hanafi');
+            Alert.alert('تم', 'تم مسح جميع البيانات بنجاح');
+          }
+        }
+      ]
+    );
   }, []);
 
   return (
@@ -106,7 +150,7 @@ export function CalculatorScreen({ onNavigate }: CalculatorScreenProps) {
               <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>اختر المذهب الإسلامي</Text>
               </View>
-              <MadhhabSelector />
+              <MadhhabSelector onMadhhabChange={handleMadhhabChange} />
             </View>
 
             {/* قسم البيانات المالية */}
@@ -114,7 +158,7 @@ export function CalculatorScreen({ onNavigate }: CalculatorScreenProps) {
               <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>بيانات التركة</Text>
               </View>
-              <EstateInput />
+              <EstateInput onEstateChange={handleEstateChange} initialEstate={estateData} />
             </View>
 
             {/* قسم الوارثون */}
@@ -122,15 +166,35 @@ export function CalculatorScreen({ onNavigate }: CalculatorScreenProps) {
               <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>إضافة الوارثون</Text>
               </View>
-              <HeirSelector />
+              <HeirSelector onHeirsChange={handleHeirsChange} />
             </View>
 
-            {/* زر الحساب - with default props for now */}
+            {/* Buttons Section */}
+            <View style={styles.buttonsSection}>
+              <TouchableOpacity
+                style={[styles.calculateBtn, !canCalculate && styles.calculateBtnDisabled]}
+                onPress={() => {}} // Connected to CalculationButton below
+                disabled={!canCalculate}
+              >
+                <Text style={styles.calculateBtnText}>
+                  {canCalculate ? '✓ حساب الميراث' : '⚠️ أكمل البيانات أولاً'}
+                </Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity
+                style={styles.resetBtn}
+                onPress={handleResetAll}
+              >
+                <Text style={styles.resetBtnText}>↺ مسح الكل</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* زر الحساب */}
             <View style={styles.section}>
               <CalculationButton
-                madhab="hanafi"
-                heirs={{}}
-                estate={{ total: 0, funeral: 0, debts: 0, will: 0 }}
+                madhab={madhab}
+                heirs={heirsData}
+                estate={estateData}
                 onCalculationComplete={handleCalculationComplete}
               />
             </View>
@@ -239,6 +303,44 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#333',
     textAlign: 'right'
+  },
+  buttonsSection: {
+    marginHorizontal: 16,
+    marginBottom: 16,
+    gap: 12,
+    flexDirection: 'column'
+  },
+  calculateBtn: {
+    backgroundColor: '#4caf50',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#388e3c'
+  },
+  calculateBtnDisabled: {
+    backgroundColor: '#cccccc',
+    borderColor: '#aaaaaa'
+  },
+  calculateBtnText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '700'
+  },
+  resetBtn: {
+    backgroundColor: '#ff9800',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#f57c00'
+  },
+  resetBtnText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600'
   }
 });
 

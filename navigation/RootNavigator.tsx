@@ -21,6 +21,7 @@ import { linking } from './linking';
 // Screens
 import CalculatorScreen from '../screens/CalculatorScreen';
 import HistoryScreen from '../screens/HistoryScreen';
+import AuditTrailScreen from '../screens/AuditTrailScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import AboutScreen from '../screens/AboutScreen';
 
@@ -73,6 +74,8 @@ export function TabNavigator() {
             iconName = focused ? 'calculator' : 'calculator-outline';
           } else if (route.name === 'History') {
             iconName = focused ? 'time' : 'time-outline';
+          } else if (route.name === 'AuditTrail') {
+            iconName = focused ? 'list' : 'list-outline';
           } else if (route.name === 'Settings') {
             iconName = focused ? 'settings' : 'settings-outline';
           } else if (route.name === 'About') {
@@ -100,6 +103,14 @@ export function TabNavigator() {
         options={{
           title: 'سجل العمليات',
           tabBarLabel: 'السجل',
+        }}
+      />
+      <Tab.Screen
+        name="AuditTrail"
+        component={AuditTrailScreen}
+        options={{
+          title: 'سجل التدقيق',
+          tabBarLabel: 'التدقيق',
         }}
       />
       <Tab.Screen

@@ -7,7 +7,7 @@
  */
 
 import React, { useState, useCallback, useMemo } from 'react';
-import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { useCalculator } from '../lib/inheritance/hooks';
 import { EstateData } from '../lib/inheritance/types';
 import { EstateValidator } from '../lib/validation/InputValidator';
@@ -137,32 +137,6 @@ export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps)
         />
       </View>
 
-      {/* تكاليف الجنازة */}
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>تكاليف الجنازة (اختياري)</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Funeral Costs (Optional)"
-          placeholderTextColor="#999"
-          value={funeral}
-          onChangeText={handleFuneralChange}
-          keyboardType="decimal-pad"
-        />
-      </View>
-
-      {/* الديون */}
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>الديون (اختياري)</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Debts (Optional)"
-          placeholderTextColor="#999"
-          value={debts}
-          onChangeText={handleDebtsChange}
-          keyboardType="decimal-pad"
-        />
-      </View>
-
       {/* الوصية */}
       <View style={styles.inputGroup}>
         <Text style={styles.label}>الوصية (اختياري)</Text>
@@ -175,6 +149,22 @@ export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps)
           keyboardType="decimal-pad"
         />
       </View>
+
+      {/* Reset Button */}
+      <TouchableOpacity
+        style={styles.resetButton}
+        onPress={() => {
+          setTotal('0');
+          setFuneral('0');
+          setDebts('0');
+          setWill('0');
+          updateEstateData({ total: 0, funeral: 0, debts: 0, will: 0 });
+          setValidationResult(null);
+          Alert.alert('تم', 'تم مسح جميع البيانات');
+        }}
+      >
+        <Text style={styles.resetButtonText}>↺ مسح البيانات</Text>
+      </TouchableOpacity>
 
       {/* Validation Feedback */}
       {validationResult && (
@@ -391,6 +381,21 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     color: '#1976d2'
+  },
+  resetButton: {
+    backgroundColor: '#ff9800',
+    borderRadius: 6,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: '#f57c00'
+  },
+  resetButtonText: {
+    color: '#fff',
+    fontSize: 13,
+    fontWeight: '600'
   }
 });
 
