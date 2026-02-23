@@ -38,7 +38,7 @@ const config: ExpoConfig = {
 
   extra: {
     eas: {
-      projectId: "90fe5fd5-1d5b-478d-9e1b-7804d74309fc"
+      projectId: "6e303c44-d7c9-403a-a835-80eff6a802ff"
     },
     appMetadata: {
       version: "1.0.0",
