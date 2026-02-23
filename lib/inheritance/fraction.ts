@@ -38,11 +38,24 @@ export class FractionClass {
   }
 
   /**
-   * حساب القاسم المشترك الأكبر
-   * Calculate Greatest Common Divisor
+   * حساب القاسم المشترك الأكبر (الخوارزمية التكرارية)
+   * Calculate Greatest Common Divisor (Iterative Euclidean Algorithm)
+   * 
+   * Note: Using iterative instead of recursive to prevent stack overflow
+   * with large denominators in edge cases (e.g., single male heir scenarios)
    */
   private gcd(a: number, b: number): number {
-    return b === 0 ? a : this.gcd(b, a % b);
+    a = Math.abs(a);
+    b = Math.abs(b);
+    
+    // Euclidean algorithm - iterative approach
+    while (b !== 0) {
+      const temp = b;
+      b = a % b;
+      a = temp;
+    }
+    
+    return a;
   }
 
   /**
