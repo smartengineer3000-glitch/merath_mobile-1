@@ -32,10 +32,10 @@ export type HeirType =
 // ====== بيانات التركة ======
 export interface EstateData {
   total: number;        // إجمالي التركة بالريال
-  funeral?: number;     // تكاليف التجهيز والدفن
+  funeral: number;     // تكاليف التجهيز والدفن
   funeralCosts?: number;  // تكاليف التجهيز والدفن (alternative name)
-  debts?: number;       // الديون المستحقة
-  will?: number;        // الوصية (تُحسب بثلث الباقي عادة)
+  debts: number;       // الديون المستحقة
+  will: number;        // الوصية (تُحسب بثلث الباقي عادة)
   willAmount?: number;  // الوصية (alternative name)
 }
 

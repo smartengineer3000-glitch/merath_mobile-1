@@ -203,6 +203,62 @@ export class FractionClass {
   }
 
   /**
+   * Get numerator (alternative method name)
+   */
+  getNumerator(): number {
+    return this.numerator;
+  }
+
+  /**
+   * Get denominator (alternative method name)
+   */
+  getDenominator(): number {
+    return this.denominator;
+  }
+
+  /**
+   * Check if fraction is positive
+   */
+  isPositive(): boolean {
+    return this.numerator > 0;
+  }
+
+  /**
+   * Check if fraction is zero
+   */
+  isZero(): boolean {
+    return this.numerator === 0;
+  }
+
+  /**
+   * Check if greater than another fraction
+   */
+  greaterThan(other: FractionClass): boolean {
+    return this.toDecimal() > other.toDecimal();
+  }
+
+  /**
+   * Check if less than another fraction
+   */
+  lessThan(other: FractionClass): boolean {
+    return this.toDecimal() < other.toDecimal();
+  }
+
+  /**
+   * Check if greater than or equal
+   */
+  greaterThanOrEqual(other: FractionClass): boolean {
+    return this.toDecimal() >= other.toDecimal();
+  }
+
+  /**
+   * Check if less than or equal
+   */
+  lessThanOrEqual(other: FractionClass): boolean {
+    return this.toDecimal() <= other.toDecimal();
+  }
+
+  /**
    * تحويل إلى كائن بيانات
    */
   toData(): FractionData {

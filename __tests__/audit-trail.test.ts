@@ -26,7 +26,7 @@ describe('AuditTrailManager', () => {
       operation: 'calculate',
       madhab: madhab as any,
       heirs: { son: 1, daughter: 1 },
-      estate: { total },
+      estate: { total, funeral: 0, debts: 0, will: 0 },
       result: {
         success: true,
         madhab: madhab as any,

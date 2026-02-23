@@ -19,7 +19,7 @@ import {
 } from './types';
 import { validateEstateData, validateHeirsData, getHeirName, formatTime } from './utils';
 
-export class InheritanceCalculationEngine {
+export class LegacyInheritanceCalculationEngine {
   private madhab: MadhhabType;
   private estate: EstateData;
   private heirs: HeirsData;
@@ -434,3 +434,12 @@ export class InheritanceCalculationEngine {
     return 100;
   }
 }
+
+// Prefer the new EnhancedInheritanceCalculationEngine as the primary export
+// We keep the legacy implementation available as `LegacyInheritanceCalculationEngine`
+import { EnhancedInheritanceCalculationEngine } from './enhanced-engine-complete';
+
+// Export the enhanced engine under the original name so existing imports continue to work
+export const InheritanceCalculationEngine: typeof EnhancedInheritanceCalculationEngine = EnhancedInheritanceCalculationEngine;
+
+export { EnhancedInheritanceCalculationEngine };
