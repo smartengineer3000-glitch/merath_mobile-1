@@ -35,9 +35,19 @@ const HEIR_TYPES: { key: HeirType; label: string; emoji: string }[] = [
   { key: 'father', label: 'الأب', emoji: '👨' },
   { key: 'mother', label: 'الأم', emoji: '👩' },
   { key: 'grandfather', label: 'الجد', emoji: '👴' },
+  { key: 'grandmother', label: 'الجدة', emoji: '👵' },
   { key: 'full_brother', label: 'الأخ الشقيق', emoji: '👨‍🤝‍👨' },
   { key: 'full_sister', label: 'الأخت الشقيقة', emoji: '👩‍🤝‍👩' },
-  { key: 'half_brother_paternal', label: 'الأخ لأب', emoji: '👨' }
+  { key: 'half_brother_paternal', label: 'الأخ لأب', emoji: '👨' },
+  { key: 'half_sister_paternal', label: 'الأخت لأب', emoji: '👩' },
+  { key: 'half_brother_maternal', label: 'الأخ لأم', emoji: '👨' },
+  { key: 'half_sister_maternal', label: 'الأخت لأم', emoji: '👩' },
+  { key: 'nephew_from_brother', label: 'ابن أخ/أخت', emoji: '👶' },
+  { key: 'niece_from_brother', label: 'ابنة أخ/أخت', emoji: '👧' },
+  { key: 'uncle_paternal', label: 'العم', emoji: '🧔' },
+  { key: 'uncle_maternal', label: 'الخال', emoji: '🧔' },
+  { key: 'aunt_paternal', label: 'العمة', emoji: '👵' },
+  { key: 'aunt_maternal', label: 'الخالة', emoji: '👵' }
 ];
 
 /**
@@ -45,7 +55,7 @@ const HEIR_TYPES: { key: HeirType; label: string; emoji: string }[] = [
  * Displays and manages heir selection
  */
 export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
-  const { heirs } = useHeirs();
+  const { heirs, addHeir, updateHeir, removeHeir, clearHeirs } = useHeirs();
   const [showModal, setShowModal] = useState(false);
   const [selectedHeirType, setSelectedHeirType] = useState<HeirType>('son');
   const [selectedCount, setSelectedCount] = useState(1);
@@ -54,15 +64,13 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
   const [editingHeirType, setEditingHeirType] = useState<HeirType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Convert array heirs to HeirsData object
-  const heirsArray = (heirs as any) || [];
+  // heirs is an array of {id, key, count}
+  const heirsArray = (heirs as Array<{ id: string; key: HeirType; count: number }>) || [];
   const safeHeirs: HeirsData = useMemo(() => {
     const result: HeirsData = {};
-    if (Array.isArray(heirsArray)) {
-      heirsArray.forEach((heir: any) => {
-        result[heir.key] = heir.count;
-      });
-    }
+    heirsArray.forEach((heir) => {
+      result[heir.key] = heir.count;
+    });
     return result;
   }, [heirsArray]);
 
@@ -84,31 +92,35 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
         return;
       }
 
-      // تحديث الوارثون
-      const newHeirs: HeirsData = { ...safeHeirs };
-      newHeirs[selectedHeirType] = selectedCount;
-      
-      // Validate updated heirs list
-      const validation = HeirValidator.validate(newHeirs);
-      setValidationResult(validation);
-      
-      if (validation.isValid) {
-        onHeirsChange?.(newHeirs);
-        setModalError(null);
-        setEditingHeirType(null);
-        
-        // Show success alert
-        const heirLabel = HEIR_TYPES.find(h => h.key === selectedHeirType)?.label || selectedHeirType;
-        Alert.alert(
-          'نجح',
-          `تم ${editingHeirType ? 'تحديث' : 'إضافة'} ${heirLabel} بنجاح`,
-          [{ text: 'حسناً', onPress: () => setShowModal(false) }]
-        );
+      // Use hook API to add or update
+      if (editingHeirType) {
+        // find heir id
+        const existing = heirsArray.find(h => h.key === editingHeirType);
+        if (existing) {
+          const ok = updateHeir(existing.id, { count: selectedCount });
+          if (ok) {
+            setModalError(null);
+            const heirLabel = HEIR_TYPES.find(h => h.key === editingHeirType)?.label || editingHeirType;
+            Alert.alert('نجح', `تم تحديث ${heirLabel} بنجاح`, [{ text: 'حسناً', onPress: () => setShowModal(false) }]);
+          } else {
+            setModalError('فشل في تحديث الوارث');
+            Alert.alert('خطأ', 'فشل في تحديث الوارث');
+          }
+        } else {
+          setModalError('الوارث المطلوب للتحديث غير موجود');
+          Alert.alert('خطأ', 'الوارث المطلوب للتحديث غير موجود');
+        }
       } else {
-        // Show first error in modal and alert
-        const firstError = validation.errors[0];
-        setModalError(firstError.userMessage);
-        Alert.alert('خطأ في التحقق', firstError.userMessage);
+        const gender = ['husband','son','father','grandfather','full_brother','half_brother_paternal','half_brother_maternal','nephew_from_brother','uncle_paternal','uncle_maternal'].includes(selectedHeirType) ? 'male' : 'female';
+        const ok = addHeir({ type: selectedHeirType as string, gender: gender as 'male'|'female', count: selectedCount });
+        if (ok) {
+          setModalError(null);
+          const heirLabel = HEIR_TYPES.find(h => h.key === selectedHeirType)?.label || selectedHeirType;
+          Alert.alert('نجح', `تم إضافة ${heirLabel} بنجاح`, [{ text: 'حسناً', onPress: () => setShowModal(false) }]);
+        } else {
+          setModalError('فشل في إضافة الوارث (مكرر أو غير صالح)');
+          Alert.alert('خطأ', 'فشل في إضافة الوارث (مكرر أو غير صالح)');
+        }
       }
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'خطأ في إضافة الوارث';
@@ -129,15 +141,22 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
         {
           text: 'حذف',
           onPress: () => {
-            const newHeirs: HeirsData = { ...safeHeirs };
-            delete newHeirs[heirType];
-            
-            // Validate updated heirs list
-            const validation = HeirValidator.validate(newHeirs);
-            setValidationResult(validation);
-            
-            onHeirsChange?.(newHeirs);
-            Alert.alert('نجح', `تم حذف ${heirLabel} بنجاح`);
+            const existing = heirsArray.find(h => h.key === heirType);
+            if (!existing) {
+              Alert.alert('خطأ', 'الوارث غير موجود');
+              return;
+            }
+            const ok = removeHeir(existing.id);
+            if (ok) {
+              const newMap: HeirsData = { ...safeHeirs };
+              delete newMap[heirType];
+              const validation = HeirValidator.validate(newMap);
+              setValidationResult(validation);
+              onHeirsChange?.(newMap);
+              Alert.alert('نجح', `تم حذف ${heirLabel} بنجاح`);
+            } else {
+              Alert.alert('خطأ', 'فشل في حذف الوارث');
+            }
           }
         }
       ]
@@ -145,9 +164,8 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
   }, [safeHeirs, onHeirsChange]);
 
   const handleEditHeir = useCallback((heirType: HeirType) => {
-    const currentCount = safeHeirs[heirType] || 1;
-    const heirLabel = HEIR_TYPES.find(h => h.key === heirType)?.label || heirType;
-    
+    const current = heirsArray.find(h => h.key === heirType);
+    const currentCount = current ? current.count : (safeHeirs[heirType] || 1);
     setEditingHeirType(heirType);
     setSelectedHeirType(heirType);
     setSelectedCount(currentCount);
@@ -177,8 +195,9 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
     );
   }, [onHeirsChange]);
 
-  const heirEntries = Object.entries(safeHeirs);
-  const totalHeirs = Object.values(safeHeirs).reduce((sum: number, count: number | undefined) => sum + (count || 0), 0);
+  // Use heirsArray for rendering to preserve ids
+  const heirEntries = heirsArray.map(h => [h.key, h.count] as [string, number]);
+  const totalHeirs = heirsArray.reduce((sum, h) => sum + (h.count || 0), 0);
 
   return (
     <View style={styles.container}>
@@ -234,7 +253,7 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
       {heirEntries.length > 0 ? (
         <View style={styles.heirsListContainer}>
           <Text style={styles.heirsListTitle}>الوارثون المضافون:</Text>
-          <ScrollView style={styles.heirsList} scrollEnabled={false}>
+          <ScrollView style={styles.heirsList} scrollEnabled={true}>
             {heirEntries.map(([heirTypeStr, count]: [string, number | undefined]) => {
               const heirType = heirTypeStr as HeirType;
               const heirLabel = HEIR_TYPES.find(h => h.key === heirType)?.label || heirTypeStr;
