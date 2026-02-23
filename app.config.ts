@@ -5,7 +5,7 @@ const appScheme = "merath";
 
 const env = {
   appName: 'حاسبة المواريث الشرعية (تطبيق جوال)',
-  appSlug: 'merathmobilev1',
+  appSlug: 'mertahmobile',
   logoUrl: '',
   scheme: appScheme,
   androidPackage: bundleId,
@@ -13,7 +13,7 @@ const env = {
 
 const config: ExpoConfig = {
   name: env.appName,
-  slug: 'merathmobilev1',
+  slug: 'mertahmobile',
   version: "1.0.0",
   orientation: "portrait",
   icon: "./assets/icon.png",
