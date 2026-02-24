@@ -63,15 +63,39 @@ export class EstateValidator {
       });
     }
 
+    // Validate will amount
+    if (estate.will && estate.will < 0) {
+      errors.push({
+        field: 'estate.will',
+        userMessage: 'الوصية لا يمكن أن تكون سالبة',
+        technicalMessage: 'Will amount cannot be negative',
+        severity: 'error',
+        suggestion: 'أدخل مبلغ موجب أو اترك الحقل فارغاً',
+      });
+    }
+
+    // Validate will does not exceed 1/3 of total estate
+    if (estate.will && estate.will > estate.total / 3) {
+      errors.push({
+        field: 'estate.will',
+        userMessage: 'الوصية لا يمكن أن تتجاوز ثلث التركة',
+        technicalMessage: 'Will cannot exceed 1/3 of total estate per Islamic law',
+        severity: 'error',
+        suggestion: `الحد الأقصى للوصية: ${(estate.total / 3).toFixed(2)} (ثلث التركة)`,
+      });
+    }
+
     // Check if debts/funeral exceed total
-    const deductions = (estate.funeral || 0) + (estate.debts || 0);
+    const deductions = (estate.funeral || 0) + (estate.debts || 0) + (estate.will || 0);
+    // Check if debts/funeral/will exceed total
+    const deductions = (estate.funeral || 0) + (estate.debts || 0) + (estate.will || 0);
     if (deductions > estate.total) {
       errors.push({
         field: 'estate.total',
-        userMessage: 'مجموع الديون والتكاليف لا يمكن أن يتجاوز التركة',
+        userMessage: 'مجموع الديون والتكاليف والوصية لا يمكن أن يتجاوز التركة',
         technicalMessage: 'Total deductions cannot exceed estate',
         severity: 'error',
-        suggestion: 'تأكد من أن الديون والتكاليف أقل من أو تساوي التركة الإجمالية',
+        suggestion: 'تأكد من أن الديون والتكاليف والوصية أقل من أو تساوي التركة الإجمالية',
       });
     }
 

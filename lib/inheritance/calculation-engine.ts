@@ -113,7 +113,8 @@ export class LegacyInheritanceCalculationEngine {
     const estateError = validateEstateData(
       this.estate.total,
       this.estate.funeral ?? 0,
-      this.estate.debts ?? 0
+      this.estate.debts ?? 0,
+      this.estate.will ?? 0
     );
     if (estateError) {
       throw new Error(estateError);
@@ -138,16 +139,18 @@ export class LegacyInheritanceCalculationEngine {
   private calculateNetEstate(): number {
     const funeral = this.estate.funeral ?? 0;
     const debts = this.estate.debts ?? 0;
-    const net = this.estate.total - funeral - debts;
+    const will = this.estate.will ?? 0;
+    const net = this.estate.total - funeral - debts - will;
 
     this.addStep(
       'حساب التركة الصافية',
-      `التركة الصافية = ${this.estate.total} - ${funeral} - ${debts} = ${net}`,
+      `التركة الصافية = ${this.estate.total} - ${funeral} - ${debts} - ${will} = ${net}`,
       'estate_calculation',
       {
         total: this.estate.total,
         funeral: funeral,
         debts: debts,
+        will: will,
         net: net
       }
     );

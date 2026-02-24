@@ -46,13 +46,6 @@ export function CalculatorScreen({ onNavigate }: CalculatorScreenProps) {
   const [heirsData, setHeirsData] = useState<HeirsData>({});
   const [madhab, setMadhab] = useState<MadhhabType>('hanafi');
 
-  // Check if calculation is possible
-  const canCalculate = useMemo(() => {
-    const hasEstate = estateData && estateData.total > 0;
-    const hasHeirs = heirsData && Object.values(heirsData).some(count => count && count > 0);
-    return hasEstate && hasHeirs;
-  }, [estateData, heirsData]);
-
   const handleHistoryEntrySelect = useCallback((entryId: string) => {
     setSelectedHistoryEntry(entryId);
   }, []);
@@ -169,26 +162,6 @@ export function CalculatorScreen({ onNavigate }: CalculatorScreenProps) {
               <HeirSelector onHeirsChange={handleHeirsChange} />
             </View>
 
-            {/* Buttons Section */}
-            <View style={styles.buttonsSection}>
-              <TouchableOpacity
-                style={[styles.calculateBtn, !canCalculate && styles.calculateBtnDisabled]}
-                onPress={() => {}} // Connected to CalculationButton below
-                disabled={!canCalculate}
-              >
-                <Text style={styles.calculateBtnText}>
-                  {canCalculate ? '✓ حساب الميراث' : '⚠️ أكمل البيانات أولاً'}
-                </Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity
-                style={styles.resetBtn}
-                onPress={handleResetAll}
-              >
-                <Text style={styles.resetBtnText}>↺ مسح الكل</Text>
-              </TouchableOpacity>
-            </View>
-
             {/* زر الحساب */}
             <View style={styles.section}>
               <CalculationButton
@@ -197,6 +170,16 @@ export function CalculatorScreen({ onNavigate }: CalculatorScreenProps) {
                 estate={estateData}
                 onCalculationComplete={handleCalculationComplete}
               />
+            </View>
+
+            {/* قسم مسح البيانات */}
+            <View style={styles.buttonsSection}>
+              <TouchableOpacity
+                style={styles.resetBtn}
+                onPress={handleResetAll}
+              >
+                <Text style={styles.resetBtnText}>↺ مسح الكل</Text>
+              </TouchableOpacity>
             </View>
 
             {/* قسم النتائج */}

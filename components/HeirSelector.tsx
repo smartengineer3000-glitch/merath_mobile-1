@@ -27,22 +27,23 @@ export interface HeirSelectorProps {
   onHeirsChange?: (heirs: HeirsData) => void;
 }
 
-// Heir categories as per original HTML
+// Heir categories as per original HTML - Complete List
 const HEIR_CATEGORIES = [
   {
     name: '🤝 الأزواج (Spouses)',
     heirs: [
       { key: 'husband' as HeirType, label: 'الزوج', emoji: '💍' },
-      { key: 'wife' as HeirType, label: 'الزوجة', emoji: '💍' },
+      { key: 'wife' as HeirType, label: 'الزوجة / الزوجات', emoji: '💍' },
     ]
   },
   {
-    name: '👨‍👩‍👧 الأصول (Ascendants)',
+    name: '👴 الأصول (Ascendants)',
     heirs: [
-      { key: 'father' as HeirType, label: 'الأب', emoji: '👨' },
-      { key: 'mother' as HeirType, label: 'الأم', emoji: '👩' },
-      { key: 'grandfather' as HeirType, label: 'الجد', emoji: '👴' },
-      { key: 'grandmother' as HeirType, label: 'الجدة', emoji: '👵' },
+      { key: 'father' as HeirType, label: 'الأب', emoji: '👨‍🦳' },
+      { key: 'mother' as HeirType, label: 'الأم', emoji: '👩‍🦳' },
+      { key: 'grandfather' as HeirType, label: 'الجد الصحيح', emoji: '👴' },
+      { key: 'grandmother_mother' as HeirType, label: 'الجدة لأم', emoji: '👵' },
+      { key: 'grandmother_father' as HeirType, label: 'الجدة لأب', emoji: '👵' },
     ]
   },
   {
@@ -50,54 +51,71 @@ const HEIR_CATEGORIES = [
     heirs: [
       { key: 'son' as HeirType, label: 'الابن', emoji: '👦' },
       { key: 'daughter' as HeirType, label: 'البنت', emoji: '👧' },
+      { key: 'grandson' as HeirType, label: 'ابن الابن', emoji: '👦' },
+      { key: 'granddaughter' as HeirType, label: 'بنت الابن', emoji: '👧' },
     ]
   },
   {
-    name: '👯 الحواشي (Siblings)',
+    name: '👫 الحواشي (Siblings)',
     heirs: [
       { key: 'full_brother' as HeirType, label: 'الأخ الشقيق', emoji: '👨‍🤝‍👨' },
       { key: 'full_sister' as HeirType, label: 'الأخت الشقيقة', emoji: '👩‍🤝‍👩' },
-      { key: 'half_brother_paternal' as HeirType, label: 'الأخ لأب', emoji: '👨' },
-      { key: 'half_sister_paternal' as HeirType, label: 'الأخت لأب', emoji: '👩' },
-      { key: 'half_brother_maternal' as HeirType, label: 'الأخ لأم', emoji: '👨' },
-      { key: 'half_sister_maternal' as HeirType, label: 'الأخت لأم', emoji: '👩' },
+      { key: 'paternal_brother' as HeirType, label: 'الأخ لأب', emoji: '👨' },
+      { key: 'paternal_sister' as HeirType, label: 'الأخت لأب', emoji: '👩' },
+      { key: 'maternal_brother' as HeirType, label: 'الإخوة لأم (ذكور)', emoji: '👨' },
+      { key: 'maternal_sister' as HeirType, label: 'الإخوة لأم (إناث)', emoji: '👩' },
     ]
   },
   {
     name: '👨‍👦 الأقارب البعداء (Extended Family)',
     heirs: [
-      { key: 'nephew_from_brother' as HeirType, label: 'ابن أخ/أخت', emoji: '👶' },
-      { key: 'niece_from_brother' as HeirType, label: 'ابنة أخ/أخت', emoji: '👧' },
-      { key: 'uncle_paternal' as HeirType, label: 'العم', emoji: '🧔' },
-      { key: 'uncle_maternal' as HeirType, label: 'الخال', emoji: '🧔' },
-      { key: 'aunt_paternal' as HeirType, label: 'العمة', emoji: '👵' },
-      { key: 'aunt_maternal' as HeirType, label: 'الخالة', emoji: '👵' },
+      { key: 'full_nephew' as HeirType, label: 'ابن الأخ الشقيق', emoji: '👶' },
+      { key: 'paternal_nephew' as HeirType, label: 'ابن الأخ لأب', emoji: '👶' },
+      { key: 'full_uncle' as HeirType, label: 'العم الشقيق', emoji: '🧔' },
+      { key: 'paternal_uncle' as HeirType, label: 'العم لأب', emoji: '🧔' },
+      { key: 'full_cousin' as HeirType, label: 'ابن العم الشقيق', emoji: '👨' },
+      { key: 'paternal_cousin' as HeirType, label: 'ابن العم لأب', emoji: '👨' },
+      { key: 'maternal_uncle' as HeirType, label: 'الخال', emoji: '🧔' },
+      { key: 'maternal_aunt' as HeirType, label: 'الخالة', emoji: '👩' },
+      { key: 'paternal_aunt' as HeirType, label: 'العمة', emoji: '👵' },
+      { key: 'daughter_son' as HeirType, label: 'ابن البنت (ذكور)', emoji: '👶' },
+      { key: 'daughter_daughter' as HeirType, label: 'ابن البنت (إناث)', emoji: '👧' },
+      { key: 'sister_children' as HeirType, label: 'أولاد الأخوات', emoji: '👶' },
     ]
   }
 ];
 
-// Flat array for backwards compatibility
+// Flat array for backwards compatibility - All Heir Types
 const HEIR_TYPES: { key: HeirType; label: string; emoji: string }[] = [
   { key: 'husband', label: 'الزوج', emoji: '💍' },
   { key: 'wife', label: 'الزوجة', emoji: '💍' },
   { key: 'son', label: 'الابن', emoji: '👦' },
   { key: 'daughter', label: 'البنت', emoji: '👧' },
-  { key: 'father', label: 'الأب', emoji: '👨' },
-  { key: 'mother', label: 'الأم', emoji: '👩' },
+  { key: 'grandson', label: 'ابن الابن', emoji: '👦' },
+  { key: 'granddaughter', label: 'بنت الابن', emoji: '👧' },
+  { key: 'father', label: 'الأب', emoji: '👨‍🦳' },
+  { key: 'mother', label: 'الأم', emoji: '👩‍🦳' },
   { key: 'grandfather', label: 'الجد', emoji: '👴' },
-  { key: 'grandmother', label: 'الجدة', emoji: '👵' },
+  { key: 'grandmother_mother', label: 'الجدة لأم', emoji: '👵' },
+  { key: 'grandmother_father', label: 'الجدة لأب', emoji: '👵' },
   { key: 'full_brother', label: 'الأخ الشقيق', emoji: '👨‍🤝‍👨' },
   { key: 'full_sister', label: 'الأخت الشقيقة', emoji: '👩‍🤝‍👩' },
-  { key: 'half_brother_paternal', label: 'الأخ لأب', emoji: '👨' },
-  { key: 'half_sister_paternal', label: 'الأخت لأب', emoji: '👩' },
-  { key: 'half_brother_maternal', label: 'الأخ لأم', emoji: '👨' },
-  { key: 'half_sister_maternal', label: 'الأخت لأم', emoji: '👩' },
-  { key: 'nephew_from_brother', label: 'ابن أخ/أخت', emoji: '👶' },
-  { key: 'niece_from_brother', label: 'ابنة أخ/أخت', emoji: '👧' },
-  { key: 'uncle_paternal', label: 'العم', emoji: '🧔' },
-  { key: 'uncle_maternal', label: 'الخال', emoji: '🧔' },
-  { key: 'aunt_paternal', label: 'العمة', emoji: '👵' },
-  { key: 'aunt_maternal', label: 'الخالة', emoji: '👵' }
+  { key: 'paternal_brother', label: 'الأخ لأب', emoji: '👨' },
+  { key: 'paternal_sister', label: 'الأخت لأب', emoji: '👩' },
+  { key: 'maternal_brother', label: 'الأخ لأم', emoji: '👨' },
+  { key: 'maternal_sister', label: 'الأخت لأم', emoji: '👩' },
+  { key: 'full_nephew', label: 'ابن الأخ الشقيق', emoji: '👶' },
+  { key: 'paternal_nephew', label: 'ابن الأخ لأب', emoji: '👶' },
+  { key: 'full_uncle', label: 'العم الشقيق', emoji: '🧔' },
+  { key: 'paternal_uncle', label: 'العم لأب', emoji: '🧔' },
+  { key: 'full_cousin', label: 'ابن العم الشقيق', emoji: '👨' },
+  { key: 'paternal_cousin', label: 'ابن العم لأب', emoji: '👨' },
+  { key: 'maternal_uncle', label: 'الخال', emoji: '🧔' },
+  { key: 'maternal_aunt', label: 'الخالة', emoji: '👩' },
+  { key: 'paternal_aunt', label: 'العمة', emoji: '👵' },
+  { key: 'daughter_son', label: 'ابن البنت', emoji: '👶' },
+  { key: 'daughter_daughter', label: 'بنت البنت', emoji: '👧' },
+  { key: 'sister_children', label: 'أولاد الأخوات', emoji: '👶' },
 ];
 
 /**
@@ -154,7 +172,8 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
           }
         }
       } else {
-        const gender = ['husband','son','father','grandfather','full_brother','half_brother_paternal','half_brother_maternal','nephew_from_brother','uncle_paternal','uncle_maternal'].includes(selectedHeirType) ? 'male' : 'female';
+        const maleHeirs = ['husband','son','grandson','father','grandfather','full_brother','paternal_brother','maternal_brother','full_nephew','paternal_nephew','full_uncle','paternal_uncle','full_cousin','paternal_cousin','maternal_uncle','daughter_son'];
+        const gender = maleHeirs.includes(selectedHeirType) ? 'male' : 'female';
         const ok = addHeir({ type: selectedHeirType as string, gender: gender as 'male'|'female', count: selectedCount });
         if (ok) {
           setModalError(null);
@@ -173,7 +192,8 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
 
   // Helper: determine gender for heir type
   const genderFor = useCallback((key: HeirType) => {
-    return ['husband','son','father','grandfather','full_brother','half_brother_paternal','half_brother_maternal','nephew_from_brother','uncle_paternal','uncle_maternal'].includes(key) ? 'male' : 'female';
+    const maleHeirs = ['husband','son','grandson','father','grandfather','full_brother','paternal_brother','maternal_brother','full_nephew','paternal_nephew','full_uncle','paternal_uncle','full_cousin','paternal_cousin','maternal_uncle','daughter_son'];
+    return maleHeirs.includes(key) ? 'male' : 'female';
   }, []);
 
   // Validation rules enforcement when changing counts inline
@@ -200,9 +220,9 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
     }
     
     // Single-count limits for parents/grandparents
-    const singleCountHeirs = ['husband', 'father', 'mother', 'grandfather', 'grandmother'];
+    const singleCountHeirs = ['husband', 'father', 'mother', 'grandfather', 'grandmother_mother', 'grandmother_father'];
     if (singleCountHeirs.includes(key) && newCount > 1) {
-      return `❌ خطأ: يمكن أن يكون هناك ${key === 'husband' ? 'زوج' : 'واحد'} فقط من هذا النوع`;
+      return `❌ خطأ: يمكن أن يكون هناك واحد فقط من هذا النوع`;
     }
     
     return null;

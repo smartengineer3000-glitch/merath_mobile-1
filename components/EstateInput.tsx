@@ -214,13 +214,25 @@ export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps)
       <View style={styles.summary}>
         <Text style={styles.summaryTitle}>ملخص التركة</Text>
         <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>الإجمالي:</Text>
+          <Text style={styles.summaryLabel}>إجمالي التركة:</Text>
           <Text style={styles.summaryValue}>{parseFloat(total) || 0}</Text>
         </View>
         <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>بعد الخصومات:</Text>
-          <Text style={styles.summaryValue}>
-            {(parseFloat(total) || 0) - (parseFloat(funeral) || 0) - (parseFloat(debts) || 0)}
+          <Text style={styles.summaryLabel}>- تكاليف الجنازة:</Text>
+          <Text style={styles.summaryValue}>{parseFloat(funeral) || 0}</Text>
+        </View>
+        <View style={styles.summaryRow}>
+          <Text style={styles.summaryLabel}>- الديون:</Text>
+          <Text style={styles.summaryValue}>{parseFloat(debts) || 0}</Text>
+        </View>
+        <View style={styles.summaryRow}>
+          <Text style={styles.summaryLabel}>- الوصية:</Text>
+          <Text style={styles.summaryValue}>{parseFloat(will) || 0}</Text>
+        </View>
+        <View style={[styles.summaryRow, styles.summaryRowHighlight]}>
+          <Text style={[styles.summaryLabel, styles.summaryLabelHighlight]}>صافي التركة:</Text>
+          <Text style={[styles.summaryValue, styles.summaryValueHighlight]}>
+            {((parseFloat(total) || 0) - (parseFloat(funeral) || 0) - (parseFloat(debts) || 0) - (parseFloat(will) || 0)).toFixed(2)}
           </Text>
         </View>
       </View>
@@ -381,6 +393,25 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     color: '#1976d2'
+  },
+  summaryRowHighlight: {
+    borderTopWidth: 2,
+    borderTopColor: '#1976d2',
+    paddingTop: 8,
+    marginTop: 8,
+    backgroundColor: '#bbdefb',
+    padding: 8,
+    borderRadius: 4
+  },
+  summaryLabelHighlight: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#0d47a1'
+  },
+  summaryValueHighlight: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#0d47a1'
   },
   resetButton: {
     backgroundColor: '#ff9800',

@@ -13,22 +13,43 @@ export const HEIR_NAMES: Record<HeirType, string> = {
   wife: 'الزوجة',
   son: 'الابن',
   daughter: 'البنت',
+  grandson: 'ابن الابن',
+  granddaughter: 'بنت الابن',
+  daughter_son: 'ابن البنت',
+  daughter_daughter: 'بنت البنت',
+  sister_children: 'أولاد الأخت',
   father: 'الأب',
   mother: 'الأم',
-  grandfather: 'الجد الأب',
-  grandmother: 'الجدة الأب',
+  grandfather: 'الجد',
+  grandmother: 'الجدة',
+  grandmother_mother: 'الجدة لأم',
+  grandmother_father: 'الجدة لأب',
   full_brother: 'الأخ الشقيق',
   full_sister: 'الأخت الشقيقة',
-  half_brother_paternal: 'الأخ لأب',
-  half_sister_paternal: 'الأخت لأب',
-  half_brother_maternal: 'الأخ لأم',
-  half_sister_maternal: 'الأخت لأم',
+  paternal_brother: 'الأخ لأب',
+  paternal_sister: 'الأخت لأب',
+  maternal_brother: 'الأخ لأم',
+  maternal_sister: 'الأخت لأم',
+  half_brother_paternal: 'نصف أخ لأب',
+  half_sister_paternal: 'نصف أخت لأب',
+  half_brother_maternal: 'نصف أخ لأم',
+  half_sister_maternal: 'نصف أخت لأم',
+  full_nephew: 'ابن الأخ الشقيق',
+  paternal_nephew: 'ابن الأخ لأب',
   nephew_from_brother: 'ابن الأخ',
   niece_from_brother: 'بنت الأخ',
-  uncle_paternal: 'العم الشقيق',
-  aunt_paternal: 'العمة الشقيقة',
+  full_uncle: 'العم الشقيق',
+  paternal_uncle: 'العم لأب',
+  maternal_uncle: 'الخال',
+  full_cousin: 'ابن العم الشقيق',
+  paternal_cousin: 'ابن العم لأب',
+  uncle_paternal: 'العم',
   uncle_maternal: 'الخال',
-  aunt_maternal: 'الخالة'
+  aunt_paternal: 'العمة',
+  aunt_maternal: 'الخالة',
+  maternal_aunt: 'الخالة',
+  paternal_aunt: 'العمة',
+  treasury: 'بيت المال'
 };
 
 /**
@@ -72,29 +93,7 @@ export function isValidMadhab(madhab: any): madhab is MadhhabType {
  * التحقق من صحة نوع الوارث
  */
 export function isValidHeirType(heir: any): heir is HeirType {
-  const validHeirs = [
-    'husband',
-    'wife',
-    'son',
-    'daughter',
-    'father',
-    'mother',
-    'grandfather',
-    'grandmother',
-    'full_brother',
-    'full_sister',
-    'half_brother_paternal',
-    'half_sister_paternal',
-    'half_brother_maternal',
-    'half_sister_maternal',
-    'nephew_from_brother',
-    'niece_from_brother',
-    'uncle_paternal',
-    'aunt_paternal',
-    'uncle_maternal',
-    'aunt_maternal'
-  ];
-  return validHeirs.includes(heir);
+  return Object.keys(HEIR_NAMES).includes(heir);
 }
 
 /**
@@ -160,7 +159,7 @@ export function formatTime(milliseconds: number): string {
 /**
  * التحقق من صحة بيانات التركة
  */
-export function validateEstateData(total: number, funeral: number, debts: number): string | null {
+export function validateEstateData(total: number, funeral: number, debts: number, will: number = 0): string | null {
   if (total <= 0) {
     return 'إجمالي التركة يجب أن يكون أكبر من صفر';
   }
@@ -170,8 +169,14 @@ export function validateEstateData(total: number, funeral: number, debts: number
   if (debts < 0) {
     return 'الديون لا يمكن أن تكون سالبة';
   }
-  if (funeral + debts > total) {
-    return 'التكاليف والديون تتجاوز إجمالي التركة';
+  if (will < 0) {
+    return 'الوصية لا يمكن أن تكون سالبة';
+  }
+  if (will > total / 3) {
+    return 'الوصية لا يمكن أن تتجاوز ثلث التركة';
+  }
+  if (funeral + debts + will > total) {
+    return 'التكاليف والديون والوصية تتجاوز إجمالي التركة';
   }
   return null;
 }
