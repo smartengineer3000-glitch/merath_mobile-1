@@ -223,11 +223,16 @@ export function AuditTrailCard({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fff',
-    borderRadius: 8,
+    borderRadius: 12,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: '#e5e7eb',
     overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2
   },
   cardHeader: {
     flexDirection: 'row',
@@ -317,30 +322,44 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 12,
     paddingBottom: 12,
-    gap: 6,
+    gap: 8,
   },
   actionButton: {
     flex: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 6,
-    borderRadius: 4,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
+    elevation: 2
   },
   expandButton: {
-    backgroundColor: '#e3f2fd',
+    backgroundColor: '#3B82F6',
+    shadowColor: '#3B82F6',
+    shadowOpacity: 0.2,
+    elevation: 2
   },
   exportButton: {
-    backgroundColor: '#f3e5f5',
+    backgroundColor: '#10B981',
+    shadowColor: '#10B981',
+    shadowOpacity: 0.2,
+    elevation: 2
   },
   deleteButton: {
-    backgroundColor: '#ffebee',
+    backgroundColor: '#EF4444',
+    shadowColor: '#EF4444',
+    shadowOpacity: 0.2,
+    elevation: 2
   },
   actionButtonText: {
-    fontSize: 11,
-    fontWeight: '500',
-    color: '#333',
-    textAlign: 'center',
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#fff',
+    textAlign: 'center'
   },
 });
 

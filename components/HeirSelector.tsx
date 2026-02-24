@@ -31,6 +31,7 @@ export interface HeirSelectorProps {
 const HEIR_CATEGORIES = [
   {
     name: '🤝 الأزواج (Spouses)',
+    collapsible: false,
     heirs: [
       { key: 'husband' as HeirType, label: 'الزوج', emoji: '💍' },
       { key: 'wife' as HeirType, label: 'الزوجة / الزوجات', emoji: '💍' },
@@ -38,16 +39,19 @@ const HEIR_CATEGORIES = [
   },
   {
     name: '👴 الأصول (Ascendants)',
+    collapsible: false,
     heirs: [
       { key: 'father' as HeirType, label: 'الأب', emoji: '👨‍🦳' },
       { key: 'mother' as HeirType, label: 'الأم', emoji: '👩‍🦳' },
-      { key: 'grandfather' as HeirType, label: 'الجد الصحيح', emoji: '👴' },
+      { key: 'grandfather' as HeirType, label: 'الجد', emoji: '👴' },
+      { key: 'grandmother' as HeirType, label: 'الجدة', emoji: '👵' },
       { key: 'grandmother_mother' as HeirType, label: 'الجدة لأم', emoji: '👵' },
       { key: 'grandmother_father' as HeirType, label: 'الجدة لأب', emoji: '👵' },
     ]
   },
   {
     name: '👶 الفروع (Descendants)',
+    collapsible: false,
     heirs: [
       { key: 'son' as HeirType, label: 'الابن', emoji: '👦' },
       { key: 'daughter' as HeirType, label: 'البنت', emoji: '👧' },
@@ -57,17 +61,19 @@ const HEIR_CATEGORIES = [
   },
   {
     name: '👫 الحواشي (Siblings)',
+    collapsible: false,
     heirs: [
       { key: 'full_brother' as HeirType, label: 'الأخ الشقيق', emoji: '👨‍🤝‍👨' },
       { key: 'full_sister' as HeirType, label: 'الأخت الشقيقة', emoji: '👩‍🤝‍👩' },
       { key: 'paternal_brother' as HeirType, label: 'الأخ لأب', emoji: '👨' },
       { key: 'paternal_sister' as HeirType, label: 'الأخت لأب', emoji: '👩' },
-      { key: 'maternal_brother' as HeirType, label: 'الإخوة لأم (ذكور)', emoji: '👨' },
-      { key: 'maternal_sister' as HeirType, label: 'الإخوة لأم (إناث)', emoji: '👩' },
+      { key: 'maternal_brother' as HeirType, label: 'الأخ لأم', emoji: '👨' },
+      { key: 'maternal_sister' as HeirType, label: 'الأخت لأم', emoji: '👩' },
     ]
   },
   {
-    name: '👨‍👦 الأقارب البعداء (Extended Family)',
+    name: '👨‍👦 أبناء الإخوة والأعمام (Nephews & Uncles)',
+    collapsible: true,
     heirs: [
       { key: 'full_nephew' as HeirType, label: 'ابن الأخ الشقيق', emoji: '👶' },
       { key: 'paternal_nephew' as HeirType, label: 'ابن الأخ لأب', emoji: '👶' },
@@ -75,29 +81,36 @@ const HEIR_CATEGORIES = [
       { key: 'paternal_uncle' as HeirType, label: 'العم لأب', emoji: '🧔' },
       { key: 'full_cousin' as HeirType, label: 'ابن العم الشقيق', emoji: '👨' },
       { key: 'paternal_cousin' as HeirType, label: 'ابن العم لأب', emoji: '👨' },
+    ]
+  },
+  {
+    name: '🔗 ذوو الأرحام (Blood Relatives)',
+    collapsible: true,
+    heirs: [
+      { key: 'daughter_son' as HeirType, label: 'ابن البنت', emoji: '👶' },
+      { key: 'daughter_daughter' as HeirType, label: 'بنت البنت', emoji: '👧' },
+      { key: 'sister_children' as HeirType, label: 'أولاد الأخت', emoji: '👶' },
       { key: 'maternal_uncle' as HeirType, label: 'الخال', emoji: '🧔' },
       { key: 'maternal_aunt' as HeirType, label: 'الخالة', emoji: '👩' },
       { key: 'paternal_aunt' as HeirType, label: 'العمة', emoji: '👵' },
-      { key: 'daughter_son' as HeirType, label: 'ابن البنت (ذكور)', emoji: '👶' },
-      { key: 'daughter_daughter' as HeirType, label: 'ابن البنت (إناث)', emoji: '👧' },
-      { key: 'sister_children' as HeirType, label: 'أولاد الأخوات', emoji: '👶' },
     ]
   }
 ];
 
-// Flat array for backwards compatibility - All Heir Types
+// Flat array for backwards compatibility - All Heir Types (matching HTML heirNames object)
 const HEIR_TYPES: { key: HeirType; label: string; emoji: string }[] = [
   { key: 'husband', label: 'الزوج', emoji: '💍' },
   { key: 'wife', label: 'الزوجة', emoji: '💍' },
+  { key: 'father', label: 'الأب', emoji: '👨‍🦳' },
+  { key: 'mother', label: 'الأم', emoji: '👩‍🦳' },
+  { key: 'grandfather', label: 'الجد', emoji: '👴' },
+  { key: 'grandmother', label: 'الجدة', emoji: '👵' },
+  { key: 'grandmother_mother', label: 'الجدة لأم', emoji: '👵' },
+  { key: 'grandmother_father', label: 'الجدة لأب', emoji: '👵' },
   { key: 'son', label: 'الابن', emoji: '👦' },
   { key: 'daughter', label: 'البنت', emoji: '👧' },
   { key: 'grandson', label: 'ابن الابن', emoji: '👦' },
   { key: 'granddaughter', label: 'بنت الابن', emoji: '👧' },
-  { key: 'father', label: 'الأب', emoji: '👨‍🦳' },
-  { key: 'mother', label: 'الأم', emoji: '👩‍🦳' },
-  { key: 'grandfather', label: 'الجد', emoji: '👴' },
-  { key: 'grandmother_mother', label: 'الجدة لأم', emoji: '👵' },
-  { key: 'grandmother_father', label: 'الجدة لأب', emoji: '👵' },
   { key: 'full_brother', label: 'الأخ الشقيق', emoji: '👨‍🤝‍👨' },
   { key: 'full_sister', label: 'الأخت الشقيقة', emoji: '👩‍🤝‍👩' },
   { key: 'paternal_brother', label: 'الأخ لأب', emoji: '👨' },
@@ -115,7 +128,19 @@ const HEIR_TYPES: { key: HeirType; label: string; emoji: string }[] = [
   { key: 'paternal_aunt', label: 'العمة', emoji: '👵' },
   { key: 'daughter_son', label: 'ابن البنت', emoji: '👶' },
   { key: 'daughter_daughter', label: 'بنت البنت', emoji: '👧' },
-  { key: 'sister_children', label: 'أولاد الأخوات', emoji: '👶' },
+  { key: 'sister_children', label: 'أولاد الأخت', emoji: '👶' },
+  // Extended types also in HeirType union but not shown in UI:
+  { key: 'half_brother_paternal', label: 'نصف أخ لأب', emoji: '🧑' },
+  { key: 'half_sister_paternal', label: 'نصف أخت لأب', emoji: '👩' },
+  { key: 'half_brother_maternal', label: 'نصف أخ لأم', emoji: '🧑' },
+  { key: 'half_sister_maternal', label: 'نصف أخت لأم', emoji: '👩' },
+  { key: 'nephew_from_brother', label: 'ابن الأخ', emoji: '👶' },
+  { key: 'niece_from_brother', label: 'بنت الأخ', emoji: '👧' },
+  { key: 'uncle_paternal', label: 'العم', emoji: '🧔' },
+  { key: 'uncle_maternal', label: 'الخال', emoji: '🧔' },
+  { key: 'aunt_paternal', label: 'العمة', emoji: '👵' },
+  { key: 'aunt_maternal', label: 'الخالة', emoji: '👩' },
+  { key: 'treasury', label: 'بيت المال', emoji: '🏛️' },
 ];
 
 /**
@@ -131,6 +156,11 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
   const [modalError, setModalError] = useState<string | null>(null);
   const [editingHeirType, setEditingHeirType] = useState<HeirType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [expandedCategories, setExpandedCategories] = useState<Set<number>>(
+    // By default, shown categories 0-3 are always visible (not collapsible)
+    // Categories 4-5 (Nephews & Uncles, Blood Relatives) are collapsed by default
+    new Set()
+  );
 
   // heirs is an array of {id, key, count}
   const heirsArray = (heirs as Array<{ id: string; key: HeirType; count: number }>) || [];
@@ -220,7 +250,7 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
     }
     
     // Single-count limits for parents/grandparents
-    const singleCountHeirs = ['husband', 'father', 'mother', 'grandfather', 'grandmother_mother', 'grandmother_father'];
+    const singleCountHeirs = ['husband', 'father', 'mother', 'grandfather', 'grandmother', 'grandmother_mother', 'grandmother_father'];
     if (singleCountHeirs.includes(key) && newCount > 1) {
       return `❌ خطأ: يمكن أن يكون هناك واحد فقط من هذا النوع`;
     }
@@ -335,6 +365,17 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
     );
   }, [onHeirsChange]);
 
+  // Toggle collapsible category
+  const toggleCategory = useCallback((categoryIndex: number) => {
+    const newExpanded = new Set(expandedCategories);
+    if (newExpanded.has(categoryIndex)) {
+      newExpanded.delete(categoryIndex);
+    } else {
+      newExpanded.add(categoryIndex);
+    }
+    setExpandedCategories(newExpanded);
+  }, [expandedCategories]);
+
   // Use heirsArray for rendering to preserve ids
   const heirEntries = heirsArray.map(h => [h.key, h.count] as [string, number]);
   const totalHeirs = heirsArray.reduce((sum, h) => sum + (h.count || 0), 0);
@@ -378,43 +419,63 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
       <View style={styles.groupedHeirstContainer}>
         <Text style={styles.heirstitle}>إضافة الوارثون (مرتبة بالفئات)</Text>
         <ScrollView style={styles.groupedHeirstScrollView}>
-          {HEIR_CATEGORIES.map((category, catIndex) => (
-            <View key={`category-${catIndex}`} style={styles.categorySection}>
-              <View style={styles.categoryHeader}>
-                <Text style={styles.categoryName}>{category.name}</Text>
-              </View>
-              {category.heirs.map((heir) => {
-                const existing = heirsArray.find(h => h.key === heir.key);
-                const count = existing ? existing.count : 0;
-                return (
-                  <View key={heir.key} style={styles.heirRow}>
-                    <View style={styles.heirRowLeft}>
-                      <Text style={styles.heirEmoji}>{heir.emoji}</Text>
-                      <Text style={styles.heirName}>{heir.label}</Text>
-                    </View>
-                    <View style={styles.heirRowRight}>
-                      <TouchableOpacity
-                        style={[styles.smallBtn, count > 0 && styles.smallBtnActive]}
-                        onPress={() => handleDecrement(heir.key)}
-                        disabled={count === 0}
-                      >
-                        <Text style={styles.smallBtnText}>−</Text>
-                      </TouchableOpacity>
-                      <View style={styles.countDisplay}>
-                        <Text style={styles.countText}>{count}</Text>
-                      </View>
-                      <TouchableOpacity
-                        style={[styles.smallBtn, count > 0 && styles.smallBtnActive]}
-                        onPress={() => handleIncrement(heir.key)}
-                      >
-                        <Text style={styles.smallBtnText}>+</Text>
-                      </TouchableOpacity>
-                    </View>
+          {HEIR_CATEGORIES.map((category, catIndex) => {
+            const isCollapsible = category.collapsible || false;
+            const isExpanded = expandedCategories.has(catIndex);
+            const shouldShowHeirs = !isCollapsible || isExpanded;
+            
+            return (
+              <View key={`category-${catIndex}`} style={styles.categorySection}>
+                {isCollapsible ? (
+                  // Collapsible header with toggle button
+                  <TouchableOpacity 
+                    style={styles.collapsibleHeader}
+                    onPress={() => toggleCategory(catIndex)}
+                  >
+                    <Text style={styles.expandIcon}>{isExpanded ? '▼' : '▶'}</Text>
+                    <Text style={styles.categoryName}>{category.name}</Text>
+                  </TouchableOpacity>
+                ) : (
+                  // Regular header (not collapsible)
+                  <View style={styles.categoryHeader}>
+                    <Text style={styles.categoryName}>{category.name}</Text>
                   </View>
-                );
-              })}
-            </View>
-          ))}
+                )}
+                
+                {/* Render heirs only if category should be shown */}
+                {shouldShowHeirs && category.heirs.map((heir) => {
+                  const existing = heirsArray.find(h => h.key === heir.key);
+                  const count = existing ? existing.count : 0;
+                  return (
+                    <View key={heir.key} style={styles.heirRow}>
+                      <View style={styles.heirRowLeft}>
+                        <Text style={styles.heirEmoji}>{heir.emoji}</Text>
+                        <Text style={styles.heirName}>{heir.label}</Text>
+                      </View>
+                      <View style={styles.heirRowRight}>
+                        <TouchableOpacity
+                          style={[styles.smallBtn, count > 0 && styles.smallBtnActive]}
+                          onPress={() => handleDecrement(heir.key)}
+                          disabled={count === 0}
+                        >
+                          <Text style={styles.smallBtnText}>−</Text>
+                        </TouchableOpacity>
+                        <View style={styles.countDisplay}>
+                          <Text style={styles.countText}>{count}</Text>
+                        </View>
+                        <TouchableOpacity
+                          style={[styles.smallBtn, count > 0 && styles.smallBtnActive]}
+                          onPress={() => handleIncrement(heir.key)}
+                        >
+                          <Text style={styles.smallBtnText}>+</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  );
+                })}
+              </View>
+            );
+          })}
         </ScrollView>
       </View>
 
@@ -574,17 +635,23 @@ const styles = StyleSheet.create({
     paddingVertical: 8
   },
   addButton: {
-    backgroundColor: '#4caf50',
-    borderRadius: 6,
-    paddingVertical: 12,
+    backgroundColor: '#4F46E5',
+    borderRadius: 10,
+    paddingVertical: 14,
     paddingHorizontal: 16,
     alignItems: 'center',
-    marginBottom: 12
+    marginBottom: 12,
+    shadowColor: '#4F46E5',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 6
   },
   addButtonText: {
     color: '#fff',
-    fontSize: 14,
-    fontWeight: '600'
+    fontSize: 15,
+    fontWeight: '700',
+    letterSpacing: 0.5
   },
   heirsListContainer: {
     marginTop: 8
@@ -639,53 +706,73 @@ const styles = StyleSheet.create({
     gap: 6
   },
   editButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#e3f2fd',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#3B82F6',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    shadowColor: '#3B82F6',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3
   },
   editButtonText: {
-    color: '#1976d2',
-    fontSize: 16,
+    color: '#fff',
+    fontSize: 18,
     fontWeight: 'bold'
   },
   deleteButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#ffebee',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#EF4444',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    shadowColor: '#EF4444',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3
   },
   deleteButtonText: {
-    color: '#d32f2f',
-    fontSize: 16,
+    color: '#fff',
+    fontSize: 18,
     fontWeight: 'bold'
   },
   statsContainer: {
-    backgroundColor: '#e3f2fd',
-    borderRadius: 6,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#1976d2',
-    marginTop: 8
+    backgroundColor: '#eff6ff',
+    borderRadius: 10,
+    padding: 12,
+    borderWidth: 1.5,
+    borderColor: '#4F46E5',
+    marginTop: 8,
+    shadowColor: '#4F46E5',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2
   },
   statsText: {
-    fontSize: 12,
-    color: '#1976d2',
-    fontWeight: '500',
+    fontSize: 13,
+    color: '#4F46E5',
+    fontWeight: '600',
     textAlign: 'right',
     marginVertical: 2
   },
   clearButton: {
-    backgroundColor: '#d32f2f',
-    borderRadius: 6,
-    paddingVertical: 10,
+    backgroundColor: '#DC2626',
+    borderRadius: 10,
+    paddingVertical: 12,
     paddingHorizontal: 16,
     alignItems: 'center',
-    marginTop: 8
+    marginTop: 8,
+    shadowColor: '#DC2626',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 5
   },
   clearButtonText: {
     color: '#fff',
@@ -744,17 +831,26 @@ const styles = StyleSheet.create({
   heirTypeButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    borderRadius: 6,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    marginBottom: 6,
+    backgroundColor: '#f9fafb',
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    marginBottom: 8,
     borderWidth: 2,
-    borderColor: 'transparent'
+    borderColor: '#e5e7eb',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 2,
+    elevation: 1
   },
   heirTypeButtonSelected: {
-    backgroundColor: '#e3f2fd',
-    borderColor: '#1976d2'
+    backgroundColor: '#eff6ff',
+    borderColor: '#4F46E5',
+    shadowColor: '#4F46E5',
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3
   },
   heirTypeButtonDisabled: {
     opacity: 0.5
@@ -777,14 +873,17 @@ const styles = StyleSheet.create({
     gap: 8
   },
   decrementButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#ff7043',
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#EF4444',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#e64a19'
+    shadowColor: '#EF4444',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4
   },
   decrementButtonText: {
     fontSize: 24,
@@ -793,26 +892,34 @@ const styles = StyleSheet.create({
   },
   countInput: {
     width: 80,
-    height: 44,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: '#1976d2',
+    height: 48,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: '#4F46E5',
     paddingHorizontal: 12,
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#333',
-    backgroundColor: '#f5f5f5'
+    color: '#1f2937',
+    backgroundColor: '#f9fafb',
+    shadowColor: '#4F46E5',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1
   },
   incrementButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#4caf50',
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#10B981',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#388e3c'
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4
   },
   incrementButtonText: {
     fontSize: 24,
@@ -906,7 +1013,7 @@ const styles = StyleSheet.create({
     textAlign: 'right'
   },
   groupedHeirstScrollView: {
-    maxHeight: 800,
+    maxHeight: 1200,
     minHeight: 400
   },
   categorySection: {
@@ -920,11 +1027,29 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#c8e6c9'
   },
+  collapsibleHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f3f4f6',
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+    gap: 8
+  },
+  expandIcon: {
+    fontSize: 14,
+    color: '#4F46E5',
+    fontWeight: '700',
+    width: 16,
+    textAlign: 'center'
+  },
   categoryName: {
     fontSize: 13,
     fontWeight: '700',
     color: '#2e7d32',
-    textAlign: 'right'
+    textAlign: 'right',
+    flex: 1
   },
   heirRow: {
     flexDirection: 'row',
@@ -953,22 +1078,31 @@ const styles = StyleSheet.create({
     gap: 8
   },
   smallBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#f0f0f0',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#f3f4f6',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#ddd'
+    borderWidth: 1.5,
+    borderColor: '#e5e7eb',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1
   },
   smallBtnActive: {
-    backgroundColor: '#4caf50',
-    borderColor: '#388e3c'
+    backgroundColor: '#10B981',
+    borderColor: '#059669',
+    shadowColor: '#10B981',
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 3
   },
   smallBtnText: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight: '700',
     color: '#333'
   },
   countDisplay: {
@@ -1095,34 +1229,45 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: 13,
     paddingHorizontal: 16,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 6,
+    backgroundColor: '#f3f4f6',
+    borderRadius: 10,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#ddd'
+    borderWidth: 1.5,
+    borderColor: '#e5e7eb',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1
   },
   cancelButtonText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#666'
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#374151'
   },
   confirmButton: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: 14,
     paddingHorizontal: 16,
-    backgroundColor: '#1976d2',
-    borderRadius: 6,
-    alignItems: 'center'
+    backgroundColor: '#4F46E5',
+    borderRadius: 10,
+    alignItems: 'center',
+    shadowColor: '#4F46E5',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 4
   },
   confirmButtonDisabled: {
-    backgroundColor: '#ccc',
-    opacity: 0.6
+    backgroundColor: '#cbd5e1',
+    shadowColor: '#000',
+    shadowOpacity: 0
   },
   confirmButtonText: {
-    fontSize: 13,
-    fontWeight: '600',
+    fontSize: 14,
+    fontWeight: '700',
     color: '#fff'
   }
 });

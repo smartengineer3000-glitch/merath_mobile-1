@@ -191,20 +191,25 @@ const styles = StyleSheet.create({
   button: {
     paddingVertical: 14,
     paddingHorizontal: 20,
-    backgroundColor: '#1976d2',
-    borderRadius: 8,
+    // Professional color matching HTML primary (#4F46E5)
+    backgroundColor: '#4F46E5',
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 48,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 5
+    // Enhanced shadow elevation for depth
+    shadowColor: '#4F46E5',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6
   },
   buttonDisabled: {
-    backgroundColor: '#bdbdbd',
-    opacity: 0.6
+    backgroundColor: '#cbd5e1',
+    shadowColor: 'transparent',
+    shadowOpacity: 0,
+    elevation: 0,
+    opacity: 1
   },
   buttonText: {
     color: '#fff',
@@ -214,7 +219,8 @@ const styles = StyleSheet.create({
   },
   buttonTextDisabled: {
     fontSize: 14,
-    fontWeight: '500'
+    fontWeight: '500',
+    color: '#64748b'
   },
   warningBox: {
     backgroundColor: '#fff3e0',
@@ -222,8 +228,15 @@ const styles = StyleSheet.create({
     borderLeftColor: '#f57c00',
     paddingHorizontal: 12,
     paddingVertical: 10,
-    borderRadius: 4,
-    marginBottom: 12
+    borderRadius: 8,
+    marginBottom: 12,
+    borderTopRightRadius: 8,
+    borderBottomRightRadius: 8,
+    shadowColor: '#f57c00',
+    shadowOffset: { width: -2, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 2
   },
   warningText: {
     color: '#e65100',
@@ -241,13 +254,18 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
     backgroundColor: '#ffebee',
-    borderRadius: 6,
+    borderRadius: 8,
     borderLeftWidth: 4,
-    borderLeftColor: '#d32f2f'
+    borderLeftColor: '#d32f2f',
+    shadowColor: '#d32f2f',
+    shadowOffset: { width: -2, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 1
   },
   errorText: {
     fontSize: 13,
-    color: '#d32f2f',
+    color: '#c62828',
     fontWeight: '500',
     textAlign: 'right'
   },
@@ -256,9 +274,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
     backgroundColor: '#e8f5e9',
-    borderRadius: 6,
+    borderRadius: 8,
     borderLeftWidth: 4,
-    borderLeftColor: '#4caf50'
+    borderLeftColor: '#4caf50',
+    shadowColor: '#4caf50',
+    shadowOffset: { width: -2, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 1
   },
   successText: {
     fontSize: 13,

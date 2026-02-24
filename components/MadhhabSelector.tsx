@@ -15,22 +15,30 @@ const MADHABS_INFO = {
   hanafi: {
     name: 'الحنفي',
     description: 'مذهب أبي حنيفة',
-    color: '#1976d2'
+    gradient: ['#dc2626', '#ef4444'],
+    lightBg: '#fef2f2',
+    darkColor: '#991b1b'
   },
   maliki: {
     name: 'المالكي',
     description: 'مذهب مالك بن أنس',
-    color: '#388e3c'
+    gradient: ['#7c3aed', '#8b5cf6'],
+    lightBg: '#faf5ff',
+    darkColor: '#6b21a8'
   },
   shafii: {
     name: 'الشافعي',
     description: 'مذهب محمد بن إدريس الشافعي',
-    color: '#f57c00'
+    gradient: ['#059669', '#10b981'],
+    lightBg: '#ecfdf5',
+    darkColor: '#065f46'
   },
   hanbali: {
     name: 'الحنبلي',
     description: 'مذهب أحمد بن حنبل',
-    color: '#d32f2f'
+    gradient: ['#0284c7', '#0ea5e9'],
+    lightBg: '#eff6ff',
+    darkColor: '#1e40af'
   }
 };
 
@@ -70,14 +78,14 @@ export function MadhhabSelector({ onMadhhabChange }: MadhhabSelectorProps) {
               style={[
                 styles.madhhabCard,
                 isSelected && styles.madhhabCardActive,
-                { borderColor: madhhabInfo.color }
+                { borderColor: madhhabInfo.gradient[0] }
               ]}
               onPress={() => handleMadhhabChange(madhhabKey)}
             >
               <View
                 style={[
                   styles.madhhabCardHeader,
-                  isSelected && { backgroundColor: madhhabInfo.color }
+                  isSelected && { backgroundColor: madhhabInfo.gradient[0] }
                 ]}
               >
                 <Text
@@ -148,85 +156,102 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: 16
+    marginBottom: 16,
+    gap: 12
   },
   madhhabCard: {
     width: '48%',
-    borderRadius: 8,
+    borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#ddd',
+    borderColor: '#e5e7eb',
     backgroundColor: '#fff',
-    marginBottom: 12,
-    overflow: 'hidden'
+    marginBottom: 8,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2
   },
   madhhabCardActive: {
-    borderColor: '#1976d2',
-    backgroundColor: '#f5f5f5'
+    borderWidth: 3,
+    shadowColor: '#4F46E5',
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5
   },
   madhhabCardHeader: {
-    paddingVertical: 10,
+    paddingVertical: 12,
     paddingHorizontal: 12,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#f9fafb',
     alignItems: 'center'
   },
   madhhabCardHeaderText: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#333'
+    color: '#374151'
   },
   madhhabCardHeaderTextActive: {
     color: '#fff'
   },
   madhhabCardBody: {
-    padding: 10,
+    padding: 12,
     alignItems: 'center'
   },
   madhhabDescription: {
-    fontSize: 11,
-    color: '#666',
+    fontSize: 12,
+    color: '#6b7280',
     textAlign: 'center',
-    marginBottom: 6
+    marginBottom: 8,
+    fontWeight: '500'
   },
   selectedIndicator: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    backgroundColor: '#c8e6c9',
-    borderRadius: 4,
-    marginTop: 6
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    backgroundColor: '#ecfdf5',
+    borderRadius: 6,
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: '#a7f3d0'
   },
   selectedIndicatorText: {
-    fontSize: 11,
-    color: '#2e7d32',
+    fontSize: 12,
+    color: '#065f46',
     fontWeight: '600'
   },
   infoContainer: {
-    backgroundColor: '#e3f2fd',
-    borderRadius: 6,
-    padding: 12,
+    backgroundColor: '#f3f4f6',
+    borderRadius: 10,
+    padding: 14,
     borderLeftWidth: 4,
-    borderLeftColor: '#1976d2'
+    borderLeftColor: '#4F46E5',
+    shadowColor: '#4F46E5',
+    shadowOffset: { width: -2, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2
   },
   infoTitle: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#1976d2',
-    marginBottom: 8,
+    color: '#1f2937',
+    marginBottom: 10,
     textAlign: 'right'
   },
   infoContent: {
     backgroundColor: '#fff',
-    borderRadius: 4,
-    padding: 10
+    borderRadius: 6,
+    padding: 12
   },
   infoItem: {
     fontSize: 12,
-    color: '#333',
-    marginBottom: 6,
+    color: '#374151',
+    marginBottom: 8,
     textAlign: 'right'
   },
   infoLabel: {
     fontWeight: '600',
-    color: '#1976d2'
+    color: '#4F46E5'
   },
   infoValue: {
     color: '#333',

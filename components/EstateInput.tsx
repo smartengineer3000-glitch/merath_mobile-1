@@ -414,19 +414,22 @@ const styles = StyleSheet.create({
     color: '#0d47a1'
   },
   resetButton: {
-    backgroundColor: '#ff9800',
-    borderRadius: 6,
-    paddingVertical: 12,
+    backgroundColor: '#667eea',
+    borderRadius: 10,
+    paddingVertical: 13,
     paddingHorizontal: 16,
     alignItems: 'center',
     marginTop: 12,
-    borderWidth: 1,
-    borderColor: '#f57c00'
+    shadowColor: '#667eea',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 3
   },
   resetButtonText: {
     color: '#fff',
-    fontSize: 13,
-    fontWeight: '600'
+    fontSize: 14,
+    fontWeight: '700'
   }
 });
 
