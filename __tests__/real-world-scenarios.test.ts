@@ -181,7 +181,7 @@ describe('Real-World Islamic Inheritance Scenarios', () => {
       will: 0
     };
 
-    it.skip('Only a son inherits entire estate', () => {
+    it('Only a son inherits entire estate', () => {
       const heirs: HeirsData = {
         son: 1
       };
