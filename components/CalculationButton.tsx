@@ -50,7 +50,7 @@ export function CalculationButton({
         return;
       }
 
-      const heirsCount = Object.values(heirs || {}).reduce((s, v) => s + (v || 0), 0);
+      const heirsCount = Object.values(heirs || {}).reduce((s: number, v) => s + (v || 0), 0);
       if (heirsCount === 0) {
         const msg = 'يجب إضافة واحد على الأقل من الورثة';
         setLocalError(msg);
@@ -106,7 +106,7 @@ export function CalculationButton({
     }
   }, [madhab, heirs, estate, calculateWithMethod, onCalculationComplete]);
 
-  const heirsCountForDisable = Object.values(heirs || {}).reduce((s, v) => s + (v || 0), 0);
+  const heirsCountForDisable = Object.values(heirs || {}).reduce((s: number, v) => s + (v || 0), 0);
   const isDisabled = disabled || heirsCountForDisable === 0 || estate.total <= 0 || isCalculating;
   const currentError = localError || error;
 

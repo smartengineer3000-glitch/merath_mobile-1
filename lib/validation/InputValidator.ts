@@ -85,8 +85,6 @@ export class EstateValidator {
       });
     }
 
-    // Check if debts/funeral exceed total
-    const deductions = (estate.funeral || 0) + (estate.debts || 0) + (estate.will || 0);
     // Check if debts/funeral/will exceed total
     const deductions = (estate.funeral || 0) + (estate.debts || 0) + (estate.will || 0);
     if (deductions > estate.total) {
