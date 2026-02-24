@@ -906,7 +906,8 @@ const styles = StyleSheet.create({
     textAlign: 'right'
   },
   groupedHeirstScrollView: {
-    maxHeight: 400
+    maxHeight: 800,
+    minHeight: 400
   },
   categorySection: {
     borderBottomWidth: 1,

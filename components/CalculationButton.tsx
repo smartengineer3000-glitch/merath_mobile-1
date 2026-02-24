@@ -109,9 +109,23 @@ export function CalculationButton({
   const heirsCountForDisable = Object.values(heirs || {}).reduce((s: number, v) => s + (v || 0), 0);
   const isDisabled = disabled || heirsCountForDisable === 0 || estate.total <= 0 || isCalculating;
   const currentError = localError || error;
+  const hasValidHeirs = heirsCountForDisable > 0;
+  const hasValidEstate = estate.total > 0;
 
   return (
     <View style={styles.container}>
+      {/* تحذيرات الحقول المفقودة */}
+      {!hasValidEstate && (
+        <View style={styles.warningBox}>
+          <Text style={styles.warningText}>⚠️ أدخل مبلغ التركة الإجمالي أولاً</Text>
+        </View>
+      )}
+      {!hasValidHeirs && (
+        <View style={styles.warningBox}>
+          <Text style={styles.warningText}>⚠️ أضف وارثاً واحداً على الأقل</Text>
+        </View>
+      )}
+      
       <TouchableOpacity
         style={[styles.button, isDisabled && styles.buttonDisabled]}
         onPress={handleCalculate}
@@ -123,7 +137,9 @@ export function CalculationButton({
             <Text style={styles.buttonText}>جاري الحساب...</Text>
           </View>
         ) : (
-          <Text style={styles.buttonText}>حساب الميراث</Text>
+          <Text style={[styles.buttonText, isDisabled && styles.buttonTextDisabled]}>
+            {isDisabled ? 'يرجى ملء البيانات أولاً' : 'حساب الميراث'}
+          </Text>
         )}
       </TouchableOpacity>
 
@@ -190,16 +206,35 @@ const styles = StyleSheet.create({
     backgroundColor: '#bdbdbd',
     opacity: 0.6
   },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center'
+  },
+  buttonTextDisabled: {
+    fontSize: 14,
+    fontWeight: '500'
+  },
+  warningBox: {
+    backgroundColor: '#fff3e0',
+    borderLeftWidth: 4,
+    borderLeftColor: '#f57c00',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 4,
+    marginBottom: 12
+  },
+  warningText: {
+    color: '#e65100',
+    fontSize: 13,
+    fontWeight: '500',
+    textAlign: 'right'
+  },
   loadingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center'
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#fff',
-    marginLeft: 8
   },
   errorContainer: {
     marginTop: 12,
