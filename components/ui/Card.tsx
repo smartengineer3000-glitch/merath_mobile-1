@@ -29,7 +29,7 @@ export const ModernCard: React.FC<ModernCardProps> = ({
   style,
   padding,
 }) => {
-  const { colors, spacing, borderRadius } = useTheme();
+  const { theme } = useTheme();
 
   const getElevationStyles = (): ViewStyle => {
     switch (elevation) {
@@ -68,8 +68,8 @@ export const ModernCard: React.FC<ModernCardProps> = ({
 
   const cardStyle: ViewStyle = {
     backgroundColor: '#FFFFFF',
-    borderRadius: borderRadius.lg,
-    padding: padding ?? spacing.md,
+    borderRadius: theme.borderRadius.lg,
+    padding: padding ?? theme.spacing.md,
     ...getElevationStyles(),
   };
 

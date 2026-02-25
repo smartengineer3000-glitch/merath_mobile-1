@@ -66,20 +66,6 @@ const config: ExpoConfig = {
     ],
     // Enable Hermes engine for faster JS execution and smaller APK
     jsEngine: "hermes",
-    // Enable ProGuard for code obfuscation and size reduction in release builds
-    enableProguard: true,
-    // Optimized build configuration
-    extraBuildGradle: {
-      android: {
-        // Enable R8 for advanced code shrinking and obfuscation
-        buildTypes: {
-          release: {
-            minifyEnabled: true,
-            shrinkResources: true,
-          }
-        }
-      }
-    },
     intentFilters: [
       {
         action: "VIEW",

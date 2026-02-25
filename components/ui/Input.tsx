@@ -53,50 +53,50 @@ export const ModernInput: React.FC<ModernInputProps> = ({
   maxLength,
 }) => {
   const [focused, setFocused] = useState(false);
-  const { colors, spacing, borderRadius, typography } = useTheme();
+  const { theme } = useTheme();
 
   const containerStyle: ViewStyle = {
-    marginBottom: spacing.md,
+    marginBottom: theme.spacing.md,
   };
 
   const labelStyle: TextStyle = {
     fontSize: 14,
     lineHeight: 20,
     fontWeight: '500',
-    color: error ? colors.status.error : colors.text.secondary_light,
-    marginBottom: spacing.xs,
+    color: error ? theme.colors.error.main : theme.colors.neutral.light400,
+    marginBottom: theme.spacing.xs,
   };
 
   const inputContainerStyle: ViewStyle = {
     flexDirection: 'row',
     alignItems: multiline ? 'flex-start' : 'center',
-    paddingHorizontal: spacing.md,
-    paddingVertical: multiline ? spacing.md : 0,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: multiline ? theme.spacing.md : 0,
     borderWidth: 1,
-    borderRadius: borderRadius.md,
+    borderRadius: theme.borderRadius.md,
     backgroundColor: disabled ? '#F5F5F5' : '#FFFFFF',
     borderColor: error
-      ? colors.status.error
+      ? theme.colors.error.main
       : focused
-      ? colors.primary
-      : colors.secondary,
-    marginTop: spacing.xs,
+      ? theme.colors.primary.main
+      : theme.colors.secondary.main,
+    marginTop: theme.spacing.xs,
   };
 
   const textInputStyle: TextStyle = {
     flex: 1,
     fontSize: 14,
     lineHeight: 20,
-    color: colors.text.primary_light,
-    paddingVertical: multiline ? 0 : spacing.md,
-    paddingHorizontal: spacing.sm,
+    color: theme.colors.neutral.dark300,
+    paddingVertical: multiline ? 0 : theme.spacing.md,
+    paddingHorizontal: theme.spacing.sm,
   };
 
   const errorStyle: TextStyle = {
     fontSize: 12,
     lineHeight: 16,
-    color: colors.status.error,
-    marginTop: spacing.xs,
+    color: theme.colors.error.main,
+    marginTop: theme.spacing.xs,
   };
 
   return (
@@ -104,14 +104,14 @@ export const ModernInput: React.FC<ModernInputProps> = ({
       {label && (
         <Text style={labelStyle}>
           {label}
-          {required && <Text style={{ color: colors.error }}>*</Text>}
+          {required && <Text style={{ color: theme.colors.error.main }}>*</Text>}
         </Text>
       )}
       <View style={inputContainerStyle}>
         <TextInput
           style={[textInputStyle, inputStyle]}
           placeholder={placeholder}
-          placeholderTextColor={colors.text.tertiary_light}
+          placeholderTextColor={theme.colors.neutral.light400}
           value={value}
           onChangeText={onChangeText}
           keyboardType={keyboardType}

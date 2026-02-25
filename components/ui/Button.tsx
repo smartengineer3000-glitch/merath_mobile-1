@@ -41,17 +41,17 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
   fullWidth = false,
   style,
 }) => {
-  const { colors, spacing, borderRadius, typography } = useTheme();
+  const { theme } = useTheme();
 
   const getSizeStyles = (): { padding: number; fontSize: number } => {
     switch (size) {
       case 'small':
-        return { padding: spacing.sm, fontSize: 12 };
+        return { padding: theme.spacing.sm, fontSize: 12 };
       case 'large':
-        return { padding: spacing.lg, fontSize: 16 };
+        return { padding: theme.spacing.lg, fontSize: 16 };
       case 'medium':
       default:
-        return { padding: spacing.md, fontSize: 14 };
+        return { padding: theme.spacing.md, fontSize: 14 };
     }
   };
 
@@ -59,27 +59,27 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
     switch (variant) {
       case 'primary':
         return {
-          backgroundColor: disabled ? '#BDBDBD' : colors.primary,
+          backgroundColor: disabled ? '#BDBDBD' : theme.colors.primary.main,
           color: '#FFFFFF',
         };
       case 'secondary':
         return {
-          backgroundColor: disabled ? '#E0E0E0' : colors.secondary,
+          backgroundColor: disabled ? '#E0E0E0' : theme.colors.secondary.main,
           color: '#FFFFFF',
         };
       case 'tertiary':
         return {
           backgroundColor: 'transparent',
-          color: colors.primary,
+          color: theme.colors.primary.main,
         };
       case 'danger':
         return {
-          backgroundColor: disabled ? '#FFCCCC' : colors.status.error,
+          backgroundColor: disabled ? '#FFCCCC' : theme.colors.error.main,
           color: '#FFFFFF',
         };
       default:
         return {
-          backgroundColor: colors.primary,
+          backgroundColor: theme.colors.primary.main,
           color: '#FFFFFF',
         };
     }
@@ -91,7 +91,7 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
   const buttonStyle: ViewStyle = {
     paddingVertical: sizeStyles.padding,
     paddingHorizontal: sizeStyles.padding * 1.5,
-    borderRadius: borderRadius.md,
+    borderRadius: theme.borderRadius.md,
     backgroundColor: variantStyles.backgroundColor,
     flexDirection: 'row',
     alignItems: 'center',
@@ -100,7 +100,7 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
     ...(fullWidth && { width: '100%' }),
     ...(variant === 'tertiary' && {
       borderWidth: 1,
-      borderColor: colors.primary,
+      borderColor: theme.colors.primary.main,
     }),
   };
 
@@ -108,7 +108,7 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
     fontSize: sizeStyles.fontSize,
     fontWeight: '600',
     color: variantStyles.color,
-    marginLeft: icon ? spacing.sm : 0,
+    marginLeft: icon ? theme.spacing.sm : 0,
   };
 
   return (

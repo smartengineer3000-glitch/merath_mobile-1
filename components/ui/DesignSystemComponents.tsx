@@ -43,7 +43,7 @@ export const Button: React.FC<ButtonProps> = ({
   const styles = createButtonStyles(theme);
 
   const getBackgroundColor = () => {
-    if (disabled) return theme.colors.neutral[200];
+    if (disabled) return theme.colors.neutral.light300;
     switch (variant) {
       case 'primary':
         return theme.colors.primary.main;
@@ -59,7 +59,7 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   const getTextColor = () => {
-    if (disabled) return theme.colors.neutral[400];
+    if (disabled) return theme.colors.neutral.light400;
     switch (variant) {
       case 'outlined':
         return theme.colors.primary.main;
@@ -137,13 +137,13 @@ export const Heading: React.FC<HeadingProps> = ({ level, children, style }) => {
   const getHeadingStyle = (): TextStyle => {
     switch (level) {
       case 1:
-        return { ...Typography.headline.large, color: theme.colors.primary.dark300 };
+        return { ...Typography.headline.large, color: theme.colors.primary.dark };
       case 2:
-        return { ...Typography.headline.medium, color: theme.colors.primary.dark200 };
+        return { ...Typography.headline.medium, color: theme.colors.primary.dark100 };
       case 3:
-        return { ...Typography.headline.small, color: theme.colors.primary.dark };
+        return { ...Typography.headline.small, color: theme.colors.primary.main };
       default:
-        return { ...Typography.headline.medium, color: theme.colors.primary.dark200 };
+        return { ...Typography.headline.medium, color: theme.colors.primary.dark100 };
     }
   };
 
@@ -170,12 +170,12 @@ export const Body: React.FC<BodyProps> = ({ children, size = 'medium', style }) 
   const getBodyStyle = (): TextStyle => {
     switch (size) {
       case 'small':
-        return { ...Typography.body.small, color: theme.colors.neutral[700] };
+        return { ...Typography.body.small, color: theme.colors.neutral.dark200 };
       case 'large':
-        return { ...Typography.body.large, color: theme.colors.neutral[700] };
+        return { ...Typography.body.large, color: theme.colors.neutral.dark200 };
       case 'medium':
       default:
-        return { ...Typography.body.medium, color: theme.colors.neutral[700] };
+        return { ...Typography.body.medium, color: theme.colors.neutral.dark200 };
     }
   };
 
@@ -202,7 +202,7 @@ export const Divider: React.FC<DividerProps> = ({ style }) => {
       style={[
         {
           height: 1,
-          backgroundColor: theme.colors.neutral[200],
+          backgroundColor: theme.colors.neutral.light200,
           marginVertical: Spacing.md,
         },
         style,
@@ -233,7 +233,7 @@ const createButtonStyles = (theme: any) =>
 const createCardStyles = (theme: any) =>
   StyleSheet.create({
     card: {
-      backgroundColor: theme.colors.neutral[0],
+      backgroundColor: theme.colors.neutral.white,
       borderRadius: BorderRadius.lg,
       padding: Spacing.lg,
       ...Shadows.md,
