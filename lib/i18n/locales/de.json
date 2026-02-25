@@ -1,0 +1,127 @@
+{
+  "app": {
+    "name": "Merath",
+    "subtitle": "Islamischer Erbschaftsrechner",
+    "description": "Berechnen Sie islamische Erbschaftsanteile nach der Scharia und verschiedenen Rechtsschulen"
+  },
+  "navigation": {
+    "calculator": "Rechner",
+    "history": "Verlauf",
+    "settings": "Einstellungen",
+    "about": "Über"
+  },
+  "calculator": {
+    "title": "Erbschaftsrechner",
+    "estate": "Erbschaft",
+    "heirs": "Erben",
+    "calculate": "Berechnen",
+    "results": "Ergebnisse",
+    "calculating": "Wird berechnet...",
+    "clear": "Löschen",
+    "copy": "Kopieren",
+    "share": "Teilen"
+  },
+  "estate": {
+    "title": "Erbschaftsinformationen",
+    "total": "Gesamtvermögen",
+    "funeral": "Bestattungskosten",
+    "debts": "Schulden",
+    "will": "Testament",
+    "netEstate": "Nettovermögen"
+  },
+  "heirs": {
+    "title": "Erben hinzufügen",
+    "addHeir": "Erbe hinzufügen",
+    "group": {
+      "spouses": "Ehepartner",
+      "ascendants": "Aufsteiger",
+      "descendants": "Nachkommen",
+      "siblings": "Geschwister",
+      "nephews": "Neffen und Onkel",
+      "bloodRelatives": "Blutsverwandte"
+    },
+    "husband": "Ehemann",
+    "wife": "Ehefrau",
+    "father": "Vater",
+    "mother": "Mutter",
+    "grandfather": "Großvater",
+    "grandmother": "Großmutter",
+    "son": "Sohn",
+    "daughter": "Tochter",
+    "brother": "Bruder",
+    "sister": "Schwester",
+    "paternalBrother": "Halbbruder (väterlich)",
+    "paternalSister": "Halbschwester (väterlich)",
+    "maternalBrother": "Halbbruder (mütterlich)",
+    "maternalSister": "Halbschwester (mütterlich)",
+    "nephew": "Neffe",
+    "uncle": "Onkel",
+    "cousin": "Cousin"
+  },
+  "madhab": {
+    "title": "Islamische Rechtsschule",
+    "hanafi": "Hanafi",
+    "maliki": "Maliki",
+    "shafii": "Shafi'i",
+    "hanbali": "Hanbali"
+  },
+  "results": {
+    "shares": "Erbschaftsanteile",
+    "amount": "Betrag",
+    "fraction": "Bruch",
+    "total": "Gesamt",
+    "perPerson": "Pro Person",
+    "success": "Berechnung erfolgreich",
+    "error": "Berechnungsfehler",
+    "noHeirs": "Bitte fügen Sie mindestens einen Erben hinzu",
+    "invalidEstate": "Bitte geben Sie einen gültigen Betrag ein",
+    "invalidData": "Bitte überprüfen Sie Ihre Eingabedaten"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "language": "Sprache",
+    "theme": "Design",
+    "lightMode": "Hell",
+    "darkMode": "Dunkel",
+    "systemMode": "System",
+    "calculationPreferences": "Berechnungseinstellungen",
+    "rounding": "Rundung",
+    "precision": "Dezimalstellen",
+    "notifications": "Benachrichtigungen",
+    "enableNotifications": "Benachrichtigungen aktivieren",
+    "about": "Über die App"
+  },
+  "about": {
+    "title": "Über Merath",
+    "version": "Version",
+    "description": "Merath ist ein professioneller islamischer Erbschaftsrechner, der Vermögen nach der Scharia und verschiedenen Rechtsschulen genau verteilt.",
+    "features": "Funktionen",
+    "feature1": "Unterstützung für 4 islamische Rechtsschulen",
+    "feature2": "Genaue Erbschaftsberechnungen",
+    "feature3": "Mehrsprachige Unterstützung",
+    "feature4": "Detaillierte Berechnungsanalysen",
+    "feature5": "Ergebnisse exportieren und teilen",
+    "copyright": "© 2026 Merath. Alle Rechte vorbehalten.",
+    "website": "Webseite",
+    "contact": "Kontakt",
+    "privacy": "Datenschutzrichtlinie",
+    "terms": "Nutzungsbedingungen"
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "add": "Hinzufügen",
+    "remove": "Entfernen",
+    "close": "Schließen",
+    "loading": "Wird geladen...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "warning": "Warnung",
+    "info": "Information",
+    "empty": "Keine Daten",
+    "noResults": "Keine Ergebnisse gefunden"
+  }
+}

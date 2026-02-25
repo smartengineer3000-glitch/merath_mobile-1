@@ -1,0 +1,127 @@
+{
+  "app": {
+    "name": "Merath",
+    "subtitle": "Calculatrice de succession islamique",
+    "description": "Calculez les parts de succession islamique selon la Charia et différentes écoles"
+  },
+  "navigation": {
+    "calculator": "Calculatrice",
+    "history": "Historique",
+    "settings": "Paramètres",
+    "about": "À propos"
+  },
+  "calculator": {
+    "title": "Calculatrice de succession",
+    "estate": "Succession",
+    "heirs": "Héritiers",
+    "calculate": "Calculer",
+    "results": "Résultats",
+    "calculating": "Calcul en cours...",
+    "clear": "Effacer",
+    "copy": "Copier",
+    "share": "Partager"
+  },
+  "estate": {
+    "title": "Informations sur la succession",
+    "total": "Succession totale",
+    "funeral": "Frais funéraires",
+    "debts": "Dettes",
+    "will": "Testament",
+    "netEstate": "Succession nette"
+  },
+  "heirs": {
+    "title": "Ajouter des héritiers",
+    "addHeir": "Ajouter un héritier",
+    "group": {
+      "spouses": "Conjoints",
+      "ascendants": "Ascendants",
+      "descendants": "Descendants",
+      "siblings": "Frères et sœurs",
+      "nephews": "Neveux et oncles",
+      "bloodRelatives": "Parents par le sang"
+    },
+    "husband": "Mari",
+    "wife": "Épouse",
+    "father": "Père",
+    "mother": "Mère",
+    "grandfather": "Grand-père",
+    "grandmother": "Grand-mère",
+    "son": "Fils",
+    "daughter": "Fille",
+    "brother": "Frère",
+    "sister": "Sœur",
+    "paternalBrother": "Demi-frère paternel",
+    "paternalSister": "Demi-sœur paternelle",
+    "maternalBrother": "Demi-frère maternel",
+    "maternalSister": "Demi-sœur maternelle",
+    "nephew": "Neveu",
+    "uncle": "Oncle",
+    "cousin": "Cousin"
+  },
+  "madhab": {
+    "title": "École islamique (Madhab)",
+    "hanafi": "Hanafi",
+    "maliki": "Maliki",
+    "shafii": "Shafi'i",
+    "hanbali": "Hanbali"
+  },
+  "results": {
+    "shares": "Parts de succession",
+    "amount": "Montant",
+    "fraction": "Fraction",
+    "total": "Total",
+    "perPerson": "Par personne",
+    "success": "Calcul réussi",
+    "error": "Erreur de calcul",
+    "noHeirs": "Veuillez ajouter un héritier",
+    "invalidEstate": "Veuillez entrer un montant valide",
+    "invalidData": "Veuillez vérifier vos données"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "language": "Langue",
+    "theme": "Thème",
+    "lightMode": "Clair",
+    "darkMode": "Sombre",
+    "systemMode": "Système",
+    "calculationPreferences": "Préférences de calcul",
+    "rounding": "Arrondi",
+    "precision": "Décimales",
+    "notifications": "Notifications",
+    "enableNotifications": "Activer les notifications",
+    "about": "À propos de l'application"
+  },
+  "about": {
+    "title": "À propos de Merath",
+    "version": "Version",
+    "description": "Merath est une calculatrice professionnelle de succession islamique qui distribue précisément les successions selon la Charia et différentes écoles.",
+    "features": "Caractéristiques",
+    "feature1": "Support de 4 écoles islamiques",
+    "feature2": "Calculs de succession précis",
+    "feature3": "Support multilingue",
+    "feature4": "Analyses détaillées",
+    "feature5": "Exporter et partager les résultats",
+    "copyright": "© 2026 Merath. Tous droits réservés.",
+    "website": "Site Web",
+    "contact": "Contact",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation"
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "remove": "Retirer",
+    "close": "Fermer",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "warning": "Avertissement",
+    "info": "Information",
+    "empty": "Aucune donnée",
+    "noResults": "Aucun résultat trouvé"
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "app": {
+    "name": "ميراث",
+    "subtitle": "آلة حاسبة الميراث الإسلامية",
+    "description": "احسب حصص الميراث الإسلامية وفقاً للشريعة والمذاهب المختلفة"
+  },
+
+  "navigation": {
+    "calculator": "آلة الحساب",
+    "history": "السجل",
+    "settings": "الإعدادات",
+    "about": "حول"
+  },
+
+  "calculator": {
+    "title": "آلة حاسبة الميراث",
+    "estate": "التركة",
+    "heirs": "الورثة",
+    "calculate": "احسب",
+    "results": "النتائج",
+    "calculating": "جارٍ الحساب...",
+    "clear": "مسح",
+    "copy": "نسخ",
+    "share": "مشاركة"
+  },
+
+  "estate": {
+    "title": "معلومات التركة",
+    "total": "إجمالي التركة",
+    "funeral": "نفقات الجنازة",
+    "debts": "الديون",
+    "will": "الوصية",
+    "netEstate": "التركة الصافية"
+  },
+
+  "heirs": {
+    "title": "إضافة الورثة",
+    "addHeir": "أضف وارثاً",
+    "group": {
+      "spouses": "الزوجان",
+      "ascendants": "الأصول",
+      "descendants": "الفروع",
+      "siblings": "الإخوة والأخوات",
+      "nephews": "أبناء الإخوة والأعمام",
+      "bloodRelatives": "ذوو الأرحام"
+    },
+    "husband": "الزوج",
+    "wife": "الزوجة",
+    "father": "الأب",
+    "mother": "الأم",
+    "grandfather": "الجد",
+    "grandmother": "الجدة",
+    "son": "الابن",
+    "daughter": "البنت",
+    "brother": "الأخ الشقيق",
+    "sister": "الأخت الشقيقة",
+    "paternalBrother": "الأخ لأب",
+    "paternalSister": "الأخت لأب",
+    "maternalBrother": "الأخ لأم",
+    "maternalSister": "الأخت لأم",
+    "nephew": "ابن الأخ",
+    "uncle": "العم",
+    "cousin": "ابن العم"
+  },
+
+  "madhab": {
+    "title": "المذهب الفقهي",
+    "hanafi": "الحنفي",
+    "maliki": "المالكي",
+    "shafii": "الشافعي",
+    "hanbali": "الحنبلي"
+  },
+
+  "results": {
+    "shares": "حصص الميراث",
+    "amount": "المبلغ",
+    "fraction": "الكسر",
+    "total": "الإجمالي",
+    "perPerson": "لكل شخص",
+    "success": "نجح الحساب",
+    "error": "خطأ في الحساب",
+    "noHeirs": "يرجى إضافة وارث واحد على الأقل",
+    "invalidEstate": "يرجى إدخال مبلغ تركة صحيح",
+    "invalidData": "يرجى التحقق من بيانات الإدخال"
+  },
+
+  "settings": {
+    "title": "الإعدادات",
+    "language": "اللغة",
+    "theme": "المظهر",
+    "lightMode": "فاتح",
+    "darkMode": "داكن",
+    "systemMode": "النظام",
+    "calculationPreferences": "تفضيلات الحساب",
+    "rounding": "التقريب",
+    "precision": "الكسور العشرية",
+    "notifications": "الإشعارات",
+    "enableNotifications": "تفعيل الإشعارات",
+    "about": "حول التطبيق"
+  },
+
+  "about": {
+    "title": "حول ميراث",
+    "version": "الإصدار",
+    "description": "ميراث هي آلة حاسبة احترافية للميراث الإسلامي توزع التركات بدقة وفقاً لقانون الشريعة والمذاهب المتعددة.",
+    "features": "المميزات",
+    "feature1": "دعم 4 مذاهب إسلامية فقهية",
+    "feature2": "حسابات ميراث دقيقة",
+    "feature3": "دعم لغات متعددة",
+    "feature4": "تفاصيل تفصيلية للحسابات",
+    "feature5": "تصدير ومشاركة النتائج",
+    "copyright": "© 2026 ميراث. جميع الحقوق محفوظة.",
+    "website": "الموقع الإلكتروني",
+    "contact": "اتصل بنا",
+    "privacy": "سياسة الخصوصية",
+    "terms": "شروط الخدمة"
+  },
+
+  "common": {
+    "ok": "حسناً",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تحرير",
+    "add": "إضافة",
+    "remove": "إزالة",
+    "close": "إغلاق",
+    "loading": "جارٍ التحميل...",
+    "error": "خطأ",
+    "success": "نجح",
+    "warning": "تحذير",
+    "info": "معلومات",
+    "empty": "لا توجد بيانات",
+    "noResults": "لم يتم العثور على نتائج"
+  }
+}
