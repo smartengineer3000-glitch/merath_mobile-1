@@ -27,126 +27,377 @@ export interface HeirSelectorProps {
   onHeirsChange?: (heirs: HeirsData) => void;
 }
 
-// Heir categories as per original HTML - Complete List
+interface HeirCategoryItem {
+  key: HeirType;
+  label: string;
+  labelEn: string;
+  type: "fard" | "asaba" | "both" | "blood";
+  badge: string;
+  shareInfo: string;
+  emoji: string;
+  maxCount?: number;
+  [key: string]: any; // Allow additional properties
+}
+
+// Heir categories with visual hierarchy and badges
 const HEIR_CATEGORIES = [
   {
-    name: '🤝 الأزواج (Spouses)',
+    id: 'spouses',
+    name: '⭐ الأساسيون - الزوجان',
+    titleEn: '⭐ Primary - Spouses',
+    icon: '💑',
+    type: 'primary',
+    description: 'الزوج والزوجة - يرثون دائماً',
     collapsible: false,
     heirs: [
-      { key: 'husband' as HeirType, label: 'الزوج', emoji: '💍' },
-      { key: 'wife' as HeirType, label: 'الزوجة / الزوجات', emoji: '💍' },
+      { 
+        key: 'husband' as HeirType, 
+        label: 'الزوج', 
+        labelEn: 'Husband',
+        type: 'fard', 
+        badge: 'فرض',
+        shareInfo: '½ أو ¼',
+        emoji: '👨‍❤️‍👨'
+      },
+      { 
+        key: 'wife' as HeirType, 
+        label: 'الزوجة', 
+        labelEn: 'Wife',
+        type: 'fard', 
+        badge: 'فرض',
+        shareInfo: '¼ أو ⅛',
+        emoji: '👩‍❤️‍👩',
+        maxCount: 4
+      },
     ]
   },
   {
-    name: '👴 الأصول (Ascendants)',
+    id: 'children',
+    name: '⭐ الأساسيون - الأبناء',
+    titleEn: '⭐ Primary - Children',
+    icon: '👶',
+    type: 'primary',
+    description: 'الأبناء والبنات - عصبة وفرض',
     collapsible: false,
     heirs: [
-      { key: 'father' as HeirType, label: 'الأب', emoji: '👨‍🦳' },
-      { key: 'mother' as HeirType, label: 'الأم', emoji: '👩‍🦳' },
-      { key: 'grandfather' as HeirType, label: 'الجد', emoji: '👴' },
-      { key: 'grandmother' as HeirType, label: 'الجدة', emoji: '👵' },
-      { key: 'grandmother_mother' as HeirType, label: 'الجدة لأم', emoji: '👵' },
-      { key: 'grandmother_father' as HeirType, label: 'الجدة لأب', emoji: '👵' },
+      { 
+        key: 'son' as HeirType, 
+        label: 'الابن', 
+        labelEn: 'Son',
+        type: 'asaba', 
+        badge: 'عصبة',
+        shareInfo: 'للذكر مثل حظ الأنثيين',
+        emoji: '👦'
+      },
+      { 
+        key: 'daughter' as HeirType, 
+        label: 'البنت', 
+        labelEn: 'Daughter',
+        type: 'fard', 
+        badge: 'فرض',
+        shareInfo: '½ أو ⅔',
+        emoji: '👧'
+      },
     ]
   },
   {
-    name: '👶 الفروع (Descendants)',
+    id: 'parents',
+    name: '⭐ الأساسيون - الوالدان',
+    titleEn: '⭐ Primary - Parents',
+    icon: '👴',
+    type: 'primary',
+    description: 'الأب والأم - فرض وتعصيب',
     collapsible: false,
     heirs: [
-      { key: 'son' as HeirType, label: 'الابن', emoji: '👦' },
-      { key: 'daughter' as HeirType, label: 'البنت', emoji: '👧' },
-      { key: 'grandson' as HeirType, label: 'ابن الابن', emoji: '👦' },
-      { key: 'granddaughter' as HeirType, label: 'بنت الابن', emoji: '👧' },
+      { 
+        key: 'father' as HeirType, 
+        label: 'الأب', 
+        labelEn: 'Father',
+        type: 'both', 
+        badge: 'فرض + تعصيب',
+        shareInfo: '⅙ أو الباقي',
+        emoji: '👨‍🦳'
+      },
+      { 
+        key: 'mother' as HeirType, 
+        label: 'الأم', 
+        labelEn: 'Mother',
+        type: 'fard', 
+        badge: 'فرض',
+        shareInfo: '⅙ أو ⅓',
+        emoji: '👩‍🦳'
+      },
     ]
   },
   {
-    name: '👫 الحواشي (Siblings)',
-    collapsible: false,
-    heirs: [
-      { key: 'full_brother' as HeirType, label: 'الأخ الشقيق', emoji: '👨‍🤝‍👨' },
-      { key: 'full_sister' as HeirType, label: 'الأخت الشقيقة', emoji: '👩‍🤝‍👩' },
-      { key: 'paternal_brother' as HeirType, label: 'الأخ لأب', emoji: '👨' },
-      { key: 'paternal_sister' as HeirType, label: 'الأخت لأب', emoji: '👩' },
-      { key: 'maternal_brother' as HeirType, label: 'الأخ لأم', emoji: '👨' },
-      { key: 'maternal_sister' as HeirType, label: 'الأخت لأم', emoji: '👩' },
-    ]
-  },
-  {
-    name: '👨‍👦 أبناء الإخوة والأعمام (Nephews & Uncles)',
+    id: 'grandparents',
+    name: '🔹 الأجداد',
+    titleEn: '🔹 Grandparents',
+    icon: '👵',
+    type: 'secondary',
+    description: 'الأجداد والجدات',
     collapsible: true,
+    badge: 'فرض',
     heirs: [
-      { key: 'full_nephew' as HeirType, label: 'ابن الأخ الشقيق', emoji: '👶' },
-      { key: 'paternal_nephew' as HeirType, label: 'ابن الأخ لأب', emoji: '👶' },
-      { key: 'full_uncle' as HeirType, label: 'العم الشقيق', emoji: '🧔' },
-      { key: 'paternal_uncle' as HeirType, label: 'العم لأب', emoji: '🧔' },
-      { key: 'full_cousin' as HeirType, label: 'ابن العم الشقيق', emoji: '👨' },
-      { key: 'paternal_cousin' as HeirType, label: 'ابن العم لأب', emoji: '👨' },
+      { 
+        key: 'grandfather' as HeirType, 
+        label: 'الجد', 
+        labelEn: 'Grandfather',
+        type: 'fard', 
+        badge: 'فرض',
+        shareInfo: '⅙',
+        emoji: '👴'
+      },
+      { 
+        key: 'grandmother_mother' as HeirType, 
+        label: 'الجدة لأم', 
+        labelEn: 'Grandmother (Maternal)',
+        type: 'fard', 
+        badge: 'فرض',
+        shareInfo: '⅙',
+        emoji: '👵'
+      },
+      { 
+        key: 'grandmother_father' as HeirType, 
+        label: 'الجدة لأب', 
+        labelEn: 'Grandmother (Paternal)',
+        type: 'fard', 
+        badge: 'فرض',
+        shareInfo: '⅙',
+        emoji: '👵'
+      },
     ]
   },
   {
-    name: '🔗 ذوو الأرحام (Blood Relatives)',
+    id: 'grandchildren',
+    name: '🔹 الأحفاد',
+    titleEn: '🔹 Grandchildren',
+    icon: '🧒',
+    type: 'secondary',
+    description: 'أبناء الابن',
     collapsible: true,
+    badge: 'عصبة / فرض',
     heirs: [
-      { key: 'daughter_son' as HeirType, label: 'ابن البنت', emoji: '👶' },
-      { key: 'daughter_daughter' as HeirType, label: 'بنت البنت', emoji: '👧' },
-      { key: 'sister_children' as HeirType, label: 'أولاد الأخت', emoji: '👶' },
-      { key: 'maternal_uncle' as HeirType, label: 'الخال', emoji: '🧔' },
-      { key: 'maternal_aunt' as HeirType, label: 'الخالة', emoji: '👩' },
-      { key: 'paternal_aunt' as HeirType, label: 'العمة', emoji: '👵' },
+      { 
+        key: 'grandson' as HeirType, 
+        label: 'ابن الابن', 
+        labelEn: 'Grandson',
+        type: 'asaba', 
+        badge: 'عصبة',
+        shareInfo: 'عصبة',
+        emoji: '👦'
+      },
+      { 
+        key: 'granddaughter' as HeirType, 
+        label: 'بنت الابن', 
+        labelEn: 'Granddaughter',
+        type: 'fard', 
+        badge: 'فرض',
+        shareInfo: '½ أو ⅔ أو ⅙',
+        emoji: '👧'
+      },
+    ]
+  },
+  {
+    id: 'siblings',
+    name: '🔹 الإخوة والأخوات',
+    titleEn: '🔹 Siblings',
+    icon: '👫',
+    type: 'secondary',
+    description: 'الإخوة الأشقاء ولأب ولأم',
+    collapsible: true,
+    badge: 'عصبة / فرض',
+    heirs: [
+      { 
+        key: 'full_brother' as HeirType, 
+        label: 'الأخ الشقيق', 
+        labelEn: 'Full Brother',
+        type: 'asaba', 
+        badge: 'عصبة',
+        shareInfo: 'عصبة',
+        emoji: '👨'
+      },
+      { 
+        key: 'full_sister' as HeirType, 
+        label: 'الأخت الشقيقة', 
+        labelEn: 'Full Sister',
+        type: 'fard', 
+        badge: 'فرض',
+        shareInfo: '½ أو ⅔',
+        emoji: '👩'
+      },
+      { 
+        key: 'paternal_brother' as HeirType, 
+        label: 'الأخ لأب', 
+        labelEn: 'Paternal Brother',
+        type: 'asaba', 
+        badge: 'عصبة',
+        shareInfo: 'عصبة',
+        emoji: '👨'
+      },
+      { 
+        key: 'paternal_sister' as HeirType, 
+        label: 'الأخت لأب', 
+        labelEn: 'Paternal Sister',
+        type: 'fard', 
+        badge: 'فرض',
+        shareInfo: '½ أو ⅔ أو ⅙',
+        emoji: '👩'
+      },
+      { 
+        key: 'maternal_brother' as HeirType, 
+        label: 'الأخ لأم', 
+        labelEn: 'Maternal Brother',
+        type: 'fard', 
+        badge: 'فرض',
+        shareInfo: '⅙ أو ⅓',
+        emoji: '👨'
+      },
+      { 
+        key: 'maternal_sister' as HeirType, 
+        label: 'الأخت لأم', 
+        labelEn: 'Maternal Sister',
+        type: 'fard', 
+        badge: 'فرض',
+        shareInfo: '⅙ أو ⅓',
+        emoji: '👩'
+      },
+    ]
+  },
+  {
+    id: 'nephews_uncles',
+    name: '📌 أبناء الإخوة والأعمام',
+    titleEn: '📌 Nephews & Uncles',
+    icon: '👨‍👦',
+    type: 'tertiary',
+    description: 'العصبات البعيدة',
+    collapsible: true,
+    badge: 'عصبة',
+    heirs: [
+      { 
+        key: 'full_nephew' as HeirType, 
+        label: 'ابن الأخ الشقيق', 
+        labelEn: 'Full Nephew',
+        type: 'asaba', 
+        badge: 'عصبة',
+        shareInfo: 'عصبة',
+        emoji: '👶'
+      },
+      { 
+        key: 'paternal_nephew' as HeirType, 
+        label: 'ابن الأخ لأب', 
+        labelEn: 'Paternal Nephew',
+        type: 'asaba', 
+        badge: 'عصبة',
+        shareInfo: 'عصبة',
+        emoji: '👶'
+      },
+      { 
+        key: 'full_uncle' as HeirType, 
+        label: 'العم الشقيق', 
+        labelEn: 'Full Uncle',
+        type: 'asaba', 
+        badge: 'عصبة',
+        shareInfo: 'عصبة',
+        emoji: '🧔'
+      },
+      { 
+        key: 'paternal_uncle' as HeirType, 
+        label: 'العم لأب', 
+        labelEn: 'Paternal Uncle',
+        type: 'asaba', 
+        badge: 'عصبة',
+        shareInfo: 'عصبة',
+        emoji: '🧔'
+      },
+      { 
+        key: 'full_cousin' as HeirType, 
+        label: 'ابن العم الشقيق', 
+        labelEn: 'Full Cousin',
+        type: 'asaba', 
+        badge: 'عصبة',
+        shareInfo: 'عصبة',
+        emoji: '👨'
+      },
+      { 
+        key: 'paternal_cousin' as HeirType, 
+        label: 'ابن العم لأب', 
+        labelEn: 'Paternal Cousin',
+        type: 'asaba', 
+        badge: 'عصبة',
+        shareInfo: 'عصبة',
+        emoji: '👨'
+      },
+    ]
+  },
+  {
+    id: 'blood_relatives',
+    name: '📌 ذوو الأرحام',
+    titleEn: '📌 Blood Relatives',
+    icon: '🔗',
+    type: 'tertiary',
+    description: 'يرثون عند عدم وجود العصبة',
+    collapsible: true,
+    badge: 'ذو رحم',
+    heirs: [
+      { 
+        key: 'daughter_son' as HeirType, 
+        label: 'ابن البنت', 
+        labelEn: "Daughter's Son",
+        type: 'blood', 
+        badge: 'ذو رحم - صنف 1',
+        shareInfo: 'عند عدم العصبة',
+        emoji: '👶'
+      },
+      { 
+        key: 'daughter_daughter' as HeirType, 
+        label: 'بنت البنت', 
+        labelEn: "Daughter's Daughter",
+        type: 'blood', 
+        badge: 'ذو رحم - صنف 1',
+        shareInfo: 'عند عدم العصبة',
+        emoji: '👧'
+      },
+      { 
+        key: 'sister_children' as HeirType, 
+        label: 'أولاد الأخت', 
+        labelEn: "Sister's Children",
+        type: 'blood', 
+        badge: 'ذو رحم - صنف 2',
+        shareInfo: 'عند عدم العصبة',
+        emoji: '👨‍👧'
+      },
+      { 
+        key: 'maternal_uncle' as HeirType, 
+        label: 'الخال', 
+        labelEn: 'Maternal Uncle',
+        type: 'blood', 
+        badge: 'ذو رحم - صنف 3',
+        shareInfo: 'عند عدم العصبة',
+        emoji: '🧔'
+      },
+      { 
+        key: 'maternal_aunt' as HeirType, 
+        label: 'الخالة', 
+        labelEn: 'Maternal Aunt',
+        type: 'blood', 
+        badge: 'ذو رحم - صنف 3',
+        shareInfo: 'عند عدم العصبة',
+        emoji: '👩'
+      },
+      { 
+        key: 'paternal_aunt' as HeirType, 
+        label: 'العمة', 
+        labelEn: 'Paternal Aunt',
+        type: 'blood', 
+        badge: 'ذو رحم - صنف 4',
+        shareInfo: 'عند عدم العصبة',
+        emoji: '👵'
+      },
     ]
   }
 ];
 
-// Flat array for backwards compatibility - All Heir Types (matching HTML heirNames object)
-const HEIR_TYPES: { key: HeirType; label: string; emoji: string }[] = [
-  { key: 'husband', label: 'الزوج', emoji: '💍' },
-  { key: 'wife', label: 'الزوجة', emoji: '💍' },
-  { key: 'father', label: 'الأب', emoji: '👨‍🦳' },
-  { key: 'mother', label: 'الأم', emoji: '👩‍🦳' },
-  { key: 'grandfather', label: 'الجد', emoji: '👴' },
-  { key: 'grandmother', label: 'الجدة', emoji: '👵' },
-  { key: 'grandmother_mother', label: 'الجدة لأم', emoji: '👵' },
-  { key: 'grandmother_father', label: 'الجدة لأب', emoji: '👵' },
-  { key: 'son', label: 'الابن', emoji: '👦' },
-  { key: 'daughter', label: 'البنت', emoji: '👧' },
-  { key: 'grandson', label: 'ابن الابن', emoji: '👦' },
-  { key: 'granddaughter', label: 'بنت الابن', emoji: '👧' },
-  { key: 'full_brother', label: 'الأخ الشقيق', emoji: '👨‍🤝‍👨' },
-  { key: 'full_sister', label: 'الأخت الشقيقة', emoji: '👩‍🤝‍👩' },
-  { key: 'paternal_brother', label: 'الأخ لأب', emoji: '👨' },
-  { key: 'paternal_sister', label: 'الأخت لأب', emoji: '👩' },
-  { key: 'maternal_brother', label: 'الأخ لأم', emoji: '👨' },
-  { key: 'maternal_sister', label: 'الأخت لأم', emoji: '👩' },
-  { key: 'full_nephew', label: 'ابن الأخ الشقيق', emoji: '👶' },
-  { key: 'paternal_nephew', label: 'ابن الأخ لأب', emoji: '👶' },
-  { key: 'full_uncle', label: 'العم الشقيق', emoji: '🧔' },
-  { key: 'paternal_uncle', label: 'العم لأب', emoji: '🧔' },
-  { key: 'full_cousin', label: 'ابن العم الشقيق', emoji: '👨' },
-  { key: 'paternal_cousin', label: 'ابن العم لأب', emoji: '👨' },
-  { key: 'maternal_uncle', label: 'الخال', emoji: '🧔' },
-  { key: 'maternal_aunt', label: 'الخالة', emoji: '👩' },
-  { key: 'paternal_aunt', label: 'العمة', emoji: '👵' },
-  { key: 'daughter_son', label: 'ابن البنت', emoji: '👶' },
-  { key: 'daughter_daughter', label: 'بنت البنت', emoji: '👧' },
-  { key: 'sister_children', label: 'أولاد الأخت', emoji: '👶' },
-  // Extended types also in HeirType union but not shown in UI:
-  { key: 'half_brother_paternal', label: 'نصف أخ لأب', emoji: '🧑' },
-  { key: 'half_sister_paternal', label: 'نصف أخت لأب', emoji: '👩' },
-  { key: 'half_brother_maternal', label: 'نصف أخ لأم', emoji: '🧑' },
-  { key: 'half_sister_maternal', label: 'نصف أخت لأم', emoji: '👩' },
-  { key: 'nephew_from_brother', label: 'ابن الأخ', emoji: '👶' },
-  { key: 'niece_from_brother', label: 'بنت الأخ', emoji: '👧' },
-  { key: 'uncle_paternal', label: 'العم', emoji: '🧔' },
-  { key: 'uncle_maternal', label: 'الخال', emoji: '🧔' },
-  { key: 'aunt_paternal', label: 'العمة', emoji: '👵' },
-  { key: 'aunt_maternal', label: 'الخالة', emoji: '👩' },
-  { key: 'treasury', label: 'بيت المال', emoji: '🏛️' },
-];
-
-/**
- * مكون اختيار الوارثون
- * Displays and manages heir selection
- */
 export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
   const { heirs, addHeir, updateHeir, removeHeir, clearHeirs } = useHeirs();
   const [showModal, setShowModal] = useState(false);
@@ -156,11 +407,20 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
   const [modalError, setModalError] = useState<string | null>(null);
   const [editingHeirType, setEditingHeirType] = useState<HeirType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [expandedCategories, setExpandedCategories] = useState<Set<number>>(
-    // By default, shown categories 0-3 are always visible (not collapsible)
-    // Categories 4-5 (Nephews & Uncles, Blood Relatives) are collapsed by default
-    new Set()
-  );
+
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({
+    spouses: true,
+    children: true,
+    parents: true,
+    grandparents: false,
+    grandchildren: false,
+    siblings: false,
+    nephews_uncles: false,
+    blood_relatives: false
+  });
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
 
   // heirs is an array of {id, key, count}
   const heirsArray = (heirs as Array<{ id: string; key: HeirType; count: number }>) || [];
@@ -218,7 +478,7 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
       setModalError(errorMsg);
       Alert.alert('خطأ', errorMsg);
     }
-  }, [selectedHeirType, selectedCount, safeHeirs, onHeirsChange, editingHeirType]);
+  }, [selectedHeirType, selectedCount, safeHeirs, onHeirsChange, editingHeirType, heirsArray, addHeir, updateHeir]);
 
   // Helper: determine gender for heir type
   const genderFor = useCallback((key: HeirType) => {
@@ -302,7 +562,7 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
   }, [heirsArray, safeHeirs, removeHeir, updateHeir, validateChange]);
 
   const handleRemoveHeir = useCallback((heirType: HeirType) => {
-    const heirLabel = HEIR_TYPES.find(h => h.key === heirType)?.label || heirType;
+    const heirLabel = HEIR_CATEGORIES.flatMap(c => c.heirs).find(h => h.key === heirType)?.label || heirType;
     Alert.alert(
       'تأكيد الحذف',
       `هل تريد حذف ${heirLabel}؟`,
@@ -331,7 +591,7 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
         }
       ]
     );
-  }, [safeHeirs, onHeirsChange]);
+  }, [safeHeirs, onHeirsChange, heirsArray, removeHeir]);
 
   const handleEditHeir = useCallback((heirType: HeirType) => {
     const current = heirsArray.find(h => h.key === heirType);
@@ -341,7 +601,7 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
     setSelectedCount(currentCount);
     setModalError(null);
     setShowModal(true);
-  }, [safeHeirs]);
+  }, [safeHeirs, heirsArray]);
 
   const handleClearAll = useCallback(() => {
     Alert.alert(
@@ -365,16 +625,12 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
     );
   }, [onHeirsChange]);
 
-  // Toggle collapsible category
-  const toggleCategory = useCallback((categoryIndex: number) => {
-    const newExpanded = new Set(expandedCategories);
-    if (newExpanded.has(categoryIndex)) {
-      newExpanded.delete(categoryIndex);
-    } else {
-      newExpanded.add(categoryIndex);
-    }
-    setExpandedCategories(newExpanded);
-  }, [expandedCategories]);
+  const toggleCategory = useCallback((categoryId: string) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [categoryId]: !prev[categoryId]
+    }));
+  }, []);
 
   // Use heirsArray for rendering to preserve ids
   const heirEntries = heirsArray.map(h => [h.key, h.count] as [string, number]);
@@ -382,6 +638,27 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
 
   return (
     <View style={styles.container}>
+      {/* Search Bar */}
+      <View style={styles.searchContainer}>
+        <TouchableOpacity 
+          style={styles.searchToggle}
+          onPress={() => setShowSearch(!showSearch)}
+        >
+          <Text style={styles.searchIcon}>🔍</Text>
+        </TouchableOpacity>
+        
+        {showSearch && (
+          <TextInput
+            style={styles.searchInput}
+            placeholder="بحث عن وارث..."
+            placeholderTextColor="#999"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            autoFocus
+          />
+        )}
+      </View>
+
       {/* Validation Errors/Warnings */}
       {validationResult && validationResult.errors.length > 0 && (
         <View style={[styles.feedbackContainer, styles.feedbackErrorContainer]}>
@@ -415,64 +692,131 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
         </View>
       )}
 
-      {/* Grouped Heir Selection */}
-      <View style={styles.groupedHeirstContainer}>
-        <Text style={styles.heirstitle}>إضافة الوارثون (مرتبة بالفئات)</Text>
-        <ScrollView style={styles.groupedHeirstScrollView}>
-          {HEIR_CATEGORIES.map((category, catIndex) => {
-            const isCollapsible = category.collapsible || false;
-            const isExpanded = expandedCategories.has(catIndex);
-            const shouldShowHeirs = !isCollapsible || isExpanded;
+      {/* Heir Categories */}
+      <View style={styles.categoriesContainer}>
+        <Text style={styles.categoriesTitle}>👥 إضافة الوارثون</Text>
+        <Text style={styles.categoriesSubtitle}>Add Heirs by Category</Text>
+
+        <ScrollView style={styles.categoriesScrollView}>
+          {HEIR_CATEGORIES.map((category) => {
+            const isExpanded = expandedCategories[category.id];
             
             return (
-              <View key={`category-${catIndex}`} style={styles.categorySection}>
-                {isCollapsible ? (
-                  // Collapsible header with toggle button
-                  <TouchableOpacity 
-                    style={styles.collapsibleHeader}
-                    onPress={() => toggleCategory(catIndex)}
-                  >
-                    <Text style={styles.expandIcon}>{isExpanded ? '▼' : '▶'}</Text>
-                    <Text style={styles.categoryName}>{category.name}</Text>
-                  </TouchableOpacity>
-                ) : (
-                  // Regular header (not collapsible)
-                  <View style={styles.categoryHeader}>
-                    <Text style={styles.categoryName}>{category.name}</Text>
+              <View key={category.id} style={styles.categoryCard}>
+                {/* Category Header */}
+                <TouchableOpacity
+                  style={[
+                    styles.categoryHeader,
+                    category.type === 'primary' && styles.categoryHeaderPrimary,
+                    category.type === 'secondary' && styles.categoryHeaderSecondary,
+                    category.type === 'tertiary' && styles.categoryHeaderTertiary,
+                  ]}
+                  onPress={() => toggleCategory(category.id)}
+                  disabled={!category.collapsible}
+                >
+                  <View style={styles.categoryHeaderLeft}>
+                    <Text style={styles.categoryIcon}>{category.icon}</Text>
+                    <View>
+                      <Text style={styles.categoryName}>{category.name}</Text>
+                      <Text style={styles.categoryDescription}>{category.description}</Text>
+                    </View>
+                  </View>
+                  
+                  <View style={styles.categoryHeaderRight}>
+                    {category.badge && (
+                      <View style={[
+                        styles.categoryBadge,
+                        category.type === 'primary' && styles.categoryBadgePrimary,
+                        category.type === 'secondary' && styles.categoryBadgeSecondary,
+                        category.type === 'tertiary' && styles.categoryBadgeTertiary,
+                      ]}>
+                        <Text style={styles.categoryBadgeText}>{category.badge}</Text>
+                      </View>
+                    )}
+                    
+                    {category.collapsible && (
+                      <Text style={styles.expandIcon}>
+                        {isExpanded ? '▼' : '▶'}
+                      </Text>
+                    )}
+                  </View>
+                </TouchableOpacity>
+
+                {/* Category Heirs */}
+                {isExpanded && (
+                  <View style={styles.categoryHeirs}>
+                    {category.heirs.map((heir) => {
+                      const existingHeir = heirsArray.find(h => h.key === heir.key);
+                      const count = existingHeir?.count || 0;
+                      
+                      // Filter by search query if needed
+                      if (searchQuery && !heir.label.includes(searchQuery) && 
+                          !(heir.labelEn && heir.labelEn.includes(searchQuery))) {
+                        return null;
+                      }
+
+                      return (
+                        <View key={heir.key} style={styles.heirRow}>
+                          <View style={styles.heirInfo}>
+                            <Text style={styles.heirEmoji}>{heir.emoji}</Text>
+                            <View style={styles.heirDetails}>
+                              <View style={styles.heirNameContainer}>
+                                <Text style={styles.heirName}>{heir.label}</Text>
+                                {heir.badge && (
+                                  <View style={[
+                                    styles.heirBadge,
+                                    heir.type === 'fard' && styles.heirBadgeFard,
+                                    heir.type === 'asaba' && styles.heirBadgeAsaba,
+                                    heir.type === 'both' && styles.heirBadgeBoth,
+                                    heir.type === 'blood' && styles.heirBadgeBlood,
+                                  ]}>
+                                    <Text style={styles.heirBadgeText}>{heir.badge}</Text>
+                                  </View>
+                                )}
+                              </View>
+                              
+                              {heir.shareInfo && (
+                                <Text style={styles.heirShareInfo}>{heir.shareInfo}</Text>
+                              )}
+                              
+                              {(heir as any).maxCount && count >= (heir as any).maxCount && (
+                                <Text style={styles.heirMaxWarning}>
+                                  ⚠️ الحد الأقصى {(heir as any).maxCount}
+                                </Text>
+                              )}
+                            </View>
+                          </View>
+
+                          <View style={styles.heirControls}>
+                            <TouchableOpacity
+                              style={[styles.heirControlButton, count === 0 && styles.heirControlButtonDisabled]}
+                              onPress={() => handleDecrement(heir.key)}
+                              disabled={count === 0}
+                            >
+                              <Text style={styles.heirControlButtonText}>−</Text>
+                            </TouchableOpacity>
+
+                            <View style={styles.heirCountContainer}>
+                              <Text style={styles.heirCount}>{count}</Text>
+                            </View>
+
+                            <TouchableOpacity
+                              style={[
+                                styles.heirControlButton, 
+                                styles.heirControlButtonIncrement,
+                                (heir as any).maxCount && count >= (heir as any).maxCount && styles.heirControlButtonDisabled
+                              ]}
+                              onPress={() => handleIncrement(heir.key)}
+                              disabled={(heir as any).maxCount ? count >= (heir as any).maxCount : false}
+                            >
+                              <Text style={styles.heirControlButtonText}>+</Text>
+                            </TouchableOpacity>
+                          </View>
+                        </View>
+                      );
+                    })}
                   </View>
                 )}
-                
-                {/* Render heirs only if category should be shown */}
-                {shouldShowHeirs && category.heirs.map((heir) => {
-                  const existing = heirsArray.find(h => h.key === heir.key);
-                  const count = existing ? existing.count : 0;
-                  return (
-                    <View key={heir.key} style={styles.heirRow}>
-                      <View style={styles.heirRowLeft}>
-                        <Text style={styles.heirEmoji}>{heir.emoji}</Text>
-                        <Text style={styles.heirName}>{heir.label}</Text>
-                      </View>
-                      <View style={styles.heirRowRight}>
-                        <TouchableOpacity
-                          style={[styles.smallBtn, count > 0 && styles.smallBtnActive]}
-                          onPress={() => handleDecrement(heir.key)}
-                          disabled={count === 0}
-                        >
-                          <Text style={styles.smallBtnText}>−</Text>
-                        </TouchableOpacity>
-                        <View style={styles.countDisplay}>
-                          <Text style={styles.countText}>{count}</Text>
-                        </View>
-                        <TouchableOpacity
-                          style={[styles.smallBtn, count > 0 && styles.smallBtnActive]}
-                          onPress={() => handleIncrement(heir.key)}
-                        >
-                          <Text style={styles.smallBtnText}>+</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  );
-                })}
               </View>
             );
           })}
@@ -481,21 +825,51 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
 
       {/* Summary Section */}
       <View style={styles.summarySection}>
-        <Text style={styles.summaryLabel}>الوارثون المضافون: {heirEntries.length} نوع، الإجمالي: {totalHeirs}</Text>
+        <View style={styles.summaryHeader}>
+          <Text style={styles.summaryIcon}>📊</Text>
+          <Text style={styles.summaryTitle}>الوارثون المضافون</Text>
+        </View>
+        
+        <View style={styles.summaryStats}>
+          <View style={styles.summaryStat}>
+            <Text style={styles.summaryStatValue}>{heirEntries.length}</Text>
+            <Text style={styles.summaryStatLabel}>أنواع</Text>
+          </View>
+          <View style={styles.summaryStat}>
+            <Text style={styles.summaryStatValue}>{totalHeirs}</Text>
+            <Text style={styles.summaryStatLabel}>إجمالي</Text>
+          </View>
+        </View>
+
         {heirEntries.length > 0 && (
-          <ScrollView style={styles.addedHeirsList}>
-            {heirEntries.map(([heirTypeStr, count]: [string, number | undefined]) => {
+          <View style={styles.addedHeirsList}>
+            {heirEntries.map(([heirTypeStr, count]) => {
               const heirType = heirTypeStr as HeirType;
-              const heirLabel = HEIR_TYPES.find(h => h.key === heirType)?.label || heirTypeStr;
-              const emoji = HEIR_TYPES.find(h => h.key === heirType)?.emoji || '👤';
+              const category = HEIR_CATEGORIES.find(c => 
+                c.heirs.some(h => h.key === heirType)
+              );
+              const heir = category?.heirs.find(h => h.key === heirType);
+              
               return (
-                <View key={heirTypeStr} style={styles.summaryItem}>
-                  <Text>{emoji} {heirLabel}: {count}</Text>
+                <View key={heirTypeStr} style={styles.addedHeirItem}>
+                  <View style={styles.addedHeirInfo}>
+                    <Text style={styles.addedHeirEmoji}>{heir?.emoji || '👤'}</Text>
+                    <Text style={styles.addedHeirName}>
+                      {heir?.label || heirTypeStr}: {count}
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    style={styles.removeHeirButton}
+                    onPress={() => handleRemoveHeir(heirType)}
+                  >
+                    <Text style={styles.removeHeirButtonText}>✕</Text>
+                  </TouchableOpacity>
                 </View>
               );
             })}
-          </ScrollView>
+          </View>
         )}
+
         {heirEntries.length > 0 && (
           <TouchableOpacity style={styles.clearAllBtn} onPress={handleClearAll}>
             <Text style={styles.clearAllBtnText}>🗑️ مسح الكل</Text>
@@ -527,7 +901,7 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
             {/* اختيار نوع الوارث */}
             <Text style={styles.modalLabel}>اختر نوع الوارث:</Text>
             <ScrollView style={styles.heirTypesGrid} scrollEnabled={true}>
-              {HEIR_TYPES.map(heirType => (
+              {HEIR_CATEGORIES.flatMap(category => category.heirs).map(heirType => (
                 <TouchableOpacity
                   key={heirType.key}
                   style={[
@@ -634,6 +1008,344 @@ const styles = StyleSheet.create({
   container: {
     paddingVertical: 8
   },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  searchToggle: {
+    padding: 8,
+  },
+  searchIcon: {
+    fontSize: 18,
+  },
+  searchInput: {
+    flex: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    fontSize: 14,
+    color: '#333',
+    textAlign: 'right',
+  },
+  categoriesContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  categoriesTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#333',
+    textAlign: 'right',
+    marginBottom: 4,
+  },
+  categoriesSubtitle: {
+    fontSize: 12,
+    color: '#666',
+    textAlign: 'right',
+    marginBottom: 16,
+  },
+  categoriesScrollView: {
+    maxHeight: 500,
+  },
+  categoryCard: {
+    marginBottom: 12,
+    borderRadius: 10,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  categoryHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    backgroundColor: '#f8f9fa',
+  },
+  categoryHeaderPrimary: {
+    backgroundColor: '#e3f2fd',
+    borderLeftWidth: 4,
+    borderLeftColor: '#1976d2',
+  },
+  categoryHeaderSecondary: {
+    backgroundColor: '#f3e5f5',
+    borderLeftWidth: 4,
+    borderLeftColor: '#7b1fa2',
+  },
+  categoryHeaderTertiary: {
+    backgroundColor: '#fff3e0',
+    borderLeftWidth: 4,
+    borderLeftColor: '#f57c00',
+  },
+  categoryHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    gap: 8,
+  },
+  categoryIcon: {
+    fontSize: 24,
+    width: 32,
+    textAlign: 'center',
+  },
+  categoryName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 2,
+    textAlign: 'right',
+  },
+  categoryDescription: {
+    fontSize: 11,
+    color: '#666',
+    textAlign: 'right',
+  },
+  categoryHeaderRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  categoryBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  categoryBadgePrimary: {
+    backgroundColor: '#bbdefb',
+  },
+  categoryBadgeSecondary: {
+    backgroundColor: '#e1bee7',
+  },
+  categoryBadgeTertiary: {
+    backgroundColor: '#ffe0b2',
+  },
+  categoryBadgeText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#333',
+  },
+  expandIcon: {
+    fontSize: 14,
+    color: '#666',
+    marginLeft: 8,
+  },
+  categoryHeirs: {
+    padding: 12,
+    backgroundColor: '#fff',
+  },
+  heirRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  heirInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    gap: 8,
+  },
+  heirEmoji: {
+    fontSize: 20,
+    width: 30,
+    textAlign: 'center',
+  },
+  heirDetails: {
+    flex: 1,
+  },
+  heirNameContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 6,
+    marginBottom: 4,
+  },
+  heirName: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#333',
+    textAlign: 'right',
+  },
+  heirBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  heirBadgeFard: {
+    backgroundColor: '#e3f2fd',
+  },
+  heirBadgeAsaba: {
+    backgroundColor: '#e8f5e9',
+  },
+  heirBadgeBoth: {
+    backgroundColor: '#fff3e0',
+  },
+  heirBadgeBlood: {
+    backgroundColor: '#fce4ec',
+  },
+  heirBadgeText: {
+    fontSize: 9,
+    fontWeight: '600',
+    color: '#333',
+  },
+  heirShareInfo: {
+    fontSize: 10,
+    color: '#666',
+    fontStyle: 'italic',
+    textAlign: 'right',
+  },
+  heirMaxWarning: {
+    fontSize: 9,
+    color: '#f57c00',
+    marginTop: 2,
+  },
+  heirControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  heirControlButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#f5f5f5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  heirControlButtonIncrement: {
+    backgroundColor: '#e8f5e9',
+    borderColor: '#81c784',
+  },
+  heirControlButtonDisabled: {
+    opacity: 0.5,
+    backgroundColor: '#f5f5f5',
+  },
+  heirControlButtonText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#333',
+  },
+  heirCountContainer: {
+    minWidth: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heirCount: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1976d2',
+  },
+  summarySection: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  summaryHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    gap: 8,
+  },
+  summaryIcon: {
+    fontSize: 20,
+  },
+  summaryTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    textAlign: 'right',
+    flex: 1,
+  },
+  summaryStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 16,
+    paddingVertical: 12,
+    backgroundColor: '#f8f9fa',
+    borderRadius: 8,
+  },
+  summaryStat: {
+    alignItems: 'center',
+  },
+  summaryStatValue: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#1976d2',
+    marginBottom: 2,
+  },
+  summaryStatLabel: {
+    fontSize: 11,
+    color: '#666',
+  },
+  addedHeirsList: {
+    maxHeight: 150,
+    marginBottom: 12,
+  },
+  addedHeirItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#f8f9fa',
+    borderRadius: 8,
+    marginBottom: 6,
+  },
+  addedHeirInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  addedHeirEmoji: {
+    fontSize: 16,
+  },
+  addedHeirName: {
+    fontSize: 12,
+    color: '#333',
+    fontWeight: '500',
+  },
+  removeHeirButton: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#ffebee',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  removeHeirButtonText: {
+    fontSize: 14,
+    color: '#d32f2f',
+    fontWeight: '600',
+  },
+  clearAllBtn: {
+    backgroundColor: '#d32f2f',
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  clearAllBtnText: {
+    color: '#fff',
+    fontSize: 13,
+    fontWeight: '600',
+  },
   addButton: {
     backgroundColor: '#4F46E5',
     borderRadius: 10,
@@ -676,30 +1388,6 @@ const styles = StyleSheet.create({
     borderColor: '#e0e0e0',
     justifyContent: 'space-between',
     alignItems: 'center'
-  },
-  heirInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1
-  },
-  heirEmoji: {
-    fontSize: 24,
-    marginLeft: 12
-  },
-  heirDetails: {
-    flex: 1
-  },
-  heirLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#333',
-    textAlign: 'right'
-  },
-  heirCount: {
-    fontSize: 11,
-    color: '#666',
-    textAlign: 'right',
-    marginTop: 2
   },
   heirActions: {
     flexDirection: 'row',
@@ -940,247 +1628,6 @@ const styles = StyleSheet.create({
     color: '#1976d2',
     textAlign: 'center'
   },
-  inlineGridContainer: {
-    marginVertical: 8
-  },
-  inlineGrid: {
-    maxHeight: 220,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    padding: 8,
-    backgroundColor: '#fff'
-  },
-  gridItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0'
-  },
-  gridLeft: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  gridRight: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  smallButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#f5f5f5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 6
-  },
-  smallButtonText: {
-    fontSize: 20,
-    color: '#333',
-    fontWeight: '600'
-  },
-  countBadge: {
-    minWidth: 44,
-    height: 36,
-    borderRadius: 8,
-    backgroundColor: '#e3f2fd',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  countBadgeText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#1976d2'
-  },
-  // Grouped Heirs Styles
-  groupedHeirstContainer: {
-    marginVertical: 12,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    overflow: 'hidden'
-  },
-  heirstitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#333',
-    backgroundColor: '#f5f5f5',
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    textAlign: 'right'
-  },
-  groupedHeirstScrollView: {
-    maxHeight: 1200,
-    minHeight: 400
-  },
-  categorySection: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0'
-  },
-  categoryHeader: {
-    backgroundColor: '#e8f5e9',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#c8e6c9'
-  },
-  collapsibleHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f3f4f6',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
-    gap: 8
-  },
-  expandIcon: {
-    fontSize: 14,
-    color: '#4F46E5',
-    fontWeight: '700',
-    width: 16,
-    textAlign: 'center'
-  },
-  categoryName: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#2e7d32',
-    textAlign: 'right',
-    flex: 1
-  },
-  heirRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#f0f0f0'
-  },
-  heirRowLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1
-  },
-  heirName: {
-    fontSize: 13,
-    color: '#333',
-    fontWeight: '500',
-    flex: 1,
-    textAlign: 'right'
-  },
-  heirRowRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8
-  },
-  smallBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#f3f4f6',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1.5,
-    borderColor: '#e5e7eb',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1
-  },
-  smallBtnActive: {
-    backgroundColor: '#10B981',
-    borderColor: '#059669',
-    shadowColor: '#10B981',
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 3
-  },
-  smallBtnText: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#333'
-  },
-  countDisplay: {
-    minWidth: 40,
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    borderRadius: 6,
-    backgroundColor: '#e3f2fd',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  countText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#1976d2'
-  },
-  summarySection: {
-    marginVertical: 12,
-    padding: 12,
-    backgroundColor: '#fff9c4',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#fbc02d'
-  },
-  summaryLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#f57f17',
-    marginBottom: 8,
-    textAlign: 'right'
-  },
-  addedHeirsList: {
-    maxHeight: 120,
-    marginBottom: 8
-  },
-  summaryItem: {
-    fontSize: 12,
-    color: '#333',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    textAlign: 'right'
-  },
-  clearAllBtn: {
-    backgroundColor: '#d32f2f',
-    paddingVertical: 10,
-    borderRadius: 6,
-    alignItems: 'center'
-  },
-  clearAllBtnText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 13
-  },
-  errorContainer: {
-    padding: 10,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#ef5350'
-  },
-  errorText: {
-    color: '#d32f2f',
-    fontSize: 12,
-    textAlign: 'center'
-  },
-  modalErrorContainer: {
-    backgroundColor: '#ffebee',
-    borderRadius: 6,
-    padding: 12,
-    marginBottom: 12,
-    borderLeftWidth: 4,
-    borderLeftColor: '#d32f2f'
-  },
-  modalErrorText: {
-    color: '#d32f2f',
-    fontSize: 13,
-    fontWeight: '500',
-    textAlign: 'right'
-  },
   feedbackContainer: {
     borderRadius: 6,
     padding: 12,
@@ -1222,6 +1669,20 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     fontStyle: 'italic',
     marginTop: 2
+  },
+  modalErrorContainer: {
+    backgroundColor: '#ffebee',
+    borderRadius: 6,
+    padding: 12,
+    marginBottom: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: '#d32f2f'
+  },
+  modalErrorText: {
+    color: '#d32f2f',
+    fontSize: 13,
+    fontWeight: '500',
+    textAlign: 'right'
   },
   modalActions: {
     flexDirection: 'row',

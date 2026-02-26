@@ -13,7 +13,7 @@ import {
   useHeirs
 } from '../lib/inheritance/hooks';
 import { AuditLog, createAuditLog } from '../lib/inheritance/audit-log';
-import { InheritanceCalculationEngine } from '../lib/inheritance/calculation-engine';
+import { InheritanceCalculationEngine } from '../lib/inheritance';
 
 // ============================================================================
 // Test Suite 1: Hooks Export Validation

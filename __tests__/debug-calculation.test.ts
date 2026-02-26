@@ -1,5 +1,5 @@
 import { describe, it } from 'vitest';
-import { InheritanceCalculationEngine } from '../lib/inheritance/calculation-engine';
+import { InheritanceCalculationEngine } from '../lib/inheritance';
 import type { EstateData, HeirsData } from '../lib/inheritance/types';
 
 describe('Debug Calculation Output', () => {

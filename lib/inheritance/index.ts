@@ -1,64 +1,21 @@
 /**
- * تصدير جميع مكونات نظام المواريث
  * Export All Inheritance System Components
  */
-
-// ====== أنواع البيانات ======
 export * from './types';
+export * from './constants';
+export * from './fraction';
+export * from './hijab-system';
+export { EnhancedInheritanceCalculationEngine as InheritanceCalculationEngine } from './enhanced-engine-complete';
+export * from './audit-log';
+export * from './audit-trail-manager';
+export * from './hooks';
 
-// ====== الكسور ======
-export { FractionClass } from './fraction';
-
-// ====== قاعدة البيانات الفقهية ======
-export {
-  FIQH_DATABASE,
-  getMadhhabConfig,
-  getHijabRules,
-  isValidMadhab
-} from './constants';
-
-// ====== نظام الحجب ======
-export { HijabSystem } from './hijab-system';
-
-// ====== محرك الحسابات ======
-export { InheritanceCalculationEngine } from './calculation-engine';
-export { EnhancedInheritanceEngine, enhancedInheritanceEngine } from './enhanced-calculation-engine';
-
-// ====== نظام الاختبارات ======
-export {
-  TestSuite,
-  runTestSuite,
-  type TestCase,
-  type TestResult,
-  type TestReport
-} from './test-suite';
-
-// ====== نظام تسجيل العمليات ======
-export {
-  AuditLog,
-  createAuditLog,
-  getAuditLogStats,
-  type AuditLogEntry,
-  type AuditLogFilter,
-  type AuditLogStats
-} from './audit-log';
-
-// ====== Custom React Hooks ======
-export {
-  useCalculator,
-  useAuditLog,
-  useResults,
-  useMadhab,
-  useHeirs
-} from './hooks';
-
-// ====== الدوال المساعدة ======
+// Export from utils, excluding the one that conflicts with constants
 export {
   HEIR_NAMES,
   MADHAB_COLORS,
   MADHAB_ICONS,
   MADHAB_NAMES,
-  isValidMadhab as isValidMadhab_util,
   isValidHeirType,
   formatCurrency,
   formatPercentage,
@@ -77,4 +34,3 @@ export {
   getMadhhabIcon,
   getMadhhabName
 } from './utils';
-

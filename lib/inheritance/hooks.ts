@@ -6,7 +6,7 @@
  */
 
 import { useState, useCallback, useEffect } from 'react';
-import { InheritanceCalculationEngine } from './calculation-engine';
+import { InheritanceCalculationEngine } from '.';
 import { AuditLog, createAuditLog, type AuditLogEntry } from './audit-log';
 import { CalculationCache, PerformanceMonitor } from '../performance/optimization';
 import type {
