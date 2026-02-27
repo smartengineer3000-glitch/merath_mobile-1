@@ -16,7 +16,9 @@ import {
   Alert,
   ActivityIndicator
 } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useResults } from '../lib/inheritance/hooks';
+import { useAppTheme } from '../lib/context/ThemeProvider';
 import type { CalculationResult } from '../lib/inheritance/types';
 import { PDFExporter } from '../lib/export/PDFExporter';
 import { ErrorLogger, CalculationError } from '../lib/errors/ErrorHandler';
@@ -31,12 +33,21 @@ export interface ResultsDisplayProps {
  * Displays calculation results with distribution details
  */
 export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
+  const { theme } = useAppTheme();
   const hooksResults = useResults();
   const results = hooksResults?.previousResults || [];
   const [showComparison, setShowComparison] = useState(false);
   const [selectedResultId, setSelectedResultId] = useState<number | null>(null);
   const [exportLoading, setExportLoading] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
+
+  // Get comparison data from the enhanced hook
+  const { 
+    comparisonMode, 
+    comparisonResults, 
+    generateComparisonReport,
+    compareWithPrevious 
+  } = hooksResults;
 
   const currentResult = result || results[0];
   const previousResults = results.slice(1, 4);
@@ -109,6 +120,17 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
       setExportLoading(false);
     }
   }, [currentResult]);
+
+  const handleExportComparison = useCallback(() => {
+    if (!comparisonResults || comparisonResults.length === 0) {
+      Alert.alert('تنبيه', 'لا توجد نتائج مقارنة للتصدير');
+      return;
+    }
+
+    const html = generateComparisonReport(comparisonResults);
+    // You can integrate with PDF exporter here
+    Alert.alert('تم', 'تقرير المقارنة جاهز للتصدير');
+  }, [comparisonResults, generateComparisonReport]);
 
   if (!currentResult || !currentResult.success) {
     return (
@@ -292,6 +314,79 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
         </View>
       )}
 
+      {/* ===== NEW: Enhanced Comparison Results Section ===== */}
+      {showComparison && comparisonResults && comparisonResults.length > 0 && (
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <MaterialCommunityIcons
+              name="compare"
+              size={24}
+              color={theme.colors.primary.main}
+            />
+            <Text style={styles.sectionTitle}>مقارنة المذاهب</Text>
+          </View>
+
+          {comparisonResults.map((comparison, idx) => (
+            <View key={idx} style={styles.comparisonCard}>
+              <Text style={styles.comparisonTitle}>
+                مقارنة مع {comparison.madhhabName}
+              </Text>
+              
+              <View style={styles.comparisonSummary}>
+                <Text style={[
+                  styles.comparisonStatus,
+                  comparison.summary.isIdentical && styles.comparisonIdentical,
+                  !comparison.summary.isIdentical && comparison.summary.majorDifferences === 0 && styles.comparisonMinor,
+                  comparison.summary.majorDifferences > 0 && styles.comparisonMajor
+                ]}>
+                  {comparison.summary.isIdentical ? '✓ متطابق' :
+                   comparison.summary.majorDifferences > 0 ? '⚠️ اختلافات جوهرية' :
+                   '⚠️ اختلافات طفيفة'}
+                </Text>
+                
+                {comparison.summary.recommendation && (
+                  <Text style={styles.comparisonRecommendation}>
+                    💡 {comparison.summary.recommendation}
+                  </Text>
+                )}
+              </View>
+
+              {comparison.differences.length > 0 ? (
+                <View style={styles.differencesList}>
+                  {comparison.differences.map((diff, diffIdx) => (
+                    <View key={diffIdx} style={styles.differenceItem}>
+                      <Text style={styles.differenceHeir}>{diff.heirName}</Text>
+                      <Text style={[
+                        styles.differenceAmount,
+                        diff.amountDiff > 0 ? styles.differencePositive : styles.differenceNegative
+                      ]}>
+                        {diff.amountDiff > 0 ? '+' : ''}{diff.amountDiff.toFixed(2)} ر.س
+                      </Text>
+                      <Text style={styles.differenceExplanation}>
+                        {diff.explanation}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              ) : (
+                <Text style={styles.noDifferences}>
+                  لا توجد اختلافات في توزيع الورثة
+                </Text>
+              )}
+            </View>
+          ))}
+
+          {/* Export Comparison Button */}
+          <TouchableOpacity
+            style={styles.exportComparisonButton}
+            onPress={handleExportComparison}
+          >
+           <MaterialCommunityIcons name="file-pdf-box" size={20} color="#fff" />
+            <Text style={styles.exportComparisonText}>تصدير تقرير المقارنة</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       {/* زر الإغلاق */}
       {onClose && (
         <TouchableOpacity style={styles.closeButton} onPress={onClose}>
@@ -396,6 +491,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
     textAlign: 'right'
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    gap: 8,
   },
   emptyState: {
     paddingVertical: 40,
@@ -605,6 +706,107 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     color: '#7b1fa2'
+  },
+  // New comparison styles
+  comparisonCard: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  comparisonTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1976d2',
+    marginBottom: 8,
+    textAlign: 'right',
+  },
+  comparisonSummary: {
+    backgroundColor: '#fff',
+    borderRadius: 6,
+    padding: 10,
+    marginBottom: 10,
+  },
+  comparisonStatus: {
+    fontSize: 13,
+    fontWeight: '600',
+    marginBottom: 6,
+    textAlign: 'right',
+  },
+  comparisonIdentical: {
+    color: '#4caf50',
+  },
+  comparisonMinor: {
+    color: '#ff9800',
+  },
+  comparisonMajor: {
+    color: '#d32f2f',
+  },
+  comparisonRecommendation: {
+    fontSize: 12,
+    color: '#666',
+    fontStyle: 'italic',
+    textAlign: 'right',
+  },
+  differencesList: {
+    marginTop: 8,
+  },
+  differenceItem: {
+    backgroundColor: '#fff',
+    borderRadius: 6,
+    padding: 8,
+    marginBottom: 6,
+    borderLeftWidth: 3,
+    borderLeftColor: '#1976d2',
+  },
+  differenceHeir: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 4,
+    textAlign: 'right',
+  },
+  differenceAmount: {
+    fontSize: 12,
+    fontWeight: '700',
+    marginBottom: 2,
+    textAlign: 'right',
+  },
+  differencePositive: {
+    color: '#4caf50',
+  },
+  differenceNegative: {
+    color: '#d32f2f',
+  },
+  differenceExplanation: {
+    fontSize: 11,
+    color: '#666',
+    fontStyle: 'italic',
+    textAlign: 'right',
+  },
+  noDifferences: {
+    fontSize: 12,
+    color: '#4caf50',
+    textAlign: 'center',
+    paddingVertical: 8,
+  },
+  exportComparisonButton: {
+    backgroundColor: '#1976d2',
+    borderRadius: 6,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: 8,
+  },
+  exportComparisonText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#fff',
   },
   closeButton: {
     marginHorizontal: 12,

@@ -15,7 +15,38 @@ import type {
   MadhhabType,
   HeirType,
   HeirsData,
+  HeirShare,
 } from './types';
+
+// ============================================================================
+// Type Definitions for Comparison Feature
+// ============================================================================
+
+export interface ComparisonResult {
+  madhab: MadhhabType;
+  madhhabName: string;
+  totalAmount: number;
+  shares: HeirShare[];
+  differences: {
+    heirName: string;
+    amountDiff: number;
+    percentageDiff: number;
+    explanation: string;
+  }[];
+  summary: {
+    isIdentical: boolean;
+    majorDifferences: number;
+    minorDifferences: number;
+    recommendation?: string;
+  };
+}
+
+export interface ComparisonStats {
+  totalComparisons: number;
+  mostCommonMadhab: MadhhabType | null;
+  averageDifferences: number;
+  madhabAgreement: Record<MadhhabType, number>;
+}
 
 // ============================================================================
 // 1. useCalculator Hook - إدارة حالة الحسابات الأساسية
@@ -270,19 +301,20 @@ export function useAuditLog() {
 }
 
 // ============================================================================
-// 3. useResults Hook - إدارة حالة النتائج والتخزين المؤقت
+// 3. useResults Hook - إدارة حالة النتائج والتخزين المؤقت مع مقارنة متقدمة
 // ============================================================================
 
 export function useResults() {
   const [currentResult, setCurrentResult] = useState<CalculationResult | null>(null);
   const [previousResults, setPreviousResults] = useState<CalculationResult[]>([]);
   const [comparisonMode, setComparisonMode] = useState(false);
+  const [comparisonResults, setComparisonResults] = useState<ComparisonResult[]>([]);
 
   const saveResult = useCallback((result: CalculationResult) => {
     setCurrentResult(result);
     setPreviousResults((prev) => {
       const updated = [result, ...prev];
-      return updated.slice(0, 10);
+      return updated.slice(0, 10); // Keep last 10 results
     });
   }, []);
 
@@ -290,60 +322,306 @@ export function useResults() {
     setCurrentResult(null);
     setPreviousResults([]);
     setComparisonMode(false);
+    setComparisonResults([]);
   }, []);
 
-  const compareResults = useCallback(
-    (result1: CalculationResult, result2: CalculationResult) => {
-      const comparison = {
-        isSame: true,
-        differences: [] as string[],
-        totalShareDifference: 0,
+  /**
+   * Advanced comparison between multiple madhhab results
+   */
+  const compareMadhhabs = useCallback((
+    results: CalculationResult[]
+  ): ComparisonResult[] => {
+    if (results.length < 2) return [];
+
+    const comparisons: ComparisonResult[] = [];
+
+    // Use the first result as baseline, or find a common baseline
+    const baseline = results[0];
+    
+    for (let i = 1; i < results.length; i++) {
+      const other = results[i];
+      
+      // Calculate differences for each heir
+      const differences = [];
+      
+      // Get all unique heir keys from both results
+      const allHeirs = new Set([
+        ...baseline.shares.map(s => s.key).filter(Boolean),
+        ...other.shares.map(s => s.key).filter(Boolean)
+      ]);
+
+      let totalBaseline = 0;
+      let totalOther = 0;
+
+      for (const heirKey of allHeirs) {
+        const baselineShare = baseline.shares.find(s => s.key === heirKey);
+        const otherShare = other.shares.find(s => s.key === heirKey);
+        
+        const baselineAmount = baselineShare?.amount || 0;
+        const otherAmount = otherShare?.amount || 0;
+        
+        totalBaseline += baselineAmount;
+        totalOther += otherAmount;
+        
+        const amountDiff = otherAmount - baselineAmount;
+        const percentageDiff = baselineAmount > 0 
+          ? (amountDiff / baselineAmount) * 100 
+          : otherAmount > 0 ? 100 : 0;
+        
+        // Only include if there's a significant difference (> 0.01)
+        if (Math.abs(amountDiff) > 0.01) {
+          let explanation = '';
+          
+          // Generate explanation based on madhab differences
+          if (baselineShare && !otherShare) {
+            explanation = `محجوب في المذهب ${other.madhhabName}`;
+          } else if (!baselineShare && otherShare) {
+            explanation = `يرث في المذهب ${other.madhhabName} فقط`;
+          } else {
+            explanation = generateDifferenceExplanation(
+              heirKey as string,
+              baseline.madhab,
+              other.madhab,
+              amountDiff
+            );
+          }
+          
+          differences.push({
+            heirName: baselineShare?.name || otherShare?.name || heirKey as string,
+            amountDiff,
+            percentageDiff,
+            explanation
+          });
+        }
+      }
+
+      // Determine if results are identical (within tolerance)
+      const isIdentical = differences.length === 0 && 
+        Math.abs(totalBaseline - totalOther) < 0.01;
+
+      // Categorize differences
+      const majorDifferences = differences.filter(d => 
+        Math.abs(d.percentageDiff) > 10 || Math.abs(d.amountDiff) > 1000
+      ).length;
+      
+      const minorDifferences = differences.length - majorDifferences;
+
+      // Generate recommendation
+      let recommendation = '';
+      if (isIdentical) {
+        recommendation = 'النتائج متطابقة في كلا المذهبين';
+      } else if (majorDifferences > 0) {
+        recommendation = `يوجد اختلافات جوهرية في ${majorDifferences} من الورثة. يوصى باستشارة متخصص.`;
+      } else if (minorDifferences > 0) {
+        recommendation = 'اختلافات طفيفة بين المذهبين - يمكن اختيار أي منهما';
+      }
+
+      // Push the comparison result
+      comparisons.push({
+        madhab: other.madhab,
+        madhhabName: other.madhhabName,
+        totalAmount: totalOther,
+        shares: other.shares,
+        differences,
+        summary: {
+          isIdentical,
+          majorDifferences,
+          minorDifferences,
+          recommendation
+        }
+      });
+    }
+
+    return comparisons;
+  }, []);
+
+  /**
+   * Compare current result with previous results
+   */
+  const compareWithPrevious = useCallback((
+    result: CalculationResult
+  ): ComparisonResult[] => {
+    const allResults = [result, ...previousResults.slice(0, 3)]; // Compare with up to 3 previous
+    return compareMadhhabs(allResults);
+  }, [previousResults, compareMadhhabs]);
+
+  /**
+   * Compare specific results by index in previousResults
+   */
+  const compareSpecific = useCallback((
+    indices: number[]
+  ): ComparisonResult[] => {
+    const results = indices
+      .map(index => previousResults[index])
+      .filter(r => r !== undefined) as CalculationResult[];
+    
+    return compareMadhhabs(results);
+  }, [previousResults, compareMadhhabs]);
+
+  /**
+   * Generate HTML report for comparison
+   */
+  const generateComparisonReport = useCallback((
+    comparisons: ComparisonResult[]
+  ): string => {
+    if (comparisons.length === 0) return '';
+
+    const baseline = currentResult;
+    if (!baseline) return '';
+
+    let html = `
+      <!DOCTYPE html>
+      <html dir="rtl" lang="ar">
+      <head>
+        <meta charset="UTF-8">
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+          h1 { color: #1976d2; text-align: center; }
+          table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+          th { background-color: #1976d2; color: white; padding: 10px; }
+          td { padding: 10px; border-bottom: 1px solid #ddd; }
+          .identical { color: #4caf50; font-weight: bold; }
+          .different { color: #ff9800; font-weight: bold; }
+          .major-diff { color: #d32f2f; font-weight: bold; }
+          .summary { background-color: #f5f5f5; padding: 15px; border-radius: 5px; }
+        </style>
+      </head>
+      <body>
+        <h1>مقارنة نتائج المذاهب الفقهية</h1>
+        <p>تاريخ التقرير: ${new Date().toLocaleDateString('ar-SA')}</p>
+        
+        <h2>المذهب الأساسي: ${baseline.madhhabName}</h2>
+        <p>إجمالي التركة: ${baseline.shares.reduce((s, sh) => s + sh.amount, 0).toFixed(2)} ر.س</p>
+    `;
+
+    comparisons.forEach(comp => {
+      html += `
+        <h3>المقارنة مع: ${comp.madhhabName}</h3>
+        <div class="summary">
+          <p>إجمالي التركة: ${comp.totalAmount.toFixed(2)} ر.س</p>
+          <p>حالة المقارنة: ${
+            comp.summary.isIdentical 
+              ? '<span class="identical">✓ متطابقة</span>' 
+              : '<span class="different">⚠️ مختلفة</span>'
+          }</p>
+          ${comp.summary.recommendation ? `<p>توصية: ${comp.summary.recommendation}</p>` : ''}
+        </div>
+      `;
+
+      if (comp.differences.length > 0) {
+        html += `
+          <h4>الاختلافات:</h4>
+          <table>
+            <tr>
+              <th>الوارث</th>
+              <th>الفرق (ر.س)</th>
+              <th>الفرق (%)</th>
+              <th>التفسير</th>
+            </tr>
+        `;
+
+        comp.differences.forEach(diff => {
+          const diffClass = Math.abs(diff.percentageDiff) > 10 ? 'major-diff' : 'different';
+          html += `
+            <tr>
+              <td>${diff.heirName}</td>
+              <td class="${diffClass}">${diff.amountDiff > 0 ? '+' : ''}${diff.amountDiff.toFixed(2)}</td>
+              <td class="${diffClass}">${diff.percentageDiff > 0 ? '+' : ''}${diff.percentageDiff.toFixed(1)}%</td>
+              <td>${diff.explanation}</td>
+            </tr>
+          `;
+        });
+
+        html += `</table>`;
+      } else {
+        html += `<p class="identical">✓ لا توجد اختلافات في توزيع الورثة</p>`;
+      }
+    });
+
+    html += `
+        <div class="summary">
+          <p><strong>ملخص عام:</strong></p>
+          <p>تمت مقارنة ${comparisons.length + 1} مذاهب</p>
+          <p>${comparisons.filter(c => c.summary.isIdentical).length} مذاهب متطابقة مع الأساسي</p>
+          <p>${comparisons.filter(c => !c.summary.isIdentical && c.summary.majorDifferences === 0).length} مذاهب باختلافات طفيفة</p>
+          <p>${comparisons.filter(c => c.summary.majorDifferences > 0).length} مذاهب باختلافات جوهرية</p>
+        </div>
+      </body>
+      </html>
+    `;
+
+    return html;
+  }, [currentResult]);
+
+  /**
+   * Get comparison statistics
+   */
+  const getComparisonStats = useCallback((): ComparisonStats => {
+    if (previousResults.length === 0) {
+      return {
+        totalComparisons: 0,
+        mostCommonMadhab: null,
+        averageDifferences: 0,
+        madhabAgreement: {
+          shafii: 0,
+          hanafi: 0,
+          maliki: 0,
+          hanbali: 0
+        }
       };
+    }
 
-      if (result1.madhab !== result2.madhab) {
-        comparison.isSame = false;
-        comparison.differences.push(
-          `المذهب: ${result1.madhab} vs ${result2.madhab}`
-        );
-      }
-
-      if (result1.shares.length !== result2.shares.length) {
-        comparison.isSame = false;
-        comparison.differences.push(
-          `عدد الحصص: ${result1.shares.length} vs ${result2.shares.length}`
-        );
-      }
-
-      const total1 = result1.shares.reduce((sum, s) => sum + s.amount, 0);
-      const total2 = result2.shares.reduce((sum, s) => sum + s.amount, 0);
-      const totalDiff = Math.abs(total1 - total2);
-
-      if (totalDiff > 0.01) {
-        comparison.isSame = false;
-        comparison.differences.push(`المبلغ الإجمالي: ${total1} vs ${total2}`);
-        comparison.totalShareDifference = totalDiff;
-      }
-
-      return comparison;
-    },
-    []
-  );
-
-  const getMostUsedMadhab = useCallback(() => {
-    const madhabs: Record<MadhhabType, number> = {
+    const madhabCount: Record<MadhhabType, number> = {
       shafii: 0,
       hanafi: 0,
       maliki: 0,
-      hanbali: 0,
+      hanbali: 0
     };
 
-    previousResults.forEach((r) => {
-      madhabs[r.madhab]++;
+    previousResults.forEach(r => {
+      madhabCount[r.madhab] = (madhabCount[r.madhab] || 0) + 1;
     });
 
-    return (Object.entries(madhabs).sort(([, a], [, b]) => b - a)[0]?.[0] ||
-      'shafii') as MadhhabType;
-  }, [previousResults]);
+    const mostCommonMadhab = Object.entries(madhabCount)
+      .sort(([,a], [,b]) => b - a)[0]?.[0] as MadhhabType || null;
+
+    // Calculate average differences between consecutive results
+    let totalDifferences = 0;
+    let comparisonCount = 0;
+
+    for (let i = 0; i < previousResults.length - 1; i++) {
+      const comparisons = compareMadhhabs([previousResults[i], previousResults[i + 1]]);
+      if (comparisons.length > 0) {
+        totalDifferences += comparisons[0].differences.length;
+        comparisonCount++;
+      }
+    }
+
+    const averageDifferences = comparisonCount > 0 
+      ? totalDifferences / comparisonCount 
+      : 0;
+
+    return {
+      totalComparisons: previousResults.length,
+      mostCommonMadhab,
+      averageDifferences,
+      madhabAgreement: madhabCount
+    };
+  }, [previousResults, compareMadhhabs]);
+
+  const getResultsStats = useCallback(() => {
+    return {
+      totalResults: previousResults.length,
+      currentResult,
+      previousResults,
+      comparisonMode,
+      comparisonResults,
+      comparisons: currentResult && previousResults.length > 1
+        ? compareWithPrevious(currentResult)
+        : [],
+      stats: getComparisonStats(),
+    };
+  }, [currentResult, previousResults, comparisonMode, comparisonResults, compareWithPrevious, getComparisonStats]);
 
   const getAverageResult = useCallback(() => {
     if (previousResults.length === 0) return null;
@@ -357,34 +635,44 @@ export function useResults() {
     return {
       count: previousResults.length,
       averageAmount: avgAmount,
-      mostUsedMadhab: getMostUsedMadhab(),
+      mostUsedMadhab: getComparisonStats().mostCommonMadhab,
     };
-  }, [previousResults, getMostUsedMadhab]);
-
-  const getResultsStats = useCallback(() => {
-    return {
-      totalResults: previousResults.length,
-      currentResult,
-      previousResults,
-      comparison:
-        currentResult && previousResults.length > 1
-          ? compareResults(currentResult, previousResults[1])
-          : null,
-      average: getAverageResult(),
-    };
-  }, [currentResult, previousResults, compareResults, getAverageResult]);
+  }, [previousResults, getComparisonStats]);
 
   return {
     currentResult,
     previousResults,
     comparisonMode,
+    comparisonResults,
     saveResult,
     clearResults,
-    compareResults,
+    compareMadhhabs,
+    compareWithPrevious,
+    compareSpecific,
+    generateComparisonReport,
+    getComparisonStats,
     getResultsStats,
     getAverageResult,
     setComparisonMode,
   };
+}
+
+// Helper function to generate explanations for differences
+function generateDifferenceExplanation(
+  heirKey: string,
+  madhab1: MadhhabType,
+  madhab2: MadhhabType,
+  amountDiff: number
+): string {
+  const explanations: Record<string, string> = {
+    'grandfather': 'الجد مع الإخوة - يختلف بين المذاهب',
+    'mother': 'الأم مع الأب والزوج - العمرية',
+    'granddaughter': 'بنت الابن مع البنات',
+    'full_sister': 'الأخت الشقيقة مع الإخوة',
+    'paternal_sister': 'الأخت لأب مع الأخوات',
+  };
+
+  return explanations[heirKey] || 'اختلاف في قواعد المذهب';
 }
 
 // ============================================================================
