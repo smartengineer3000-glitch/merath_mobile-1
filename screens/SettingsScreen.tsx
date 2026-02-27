@@ -1,6 +1,7 @@
 /**
  * @file screens/SettingsScreen.tsx
  * @description Professional Settings Screen with persistence
+ * Uses ThemeProvider for theme and SettingsContext for preferences
  */
 
 import React, { useEffect, useState, useCallback } from 'react';
@@ -20,14 +21,13 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useTheme } from '../lib/design/theme';
+import { useAppTheme } from '../lib/context/ThemeProvider';
 import { useSettings } from '../lib/context/SettingsContext';
 import { languages } from '../lib/i18n';
 
 const { width } = Dimensions.get('window');
 const STORAGE_KEYS = {
   LANGUAGE: '@merath_settings_language',
-  THEME: '@merath_settings_theme',
   NOTIFICATIONS: '@merath_settings_notifications',
   ROUNDING: '@merath_settings_rounding',
   AUTO_SAVE: '@merath_settings_auto_save',
@@ -39,8 +39,15 @@ interface SettingsScreenProps {
 
 export default function SettingsScreen({ navigation }: SettingsScreenProps) {
   const { t, i18n } = useTranslation();
-  const { theme } = useTheme();
-  const { state, setLanguage, setTheme, setNotifications, setRoundingDecimals, setAutoSave } = useSettings();
+  const { theme, mode: themeMode, setThemeMode } = useAppTheme();
+  const { 
+    state, 
+    setLanguage, 
+    setNotifications, 
+    setRoundingDecimals, 
+    setAutoSave 
+  } = useSettings();
+  
   const [versionInfo] = useState('1.1.3');
   const [isLoading, setIsLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
@@ -56,12 +63,6 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
         if (savedLang && Object.keys(languages).includes(savedLang)) {
           setLanguage(savedLang as keyof typeof languages);
           i18n.changeLanguage(savedLang);
-        }
-        
-        // Load theme
-        const savedTheme = await AsyncStorage.getItem(STORAGE_KEYS.THEME);
-        if (savedTheme === 'light' || savedTheme === 'dark') {
-          setTheme(savedTheme);
         }
         
         // Load notifications
@@ -89,7 +90,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     };
     
     loadSettings();
-  }, [setLanguage, setTheme, setNotifications, setRoundingDecimals, setAutoSave, i18n]);
+  }, [setLanguage, setNotifications, setRoundingDecimals, setAutoSave, i18n]);
 
   // Save settings with debounce
   const saveSettings = useCallback(async () => {
@@ -97,7 +98,6 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
       setSaveStatus('saving');
       
       await AsyncStorage.setItem(STORAGE_KEYS.LANGUAGE, state.language);
-      await AsyncStorage.setItem(STORAGE_KEYS.THEME, state.themeMode);
       await AsyncStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, String(state.notifications));
       await AsyncStorage.setItem(STORAGE_KEYS.ROUNDING, String(state.roundingDecimals));
       await AsyncStorage.setItem(STORAGE_KEYS.AUTO_SAVE, String(state.autoSave));
@@ -112,7 +112,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
       );
       setSaveStatus('idle');
     }
-  }, [state]);
+  }, [state, t]);
 
   // Auto-save when settings change
   useEffect(() => {
@@ -124,27 +124,22 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
   const handleLanguageChange = useCallback(async (lang: keyof typeof languages) => {
     setLanguage(lang);
     i18n.changeLanguage(lang);
-    // Save is handled by useEffect
   }, [setLanguage, i18n]);
 
   const handleThemeChange = useCallback((mode: 'light' | 'dark') => {
-    setTheme(mode);
-    // Save is handled by useEffect
-  }, [setTheme]);
+    setThemeMode(mode);
+  }, [setThemeMode]);
 
   const handleDecimalChange = useCallback((value: number) => {
     setRoundingDecimals(Math.max(0, Math.min(6, value)));
-    // Save is handled by useEffect
   }, [setRoundingDecimals]);
 
   const handleNotificationToggle = useCallback((value: boolean) => {
     setNotifications(value);
-    // Save is handled by useEffect
   }, [setNotifications]);
 
   const handleAutoSaveToggle = useCallback((value: boolean) => {
     setAutoSave(value);
-    // Save is handled by useEffect
   }, [setAutoSave]);
 
   const openLink = useCallback(async (url: string) => {
@@ -242,7 +237,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
                 key={mode}
                 style={[
                   styles.themeCard,
-                  state.themeMode === mode && styles.themeCardActive,
+                  themeMode === mode && styles.themeCardActive,
                 ]}
                 onPress={() => handleThemeChange(mode)}
               >

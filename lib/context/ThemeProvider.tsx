@@ -1,13 +1,13 @@
 /**
  * @file lib/context/ThemeProvider.tsx
- * @description Theme provider component with light/dark mode support
- * Manages theme context and persists preferences to AsyncStorage
+ * @description Single source of truth for theme management
+ * Uses the comprehensive design system from lib/design/theme.ts
  */
 
 import React, { createContext, useContext, useReducer, useCallback, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useColorScheme } from 'react-native';
-import { lightTheme, darkTheme, ThemeMode, Theme, ThemeContext as BaseThemeContext } from '../design/theme';
+import { lightTheme, darkTheme, Theme, ThemeMode } from '../design/theme';
 
 interface ThemeContextValue {
   mode: ThemeMode;
@@ -17,9 +17,9 @@ interface ThemeContextValue {
   setThemeMode: (mode: ThemeMode) => void;
 }
 
-const ThemeContextValue = createContext<ThemeContextValue | undefined>(undefined);
+const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
-type ThemeAction =
+type ThemeAction = 
   | { type: 'SET_MODE'; payload: ThemeMode }
   | { type: 'TOGGLE_THEME' }
   | { type: 'LOAD_FROM_STORAGE'; payload: ThemeMode };
@@ -39,39 +39,36 @@ const themeReducer = (state: ThemeMode, action: ThemeAction): ThemeMode => {
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const systemScheme = useColorScheme();
-  const initialMode: ThemeMode =
-    systemScheme === 'dark' ? 'dark' : 'light';
+  const [mode, dispatch] = useReducer(
+    themeReducer, 
+    systemScheme === 'dark' ? 'dark' : 'light'
+  );
 
-  const [mode, dispatch] = useReducer(themeReducer, initialMode);
-  const theme = mode === 'light' ? lightTheme : darkTheme;
-
-  // Load saved theme preference on mount
+  // Load saved preference
   useEffect(() => {
-    const loadThemePreference = async () => {
+    const loadTheme = async () => {
       try {
         const saved = await AsyncStorage.getItem('@merath_theme_mode');
         if (saved === 'light' || saved === 'dark') {
           dispatch({ type: 'LOAD_FROM_STORAGE', payload: saved });
         }
       } catch (error) {
-        console.error('Failed to load theme preference:', error);
+        console.error('Failed to load theme:', error);
       }
     };
-
-    loadThemePreference();
+    loadTheme();
   }, []);
 
-  // Save theme preference when it changes
+  // Save preference when changed
   useEffect(() => {
-    const saveThemePreference = async () => {
+    const saveTheme = async () => {
       try {
         await AsyncStorage.setItem('@merath_theme_mode', mode);
       } catch (error) {
-        console.error('Failed to save theme preference:', error);
+        console.error('Failed to save theme:', error);
       }
     };
-
-    saveThemePreference();
+    saveTheme();
   }, [mode]);
 
   const toggleTheme = useCallback(() => {
@@ -82,23 +79,27 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     dispatch({ type: 'SET_MODE', payload: newMode });
   }, []);
 
-  const value: ThemeContextValue = {
+  // Use your comprehensive design system themes
+  const theme = mode === 'light' ? lightTheme : darkTheme;
+  const isDark = mode === 'dark';
+
+  const value = {
     mode,
     theme,
-    isDark: mode === 'dark',
+    isDark,
     toggleTheme,
     setThemeMode,
   };
 
   return (
-    <ThemeContextValue.Provider value={value}>
+    <ThemeContext.Provider value={value}>
       {children}
-    </ThemeContextValue.Provider>
+    </ThemeContext.Provider>
   );
 };
 
 export const useAppTheme = (): ThemeContextValue => {
-  const context = useContext(ThemeContextValue);
+  const context = useContext(ThemeContext);
   if (!context) {
     throw new Error('useAppTheme must be used within ThemeProvider');
   }
