@@ -42,7 +42,7 @@ export default function CalculatorScreen({ navigation }: CalculatorScreenProps) 
   const { theme } = useTheme();
   const { state: settings } = useSettings();
   
-  // Refs for scroll and input management
+  // Refs for scroll and input management - FIXED with proper typing
   const scrollViewRef = useRef<ScrollView>(null);
   const estateInputRef = useRef<TextInput>(null);
   const funeralInputRef = useRef<TextInput>(null);
@@ -98,7 +98,7 @@ export default function CalculatorScreen({ navigation }: CalculatorScreenProps) 
     };
   }, []);
 
-  // Scroll to focused input
+  // Scroll to focused input - FIXED with proper type checking
   const scrollToInput = useCallback((inputRef: React.RefObject<TextInput>) => {
     setTimeout(() => {
       if (inputRef.current && scrollViewRef.current) {
@@ -117,7 +117,7 @@ export default function CalculatorScreen({ navigation }: CalculatorScreenProps) 
     }, 100);
   }, []);
 
-  // Input focus handlers
+  // Input focus handlers - FIXED with proper type casting
   const handleFocus = useCallback((inputName: string, ref: React.RefObject<TextInput>) => {
     setFocusedInput(inputName);
     scrollToInput(ref);
@@ -326,7 +326,7 @@ export default function CalculatorScreen({ navigation }: CalculatorScreenProps) 
                   keyboardType="decimal-pad"
                   returnKeyType="next"
                   onSubmitEditing={() => funeralInputRef.current?.focus()}
-                  onFocus={() => handleFocus('total', estateInputRef)}
+                  onFocus={() => handleFocus('total', estateInputRef as React.RefObject<TextInput>)}
                   blurOnSubmit={false}
                 />
               </View>
@@ -346,7 +346,7 @@ export default function CalculatorScreen({ navigation }: CalculatorScreenProps) 
                   keyboardType="decimal-pad"
                   returnKeyType="next"
                   onSubmitEditing={() => debtsInputRef.current?.focus()}
-                  onFocus={() => handleFocus('funeral', funeralInputRef)}
+                  onFocus={() => handleFocus('funeral', funeralInputRef as React.RefObject<TextInput>)}
                   blurOnSubmit={false}
                 />
               </View>
@@ -366,7 +366,7 @@ export default function CalculatorScreen({ navigation }: CalculatorScreenProps) 
                   keyboardType="decimal-pad"
                   returnKeyType="next"
                   onSubmitEditing={() => willInputRef.current?.focus()}
-                  onFocus={() => handleFocus('debts', debtsInputRef)}
+                  onFocus={() => handleFocus('debts', debtsInputRef as React.RefObject<TextInput>)}
                   blurOnSubmit={false}
                 />
               </View>
@@ -386,7 +386,7 @@ export default function CalculatorScreen({ navigation }: CalculatorScreenProps) 
                   keyboardType="decimal-pad"
                   returnKeyType="done"
                   onSubmitEditing={dismissKeyboard}
-                  onFocus={() => handleFocus('will', willInputRef)}
+                  onFocus={() => handleFocus('will', willInputRef as React.RefObject<TextInput>)}
                 />
               </View>
 
