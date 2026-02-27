@@ -1,10 +1,9 @@
 /**
  * @file screens/CalculatorScreen.tsx
- * @description Main calculator screen for Islamic inheritance calculations
- * Fully integrated with existing hooks and components
+ * @description Main calculator screen with enhanced keyboard handling
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -12,10 +11,14 @@ import {
   ScrollView,
   SafeAreaView,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
   Alert,
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  TextInput,
+  Dimensions,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -28,6 +31,8 @@ import EstateInput from '../components/EstateInput';
 import MadhhabSelector from '../components/MadhhabSelector';
 import type { MadhhabType } from '../lib/inheritance/types';
 
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+
 interface CalculatorScreenProps {
   navigation?: any;
 }
@@ -36,6 +41,18 @@ export default function CalculatorScreen({ navigation }: CalculatorScreenProps) 
   const { t } = useTranslation();
   const { theme } = useTheme();
   const { state: settings } = useSettings();
+  
+  // Refs for scroll and input management
+  const scrollViewRef = useRef<ScrollView>(null);
+  const estateInputRef = useRef<TextInput>(null);
+  const funeralInputRef = useRef<TextInput>(null);
+  const debtsInputRef = useRef<TextInput>(null);
+  const willInputRef = useRef<TextInput>(null);
+  
+  // State for keyboard
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [focusedInput, setFocusedInput] = useState<string | null>(null);
   
   // Core hooks
   const { 
@@ -48,7 +65,6 @@ export default function CalculatorScreen({ navigation }: CalculatorScreenProps) 
     resetCalculator 
   } = useCalculator();
   
-  // Madhab is managed by its own hook, not in settings
   const { madhab, changeMadhab } = useMadhab('shafii');
   const { heirs, addHeir, updateHeir, removeHeir, clearHeirs } = useHeirs();
   const { logCalculation } = useAuditLog();
@@ -56,6 +72,61 @@ export default function CalculatorScreen({ navigation }: CalculatorScreenProps) 
   
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [showResults, setShowResults] = useState(false);
+
+  // Keyboard event listeners
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      (event) => {
+        setKeyboardVisible(true);
+        setKeyboardHeight(event.endCoordinates.height);
+      }
+    );
+    
+    const keyboardDidHideListener = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false);
+        setKeyboardHeight(0);
+        setFocusedInput(null);
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  // Scroll to focused input
+  const scrollToInput = useCallback((inputRef: React.RefObject<TextInput>) => {
+    setTimeout(() => {
+      if (inputRef.current && scrollViewRef.current) {
+        inputRef.current.measureLayout(
+          scrollViewRef.current.getInnerViewNode(),
+          (x, y) => {
+            // Scroll to the input with offset to account for keyboard
+            scrollViewRef.current?.scrollTo({
+              y: y - 100,
+              animated: true,
+            });
+          },
+          () => {}
+        );
+      }
+    }, 100);
+  }, []);
+
+  // Input focus handlers
+  const handleFocus = useCallback((inputName: string, ref: React.RefObject<TextInput>) => {
+    setFocusedInput(inputName);
+    scrollToInput(ref);
+  }, [scrollToInput]);
+
+  // Dismiss keyboard
+  const dismissKeyboard = useCallback(() => {
+    Keyboard.dismiss();
+  }, []);
 
   // Transform heirs array to HeirsData object for calculation
   const getHeirsData = useCallback(() => {
@@ -70,12 +141,10 @@ export default function CalculatorScreen({ navigation }: CalculatorScreenProps) 
   const validateInputs = useCallback((): boolean => {
     const errors: string[] = [];
     
-    // Validate estate
     if (!estateData.total || estateData.total <= 0) {
       errors.push('يجب إدخال المبلغ الإجمالي للتركة');
     }
     
-    // Validate heirs
     if (heirs.length === 0) {
       errors.push('يجب إضافة واحد على الأقل من الورثة');
     } else {
@@ -85,7 +154,6 @@ export default function CalculatorScreen({ navigation }: CalculatorScreenProps) 
       }
     }
     
-    // Validate madhab
     if (!madhab) {
       errors.push('يجب اختيار المذهب الفقهي');
     }
@@ -96,6 +164,8 @@ export default function CalculatorScreen({ navigation }: CalculatorScreenProps) 
 
   // Handle calculation
   const handleCalculate = useCallback(async () => {
+    dismissKeyboard();
+    
     if (!validateInputs()) {
       Alert.alert(
         'خطأ في التحقق',
@@ -110,7 +180,6 @@ export default function CalculatorScreen({ navigation }: CalculatorScreenProps) 
       const calculationResult = await calculateWithMethod(madhab, heirsData);
       
       if (calculationResult && calculationResult.success) {
-        // Log to audit trail
         logCalculation(
           madhab,
           estateData,
@@ -119,9 +188,13 @@ export default function CalculatorScreen({ navigation }: CalculatorScreenProps) 
           calculationResult.calculationTime || 0
         );
         
-        // Save to results history
         saveResult(calculationResult);
         setShowResults(true);
+        
+        // Scroll to results
+        setTimeout(() => {
+          scrollViewRef.current?.scrollToEnd({ animated: true });
+        }, 300);
         
         Alert.alert(
           'تم بنجاح',
@@ -142,10 +215,12 @@ export default function CalculatorScreen({ navigation }: CalculatorScreenProps) 
         [{ text: 'حسناً' }]
       );
     }
-  }, [validateInputs, getHeirsData, calculateWithMethod, madhab, estateData, logCalculation, saveResult, validationErrors]);
+  }, [validateInputs, getHeirsData, calculateWithMethod, madhab, estateData, logCalculation, saveResult, validationErrors, dismissKeyboard]);
 
   // Handle reset
   const handleReset = useCallback(() => {
+    dismissKeyboard();
+    
     Alert.alert(
       'تأكيد المسح',
       'هل أنت متأكد من مسح جميع البيانات؟',
@@ -163,14 +238,14 @@ export default function CalculatorScreen({ navigation }: CalculatorScreenProps) 
         }
       ]
     );
-  }, [resetCalculator, clearHeirs]);
+  }, [resetCalculator, clearHeirs, dismissKeyboard]);
 
   // Auto-validate on changes
   useEffect(() => {
     validateInputs();
   }, [estateData, heirs, madhab, validateInputs]);
 
-  const styles = createStyles(theme);
+  const styles = createStyles(theme, keyboardVisible, keyboardHeight);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -179,182 +254,311 @@ export default function CalculatorScreen({ navigation }: CalculatorScreenProps) 
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
       >
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.contentContainer}
-          scrollEnabled={true}
-        >
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.headerTitle}>حاسبة المواريث الشرعية</Text>
-            <Text style={styles.headerSubtitle}>
-              Islamic Inheritance Calculator
-            </Text>
-            
-            {/* Validation Summary */}
-            {validationErrors.length > 0 && (
-              <View style={styles.validationSummary}>
-                <MaterialCommunityIcons name="alert-circle" size={20} color="#fff" />
-                <Text style={styles.validationSummaryText}>
-                  {validationErrors.length} {validationErrors.length === 1 ? 'خطأ' : 'أخطاء'} تحتاج إلى مراجعة
-                </Text>
-              </View>
-            )}
-          </View>
-
-          {/* Madhab Selection */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <MaterialCommunityIcons
-                name="school"
-                size={24}
-                color={theme.colors.primary.main}
-              />
-              <Text style={styles.sectionTitle}>
-                اختر المذهب الفقهي
+        <TouchableWithoutFeedback onPress={dismissKeyboard}>
+          <ScrollView
+            ref={scrollViewRef}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.contentContainer}
+            scrollEnabled={true}
+            keyboardShouldPersistTaps="handled"
+          >
+            {/* Header */}
+            <View style={styles.header}>
+              <Text style={styles.headerTitle}>حاسبة المواريث الشرعية</Text>
+              <Text style={styles.headerSubtitle}>
+                Islamic Inheritance Calculator
               </Text>
-            </View>
-            <MadhhabSelector
-              onMadhhabChange={changeMadhab}
-            />
-          </View>
-
-          {/* Estate Input */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <MaterialCommunityIcons
-                name="currency-usd"
-                size={24}
-                color={theme.colors.primary.main}
-              />
-              <Text style={styles.sectionTitle}>
-                بيانات التركة
-              </Text>
-            </View>
-            <EstateInput
-              onEstateChange={updateEstateData}
-              initialEstate={estateData}
-            />
-          </View>
-
-          {/* Heir Selection */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <MaterialCommunityIcons
-                name="account-group"
-                size={24}
-                color={theme.colors.primary.main}
-              />
-              <Text style={styles.sectionTitle}>
-                إضافة الوارثون
-              </Text>
-              {heirs.length > 0 && (
-                <View style={styles.heirCountBadge}>
-                  <Text style={styles.heirCountText}>
-                    {heirs.reduce((sum, h) => sum + h.count, 0)}
+              
+              {/* Validation Summary */}
+              {validationErrors.length > 0 && (
+                <View style={styles.validationSummary}>
+                  <MaterialCommunityIcons name="alert-circle" size={20} color="#fff" />
+                  <Text style={styles.validationSummaryText}>
+                    {validationErrors.length} {validationErrors.length === 1 ? 'خطأ' : 'أخطاء'} تحتاج إلى مراجعة
                   </Text>
                 </View>
               )}
             </View>
-            <HeirSelector
-              onHeirsChange={() => {}}
-            />
-          </View>
 
-          {/* Action Buttons */}
-          <View style={styles.actionContainer}>
-            <TouchableOpacity
-              style={[
-                styles.button,
-                styles.calculateButton,
-                (isCalculating || validationErrors.length > 0) && styles.buttonDisabled
-              ]}
-              onPress={handleCalculate}
-              disabled={isCalculating || validationErrors.length > 0}
-            >
-              {isCalculating ? (
-                <>
-                  <ActivityIndicator size="small" color="#ffffff" />
-                  <Text style={styles.buttonText}>
-                    جاري الحساب...
-                  </Text>
-                </>
-              ) : (
-                <>
-                  <MaterialCommunityIcons
-                    name="calculator"
-                    size={20}
-                    color="#ffffff"
-                  />
-                  <Text style={styles.buttonText}>
-                    حساب الميراث
-                  </Text>
-                </>
-              )}
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.button, styles.resetButton]}
-              onPress={handleReset}
-              disabled={isCalculating}
-            >
-              <MaterialCommunityIcons
-                name="refresh"
-                size={20}
-                color={theme.colors.primary.main}
-              />
-              <Text style={[styles.buttonText, styles.resetButtonText]}>
-                مسح الكل
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Error Display */}
-          {calcError && (
-            <View style={styles.errorContainer}>
-              <MaterialCommunityIcons name="alert-circle" size={24} color="#d32f2f" />
-              <Text style={styles.errorText}>{calcError}</Text>
-            </View>
-          )}
-
-          {/* Results */}
-          {showResults && result && result.success && (
+            {/* Madhab Selection */}
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
                 <MaterialCommunityIcons
-                  name="chart-pie"
+                  name="school"
                   size={24}
                   color={theme.colors.primary.main}
                 />
                 <Text style={styles.sectionTitle}>
-                  نتائج التوزيع
+                  اختر المذهب الفقهي
                 </Text>
               </View>
-              <ResultsDisplay
-                result={result}
-                onClose={() => setShowResults(false)}
+              <MadhhabSelector
+                onMadhhabChange={changeMadhab}
               />
             </View>
-          )}
 
-          {/* Quick Stats (if available) */}
-          {previousResults.length > 0 && (
-            <View style={styles.statsContainer}>
-              <Text style={styles.statsTitle}>
-                النشاط الأخير
-              </Text>
-              <Text style={styles.statsText}>
-                لديك {previousResults.length} عملية حساب سابقة
-              </Text>
+            {/* Estate Input with enhanced keyboard handling */}
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <MaterialCommunityIcons
+                  name="currency-usd"
+                  size={24}
+                  color={theme.colors.primary.main}
+                />
+                <Text style={styles.sectionTitle}>
+                  بيانات التركة
+                </Text>
+              </View>
+              
+              {/* Custom Estate Input with refs for keyboard navigation */}
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>إجمالي التركة</Text>
+                <TextInput
+                  ref={estateInputRef}
+                  style={[
+                    styles.input,
+                    focusedInput === 'total' && styles.inputFocused
+                  ]}
+                  placeholder="مثال: 100000"
+                  placeholderTextColor={theme.colors.neutral.light400}
+                  value={estateData.total?.toString() || ''}
+                  onChangeText={(text) => updateEstateData({ total: parseFloat(text) || 0 })}
+                  keyboardType="decimal-pad"
+                  returnKeyType="next"
+                  onSubmitEditing={() => funeralInputRef.current?.focus()}
+                  onFocus={() => handleFocus('total', estateInputRef)}
+                  blurOnSubmit={false}
+                />
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>تكاليف التجهيز</Text>
+                <TextInput
+                  ref={funeralInputRef}
+                  style={[
+                    styles.input,
+                    focusedInput === 'funeral' && styles.inputFocused
+                  ]}
+                  placeholder="اختياري"
+                  placeholderTextColor={theme.colors.neutral.light400}
+                  value={estateData.funeral?.toString() || ''}
+                  onChangeText={(text) => updateEstateData({ funeral: parseFloat(text) || 0 })}
+                  keyboardType="decimal-pad"
+                  returnKeyType="next"
+                  onSubmitEditing={() => debtsInputRef.current?.focus()}
+                  onFocus={() => handleFocus('funeral', funeralInputRef)}
+                  blurOnSubmit={false}
+                />
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>الديون</Text>
+                <TextInput
+                  ref={debtsInputRef}
+                  style={[
+                    styles.input,
+                    focusedInput === 'debts' && styles.inputFocused
+                  ]}
+                  placeholder="اختياري"
+                  placeholderTextColor={theme.colors.neutral.light400}
+                  value={estateData.debts?.toString() || ''}
+                  onChangeText={(text) => updateEstateData({ debts: parseFloat(text) || 0 })}
+                  keyboardType="decimal-pad"
+                  returnKeyType="next"
+                  onSubmitEditing={() => willInputRef.current?.focus()}
+                  onFocus={() => handleFocus('debts', debtsInputRef)}
+                  blurOnSubmit={false}
+                />
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>الوصية</Text>
+                <TextInput
+                  ref={willInputRef}
+                  style={[
+                    styles.input,
+                    focusedInput === 'will' && styles.inputFocused
+                  ]}
+                  placeholder="اختياري"
+                  placeholderTextColor={theme.colors.neutral.light400}
+                  value={estateData.will?.toString() || ''}
+                  onChangeText={(text) => updateEstateData({ will: parseFloat(text) || 0 })}
+                  keyboardType="decimal-pad"
+                  returnKeyType="done"
+                  onSubmitEditing={dismissKeyboard}
+                  onFocus={() => handleFocus('will', willInputRef)}
+                />
+              </View>
+
+              {/* Keyboard Toolbar for iOS */}
+              {Platform.OS === 'ios' && keyboardVisible && (
+                <View style={styles.keyboardToolbar}>
+                  <TouchableOpacity 
+                    style={styles.keyboardToolbarButton}
+                    onPress={() => {
+                      if (focusedInput === 'will') {
+                        debtsInputRef.current?.focus();
+                      } else if (focusedInput === 'debts') {
+                        funeralInputRef.current?.focus();
+                      } else if (focusedInput === 'funeral') {
+                        estateInputRef.current?.focus();
+                      }
+                    }}
+                  >
+                    <MaterialCommunityIcons name="arrow-up" size={20} color={theme.colors.primary.main} />
+                    <Text style={styles.keyboardToolbarText}>السابق</Text>
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity 
+                    style={styles.keyboardToolbarButton}
+                    onPress={() => {
+                      if (focusedInput === 'total') {
+                        funeralInputRef.current?.focus();
+                      } else if (focusedInput === 'funeral') {
+                        debtsInputRef.current?.focus();
+                      } else if (focusedInput === 'debts') {
+                        willInputRef.current?.focus();
+                      }
+                    }}
+                  >
+                    <Text style={styles.keyboardToolbarText}>التالي</Text>
+                    <MaterialCommunityIcons name="arrow-down" size={20} color={theme.colors.primary.main} />
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity 
+                    style={[styles.keyboardToolbarButton, styles.keyboardToolbarDone]}
+                    onPress={dismissKeyboard}
+                  >
+                    <Text style={styles.keyboardToolbarDoneText}>تم</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
-          )}
-        </ScrollView>
+
+            {/* Heir Selection */}
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <MaterialCommunityIcons
+                  name="account-group"
+                  size={24}
+                  color={theme.colors.primary.main}
+                />
+                <Text style={styles.sectionTitle}>
+                  إضافة الوارثون
+                </Text>
+                {heirs.length > 0 && (
+                  <View style={styles.heirCountBadge}>
+                    <Text style={styles.heirCountText}>
+                      {heirs.reduce((sum, h) => sum + h.count, 0)}
+                    </Text>
+                  </View>
+                )}
+              </View>
+              <HeirSelector
+                onHeirsChange={() => {}}
+              />
+            </View>
+
+            {/* Action Buttons */}
+            <View style={styles.actionContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  styles.calculateButton,
+                  (isCalculating || validationErrors.length > 0) && styles.buttonDisabled
+                ]}
+                onPress={handleCalculate}
+                disabled={isCalculating || validationErrors.length > 0}
+              >
+                {isCalculating ? (
+                  <>
+                    <ActivityIndicator size="small" color="#ffffff" />
+                    <Text style={styles.buttonText}>
+                      جاري الحساب...
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    <MaterialCommunityIcons
+                      name="calculator"
+                      size={20}
+                      color="#ffffff"
+                    />
+                    <Text style={styles.buttonText}>
+                      حساب الميراث
+                    </Text>
+                  </>
+                )}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.button, styles.resetButton]}
+                onPress={handleReset}
+                disabled={isCalculating}
+              >
+                <MaterialCommunityIcons
+                  name="refresh"
+                  size={20}
+                  color={theme.colors.primary.main}
+                />
+                <Text style={[styles.buttonText, styles.resetButtonText]}>
+                  مسح الكل
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Error Display */}
+            {calcError && (
+              <View style={styles.errorContainer}>
+                <MaterialCommunityIcons name="alert-circle" size={24} color="#d32f2f" />
+                <Text style={styles.errorText}>{calcError}</Text>
+              </View>
+            )}
+
+            {/* Results */}
+            {showResults && result && result.success && (
+              <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                  <MaterialCommunityIcons
+                    name="chart-pie"
+                    size={24}
+                    color={theme.colors.primary.main}
+                  />
+                  <Text style={styles.sectionTitle}>
+                    نتائج التوزيع
+                  </Text>
+                </View>
+                <ResultsDisplay
+                  result={result}
+                  onClose={() => setShowResults(false)}
+                />
+              </View>
+            )}
+
+            {/* Quick Stats (if available) */}
+            {previousResults.length > 0 && (
+              <View style={styles.statsContainer}>
+                <Text style={styles.statsTitle}>
+                  النشاط الأخير
+                </Text>
+                <Text style={styles.statsText}>
+                  لديك {previousResults.length} عملية حساب سابقة
+                </Text>
+              </View>
+            )}
+            
+            {/* Extra padding for keyboard */}
+            {keyboardVisible && Platform.OS === 'android' && (
+              <View style={{ height: keyboardHeight }} />
+            )}
+          </ScrollView>
+        </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
-const createStyles = (theme: any) =>
+const createStyles = (theme: any, keyboardVisible: boolean, keyboardHeight: number) =>
   StyleSheet.create({
     safeArea: {
       flex: 1,
@@ -364,7 +568,7 @@ const createStyles = (theme: any) =>
       flex: 1,
     },
     contentContainer: {
-      paddingBottom: 32,
+      paddingBottom: keyboardVisible && Platform.OS === 'ios' ? keyboardHeight : 32,
     },
     header: {
       paddingHorizontal: 20,
@@ -435,6 +639,68 @@ const createStyles = (theme: any) =>
       fontSize: 12,
       fontWeight: '600',
       color: theme.colors.primary.main,
+    },
+    inputGroup: {
+      marginBottom: 12,
+    },
+    label: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: '#374151',
+      marginBottom: 6,
+      textAlign: 'right',
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: '#e5e7eb',
+      borderRadius: 12,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      fontSize: 16,
+      color: '#1f2937',
+      backgroundColor: '#f9fafb',
+      textAlign: 'right',
+    },
+    inputFocused: {
+      borderColor: theme.colors.primary.main,
+      borderWidth: 2,
+      backgroundColor: '#ffffff',
+      shadowColor: theme.colors.primary.main,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    keyboardToolbar: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      backgroundColor: '#f3f4f6',
+      borderRadius: 12,
+      marginTop: 8,
+    },
+    keyboardToolbarButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      borderRadius: 8,
+      backgroundColor: '#ffffff',
+      gap: 4,
+    },
+    keyboardToolbarText: {
+      fontSize: 12,
+      color: theme.colors.primary.main,
+      fontWeight: '500',
+    },
+    keyboardToolbarDone: {
+      backgroundColor: theme.colors.primary.main,
+    },
+    keyboardToolbarDoneText: {
+      fontSize: 12,
+      color: '#ffffff',
+      fontWeight: '600',
     },
     actionContainer: {
       flexDirection: 'row',
