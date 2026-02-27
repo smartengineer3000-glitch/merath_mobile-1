@@ -2,8 +2,7 @@
  * Main Application Entry Point
  * Phase 6: App Integration & Navigation
  * 
- * Root application component that initializes navigation,
- * sets up gesture handlers, and configures the status bar
+ * Root application component with all providers
  */
 
 import React, { useEffect, useState } from 'react';
