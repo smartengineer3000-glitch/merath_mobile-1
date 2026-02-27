@@ -12,6 +12,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SplashScreen from 'expo-splash-screen';
+import { SettingsProvider } from './lib/context/SettingsContext';
+import { ThemeProvider } from './lib/context/ThemeProvider';
 import RootNavigator from './navigation/RootNavigator';
 import DisclaimersModal from './components/DisclaimersModal';
 
@@ -86,6 +88,8 @@ class ErrorBoundary extends React.Component<
  * Wraps the application with necessary providers and configuration:
  * - GestureHandlerRootView: Enables gesture handling for navigation
  * - SafeAreaProvider: Handles safe area insets for notched devices
+ * - SettingsProvider: Provides global settings context
+ * - ThemeProvider: Provides theme context
  * - DisclaimersModal: Shows legal disclaimers on first launch
  * - RootNavigator: Main navigation container
  */
@@ -187,20 +191,25 @@ export default function App() {
     );
   }
 
-  // Main app render with error boundary
+  // Main app render with all providers
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <ErrorBoundary>
-          {/* Disclaimers Modal - Shows if not yet accepted */}
-          <DisclaimersModal
-            visible={!disclaimersAccepted}
-            onAccept={handleDisclaimersAccept}
-            onDecline={handleDisclaimersDecline}
-          />
-          
-          {/* Main Navigation - Only shown after disclaimers accepted */}
-          {disclaimersAccepted && <RootNavigator />}
+          {/* Wrap everything with SettingsProvider and ThemeProvider */}
+          <SettingsProvider>
+            <ThemeProvider>
+              {/* Disclaimers Modal - Shows if not yet accepted */}
+              <DisclaimersModal
+                visible={!disclaimersAccepted}
+                onAccept={handleDisclaimersAccept}
+                onDecline={handleDisclaimersDecline}
+              />
+              
+              {/* Main Navigation - Only shown after disclaimers accepted */}
+              {disclaimersAccepted && <RootNavigator />}
+            </ThemeProvider>
+          </SettingsProvider>
         </ErrorBoundary>
       </SafeAreaProvider>
     </GestureHandlerRootView>

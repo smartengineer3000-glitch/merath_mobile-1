@@ -7,7 +7,8 @@ import {
   useHeirs
 } from '../lib/inheritance/hooks';
 import { AuditLog, createAuditLog } from '../lib/inheritance/audit-log';
-import { InheritanceCalculationEngine } from '../lib/inheritance/calculation-engine';
+// Import from the correct location - the engine is exported from enhanced-engine-complete
+import { EnhancedInheritanceCalculationEngine as InheritanceCalculationEngine } from '../lib/inheritance/enhanced-engine-complete';
 
 // ============================================================================
 // Test Suite 1: Hooks Export Validation
