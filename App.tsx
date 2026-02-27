@@ -2,19 +2,21 @@
  * Main Application Entry Point
  * Phase 6: App Integration & Navigation
  * 
- * Root application component with all providers
+ * Root application component that initializes navigation,
+ * sets up gesture handlers, and configures the status bar
  */
 
 import React, { useEffect, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Platform, StatusBar } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SplashScreen from 'expo-splash-screen';
 import { SettingsProvider } from './lib/context/SettingsContext';
 import { ThemeProvider } from './lib/context/ThemeProvider';
 import RootNavigator from './navigation/RootNavigator';
 import DisclaimersModal from './components/DisclaimersModal';
+import LoadingScreen from './components/LoadingScreen';
 
 // Keep the splash screen visible while app initializes
 SplashScreen.preventAutoHideAsync().catch(() => {
@@ -97,8 +99,32 @@ export default function App() {
   const [disclaimersLoaded, setDisclaimersLoaded] = useState(false);
   const [appReady, setAppReady] = useState(false);
   const [initError, setInitError] = useState<string | null>(null);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingMessage, setLoadingMessage] = useState('جاري التحميل...');
 
   useEffect(() => {
+    // Simulate loading progress for better UX
+    const progressInterval = setInterval(() => {
+      setLoadingProgress(prev => {
+        if (prev >= 0.9) return prev;
+        return prev + 0.1;
+      });
+    }, 500);
+
+    // Update loading messages
+    const messages = [
+      'جاري التحميل...',
+      'تحميل الإعدادات...',
+      'تجهيز البيانات...',
+      'تهيئة النظام...',
+    ];
+    
+    let messageIndex = 0;
+    const messageInterval = setInterval(() => {
+      messageIndex = (messageIndex + 1) % messages.length;
+      setLoadingMessage(messages[messageIndex]);
+    }, 1200);
+
     // Check if user has already accepted disclaimers
     checkDisclaimerAcceptance();
 
@@ -109,7 +135,11 @@ export default function App() {
       });
     }, SPLASH_HIDE_TIMEOUT);
 
-    return () => clearTimeout(splashTimeout);
+    return () => {
+      clearInterval(progressInterval);
+      clearInterval(messageInterval);
+      clearTimeout(splashTimeout);
+    };
   }, []);
 
   // Hide splash screen once app is ready
@@ -118,12 +148,18 @@ export default function App() {
       SplashScreen.hideAsync().catch((err) => {
         console.warn('Failed to hide splash screen:', err);
       });
-      setAppReady(true);
+      
+      // Small delay to ensure smooth transition
+      setTimeout(() => {
+        setAppReady(true);
+        setLoadingProgress(1);
+      }, 500);
     }
   }, [disclaimersLoaded, initError]);
 
   const checkDisclaimerAcceptance = async () => {
     try {
+      setLoadingMessage('التحقق من الموافقات...');
       const accepted = await AsyncStorage.getItem('disclaimers_accepted');
       if (accepted === 'true') {
         setDisclaimersAccepted(true);
@@ -138,6 +174,7 @@ export default function App() {
 
   const handleDisclaimersAccept = async () => {
     try {
+      setLoadingMessage('حفظ الإعدادات...');
       // Store acceptance in AsyncStorage
       await AsyncStorage.setItem('disclaimers_accepted', 'true');
       await AsyncStorage.setItem('disclaimers_accepted_date', new Date().toISOString());
@@ -155,36 +192,43 @@ export default function App() {
     console.log('User declined disclaimers');
   };
 
+  const handleRetry = () => {
+    setInitError(null);
+    checkDisclaimerAcceptance();
+  };
+
   // Show error state if initialization failed
   if (initError && disclaimersLoaded) {
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
         <SafeAreaProvider>
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 }}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#d32f2f', marginBottom: 12, textAlign: 'center' }}>
-              خطأ في التهيئة
-            </Text>
-            <Text style={{ fontSize: 14, color: '#666', marginBottom: 12, textAlign: 'center' }}>
-              {initError}
-            </Text>
-            <Text style={{ fontSize: 12, color: '#999', textAlign: 'center' }}>
-              يرجى إعادة تشغيل التطبيق
-            </Text>
-          </View>
+          <ThemeProvider>
+            <SettingsProvider>
+              <LoadingScreen 
+                error={initError}
+                onRetry={handleRetry}
+                message="حدث خطأ أثناء التهيئة"
+              />
+            </SettingsProvider>
+          </ThemeProvider>
         </SafeAreaProvider>
       </GestureHandlerRootView>
     );
   }
 
   if (!disclaimersLoaded) {
-    // Show loading state while checking disclaimer acceptance
+    // Show professional loading screen while checking disclaimer acceptance
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
         <SafeAreaProvider>
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <ActivityIndicator size="large" color="#4F46E5" />
-            <Text style={{ marginTop: 12, fontSize: 14, color: '#666' }}>جاري التحميل...</Text>
-          </View>
+          <ThemeProvider>
+            <SettingsProvider>
+              <LoadingScreen 
+                message={loadingMessage}
+                progress={loadingProgress}
+              />
+            </SettingsProvider>
+          </ThemeProvider>
         </SafeAreaProvider>
       </GestureHandlerRootView>
     );
@@ -195,6 +239,13 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <ErrorBoundary>
+          {/* Status Bar Configuration */}
+          <StatusBar
+            backgroundColor="transparent"
+            translucent
+            barStyle="dark-content"
+          />
+          
           {/* Wrap everything with SettingsProvider and ThemeProvider */}
           <SettingsProvider>
             <ThemeProvider>
@@ -206,7 +257,16 @@ export default function App() {
               />
               
               {/* Main Navigation - Only shown after disclaimers accepted */}
-              {disclaimersAccepted && <RootNavigator />}
+              {disclaimersAccepted && (
+                appReady ? (
+                  <RootNavigator />
+                ) : (
+                  <LoadingScreen 
+                    message="جاري تجهيز التطبيق..."
+                    progress={loadingProgress}
+                  />
+                )
+              )}
             </ThemeProvider>
           </SettingsProvider>
         </ErrorBoundary>
