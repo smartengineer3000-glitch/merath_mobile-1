@@ -6,7 +6,6 @@
  */
 
 import { EstateData, HeirsData, MadhhabType } from '../inheritance/types';
-import { HeirValidationError } from '../errors/ErrorHandler';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -30,11 +29,11 @@ export class EstateValidator {
     const errors: ValidationMessage[] = [];
     const warnings: ValidationMessage[] = [];
 
-    // Validate total estate
+    // CRITICAL FIX: Validate total estate - must be > 0
     if (!estate.total || estate.total <= 0) {
       errors.push({
         field: 'estate.total',
-        userMessage: 'يجب إدخال المبلغ الإجمالي للتركة',
+        userMessage: 'يجب إدخال المبلغ الإجمالي للتركة (أكبر من صفر)',
         technicalMessage: 'Estate total must be a positive number',
         severity: 'error',
         suggestion: 'أدخل المبلغ الإجمالي للتركة (مثل: 100000)',
@@ -74,38 +73,41 @@ export class EstateValidator {
       });
     }
 
-    // Validate will does not exceed 1/3 of total estate
-    if (estate.will && estate.will > estate.total / 3) {
-      errors.push({
-        field: 'estate.will',
-        userMessage: 'الوصية لا يمكن أن تتجاوز ثلث التركة',
-        technicalMessage: 'Will cannot exceed 1/3 of total estate per Islamic law',
-        severity: 'error',
-        suggestion: `الحد الأقصى للوصية: ${(estate.total / 3).toFixed(2)} (ثلث التركة)`,
-      });
-    }
+    // Only proceed with additional validation if total is valid
+    if (estate.total && estate.total > 0) {
+      // Validate will does not exceed 1/3 of total estate
+      if (estate.will && estate.will > estate.total / 3) {
+        errors.push({
+          field: 'estate.will',
+          userMessage: 'الوصية لا يمكن أن تتجاوز ثلث التركة',
+          technicalMessage: 'Will cannot exceed 1/3 of total estate per Islamic law',
+          severity: 'error',
+          suggestion: `الحد الأقصى للوصية: ${(estate.total / 3).toFixed(2)} (ثلث التركة)`,
+        });
+      }
 
-    // Check if debts/funeral/will exceed total
-    const deductions = (estate.funeral || 0) + (estate.debts || 0) + (estate.will || 0);
-    if (deductions > estate.total) {
-      errors.push({
-        field: 'estate.total',
-        userMessage: 'مجموع الديون والتكاليف والوصية لا يمكن أن يتجاوز التركة',
-        technicalMessage: 'Total deductions cannot exceed estate',
-        severity: 'error',
-        suggestion: 'تأكد من أن الديون والتكاليف والوصية أقل من أو تساوي التركة الإجمالية',
-      });
-    }
+      // Check if debts/funeral/will exceed total
+      const deductions = (estate.funeral || 0) + (estate.debts || 0) + (estate.will || 0);
+      if (deductions > estate.total) {
+        errors.push({
+          field: 'estate.total',
+          userMessage: 'مجموع الديون والتكاليف والوصية لا يمكن أن يتجاوز التركة',
+          technicalMessage: 'Total deductions cannot exceed estate',
+          severity: 'error',
+          suggestion: 'تأكد من أن الديون والتكاليف والوصية أقل من أو تساوي التركة الإجمالية',
+        });
+      }
 
-    // Warning: Large deductions
-    if (deductions > estate.total * 0.5) {
-      warnings.push({
-        field: 'estate.total',
-        userMessage: 'الديون والتكاليف تشكل أكثر من 50% من التركة',
-        technicalMessage: 'Large deductions detected',
-        severity: 'warning',
-        suggestion: 'تحقق من صحة المبالغ',
-      });
+      // Warning: Large deductions
+      if (deductions > estate.total * 0.5) {
+        warnings.push({
+          field: 'estate.total',
+          userMessage: 'الديون والتكاليف تشكل أكثر من 50% من التركة',
+          technicalMessage: 'Large deductions detected',
+          severity: 'warning',
+          suggestion: 'تحقق من صحة المبالغ',
+        });
+      }
     }
 
     return {
@@ -138,7 +140,7 @@ export class HeirValidator {
     // Validate each heir
     for (const [heirKey, count] of Object.entries(heirs)) {
       if (count === undefined || count === null) {
-        continue; // Skip undefined
+        continue;
       }
 
       if (typeof count !== 'number' || count < 0) {
@@ -175,7 +177,6 @@ export class HeirValidator {
   static validateCombinations(heirs: HeirsData): ValidationMessage[] {
     const messages: ValidationMessage[] = [];
 
-    // Check for impossible combinations
     const hasHusband = heirs.husband && heirs.husband > 0;
     const hasWife = heirs.wife && heirs.wife > 0;
     const hasFather = heirs.father && heirs.father > 0;
@@ -233,19 +234,12 @@ export class InputValidator {
   ): ValidationResult {
     const results: ValidationResult[] = [];
 
-    // Validate madhab
     results.push(MadhhabValidator.validate(madhab));
-
-    // Validate estate
     results.push(EstateValidator.validate(estate));
-
-    // Validate heirs
     results.push(HeirValidator.validate(heirs));
 
-    // Validate combinations
     const combinationMessages = HeirValidator.validateCombinations(heirs);
 
-    // Merge all results
     const allErrors = results.flatMap(r => r.errors);
     const allWarnings = [
       ...results.flatMap(r => r.warnings),

@@ -61,6 +61,65 @@ export class HijabSystem {
         }
       }
     }
+
+    // ===== MADHAB-SPECIFIC RULE: Grandfather with siblings =====
+    const hasGrandfather = (heirs.grandfather || 0) > 0;
+    const hasSiblings = (heirs.full_brother || 0) > 0 || 
+                        (heirs.full_sister || 0) > 0 ||
+                        (heirs.half_brother_paternal || 0) > 0 ||
+                        (heirs.half_sister_paternal || 0) > 0;
+
+    if (hasGrandfather && hasSiblings) {
+      // Shafii & Hanbali: Grandfather BLOCKS siblings
+      if (this.madhab === 'shafii' || this.madhab === 'hanbali') {
+        this.hijabLog.push(
+          `في المذهب ${this.madhab === 'shafii' ? 'الشافعي' : 'الحنبلي'}: الجد يحجب الإخوة`,
+          `In ${this.madhab} madhab: Grandfather blocks siblings`
+        );
+        
+        // Block all siblings
+        heirs.full_brother = 0;
+        heirs.full_sister = 0;
+        heirs.half_brother_paternal = 0;
+        heirs.half_sister_paternal = 0;
+      }
+      
+      // Hanafi & Maliki: Grandfather SHARES with siblings (handled in computeAsaba, not hijab)
+      else if (this.madhab === 'hanafi' || this.madhab === 'maliki') {
+        this.hijabLog.push(
+          `في المذهب ${this.madhab === 'hanafi' ? 'الحنفي' : 'المالكي'}: الجد يقاسم الإخوة (يعالج في العصبات)`,
+          `In ${this.madhab} madhab: Grandfather shares with siblings (handled in asaba)`
+        );
+        // No blocking - shares will be calculated in computeAsaba
+      }
+    }
+
+    // ===== Granddaughter blocking by daughters =====
+    // Rule: 2+ daughters block granddaughters (unless grandson exists)
+    if ((heirs.daughter || 0) >= 2 && (heirs.granddaughter || 0) > 0) {
+      // Check if there's a grandson to act as co-heir
+      const hasGrandson = (heirs.grandson || 0) > 0;
+      
+      if (!hasGrandson) {
+        // No grandson, so granddaughters are blocked
+        this.hijabLog.push(
+          `بنتان فأكثر تحجبان بنت الابن`,
+          `Two or more daughters block granddaughters`
+        );
+        heirs.granddaughter = 0;
+      } else {
+        // With grandson, granddaughters are not blocked, but will inherit as asaba
+        this.hijabLog.push(
+          `بنتان مع ابن الابن - بنات الابن يرثن كعصبة`,
+          `Daughters with grandson - granddaughters inherit as asaba`
+        );
+        // No change - granddaughters will inherit with grandson in asaba
+      }
+    }
+
+    // Rule: Single daughter does NOT block granddaughters
+    // (granddaughters get 1/6 if daughter=1, or nothing if daughter>=2 without grandson)
+    // This is handled in computeFixedShares
   }
 
   /**
@@ -83,6 +142,9 @@ export class HijabSystem {
         }
       }
     }
+
+    // ===== MADHAB-SPECIFIC PARTIAL HIJAB: =====
+    // Some madhabs have partial reduction rules that will be handled in calculation engine
   }
 
   /**
@@ -211,5 +273,12 @@ export class HijabSystem {
       (heirs['aunt_paternal'] || 0) +
       (heirs['aunt_maternal'] || 0)
     );
+  }
+
+  /**
+   * Get the madhab of this instance
+   */
+  getMadhab(): MadhhabType {
+    return this.madhab;
   }
 }

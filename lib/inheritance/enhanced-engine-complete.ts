@@ -20,6 +20,16 @@ interface HeirShareObject {
   addToExisting?: boolean;
 }
 
+// Add state interface with confidenceFactors
+interface EngineState {
+  blockedHeirs: string[];
+  hijabTypes: string[];
+  awlApplied: boolean;
+  raddApplied: boolean;
+  bloodRelativesApplied: boolean;
+  confidenceFactors: string[];
+}
+
 export class EnhancedInheritanceCalculationEngine {
   private madhab: MadhhabType;
   private estate: EstateData;
@@ -27,6 +37,14 @@ export class EnhancedInheritanceCalculationEngine {
   private hijabSystem: HijabSystem;
   private steps: Array<{ step: string; description: string; code: string; data?: unknown }> = [];
   private specialCases: Array<{ type: string; name: string; description: string }> = [];
+  private state: EngineState = {
+    blockedHeirs: [],
+    hijabTypes: [],
+    awlApplied: false,
+    raddApplied: false,
+    bloodRelativesApplied: false,
+    confidenceFactors: []
+  };
 
   constructor(madhab: MadhhabType, estate: EstateData, heirs: HeirsData) {
     this.madhab = madhab;
@@ -67,6 +85,7 @@ export class EnhancedInheritanceCalculationEngine {
           madhhabName: this.madhab,
           shares: [],
           confidence: 0,
+          confidenceFactors: [],
           steps: calcSteps,
           calculationTime: endTime - startTime,
           error: validation.error,
@@ -83,6 +102,7 @@ export class EnhancedInheritanceCalculationEngine {
       const hijabResult = this.hijabSystem.applyHijab(this.heirs);
       const validHeirs = hijabResult.heirs;
       const hijabLog = hijabResult.log || [];
+      this.state.blockedHeirs = hijabLog;
       steps.push('تطبيق الحجب: hijab');
 
       // Step 4: Compute fixed shares (fards)
@@ -95,6 +115,7 @@ export class EnhancedInheritanceCalculationEngine {
       
       if (totalFixed.toDecimal() > 1) {
         adjustedFixed = this.applyAwl(fixedShares, totalFixed);
+        this.state.awlApplied = true;
         steps.push('الأول: awl');
       }
 
@@ -119,6 +140,7 @@ export class EnhancedInheritanceCalculationEngine {
       let finalShares = allShares;
       if (finalRemainder.toDecimal() > 0.0001 && asabaShares.length === 0) {
         finalShares = this.applyRadd(allShares, finalRemainder);
+        this.state.raddApplied = true;
         steps.push('الرد: radd');
       }
 
@@ -127,6 +149,7 @@ export class EnhancedInheritanceCalculationEngine {
         const bloodDistribution = this.distributeToBloodRelatives(finalShares, finalRemainder);
         finalShares = bloodDistribution.shares;
         if (bloodDistribution.bloodRelatives.length > 0) {
+          this.state.bloodRelativesApplied = true;
           this.specialCases.push({
             type: 'blood_relatives',
             name: 'ذوو الأرحام',
@@ -141,7 +164,7 @@ export class EnhancedInheritanceCalculationEngine {
       steps.push('تحويل للمبالغ: amounts');
 
       // Step 13: Calculate confidence score
-      const confidence = this.calculateConfidence(results, validHeirs, totalFixed);
+      const confidence = this.calculateConfidence(results, validHeirs);
       steps.push('حساب مستوى الثقة: confidence');
 
       const endTime = performance.now();
@@ -168,9 +191,14 @@ export class EnhancedInheritanceCalculationEngine {
         shares: results,
         netEstate: netEstate,
         confidence,
+        confidenceFactors: this.state.confidenceFactors,
         steps: calcSteps,
         calculationTime: endTime - startTime,
-        specialCases: special
+        specialCases: special,
+        awlApplied: this.state.awlApplied,
+        raddApplied: this.state.raddApplied,
+        bloodRelativesApplied: this.state.bloodRelativesApplied,
+        blockedHeirs: this.state.blockedHeirs
       };
     } catch (error) {
       const endTime = performance.now();
@@ -189,6 +217,7 @@ export class EnhancedInheritanceCalculationEngine {
         madhhabName: this.madhab,
         shares: [],
         confidence: 0,
+        confidenceFactors: ['حدث خطأ في الحساب'],
         steps: calcSteps,
         calculationTime: endTime - startTime,
         error: `خطأ في الحساب: ${(error as Error).message}`,
@@ -648,7 +677,7 @@ export class EnhancedInheritanceCalculationEngine {
     const bloodHeirsList = [
       { key: 'daughter_son', name: 'ابن البنت', weight: 1 },
       { key: 'daughter_daughter', name: 'بنت البنت', weight: 1 },
-      { key: 'sister_descendants', name: 'أولاد الأخت', weight: 1 },
+      { key: 'sister_children', name: 'أولاد الأخت', weight: 1 },
       { key: 'maternal_uncle', name: 'الخال', weight: 1 },
       { key: 'maternal_aunt', name: 'الخالة', weight: 1 },
       { key: 'paternal_aunt', name: 'العمة', weight: 1 }
@@ -712,27 +741,95 @@ export class EnhancedInheritanceCalculationEngine {
   }
 
   /**
-   * Step 13: Calculate confidence score
+   * Step 13: Calculate confidence score with enhanced factors
    */
   private calculateConfidence(
     results: HeirShare[],
-    heirs: HeirsData,
-    totalFixed: FractionClass
+    heirs: HeirsData
   ): number {
     let confidence = 100;
+    const factors: string[] = [];
 
-    // Reduce confidence for complex scenarios
+    // ===== FACTOR 1: Complexity based on number of heirs =====
     const heirCount = Object.values(heirs).filter(v => v && v > 0).length;
-    if (heirCount > 5) confidence -= 10;
-    if (heirCount > 8) confidence -= 15;
+    if (heirCount > 8) {
+      confidence -= 15;
+      factors.push('عدد كبير من الورثة (أكثر من 8)');
+    } else if (heirCount > 5) {
+      confidence -= 10;
+      factors.push('عدد متوسط من الورثة (6-8)');
+    } else if (heirCount > 3) {
+      confidence -= 5;
+      factors.push('عدد قليل من الورثة (4-5)');
+    }
 
-    // Reduce for awl
-    if (totalFixed.toDecimal() > 1) confidence -= 5;
+    // ===== FACTOR 2: Special cases applied =====
+    if (this.state.awlApplied) {
+      confidence -= 8;
+      factors.push('تم تطبيق العول');
+    }
+    
+    if (this.state.raddApplied) {
+      confidence -= 5;
+      factors.push('تم تطبيق الرد');
+    }
+    
+    if (this.state.bloodRelativesApplied) {
+      confidence -= 10;
+      factors.push('تم توزيع الباقي على ذوي الأرحام');
+    }
 
-    // Reduce for special cases
-    if (this.specialCases.length > 0) confidence -= Math.min(10, this.specialCases.length * 3);
+    // ===== FACTOR 3: Multiple generations =====
+    const hasChildren = heirs.son || heirs.daughter;
+    const hasParents = heirs.father || heirs.mother;
+    const hasGrandparents = heirs.grandfather || heirs.grandmother_mother || heirs.grandmother_father;
+    
+    const generationCount = (hasChildren ? 1 : 0) + (hasParents ? 1 : 0) + (hasGrandparents ? 1 : 0);
+    if (generationCount >= 3) {
+      confidence -= 5;
+      factors.push('وجود عدة أجيال من الورثة');
+    }
 
-    return Math.max(50, confidence);
+    // ===== FACTOR 4: Distant heirs present =====
+    const distantHeirs = [
+      'full_nephew', 'paternal_nephew', 'full_uncle', 'paternal_uncle',
+      'full_cousin', 'paternal_cousin', 'daughter_son', 'daughter_daughter',
+      'sister_children', 'maternal_uncle', 'maternal_aunt', 'paternal_aunt'
+    ];
+    
+    const hasDistantHeirs = distantHeirs.some(key => (heirs[key as keyof HeirsData] || 0) > 0);
+    if (hasDistantHeirs) {
+      confidence -= 8;
+      factors.push('وجود ورثة من الدرجات البعيدة');
+    }
+
+    // ===== FACTOR 5: Grandfather with siblings (madhab-specific) =====
+    const hasGrandfatherWithSiblings = 
+      heirs.grandfather && (heirs.full_brother || heirs.paternal_brother);
+    if (hasGrandfatherWithSiblings) {
+      confidence -= 5;
+      factors.push('حالة الجد مع الإخوة (تختلف باختلاف المذهب)');
+    }
+
+    // ===== FACTOR 6: Multiple wives =====
+    if (heirs.wife && heirs.wife > 1) {
+      confidence -= 3;
+      factors.push('وجود عدة زوجات');
+    }
+
+    // Ensure confidence stays within 0-100 range
+    confidence = Math.max(50, Math.min(100, confidence));
+
+    // Add confidence factors explanation
+    this.state.confidenceFactors = [];
+    
+    if (factors.length > 0) {
+      this.state.confidenceFactors = factors;
+    } else {
+      this.state.confidenceFactors = ['حساب بسيط - دقة عالية'];
+    }
+
+    return confidence;
   }
 
   /**

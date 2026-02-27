@@ -6,7 +6,7 @@
  * إضافة وإدارة الوارثون بشكل ديناميكي
  */
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -27,7 +27,8 @@ export interface HeirSelectorProps {
   onHeirsChange?: (heirs: HeirsData) => void;
 }
 
-interface HeirCategoryItem {
+// Base heir type with common properties
+interface BaseHeirCategoryItem {
   key: HeirType;
   label: string;
   labelEn: string;
@@ -35,12 +36,33 @@ interface HeirCategoryItem {
   badge: string;
   shareInfo: string;
   emoji: string;
-  maxCount?: number;
-  [key: string]: any; // Allow additional properties
 }
 
+// Heir type with maxCount (for wives, etc.)
+interface HeirWithMaxCount extends BaseHeirCategoryItem {
+  maxCount: number;
+}
+
+// Union type for all possible heir configurations
+type HeirCategoryItem = BaseHeirCategoryItem | HeirWithMaxCount;
+
+// Type guard to check if heir has maxCount
+const hasMaxCount = (heir: HeirCategoryItem): heir is HeirWithMaxCount => {
+  return 'maxCount' in heir && typeof (heir as HeirWithMaxCount).maxCount === 'number';
+};
+
 // Heir categories with visual hierarchy and badges
-const HEIR_CATEGORIES = [
+const HEIR_CATEGORIES: Array<{
+  id: string;
+  name: string;
+  titleEn: string;
+  icon: string;
+  type: 'primary' | 'secondary' | 'tertiary';
+  description: string;
+  collapsible: boolean;
+  badge?: string;
+  heirs: HeirCategoryItem[];
+}> = [
   {
     id: 'spouses',
     name: '⭐ الأساسيون - الزوجان',
@@ -57,7 +79,8 @@ const HEIR_CATEGORIES = [
         type: 'fard', 
         badge: 'فرض',
         shareInfo: '½ أو ¼',
-        emoji: '👨‍❤️‍👨'
+        emoji: '👨‍❤️‍👨',
+        maxCount: 1
       },
       { 
         key: 'wife' as HeirType, 
@@ -421,6 +444,16 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+
+  // Debounce search query to prevent excessive filtering while typing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   // heirs is an array of {id, key, count}
   const heirsArray = (heirs as Array<{ id: string; key: HeirType; count: number }>) || [];
@@ -432,8 +465,38 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
     return result;
   }, [heirsArray]);
 
+  // Memoize filtered heirs for performance - only recalculates when searchQuery changes
+  const filteredHeirsByCategory = useMemo(() => {
+    if (!searchQuery || searchQuery.trim() === '') return null;
+    
+    const query = searchQuery.toLowerCase().trim();
+    
+    return HEIR_CATEGORIES.map(category => ({
+      ...category,
+      heirs: category.heirs.filter(heir => 
+        heir.label.includes(query) || 
+        (heir.labelEn && heir.labelEn.toLowerCase().includes(query))
+      )
+    })).filter(category => category.heirs.length > 0);
+  }, [searchQuery]);
+
+  // Determine which categories to display (filtered or all)
+  const categoriesToDisplay = useMemo(() => {
+    return filteredHeirsByCategory || HEIR_CATEGORIES;
+  }, [filteredHeirsByCategory]);
+
+  // Memoize heir entries for performance
+  const heirEntries = useMemo(() => 
+    heirsArray.map(h => [h.key, h.count] as [string, number]), 
+    [heirsArray]
+  );
+  
+  const totalHeirs = useMemo(() => 
+    heirsArray.reduce((sum, h) => sum + (h.count || 0), 0), 
+    [heirsArray]
+  );
+
   const handleAddHeir = useCallback(() => {
-    // kept for compatibility with modal editing (not primary in alternate UI)
     try {
       if (!selectedHeirType) {
         const errorMsg = 'يجب اختيار نوع الوارث';
@@ -562,7 +625,12 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
   }, [heirsArray, safeHeirs, removeHeir, updateHeir, validateChange]);
 
   const handleRemoveHeir = useCallback((heirType: HeirType) => {
-    const heirLabel = HEIR_CATEGORIES.flatMap(c => c.heirs).find(h => h.key === heirType)?.label || heirType;
+    const category = HEIR_CATEGORIES.find(c => 
+      c.heirs.some(h => h.key === heirType)
+    );
+    const heir = category?.heirs.find(h => h.key === heirType);
+    const heirLabel = heir?.label || heirType;
+    
     Alert.alert(
       'تأكيد الحذف',
       `هل تريد حذف ${heirLabel}؟`,
@@ -612,18 +680,16 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
         {
           text: 'مسح',
           onPress: () => {
-            const emptyHeirs: HeirsData = {};
-            
-            // Validate empty heirs (will show error)
-            const validation = HeirValidator.validate(emptyHeirs);
+            clearHeirs();
+            const validation = HeirValidator.validate({});
             setValidationResult(validation);
-            
-            onHeirsChange?.(emptyHeirs);
+            onHeirsChange?.({});
+            Alert.alert('تم', 'تم مسح جميع الورثة');
           }
         }
       ]
     );
-  }, [onHeirsChange]);
+  }, [clearHeirs, onHeirsChange]);
 
   const toggleCategory = useCallback((categoryId: string) => {
     setExpandedCategories(prev => ({
@@ -631,10 +697,6 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
       [categoryId]: !prev[categoryId]
     }));
   }, []);
-
-  // Use heirsArray for rendering to preserve ids
-  const heirEntries = heirsArray.map(h => [h.key, h.count] as [string, number]);
-  const totalHeirs = heirsArray.reduce((sum, h) => sum + (h.count || 0), 0);
 
   return (
     <View style={styles.container}>
@@ -698,7 +760,7 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
         <Text style={styles.categoriesSubtitle}>Add Heirs by Category</Text>
 
         <ScrollView style={styles.categoriesScrollView}>
-          {HEIR_CATEGORIES.map((category) => {
+          {categoriesToDisplay.map((category) => {
             const isExpanded = expandedCategories[category.id];
             
             return (
@@ -749,9 +811,9 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
                       const existingHeir = heirsArray.find(h => h.key === heir.key);
                       const count = existingHeir?.count || 0;
                       
-                      // Filter by search query if needed
-                      if (searchQuery && !heir.label.includes(searchQuery) && 
-                          !(heir.labelEn && heir.labelEn.includes(searchQuery))) {
+                      // Filter by debounced search query if needed
+                      if (debouncedSearchQuery && !heir.label.includes(debouncedSearchQuery) && 
+                          !(heir.labelEn && heir.labelEn.toLowerCase().includes(debouncedSearchQuery.toLowerCase()))) {
                         return null;
                       }
 
@@ -779,9 +841,9 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
                                 <Text style={styles.heirShareInfo}>{heir.shareInfo}</Text>
                               )}
                               
-                              {(heir as any).maxCount && count >= (heir as any).maxCount && (
+                              {hasMaxCount(heir) && heir.maxCount && count >= heir.maxCount && (
                                 <Text style={styles.heirMaxWarning}>
-                                  ⚠️ الحد الأقصى {(heir as any).maxCount}
+                                  ⚠️ الحد الأقصى {heir.maxCount}
                                 </Text>
                               )}
                             </View>
@@ -804,10 +866,10 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
                               style={[
                                 styles.heirControlButton, 
                                 styles.heirControlButtonIncrement,
-                                (heir as any).maxCount && count >= (heir as any).maxCount && styles.heirControlButtonDisabled
+                                hasMaxCount(heir) && heir.maxCount && count >= heir.maxCount ? styles.heirControlButtonDisabled : undefined
                               ]}
                               onPress={() => handleIncrement(heir.key)}
-                              disabled={(heir as any).maxCount ? count >= (heir as any).maxCount : false}
+                              disabled={hasMaxCount(heir) && heir.maxCount ? count >= heir.maxCount : false}
                             >
                               <Text style={styles.heirControlButtonText}>+</Text>
                             </TouchableOpacity>

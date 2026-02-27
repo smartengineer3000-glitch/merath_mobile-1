@@ -111,13 +111,13 @@ export interface CalculationResult {
   raddApplied?: boolean;
   bloodRelativesApplied?: boolean;
   confidence: number;
+  confidenceFactors?: string[]; // ADD THIS LINE
   steps: CalculationStep[];
   calculationTime: number;
   error?: string;
   specialCases?: SpecialCases;
   madhhabNotes?: string[];
   warnings?: string[];
-  confidenceFactors?: string[];
 }
 
 // ====== خطوات الحساب ======

@@ -6,7 +6,7 @@
  */
 
 import { useState, useCallback, useEffect } from 'react';
-import { InheritanceCalculationEngine } from '.';
+import { EnhancedInheritanceCalculationEngine as InheritanceCalculationEngine } from './enhanced-engine-complete';
 import { AuditLog, createAuditLog, type AuditLogEntry } from './audit-log';
 import { CalculationCache, PerformanceMonitor } from '../performance/optimization';
 import type {
@@ -467,7 +467,7 @@ export function useMadhab(defaultMadhab: MadhhabType = 'shafii') {
 }
 
 // ============================================================================
-// 5. useHeirs Hook - إدارة الورثة ديناميكياً
+// 5. useHeirs Hook - إدارة الورثة ديناميكياً مع منع التكرار
 // ============================================================================
 
 export function useHeirs(initialHeirs: HeirsData = {}) {
@@ -493,6 +493,7 @@ export function useHeirs(initialHeirs: HeirsData = {}) {
           throw new Error('عدد الورثة يجب أن يكون 1 على الأقل');
         }
 
+        // FIX: Check for duplicate heir type
         const isDuplicate = heirs.some((h) => h.key === heir.type);
         if (isDuplicate) {
           throw new Error('هذا الوارث موجود بالفعل');
