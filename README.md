@@ -1,220 +1,258 @@
-# Merath Islamic Inheritance Calculator
+# 📱 **Merath - حاسبة المواريث الشرعية**
+### Islamic Inheritance Calculator
 
-## Overview
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![React Native](https://img.shields.io/badge/React%20Native-0.81.5-blue)](https://reactnative.dev/)
+[![Expo](https://img.shields.io/badge/Expo-54.0.32-black)](https://expo.dev/)
+[![Tests](https://img.shields.io/badge/Tests-237%20passing-brightgreen)](https://github.com/Devlopmenteng/merath_mobile)
 
-Merath is a professional-grade Islamic inheritance calculator built with React Native and Expo. It accurately calculates heir distributions according to Islamic jurisprudence (Fiqh) across multiple Islamic schools (Madhabs) using advanced mathematical precision with fraction arithmetic.
+---
 
-## Features
+## 📖 **Overview**
 
-### Core Calculation Engine
+**Merath** is a comprehensive Islamic inheritance calculator that accurately computes estate distribution according to the four major Sunni schools of Islamic jurisprudence (Hanafi, Maliki, Shafi'i, Hanbali). The application implements classical Fiqh rules with modern precision, providing reliable calculations for complex inheritance scenarios.
 
-- **Multi-Madhab Support**: Hanafi, Maliki, Shafii, Hanbali
-- **Precision Arithmetic**: Fraction-based calculations for exact inheritance shares
-- **Hijab System**: Complete implementation of Islamic exclusion rules
-- **Asset Distribution**: Calculate exact monetary amounts for each heir
-- **Input Validation**: Comprehensive validation of estate and heir data
+---
 
-### User Interface
+## ✨ **Key Features**
 
-- **Modern Design**: Material Design 3 with professional styling
-- **Responsive Layout**: Works across all screen sizes
-- **Dark Mode Support**: Full light/dark theme support
-- **Accessibility**: WCAG 2.1 compliant components
-- **Intuitive Flow**: Step-by-step calculation wizard
+### 🕌 **Multi-Madhab Support**
+- **Hanafi** - Complete implementation with mushārakah rules for grandfather with siblings
+- **Maliki** - Accurate rulings for all cases including special scenarios
+- **Shafi'i** - Precise implementation of Shafi'i school rules
+- **Hanbali** - Full support for Hanbali jurisprudence
 
-### Data Management
+### ⚖️ **Comprehensive Inheritance Rules**
+- **Fixed Shares (Furūḍ)** - All Quranic shares: 1/2, 1/3, 2/3, 1/4, 1/6, 1/8, etc.
+- **Residuary (ʿAṣabāt)** - Male agnatic heirs with proper prioritization
+- **Blocking (Ḥujūb)** - Complete hijab rules for all heir combinations
+- **Augmentation (ʿAwl)** - Automatic application when shares exceed estate
+- **Return (Radd)** - Proper distribution of surplus to eligible heirs
+- **Blood Relatives (Dhū al-Arḥām)** - Inheritance when no asaba exist
 
-- **History Tracking**: Save and review past calculations
-- **Export Options**: JSON, CSV, and PDF export formats
-- **Audit Logging**: Complete audit trail of all calculations
-- **Data Persistence**: Secure local storage
+### 🔢 **Advanced Calculation Engine**
+- **Fraction-based arithmetic** - Precise calculations without floating-point errors
+- **Confidence scoring** - Multi-factor confidence indication (50-100%)
+- **Step-by-step breakdown** - Clear explanation of calculation process
+- **Madhab comparison** - Side-by-side comparison across all four schools
 
-### Testing & Quality
+### 📤 **Sharing & Export**
+- **PDF reports** - Professionally formatted inheritance reports
+- **Image capture** - Share results as PNG images
+- **Text sharing** - Share via any messaging app
+- **Clipboard copy** - Quick copy of results
 
-- **Comprehensive Test Suite**: 150+ test cases
-- **Unit Tests**: Core calculation engine fully tested
-- **Integration Tests**: Component and hook testing
-- **Manual QA**: Professional QA checklist
+### 🌐 **Internationalization**
+- **Arabic** - Full RTL support with complete Arabic interface
+- **English** - Complete English localization
+- **Urdu, Turkish, French, German** - Multi-language support
 
-## Installation
+### 🎨 **Professional UI/UX**
+- **Material Design 3** - Modern, clean interface
+- **Light/Dark theme** - System-aware theming
+- **Keyboard optimization** - Smooth input handling with navigation
+- **Loading states** - Professional animations during initialization
+- **Validation feedback** - Clear, actionable error messages
+
+---
+
+## 📸 **Screenshots**
+
+| Calculator Screen | Results Display | Settings |
+|:---:|:---:|:---:|
+| [Screenshot] | [Screenshot] | [Screenshot] |
+
+---
+
+## 🚀 **Quick Start**
 
 ### Prerequisites
-
 - Node.js 18+
-- Expo CLI: `npm install -g expo-cli`
-- Mobile device or emulator (iOS/Android)
+- npm or yarn
+- Expo CLI (`npm install -g expo-cli`)
 
-### Setup
+### Installation
 
 ```bash
-# Clone repository
-git clone https://github.com/yourusername/merath_mobile.git
+# Clone the repository
+git clone https://github.com/Devlopmenteng/merath_mobile.git
+
+# Navigate to project directory
 cd merath_mobile
 
 # Install dependencies
 npm install
 
-# Install iOS pods (macOS only)
-cd ios && pod install && cd ..
+# Start the development server
+npm start
 
-# Start development server
-npm run dev
-```
+# Run on Android
+npm run android
 
-### Development Modes
+# Run on iOS
+npm run ios
+📱 Usage Guide
+1. Select Madhab
+Choose from Hanafi, Maliki, Shafi'i, or Hanbali schools of jurisprudence.
 
-```bash
-# Development mode
-npm run dev
+2. Enter Estate Details
+Total estate value
 
-# Production build
-npm run build
+Funeral expenses (optional)
 
-# Run tests
+Outstanding debts (optional)
+
+Will amount (limited to 1/3 of net estate)
+
+3. Add Heirs
+Select from comprehensive list of heirs categorized by:
+
+Primary heirs (spouses, children, parents)
+
+Secondary heirs (grandparents, grandchildren, siblings)
+
+Tertiary heirs (nephews, uncles, cousins)
+
+Blood relatives (distant kin)
+
+4. Calculate
+Press calculate to see:
+
+Distribution table with amounts and fractions
+
+Special cases (awl, radd, hijab)
+
+Confidence score with explanation
+
+Step-by-step calculation breakdown
+
+5. Compare & Share
+Compare results across different madhabs
+
+Export as PDF, image, or text
+
+Copy results to clipboard
+
+Share via any installed app
+merath_mobile/
+├── components/          # Reusable UI components
+│   ├── HeirSelector/   # Heir selection with search
+│   ├── ResultsDisplay/ # Results with sharing
+│   └── LoadingScreen/  # Professional loading
+├── lib/
+│   ├── inheritance/    # Core calculation engine
+│   │   ├── enhanced-engine-complete.ts  # Main engine
+│   │   ├── hijab-system.ts               # Blocking rules
+│   │   ├── fraction.ts                    # Fraction arithmetic
+│   │   └── hooks.ts                        # React hooks
+│   ├── context/        # State management
+│   ├── validation/     # Input validation
+│   └── export/         # PDF/image export
+├── screens/            # App screens
+├── navigation/         # Navigation config
+└── __tests__/          # 237+ unit tests
+🧪 Testing
+# Run all tests
 npm test
 
-# Lint code
-npm run lint
+# Run with coverage
+npm test -- --coverage
 
-# Type checking
-npm run check
-```
+# Run specific test suite
+npm test -- hooks.test.ts
+Test Coverage: 237 passing tests covering:
 
-## Architecture
+Inheritance calculations across all madhabs
 
-### Project Structure
+Edge cases and special scenarios
 
-```text
-merath_mobile/
-├── components/              # UI components
-│   ├── ui/                 # Design system components
-│   ├── CalculationButton.tsx
-│   ├── EstateInput.tsx
-│   ├── HeirSelector.tsx
-│   └── ResultsDisplay.tsx
-├── screens/                # Screen components
-│   └── CalculatorScreen.tsx
-├── lib/                    # Core libraries
-│   ├── inheritance/        # Calculation engine
-│   │   ├── calculation-engine.ts
-│   │   ├── fraction.ts
-│   │   ├── hijab-system.ts
-│   │   ├── hooks.ts
-│   │   └── types.ts
-│   └── design/             # Design system
-│       └── theme.ts
-├── hooks/                  # Custom React hooks
-├── __tests__/              # Test suites
-├── app.config.ts           # App configuration
-├── eas.json                # EAS build config
-└── package.json            # Dependencies
-```
+Component rendering and interactions
 
-### Technology Stack
+Performance optimization
 
-- **Framework**: React Native with Expo
-- **Language**: TypeScript
-- **State Management**: React Hooks
-- **Testing**: Vitest + React Testing Library
-- **Linting**: ESLint
-- **Build**: Expo / EAS Build
+Audit logging and data persistence
+📊 Technical Specifications
+Component	Technology
+Framework	React Native 0.81.5
+Development Platform	Expo 54
+Language	TypeScript 5.9
+Navigation	React Navigation 7
+State Management	React Context + Hooks
+Testing	Vitest 4.0
+PDF Generation	Expo Print
+File System	Expo FileSystem
+Sharing	Expo Sharing
+Icons	Expo Vector Icons
+🔒 Data Privacy
+All calculations performed locally - No data sent to external servers
 
-## Core Concepts
+No tracking or analytics - Complete user privacy
 
-### Madhabs (Islamic Schools)
+Optional local storage - History saved only on device
 
-Merath supports four main Islamic jurisprudence schools:
+Open source - Fully auditable codebase
 
-- **Hanafi**: Mercy-based approach, most practical
-- **Maliki**: Customary practices integrated
-- **Shafii**: Middle-ground approach
-- **Hanbali**: Strict adherence to principles
+🤝 Contributing
+Contributions are welcome! Please read our Contributing Guidelines before submitting PRs.
 
-### Hijab (Exclusion Rules)
+Development Process
+Fork the repository
 
-Complete implementation of Islamic exclusion rules:
+Create a feature branch (git checkout -b feature/amazing-feature)
 
-- **Hijab by proximity** (حجاب بالقرب)
-- **Hijab by degree** (حجاب بالدرجة)
-- **Hijab by existence** (حجاب بالوجود)
-- **Partial hijab** (حجاب النقصان)
+Commit changes (git commit -m 'Add amazing feature')
 
-### Shares and Distribution
+Push to branch (git push origin feature/amazing-feature)
 
-- **Obligatory shares**: Fixed portions for certain heirs
-- **Residuary shares**: Remaining estate distribution
-- **Fraction precision**: Accurate fractional inheritance
-- **Monetary calculation**: Direct conversion to currency
+Open a Pull Request
 
-## Deployment & Distribution
+Coding Standards
+TypeScript strict mode enabled
 
-### iOS App Store
+ESLint + Prettier for code formatting
 
-1. Create Apple Developer Account
-2. Register App ID
-3. Create App Store Connect record
-4. Configure signing certificates
-5. Build and upload with EAS
+237+ tests must pass
 
-### Android Play Store
+No any types allowed
 
-1. Create Google Play Developer account
-2. Register app bundle ID
-3. Generate signing keys
-4. Configure Play Store listing
-5. Build and upload AAB with EAS
-
-## Roadmap
-
-### Phase 6 (In Progress)
-
-- [ ] Advanced UI/UX improvements
-- [ ] Enhanced dark mode
-- [ ] Performance optimization
-
-### Phase 7 (Planned)
-
-- [ ] Multi-language support
-- [ ] RTL language support
-- [ ] International prayer times
-
-### Phase 8 (Future)
-
-- [ ] AI-assisted heir discovery
-- [ ] Family tree builder
-- [ ] Integration with legal services
-
-## Contributing
-
-Contributions are welcome! Please follow these guidelines:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
-
-## License
-
+📄 License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Changelog
+🙏 Acknowledgments
+Classical Fiqh sources from all four madhabs
 
-### Version 1.0.0
+Contributors and testers
 
-- Initial release
-- Core calculation engine
-- Multi-madhab support
-- Basic UI
-- Test suite
+Open source community
 
-## Contact
+📞 Contact & Support
+Email: support@merath.app
 
-- **Website**: <https://merath.app>
-- **GitHub**: <https://github.com/merath/mobile>
-- **Email**: <hello@merath.app>
+Website: https://merath.app
 
----
+GitHub: @Devlopmenteng
 
-**Last Updated**: 2024
-**Maintained By**: Merath Team
+Issues: GitHub Issues
+
+
+📱 Download
+https://img.shields.io/badge/Google%2520Play-Download-brightgreen
+https://img.shields.io/badge/App%2520Store-Download-blue
+
+<div dir="rtl">
+🇸🇦 نبذة عن التطبيق
+مراث هو تطبيق شامل لحساب المواريث وفق أحكام الشريعة الإسلامية. يدعم التطبيق المذاهب الفقهية الأربعة (الحنفي، المالكي، الشافعي، الحنبلي) مع دقة عالية في الحسابات.
+
+المميزات الرئيسية
+دعم كامل للمذاهب الأربعة
+
+حسابات دقيقة باستخدام الكسور
+
+تصدير التقارير بصيغ متعددة (PDF، صورة، نص)
+
+واجهة عربية كاملة مع دعم RTL
+
+شرح خطوات الحساب بالتفصيل
+
+</div>
+Made with ❤️ for the Ummah
