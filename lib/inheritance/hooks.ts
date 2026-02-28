@@ -5,7 +5,7 @@
  * @version 1.0.0
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { EnhancedInheritanceCalculationEngine as InheritanceCalculationEngine } from './enhanced-engine-complete';
 import { AuditLog, createAuditLog, type AuditLogEntry } from './audit-log';
 import { CalculationCache, PerformanceMonitor } from '../performance/optimization';
@@ -49,7 +49,7 @@ export interface ComparisonStats {
 }
 
 // ============================================================================
-// 1. useCalculator Hook - إدارة حالة الحسابات الأساسية
+// 1. useCalculator Hook - إدارة حالة الحسابات الأساسية (محسّن لمنع التجميد)
 // ============================================================================
 
 export function useCalculator() {
@@ -63,6 +63,16 @@ export function useCalculator() {
   const [result, setResult] = useState<CalculationResult | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Use ref to track if component is mounted
+  const isMounted = useRef(true);
+  
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const updateEstateData = useCallback((updates: Partial<EstateData>) => {
     setEstateData((prev) => ({
@@ -81,18 +91,27 @@ export function useCalculator() {
     });
     setResult(null);
     setError(null);
+    setIsCalculating(false);
   }, []);
 
   const calculateWithMethod = useCallback(
-    (madhab: MadhhabType, heirs: HeirsData) => {
+    async (madhab: MadhhabType, heirs: HeirsData) => {
+      // Prevent multiple simultaneous calculations
+      if (isCalculating) {
+        console.log('Calculation already in progress');
+        return null;
+      }
+
       setIsCalculating(true);
       setError(null);
 
       try {
+        // Validate estate data
         if (estateData.total <= 0) {
           throw new Error('التركة يجب أن تكون أكبر من صفر');
         }
 
+        // Validate heirs
         const heirCount = Object.values(heirs).reduce(
           (sum, val) => (sum || 0) + (val || 0),
           0
@@ -101,44 +120,72 @@ export function useCalculator() {
           throw new Error('يجب تحديد ورثة واحد على الأقل');
         }
 
-        // Check cache first
+        // Check cache first (synchronous)
         const cachedResult = CalculationCache.getCalculation(madhab, estateData, heirs);
         if (cachedResult) {
           CalculationCache.recordHit(cachedResult.calculationTime || 0);
-          setResult(cachedResult);
+          
+          // Only update state if component is still mounted
+          if (isMounted.current) {
+            setResult(cachedResult);
+            setIsCalculating(false);
+          }
           return cachedResult;
         }
 
         // Perform calculation with performance monitoring
-        const { result: calculationResult, duration } = PerformanceMonitor.measureSync(
-          `Calculate [${madhab}]`,
-          () => {
-            const engine = new InheritanceCalculationEngine(madhab, estateData, heirs);
-            return engine.calculate();
-          }
-        );
+        // Use Promise to ensure async behavior doesn't block UI
+        const calculationResult = await new Promise<CalculationResult>((resolve, reject) => {
+          // Use setTimeout to yield to UI thread
+          setTimeout(() => {
+            try {
+              const { result: calcResult, duration } = PerformanceMonitor.measureSync(
+                `Calculate [${madhab}]`,
+                () => {
+                  const engine = new InheritanceCalculationEngine(madhab, estateData, heirs);
+                  return engine.calculate();
+                }
+              );
 
-        if (!calculationResult) {
-          throw new Error('فشل الحساب: لم يتم الحصول على نتيجة');
+              if (!calcResult) {
+                reject(new Error('فشل الحساب: لم يتم الحصول على نتيجة'));
+                return;
+              }
+
+              // Cache the result for future use
+              CalculationCache.cacheCalculation(madhab, estateData, heirs, calcResult, duration);
+              CalculationCache.recordMiss(duration);
+
+              resolve(calcResult);
+            } catch (err) {
+              reject(err);
+            }
+          }, 10); // Small delay to allow UI to breathe
+        });
+
+        // Only update state if component is still mounted
+        if (isMounted.current) {
+          setResult(calculationResult);
+          setIsCalculating(false);
         }
-
-        // Cache the result for future use
-        CalculationCache.cacheCalculation(madhab, estateData, heirs, calculationResult, duration);
-        CalculationCache.recordMiss(duration);
-
-        setResult(calculationResult);
+        
         return calculationResult;
+
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : 'حدث خطأ غير معروف في الحساب';
-        setError(errorMessage);
-        setResult(null);
+        
+        // Only update state if component is still mounted
+        if (isMounted.current) {
+          setError(errorMessage);
+          setResult(null);
+          setIsCalculating(false);
+        }
+        
         return null;
-      } finally {
-        setIsCalculating(false);
       }
     },
-    [estateData]
+    [estateData, isCalculating] // Added isCalculating to dependencies
   );
 
   const getState = useCallback(

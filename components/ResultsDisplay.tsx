@@ -343,8 +343,8 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
         
         // Write the file
         await FileSystem.writeAsStringAsync(filePath, content, {
-          encoding: FileSystem.EncodingType ? FileSystem.EncodingType.UTF8 : 'utf8',
-        });
+  encoding: 'utf8', // Use string directly instead of Enum
+});
         
         // Check if sharing is available
         const isAvailable = await Sharing.isAvailableAsync();

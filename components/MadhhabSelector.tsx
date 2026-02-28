@@ -1,262 +1,268 @@
 /**
- * @file MadhhabSelector.tsx
- * @description مكون اختيار المذهب الفقهي
- * Madhab Selector Component for Phase 5
- * 
- * اختيار أحد المذاهب الأربعة للحساب
+ * @file components/MadhhabSelector.tsx
+ * @description Professional Madhab selector with horizontal cards
  */
 
-import React, { useEffect, useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useMadhab } from '../lib/inheritance/hooks';
-import { MadhhabType } from '../lib/inheritance/types';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Dimensions,
+} from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useTheme } from '../lib/design/theme';
+import type { MadhhabType } from '../lib/inheritance/types';
 
-const MADHABS_INFO = {
-  hanafi: {
-    name: 'الحنفي',
-    description: 'مذهب أبي حنيفة',
-    gradient: ['#dc2626', '#ef4444'],
-    lightBg: '#fef2f2',
-    darkColor: '#991b1b'
-  },
-  maliki: {
-    name: 'المالكي',
-    description: 'مذهب مالك بن أنس',
-    gradient: ['#7c3aed', '#8b5cf6'],
-    lightBg: '#faf5ff',
-    darkColor: '#6b21a8'
-  },
-  shafii: {
-    name: 'الشافعي',
-    description: 'مذهب محمد بن إدريس الشافعي',
-    gradient: ['#059669', '#10b981'],
-    lightBg: '#ecfdf5',
-    darkColor: '#065f46'
-  },
-  hanbali: {
-    name: 'الحنبلي',
-    description: 'مذهب أحمد بن حنبل',
-    gradient: ['#0284c7', '#0ea5e9'],
-    lightBg: '#eff6ff',
-    darkColor: '#1e40af'
-  }
-};
+const { width } = Dimensions.get('window');
 
-export interface MadhhabSelectorProps {
-  onMadhhabChange?: (madhab: MadhhabType) => void;
+interface MadhhabSelectorProps {
+  selectedMadhab?: MadhhabType;
+  onSelect: (madhab: MadhhabType) => void;
 }
 
-/**
- * مكون اختيار المذهب
- * Allows users to select Islamic school of law
- */
-export function MadhhabSelector({ onMadhhabChange }: MadhhabSelectorProps) {
-  const { madhab, changeMadhab, getMadhhabInfo } = useMadhab();
+const MADHAB_DATA = [
+  {
+    id: 'hanafi' as MadhhabType,
+    name: 'الحنفي',
+    nameEn: 'Hanafi',
+    icon: 'school',
+    color: '#10B981',
+    description: 'الإمام أبو حنيفة',
+    scholars: 'أبو حنيفة النعمان',
+    bgGradient: ['#10B981', '#059669'],
+    rules: ['الجد مع الإخوة: مشاركة', 'رد الزوجات: نعم'],
+  },
+  {
+    id: 'maliki' as MadhhabType,
+    name: 'المالكي',
+    nameEn: 'Maliki',
+    icon: 'book-open-variant',
+    color: '#8B5CF6',
+    description: 'الإمام مالك',
+    scholars: 'مالك بن أنس',
+    bgGradient: ['#8B5CF6', '#7C3AED'],
+    rules: ['الجد مع الإخوة: مشاركة', 'رد الزوجات: نعم'],
+  },
+  {
+    id: 'shafii' as MadhhabType,
+    name: 'الشافعي',
+    nameEn: 'Shafi\'i',
+    icon: 'lightbulb-on',
+    color: '#F59E0B',
+    description: 'الإمام الشافعي',
+    scholars: 'محمد بن إدريس الشافعي',
+    bgGradient: ['#F59E0B', '#D97706'],
+    rules: ['الجد مع الإخوة: حجب', 'رد الزوجات: لا'],
+  },
+  {
+    id: 'hanbali' as MadhhabType,
+    name: 'الحنبلي',
+    nameEn: 'Hanbali',
+    icon: 'book',
+    color: '#EF4444',
+    description: 'الإمام أحمد',
+    scholars: 'أحمد بن حنبل',
+    bgGradient: ['#EF4444', '#DC2626'],
+    rules: ['الجد مع الإخوة: حجب', 'رد الزوجات: لا'],
+  },
+];
 
-  useEffect(() => {
-    onMadhhabChange?.(madhab as MadhhabType);
-  }, [madhab, onMadhhabChange]);
+export function MadhhabSelector({ selectedMadhab = 'hanafi', onSelect }: MadhhabSelectorProps) {
+  const { theme } = useTheme();
+  const [expandedInfo, setExpandedInfo] = useState<MadhhabType | null>(null);
 
-  const handleMadhhabChange = useCallback((newMadhab: MadhhabType) => {
-    changeMadhab(newMadhab);
-    onMadhhabChange?.(newMadhab);
-  }, [changeMadhab, onMadhhabChange]);
+  const styles = createStyles(theme);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>اختر المذهب الفقهي</Text>
-      <Text style={styles.subtitle}>Select Islamic School of Law</Text>
-
-      <View style={styles.madhhabsGrid}>
-        {(Object.keys(MADHABS_INFO) as MadhhabType[]).map(madhhabKey => {
-          const madhhabInfo = MADHABS_INFO[madhhabKey];
-          const isSelected = madhab === madhhabKey;
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {MADHAB_DATA.map((madhab) => {
+          const isSelected = selectedMadhab === madhab.id;
+          const isExpanded = expandedInfo === madhab.id;
 
           return (
             <TouchableOpacity
-              key={madhhabKey}
+              key={madhab.id}
               style={[
-                styles.madhhabCard,
-                isSelected && styles.madhhabCardActive,
-                { borderColor: madhhabInfo.gradient[0] }
+                styles.card,
+                isSelected && styles.selectedCard,
+                { borderColor: madhab.color },
               ]}
-              onPress={() => handleMadhhabChange(madhhabKey)}
+              onPress={() => onSelect(madhab.id)}
+              activeOpacity={0.9}
             >
-              <View
-                style={[
-                  styles.madhhabCardHeader,
-                  isSelected && { backgroundColor: madhhabInfo.gradient[0] }
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.madhhabCardHeaderText,
-                    isSelected && styles.madhhabCardHeaderTextActive
-                  ]}
-                >
-                  {madhhabInfo.name}
-                </Text>
+              {/* Card Header with Icon */}
+              <View style={[styles.cardHeader, { backgroundColor: madhab.color }]}>
+                <MaterialCommunityIcons name={madhab.icon as any} size={28} color="#fff" />
               </View>
 
-              <View style={styles.madhhabCardBody}>
-                <Text style={styles.madhhabDescription}>{madhhabInfo.description}</Text>
+              {/* Card Content */}
+              <View style={styles.cardContent}>
+                <Text style={styles.madhabName}>{madhab.name}</Text>
+                <Text style={styles.madhabNameEn}>{madhab.nameEn}</Text>
                 
+                <View style={styles.scholarContainer}>
+                  <MaterialCommunityIcons name="account" size={12} color="#666" />
+                  <Text style={styles.scholarText}>{madhab.scholars}</Text>
+                </View>
+
+                {/* Selected Indicator */}
                 {isSelected && (
-                  <View style={styles.selectedIndicator}>
-                    <Text style={styles.selectedIndicatorText}>✓ مختار</Text>
+                  <View style={[styles.selectedBadge, { backgroundColor: madhab.color }]}>
+                    <MaterialCommunityIcons name="check" size={14} color="#fff" />
+                    <Text style={styles.selectedText}>مختار</Text>
+                  </View>
+                )}
+
+                {/* Expand/Collapse Button */}
+                <TouchableOpacity
+                  style={styles.expandButton}
+                  onPress={() => setExpandedInfo(isExpanded ? null : madhab.id)}
+                >
+                  <Text style={styles.expandButtonText}>
+                    {isExpanded ? 'إخفاء التفاصيل' : 'عرض التفاصيل'}
+                  </Text>
+                  <MaterialCommunityIcons
+                    name={isExpanded ? 'chevron-up' : 'chevron-down'}
+                    size={16}
+                    color={madhab.color}
+                  />
+                </TouchableOpacity>
+
+                {/* Expanded Details */}
+                {isExpanded && (
+                  <View style={styles.expandedContent}>
+                    <View style={styles.ruleItem}>
+                      <MaterialCommunityIcons name="check-circle" size={14} color={madhab.color} />
+                      <Text style={styles.ruleText}>{madhab.rules[0]}</Text>
+                    </View>
+                    <View style={styles.ruleItem}>
+                      <MaterialCommunityIcons name="check-circle" size={14} color={madhab.color} />
+                      <Text style={styles.ruleText}>{madhab.rules[1]}</Text>
+                    </View>
                   </View>
                 )}
               </View>
             </TouchableOpacity>
           );
         })}
-      </View>
-
-      {/* معلومات المذهب المختار */}
-      <View style={styles.infoContainer}>
-        <Text style={styles.infoTitle}>معلومات المذهب الحالي:</Text>
-        <View style={styles.infoContent}>
-          <Text style={styles.infoItem}>
-            <Text style={styles.infoLabel}>المذهب: </Text>
-            <Text style={styles.infoValue}>{MADHABS_INFO[madhab as keyof typeof MADHABS_INFO]?.name}</Text>
-          </Text>
-          <Text style={styles.infoItem}>
-            <Text style={styles.infoLabel}>الوصف: </Text>
-            <Text style={styles.infoValue}>
-              {MADHABS_INFO[madhab as keyof typeof MADHABS_INFO]?.description}
-            </Text>
-          </Text>
-        </View>
-      </View>
+      </ScrollView>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 8,
-    marginBottom: 16
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
-    textAlign: 'right'
-  },
-  subtitle: {
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 16,
-    textAlign: 'right'
-  },
-  madhhabsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-    gap: 12
-  },
-  madhhabCard: {
-    width: '48%',
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#e5e7eb',
-    backgroundColor: '#fff',
-    marginBottom: 8,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2
-  },
-  madhhabCardActive: {
-    borderWidth: 3,
-    shadowColor: '#4F46E5',
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 5
-  },
-  madhhabCardHeader: {
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    backgroundColor: '#f9fafb',
-    alignItems: 'center'
-  },
-  madhhabCardHeaderText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#374151'
-  },
-  madhhabCardHeaderTextActive: {
-    color: '#fff'
-  },
-  madhhabCardBody: {
-    padding: 12,
-    alignItems: 'center'
-  },
-  madhhabDescription: {
-    fontSize: 12,
-    color: '#6b7280',
-    textAlign: 'center',
-    marginBottom: 8,
-    fontWeight: '500'
-  },
-  selectedIndicator: {
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    backgroundColor: '#ecfdf5',
-    borderRadius: 6,
-    marginTop: 8,
-    borderWidth: 1,
-    borderColor: '#a7f3d0'
-  },
-  selectedIndicatorText: {
-    fontSize: 12,
-    color: '#065f46',
-    fontWeight: '600'
-  },
-  infoContainer: {
-    backgroundColor: '#f3f4f6',
-    borderRadius: 10,
-    padding: 14,
-    borderLeftWidth: 4,
-    borderLeftColor: '#4F46E5',
-    shadowColor: '#4F46E5',
-    shadowOffset: { width: -2, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2
-  },
-  infoTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#1f2937',
-    marginBottom: 10,
-    textAlign: 'right'
-  },
-  infoContent: {
-    backgroundColor: '#fff',
-    borderRadius: 6,
-    padding: 12
-  },
-  infoItem: {
-    fontSize: 12,
-    color: '#374151',
-    marginBottom: 8,
-    textAlign: 'right'
-  },
-  infoLabel: {
-    fontWeight: '600',
-    color: '#4F46E5'
-  },
-  infoValue: {
-    color: '#333',
-    fontWeight: '500'
-  }
-});
+const createStyles = (theme: any) =>
+  StyleSheet.create({
+    container: {
+      marginVertical: 8,
+    },
+    scrollContent: {
+      paddingHorizontal: 16,
+      gap: 12,
+    },
+    card: {
+      width: width * 0.75,
+      backgroundColor: '#fff',
+      borderRadius: 20,
+      overflow: 'hidden',
+      borderWidth: 2,
+      borderColor: 'transparent',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.1,
+      shadowRadius: 12,
+      elevation: 5,
+    },
+    selectedCard: {
+      borderWidth: 3,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.2,
+      shadowRadius: 16,
+      elevation: 8,
+    },
+    cardHeader: {
+      paddingVertical: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    cardContent: {
+      padding: 16,
+    },
+    madhabName: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: '#1F2937',
+      textAlign: 'right',
+      marginBottom: 2,
+    },
+    madhabNameEn: {
+      fontSize: 14,
+      color: '#6B7280',
+      textAlign: 'right',
+      marginBottom: 12,
+    },
+    scholarContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+      marginBottom: 16,
+    },
+    scholarText: {
+      fontSize: 12,
+      color: '#6B7280',
+    },
+    selectedBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 4,
+      paddingVertical: 6,
+      paddingHorizontal: 12,
+      borderRadius: 20,
+      marginBottom: 12,
+      alignSelf: 'flex-start',
+    },
+    selectedText: {
+      color: '#fff',
+      fontSize: 12,
+      fontWeight: '600',
+    },
+    expandButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 4,
+      paddingVertical: 8,
+      borderTopWidth: 1,
+      borderTopColor: '#E5E7EB',
+      marginTop: 8,
+    },
+    expandButtonText: {
+      fontSize: 12,
+      color: '#6B7280',
+    },
+    expandedContent: {
+      marginTop: 12,
+      gap: 8,
+    },
+    ruleItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    ruleText: {
+      fontSize: 12,
+      color: '#4B5563',
+      flex: 1,
+    },
+  });
 
 export default MadhhabSelector;
