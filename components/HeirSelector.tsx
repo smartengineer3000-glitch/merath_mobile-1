@@ -14,7 +14,7 @@ import {
   Dimensions,
   Animated,
 } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '../lib/icons';
 import { useTheme } from '../lib/design/theme';
 import type { HeirsData, HeirType } from '../lib/inheritance/types';
 

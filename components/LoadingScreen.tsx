@@ -13,7 +13,7 @@ import {
   Dimensions,
   ActivityIndicator,
 } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '../lib/icons';
 import { useAppTheme } from '../lib/context/ThemeProvider';
 
 const { width } = Dimensions.get('window');

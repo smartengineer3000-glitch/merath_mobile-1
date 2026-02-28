@@ -1,26 +1,31 @@
-// Learn more https://docs.expo.io/guides/customizing-metro
 const { getDefaultConfig } = require('expo/metro-config');
+const { mergeConfig } = require('@react-native/metro-config');
 
 /** @type {import('expo/metro-config').MetroConfig} */
-const config = getDefaultConfig(__dirname);
+const expoConfig = getDefaultConfig(__dirname);
 
 // Performance optimizations
-config.maxWorkers = 4; // Limit worker threads for stability
-config.reporter = {
-  ...config.reporter,
-  update: () => {
-    // Suppress noisy logs
-  },
-};
+expoConfig.maxWorkers = 4;
 
 // Enable trailing comma stripping and other optimizations
-config.transformer = {
-  ...config.transformer,
-  minifierPath: 'metro-minify-terser', // Use Terser for smaller bundles
+expoConfig.transformer = {
+  ...expoConfig.transformer,
+  minifierPath: 'metro-minify-terser',
   minifierConfig: {
     keep_classnames: true,
     keep_fnames: true,
   },
 };
+
+// Merge with React Native's default config
+const config = mergeConfig(expoConfig, {
+  // Add any React Native specific overrides here
+  reporter: {
+    ...expoConfig.reporter,
+    update: () => {
+      // Suppress noisy logs
+    },
+  },
+});
 
 module.exports = config;

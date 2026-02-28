@@ -20,7 +20,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '../lib/icons';
 import { useAppTheme } from '../lib/context/ThemeProvider';
 import { useSettings } from '../lib/context/SettingsContext';
 import { languages } from '../lib/i18n';

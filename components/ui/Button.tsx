@@ -14,7 +14,7 @@ import {
   ActivityIndicator,
   View,
 } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '../../lib/icons';
 import { useTheme } from '../../lib/design/theme';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'outline' | 'ghost' | 'danger';

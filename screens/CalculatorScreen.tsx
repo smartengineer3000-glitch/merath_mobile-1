@@ -17,7 +17,7 @@ import {
   ActivityIndicator,
   Animated,
 } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '../lib/icons';
 import { useTheme } from '../lib/design/theme';
 import { useCalculator, useMadhab, useHeirs, useAuditLog, useResults } from '../lib/inheritance/hooks';
 import MadhhabSelector from '../components/MadhhabSelector';

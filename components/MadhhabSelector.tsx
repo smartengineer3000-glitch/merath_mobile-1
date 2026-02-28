@@ -12,7 +12,7 @@ import {
   ScrollView,
   Dimensions,
 } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '../lib/icons';
 import { useTheme } from '../lib/design/theme';
 import type { MadhhabType } from '../lib/inheritance/types';
 
