@@ -1,6 +1,6 @@
 import type { ExpoConfig } from "expo/config";
 
-const bundleId = "space.manus.merath_mobile.t20260101172935";
+const bundleId = "com.merath.app";
 const appScheme = "merath";
 
 const env = {
