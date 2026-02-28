@@ -42,7 +42,10 @@ export default function CalculatorScreen() {
     resetCalculator 
   } = useCalculator();
   
-  const { heirs, clearHeirs } = useHeirs();
+  // IMPORTANT: Track heirs as a Map to ensure reactivity
+  const [heirsMap, setHeirsMap] = useState<Map<string, number>>(new Map());
+  const { clearHeirs } = useHeirs(); // Still use the hook for its other functions
+  
   const { saveResult, previousResults } = useResults();
   const { logCalculation } = useAuditLog();
   
@@ -58,14 +61,34 @@ export default function CalculatorScreen() {
     }).start();
   }, []);
 
-  // Convert heirs array to HeirsData object
+  // Handle heir changes from HeirSelector
+  const handleHeirsChange = useCallback((heirs: HeirsData) => {
+    const newMap = new Map();
+    Object.entries(heirs).forEach(([key, count]) => {
+      if (count && count > 0) {
+        newMap.set(key, count);
+      }
+    });
+    setHeirsMap(newMap);
+  }, []);
+
+  // Convert heirs map to HeirsData object for calculation
   const getHeirsData = useCallback((): HeirsData => {
     const heirsData: HeirsData = {};
-    heirs.forEach(heir => {
-      heirsData[heir.key] = heir.count;
+    heirsMap.forEach((count, key) => {
+      heirsData[key] = count;
     });
     return heirsData;
-  }, [heirs]);
+  }, [heirsMap]);
+
+  // Get total heirs count for validation
+  const getTotalHeirsCount = useCallback((): number => {
+    let total = 0;
+    heirsMap.forEach(count => {
+      total += count;
+    });
+    return total;
+  }, [heirsMap]);
 
   // Validate inputs before calculation
   const validateInputs = useCallback((): boolean => {
@@ -75,13 +98,14 @@ export default function CalculatorScreen() {
       errors.push('الرجاء إدخال مبلغ التركة');
     }
     
-    if (heirs.length === 0) {
+    const totalHeirs = getTotalHeirsCount();
+    if (totalHeirs === 0) {
       errors.push('الرجاء إضافة وارث واحد على الأقل');
     }
     
     setValidationErrors(errors);
     return errors.length === 0;
-  }, [estateData.total, heirs.length]);
+  }, [estateData.total, getTotalHeirsCount]);
 
   // Handle calculation
   const handleCalculate = useCallback(async () => {
@@ -110,9 +134,9 @@ export default function CalculatorScreen() {
     } catch (error) {
       Alert.alert('خطأ', error instanceof Error ? error.message : 'حدث خطأ غير متوقع');
     }
-  }, [madhab, estateData, heirs, calculateWithMethod, validateInputs, validationErrors, getHeirsData, saveResult, logCalculation]);
+  }, [madhab, estateData, calculateWithMethod, validateInputs, validationErrors, getHeirsData, saveResult, logCalculation]);
 
-  // Handle reset - clears ALL fields including madhab
+  // Handle reset - clears ALL fields including madhab and heirs
   const handleReset = useCallback(() => {
     Alert.alert(
       'تأكيد إعادة التعيين',
@@ -127,7 +151,9 @@ export default function CalculatorScreen() {
             changeMadhab('hanafi');
             // Reset calculator state
             resetCalculator();
-            // Clear heirs
+            // Clear heirs map
+            setHeirsMap(new Map());
+            // Clear heirs from hook
             clearHeirs();
             // Hide results
             setShowResults(false);
@@ -184,8 +210,16 @@ export default function CalculatorScreen() {
             <View style={styles.sectionHeader}>
               <MaterialCommunityIcons name="account-group" size={20} color={theme.colors.warning.main} />
               <Text style={styles.sectionTitle}>الورثة</Text>
+              {heirsMap.size > 0 && (
+                <View style={styles.heirBadge}>
+                  <Text style={styles.heirBadgeText}>
+                    {getTotalHeirsCount()}
+                  </Text>
+                </View>
+              )}
             </View>
-            <HeirSelector />
+            {/* IMPORTANT: Pass the onHeirsChange prop */}
+            <HeirSelector onHeirsChange={handleHeirsChange} />
           </View>
 
           {/* Action Buttons */}
@@ -287,6 +321,18 @@ const createStyles = (theme: any) =>
       fontSize: 14,
       fontWeight: '600',
       color: theme.colors.neutral.dark300,
+      flex: 1,
+    },
+    heirBadge: {
+      backgroundColor: theme.colors.primary.light,
+      borderRadius: 12,
+      paddingHorizontal: 8,
+      paddingVertical: 2,
+    },
+    heirBadgeText: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: theme.colors.primary.main,
     },
     actionContainer: {
       flexDirection: 'row',
@@ -333,7 +379,7 @@ const createStyles = (theme: any) =>
       marginHorizontal: 16,
       marginVertical: 8,
       padding: 12,
-      backgroundColor: '#ffebee',
+      backgroundColor: theme.colors.error.light,
       borderRadius: 8,
       borderLeftWidth: 4,
       borderLeftColor: theme.colors.error.main,
@@ -342,6 +388,7 @@ const createStyles = (theme: any) =>
       fontSize: 12,
       color: theme.colors.error.main,
       marginVertical: 2,
+      textAlign: 'right',
     },
     resultsContainer: {
       marginHorizontal: 16,
