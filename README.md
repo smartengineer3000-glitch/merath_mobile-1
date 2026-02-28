@@ -254,5 +254,4 @@ https://img.shields.io/badge/App%2520Store-Download-blue
 
 شرح خطوات الحساب بالتفصيل
 
-</div>
 Made with ❤️ for the Ummah
