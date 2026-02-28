@@ -1,6 +1,6 @@
 /**
  * @file components/MadhhabSelector.tsx
- * @description Professional Madhab selector with horizontal cards
+ * @description Compact Madhab selector with dropdown alternative
  */
 
 import React, { useState } from 'react';
@@ -9,14 +9,12 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
-  Dimensions,
+  Modal,
+  FlatList,
 } from 'react-native';
-import { MaterialCommunityIcons } from '../lib/icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '../lib/design/theme';
 import type { MadhhabType } from '../lib/inheritance/types';
-
-const { width } = Dimensions.get('window');
 
 interface MadhhabSelectorProps {
   selectedMadhab?: MadhhabType;
@@ -24,136 +22,115 @@ interface MadhhabSelectorProps {
 }
 
 const MADHAB_DATA = [
-  {
-    id: 'hanafi' as MadhhabType,
-    name: 'الحنفي',
-    nameEn: 'Hanafi',
-    icon: 'school',
-    color: '#10B981',
-    description: 'الإمام أبو حنيفة',
-    scholars: 'أبو حنيفة النعمان',
-    bgGradient: ['#10B981', '#059669'],
-    rules: ['الجد مع الإخوة: مشاركة', 'رد الزوجات: نعم'],
-  },
-  {
-    id: 'maliki' as MadhhabType,
-    name: 'المالكي',
-    nameEn: 'Maliki',
-    icon: 'book-open-variant',
-    color: '#8B5CF6',
-    description: 'الإمام مالك',
-    scholars: 'مالك بن أنس',
-    bgGradient: ['#8B5CF6', '#7C3AED'],
-    rules: ['الجد مع الإخوة: مشاركة', 'رد الزوجات: نعم'],
-  },
-  {
-    id: 'shafii' as MadhhabType,
-    name: 'الشافعي',
-    nameEn: 'Shafi\'i',
-    icon: 'lightbulb-on',
-    color: '#F59E0B',
-    description: 'الإمام الشافعي',
-    scholars: 'محمد بن إدريس الشافعي',
-    bgGradient: ['#F59E0B', '#D97706'],
-    rules: ['الجد مع الإخوة: حجب', 'رد الزوجات: لا'],
-  },
-  {
-    id: 'hanbali' as MadhhabType,
-    name: 'الحنبلي',
-    nameEn: 'Hanbali',
-    icon: 'book',
-    color: '#EF4444',
-    description: 'الإمام أحمد',
-    scholars: 'أحمد بن حنبل',
-    bgGradient: ['#EF4444', '#DC2626'],
-    rules: ['الجد مع الإخوة: حجب', 'رد الزوجات: لا'],
-  },
+  { id: 'hanafi' as MadhhabType, name: 'الحنفي', nameEn: 'Hanafi', icon: 'school', color: '#10B981' },
+  { id: 'maliki' as MadhhabType, name: 'المالكي', nameEn: 'Maliki', icon: 'book-open-variant', color: '#8B5CF6' },
+  { id: 'shafii' as MadhhabType, name: 'الشافعي', nameEn: 'Shafi\'i', icon: 'lightbulb-on', color: '#F59E0B' },
+  { id: 'hanbali' as MadhhabType, name: 'الحنبلي', nameEn: 'Hanbali', icon: 'book', color: '#EF4444' },
 ];
 
 export function MadhhabSelector({ selectedMadhab = 'hanafi', onSelect }: MadhhabSelectorProps) {
   const { theme } = useTheme();
-  const [expandedInfo, setExpandedInfo] = useState<MadhhabType | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  
+  const selected = MADHAB_DATA.find(m => m.id === selectedMadhab);
 
   const styles = createStyles(theme);
 
+  // Option 1: Compact Grid (2x2)
   return (
     <View style={styles.container}>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
+      <View style={styles.gridContainer}>
         {MADHAB_DATA.map((madhab) => {
           const isSelected = selectedMadhab === madhab.id;
-          const isExpanded = expandedInfo === madhab.id;
-
+          
           return (
             <TouchableOpacity
               key={madhab.id}
               style={[
-                styles.card,
-                isSelected && styles.selectedCard,
-                { borderColor: madhab.color },
+                styles.gridItem,
+                isSelected && styles.gridItemSelected,
+                { borderColor: madhab.color }
               ]}
               onPress={() => onSelect(madhab.id)}
-              activeOpacity={0.9}
+              activeOpacity={0.7}
             >
-              {/* Card Header with Icon */}
-              <View style={[styles.cardHeader, { backgroundColor: madhab.color }]}>
-                <MaterialCommunityIcons name={madhab.icon as any} size={28} color="#fff" />
+              <View style={[styles.iconContainer, { backgroundColor: `${madhab.color}15` }]}>
+                <MaterialCommunityIcons name={madhab.icon as any} size={20} color={madhab.color} />
               </View>
-
-              {/* Card Content */}
-              <View style={styles.cardContent}>
+              <View style={styles.textContainer}>
                 <Text style={styles.madhabName}>{madhab.name}</Text>
                 <Text style={styles.madhabNameEn}>{madhab.nameEn}</Text>
-                
-                <View style={styles.scholarContainer}>
-                  <MaterialCommunityIcons name="account" size={12} color="#666" />
-                  <Text style={styles.scholarText}>{madhab.scholars}</Text>
-                </View>
-
-                {/* Selected Indicator */}
-                {isSelected && (
-                  <View style={[styles.selectedBadge, { backgroundColor: madhab.color }]}>
-                    <MaterialCommunityIcons name="check" size={14} color="#fff" />
-                    <Text style={styles.selectedText}>مختار</Text>
-                  </View>
-                )}
-
-                {/* Expand/Collapse Button */}
-                <TouchableOpacity
-                  style={styles.expandButton}
-                  onPress={() => setExpandedInfo(isExpanded ? null : madhab.id)}
-                >
-                  <Text style={styles.expandButtonText}>
-                    {isExpanded ? 'إخفاء التفاصيل' : 'عرض التفاصيل'}
-                  </Text>
-                  <MaterialCommunityIcons
-                    name={isExpanded ? 'chevron-up' : 'chevron-down'}
-                    size={16}
-                    color={madhab.color}
-                  />
-                </TouchableOpacity>
-
-                {/* Expanded Details */}
-                {isExpanded && (
-                  <View style={styles.expandedContent}>
-                    <View style={styles.ruleItem}>
-                      <MaterialCommunityIcons name="check-circle" size={14} color={madhab.color} />
-                      <Text style={styles.ruleText}>{madhab.rules[0]}</Text>
-                    </View>
-                    <View style={styles.ruleItem}>
-                      <MaterialCommunityIcons name="check-circle" size={14} color={madhab.color} />
-                      <Text style={styles.ruleText}>{madhab.rules[1]}</Text>
-                    </View>
-                  </View>
-                )}
               </View>
+              {isSelected && (
+                <View style={[styles.selectedBadge, { backgroundColor: madhab.color }]}>
+                  <MaterialCommunityIcons name="check" size={12} color="#fff" />
+                </View>
+              )}
             </TouchableOpacity>
           );
         })}
-      </ScrollView>
+      </View>
+
+      {/* Alternative: Dropdown Style (commented out - can switch if preferred) */}
+      {/*
+      <TouchableOpacity
+        style={styles.dropdownButton}
+        onPress={() => setModalVisible(true)}
+      >
+        <View style={styles.dropdownContent}>
+          <View style={[styles.dropdownIcon, { backgroundColor: `${selected?.color}15` }]}>
+            <MaterialCommunityIcons name={selected?.icon as any} size={20} color={selected?.color} />
+          </View>
+          <View>
+            <Text style={styles.dropdownText}>{selected?.name}</Text>
+            <Text style={styles.dropdownTextEn}>{selected?.nameEn}</Text>
+          </View>
+        </View>
+        <MaterialCommunityIcons name="chevron-down" size={20} color={theme.colors.neutral.dark200} />
+      </TouchableOpacity>
+
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>اختر المذهب</Text>
+              <TouchableOpacity onPress={() => setModalVisible(false)}>
+                <MaterialCommunityIcons name="close" size={24} color={theme.colors.neutral.dark200} />
+              </TouchableOpacity>
+            </View>
+            <FlatList
+              data={MADHAB_DATA}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.modalItem}
+                  onPress={() => {
+                    onSelect(item.id);
+                    setModalVisible(false);
+                  }}
+                >
+                  <View style={[styles.modalItemIcon, { backgroundColor: `${item.color}15` }]}>
+                    <MaterialCommunityIcons name={item.icon as any} size={20} color={item.color} />
+                  </View>
+                  <View>
+                    <Text style={styles.modalItemText}>{item.name}</Text>
+                    <Text style={styles.modalItemTextEn}>{item.nameEn}</Text>
+                  </View>
+                  {selectedMadhab === item.id && (
+                    <MaterialCommunityIcons name="check" size={20} color={item.color} style={styles.modalItemCheck} />
+                  )}
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        </View>
+      </Modal>
+      */}
     </View>
   );
 }
@@ -163,105 +140,143 @@ const createStyles = (theme: any) =>
     container: {
       marginVertical: 8,
     },
-    scrollContent: {
-      paddingHorizontal: 16,
-      gap: 12,
+    // Compact Grid Style (2x2)
+    gridContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      gap: 8,
     },
-    card: {
-      width: width * 0.75,
-      backgroundColor: '#fff',
-      borderRadius: 20,
-      overflow: 'hidden',
-      borderWidth: 2,
-      borderColor: 'transparent',
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.1,
-      shadowRadius: 12,
-      elevation: 5,
-    },
-    selectedCard: {
-      borderWidth: 3,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.2,
-      shadowRadius: 16,
-      elevation: 8,
-    },
-    cardHeader: {
-      paddingVertical: 20,
+    gridItem: {
+      width: '48%',
+      flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
+      backgroundColor: '#fff',
+      borderRadius: 12,
+      padding: 12,
+      borderWidth: 1,
+      borderColor: theme.colors.neutral.light200,
+      position: 'relative',
     },
-    cardContent: {
-      padding: 16,
+    gridItemSelected: {
+      borderWidth: 2,
+      backgroundColor: '#f8fafc',
+    },
+    iconContainer: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 8,
+    },
+    textContainer: {
+      flex: 1,
     },
     madhabName: {
-      fontSize: 20,
-      fontWeight: '700',
-      color: '#1F2937',
-      textAlign: 'right',
+      fontSize: 14,
+      fontWeight: '600',
+      color: theme.colors.neutral.dark300,
       marginBottom: 2,
     },
     madhabNameEn: {
-      fontSize: 14,
-      color: '#6B7280',
-      textAlign: 'right',
-      marginBottom: 12,
-    },
-    scholarContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 4,
-      marginBottom: 16,
-    },
-    scholarText: {
-      fontSize: 12,
-      color: '#6B7280',
+      fontSize: 10,
+      color: theme.colors.neutral.dark200,
     },
     selectedBadge: {
+      position: 'absolute',
+      top: -4,
+      right: -4,
+      width: 18,
+      height: 18,
+      borderRadius: 9,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    // Dropdown Style (commented out)
+    dropdownButton: {
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
-      gap: 4,
-      paddingVertical: 6,
-      paddingHorizontal: 12,
+      justifyContent: 'space-between',
+      backgroundColor: '#fff',
+      borderRadius: 12,
+      padding: 12,
+      borderWidth: 1,
+      borderColor: theme.colors.neutral.light200,
+    },
+    dropdownContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    dropdownIcon: {
+      width: 40,
+      height: 40,
       borderRadius: 20,
-      marginBottom: 12,
-      alignSelf: 'flex-start',
-    },
-    selectedText: {
-      color: '#fff',
-      fontSize: 12,
-      fontWeight: '600',
-    },
-    expandButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
       justifyContent: 'center',
-      gap: 4,
-      paddingVertical: 8,
-      borderTopWidth: 1,
-      borderTopColor: '#E5E7EB',
-      marginTop: 8,
+      alignItems: 'center',
     },
-    expandButtonText: {
-      fontSize: 12,
-      color: '#6B7280',
+    dropdownText: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: theme.colors.neutral.dark300,
     },
-    expandedContent: {
-      marginTop: 12,
-      gap: 8,
+    dropdownTextEn: {
+      fontSize: 10,
+      color: theme.colors.neutral.dark200,
     },
-    ruleItem: {
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      justifyContent: 'flex-end',
+    },
+    modalContent: {
+      backgroundColor: '#fff',
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      padding: 20,
+      maxHeight: '80%',
+    },
+    modalHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 16,
+      paddingBottom: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.neutral.light200,
+    },
+    modalTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.colors.neutral.dark300,
+    },
+    modalItem: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 8,
+      padding: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.neutral.light100,
     },
-    ruleText: {
-      fontSize: 12,
-      color: '#4B5563',
-      flex: 1,
+    modalItemIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 12,
+    },
+    modalItemText: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: theme.colors.neutral.dark300,
+    },
+    modalItemTextEn: {
+      fontSize: 11,
+      color: theme.colors.neutral.dark200,
+    },
+    modalItemCheck: {
+      marginLeft: 'auto',
     },
   });
 
