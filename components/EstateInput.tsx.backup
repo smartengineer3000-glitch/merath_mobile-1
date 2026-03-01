@@ -1,4 +1,3 @@
-import { parseSafeDecimal } from '../lib/utils/parsers';
 /**
  * @file EstateInput.tsx
  * @description مكون إدخال بيانات التركة مع التحقق والمُلخص
