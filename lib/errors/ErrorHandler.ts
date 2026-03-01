@@ -218,3 +218,47 @@ export class ErrorContext {
 
 // Declare __DEV__ for development mode detection
 declare const __DEV__: boolean;
+
+export interface RetryConfig {
+  maxRetries: number;
+  initialDelayMs: number;
+  backoffFactor: number;
+  maxDelayMs: number;
+  retryableErrorCodes: string[];
+}
+
+export const DEFAULT_RETRY_CONFIG: RetryConfig = {
+  maxRetries: 3,
+  initialDelayMs: 1000,
+  backoffFactor: 2,
+  maxDelayMs: 10000,
+  retryableErrorCodes: ['NETWORK_ERROR', 'STORAGE_ERROR', 'PDF_EXPORT_ERROR']
+};
+
+export async function withRetry<T>(
+  operation: () => Promise<T>,
+  errorCode: string,
+  config: Partial<RetryConfig> = {}
+): Promise<T> {
+  const fullConfig = { ...DEFAULT_RETRY_CONFIG, ...config };
+  let lastError: Error | null = null;
+  
+  for (let attempt = 1; attempt <= fullConfig.maxRetries; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error as Error;
+      if (attempt === fullConfig.maxRetries) break;
+      
+      const delay = Math.min(
+        fullConfig.initialDelayMs * Math.pow(fullConfig.backoffFactor, attempt - 1),
+        fullConfig.maxDelayMs
+      );
+      
+      console.log(`Retry attempt ${attempt}/${fullConfig.maxRetries} after ${delay}ms`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+  
+  throw lastError;
+}

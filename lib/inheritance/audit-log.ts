@@ -1,3 +1,7 @@
+import { db, DBAuditLogEntry } from '../database/db';
+
+
+
 /**
  * نظام تسجيل العمليات الشامل
  * Comprehensive Audit Log System

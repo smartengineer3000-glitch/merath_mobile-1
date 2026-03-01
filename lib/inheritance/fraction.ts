@@ -8,6 +8,44 @@
 import { FractionData } from './types';
 
 export class FractionClass {
+  private static readonly MAX_SAFE_DENOMINATOR = 1_000_000_000;
+  private static readonly SIMPLIFY_THRESHOLD = 1_000_000;
+  private static readonly TOLERANCE = 1e-10;
+
+  private safeGcd(a: number, b: number): number {
+    a = Math.abs(a);
+    b = Math.abs(b);
+    if (a > Number.MAX_SAFE_INTEGER / 2 || b > Number.MAX_SAFE_INTEGER / 2) {
+      return this.approximateGcd(a, b);
+    }
+    while (b !== 0) {
+      const temp = b;
+      b = a % b;
+      a = temp;
+    }
+    return a || 1;
+  }
+
+  private approximateGcd(a: number, b: number): number {
+    const ratio = a / b;
+    if (Math.abs(ratio - Math.round(ratio)) < FractionClass.TOLERANCE) return b;
+    const inverseRatio = b / a;
+    if (Math.abs(inverseRatio - Math.round(inverseRatio)) < FractionClass.TOLERANCE) return a;
+    return 1;
+  }
+
+  private scaleDownToSafeRange(): void {
+    if (this.denominator <= FractionClass.MAX_SAFE_DENOMINATOR) return;
+    const scaleFactor = this.denominator / FractionClass.MAX_SAFE_DENOMINATOR;
+    this.numerator = Math.round(this.numerator / scaleFactor);
+    this.denominator = FractionClass.MAX_SAFE_DENOMINATOR;
+    const gcd = this.safeGcd(Math.abs(this.numerator), this.denominator);
+    if (gcd > 1) {
+      this.numerator /= gcd;
+      this.denominator /= gcd;
+    }
+  }
+
   private numerator: number;
   private denominator: number;
 
@@ -25,6 +63,9 @@ export class FractionClass {
     this.numerator = numerator;
     this.denominator = denominator;
     this.simplify();
+    if (this.denominator > FractionClass.MAX_SAFE_DENOMINATOR) {
+      this.scaleDownToSafeRange();
+    }
   }
 
   /**
@@ -32,9 +73,19 @@ export class FractionClass {
    * Simplify fraction to lowest terms
    */
   private simplify(): void {
-    const gcd = this.gcd(Math.abs(this.numerator), this.denominator);
-    this.numerator /= gcd;
-    this.denominator /= gcd;
+    if (this.numerator === 0) {
+      this.denominator = 1;
+      return;
+    }
+    if (this.denominator > FractionClass.MAX_SAFE_DENOMINATOR) {
+      this.scaleDownToSafeRange();
+      return;
+    }
+    const gcd = this.safeGcd(Math.abs(this.numerator), this.denominator);
+    if (gcd > 1) {
+      this.numerator /= gcd;
+      this.denominator /= gcd;
+    }
   }
 
   /**

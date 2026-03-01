@@ -6,9 +6,29 @@
  */
 
 import * as Print from 'expo-print';
+
+interface TempFile {
+  uri: string;
+  createdAt: number;
+}
 import * as FileSystem from 'expo-file-system';
+
+interface TempFile {
+  uri: string;
+  createdAt: number;
+}
 import * as Sharing from 'expo-sharing';
+
+interface TempFile {
+  uri: string;
+  createdAt: number;
+}
 import { CalculationResult, HeirShare } from '../inheritance/types';
+
+interface TempFile {
+  uri: string;
+  createdAt: number;
+}
 
 export interface PDFExportOptions {
   filename?: string;
@@ -18,6 +38,78 @@ export interface PDFExportOptions {
 }
 
 export class PDFExporter {
+
+  private static generateBarChartSVG(shares: any[], total: number): string {
+    if (shares.length === 0) return "";
+    const colors = ["#4F46E5", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"];
+    const barHeight = 30, spacing = 10;
+    const chartHeight = shares.length * (barHeight + spacing);
+    const maxBarWidth = 300;
+    let bars = "", labels = "";
+    shares.forEach((share, index) => {
+      const percentage = (share.amount / total) * 100;
+      const barWidth = (percentage / 100) * maxBarWidth;
+      const y = index * (barHeight + spacing);
+      const color = colors[index % colors.length];
+      bars += `<rect x="0" y="${y}" width="${barWidth}" height="${barHeight}" fill="${color}" rx="4" ry="4" opacity="0.9"><title>${share.name}: ${percentage.toFixed(1)}%</title></rect>`;
+      labels += `<text x="${barWidth + 8}" y="${y + barHeight/2 + 4}" font-size="11" fill="#374151">${share.name} (${percentage.toFixed(1)}%)</text>`;
+    });
+    return `<div style="margin:20px 0;padding:16px;background:#f9fafb;border-radius:12px"><svg width="100%" height="${chartHeight + 20}" viewBox="0 0 ${maxBarWidth + 150} ${chartHeight + 20}">${bars}${labels}</svg></div>`;
+  }
+
+
+  private static generatePieChartSVG(shares: any[], total: number): string {
+    if (shares.length === 0) return "";
+    const colors = ["#4F46E5", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"];
+    let cumulativeAngle = 0;
+    const centerX = 100, centerY = 100, radius = 80;
+    let paths = "", legendItems = "";
+    shares.forEach((share, index) => {
+      const percentage = (share.amount / total) * 100;
+      const angle = (percentage / 100) * 360;
+      if (angle > 0) {
+        const startAngle = cumulativeAngle;
+        const endAngle = cumulativeAngle + angle;
+        const startRad = (startAngle - 90) * Math.PI / 180;
+        const endRad = (endAngle - 90) * Math.PI / 180;
+        const x1 = centerX + radius * Math.cos(startRad);
+        const y1 = centerY + radius * Math.sin(startRad);
+        const x2 = centerX + radius * Math.cos(endRad);
+        const y2 = centerY + radius * Math.sin(endRad);
+        const largeArcFlag = angle > 180 ? 1 : 0;
+        const color = colors[index % colors.length];
+        paths += `<path d="M ${centerX} ${centerY} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z" fill="${color}" stroke="white" stroke-width="1" opacity="0.9"><title>${share.name}: ${percentage.toFixed(1)}%</title></path>`;
+        legendItems += `<div style="display:flex;align-items:center;margin-bottom:4px"><div style="width:12px;height:12px;background:${color};margin-left:8px;border-radius:2px"></div><span style="font-size:10px">${share.name}: ${percentage.toFixed(1)}%</span></div>`;
+        cumulativeAngle += angle;
+      }
+    });
+    return `<div style="display:flex;align-items:center;margin:20px 0;padding:16px;background:#f9fafb;border-radius:12px"><div style="flex:1;min-width:200px"><svg width="200" height="200" viewBox="0 0 200 200">${paths}<circle cx="100" cy="100" r="35" fill="white" stroke="#e5e7eb" stroke-width="1"/><text x="100" y="105" text-anchor="middle" fill="#374151" font-size="12" font-weight="bold">${total.toFixed(0)}</text><text x="100" y="120" text-anchor="middle" fill="#6b7280" font-size="8">ر.س</text></svg></div><div style="flex:1;padding-right:20px">${legendItems}</div></div>`;
+  }
+
+
+  private static async cleanupOldTempFiles(): Promise<void> {
+    const now = Date.now();
+    const cutoff = now - this.MAX_TEMP_AGE_MS;
+    const oldFiles = this.tempFiles.filter(f => f.createdAt < cutoff);
+    this.tempFiles = this.tempFiles.filter(f => f.createdAt >= cutoff);
+    for (const file of oldFiles) {
+      try {
+        const fileInfo = await FileSystem.getInfoAsync(file.uri);
+        if (fileInfo.exists) await FileSystem.deleteAsync(file.uri, { idempotent: true });
+      } catch (error) {}
+    }
+  }
+
+
+  private static registerTempFile(uri: string): void {
+    this.tempFiles.push({ uri, createdAt: Date.now() });
+    this.cleanupOldTempFiles();
+  }
+
+  private static tempFiles: TempFile[] = [];
+  private static readonly MAX_TEMP_AGE_MS = 30 * 60 * 1000;
+  private static readonly MAX_TEMP_FILES = 20;
+
   /**
    * Generate HTML for PDF
    */
@@ -575,3 +667,9 @@ export class PDFExporter {
     }
   }
 }
+
+interface TempFile {
+  uri: string;
+  createdAt: number;
+}
+
