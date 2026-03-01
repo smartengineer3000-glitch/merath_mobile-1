@@ -350,7 +350,7 @@ describe('Real-World Islamic Inheritance Scenarios', () => {
       });
 
       // Log results for inspection
-      console.log('Madhab comparison results:', results);
+      // console.log('Madhab comparison results:', results);
     });
   });
 });

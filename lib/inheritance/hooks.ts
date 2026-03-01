@@ -98,7 +98,7 @@ export function useCalculator() {
     async (madhab: MadhhabType, heirs: HeirsData) => {
       // Prevent multiple simultaneous calculations
       if (isCalculating) {
-        console.log('Calculation already in progress');
+        // console.log('Calculation already in progress');
         return null;
       }
 

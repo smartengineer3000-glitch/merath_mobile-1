@@ -267,5 +267,5 @@ export function hasAcceptedDisclaimers(disclaimerId: string): boolean {
 export function recordDisclaimerAcceptance(disclaimerId: string): void {
   // This would typically save to localStorage or secure storage
   const timestamp = new Date().toISOString();
-  console.log(`Disclaimer ${disclaimerId} accepted at ${timestamp}`);
+  // console.log(`Disclaimer ${disclaimerId} accepted at ${timestamp}`);
 }

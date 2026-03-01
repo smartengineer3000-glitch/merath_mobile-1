@@ -189,7 +189,7 @@ export default function App() {
 
   const handleDisclaimersDecline = () => {
     // User declined - exit app
-    console.log('User declined disclaimers');
+    // console.log('User declined disclaimers');
   };
 
   const handleRetry = () => {

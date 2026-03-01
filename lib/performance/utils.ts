@@ -82,10 +82,10 @@ export const performanceUtils = {
    * Log all metrics to console for debugging
    */
   logMetrics: () => {
-    console.log('=== Performance Metrics ===');
+    // console.log('=== Performance Metrics ===');
     metrics.forEach((values, label) => {
       const stats = getStats(values);
-      console.log(`${label}:`, {
+      // console.log(`${label}:`, {
         count: stats.count,
         avg: `${stats.average.toFixed(2)}ms`,
         min: `${stats.min.toFixed(2)}ms`,
@@ -138,7 +138,7 @@ function getStats(values: number[]): PerformanceStats {
 
 // Disable console logs in production
 if (__DEV__ === false) {
-  console.log = () => {};
+  // console.log = () => {};
   console.info = () => {};
   console.warn = () => {};
   // Keep console.error for critical issues
