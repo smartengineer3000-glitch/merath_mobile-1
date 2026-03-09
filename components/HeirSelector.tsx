@@ -1,8 +1,11 @@
-import * as Haptics from 'expo-haptics';
-import { parseSafeInteger } from '../lib/utils/parsers';
 /**
  * @file HeirSelector.tsx
  * @description Professional Heir Selection Component with Material Design 3
+ * 
+ * FIXES:
+ * - C3 (🔴): Input sanitization - prevents negative counts, handles Arabic numerals
+ * - H2 (🟠): Real-time validation - spouse conflict detection, max limits
+ * - M4 (🟡): Search optimization - memoized search with debouncing
  */
 
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
@@ -15,6 +18,7 @@ import {
   TextInput,
   Dimensions,
   Animated,
+  Alert,
 } from 'react-native';
 import { MaterialCommunityIcons } from '../lib/icons';
 import { useTheme } from '../lib/design/theme';
@@ -25,6 +29,26 @@ const { width } = Dimensions.get('window');
 interface HeirSelectorProps {
   onHeirsChange?: (heirs: HeirsData) => void;
 }
+
+// ===== FIX C3: Safe number parser =====
+const parseSafeInteger = (value: string): number => {
+  if (!value || typeof value !== 'string') return 0;
+  
+  // Convert Arabic numerals to Western
+  const arabicToWestern = value.replace(/[٠-٩]/g, (d) => {
+    const map: Record<string, string> = {
+      '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+      '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+    };
+    return map[d] || d;
+  });
+
+  // Remove all non-digit characters
+  const cleaned = arabicToWestern.replace(/[^0-9]/g, '');
+  
+  const parsed = parseInt(cleaned, 10);
+  return isNaN(parsed) ? 0 : parsed;
+};
 
 // Base heir type
 interface BaseHeirItem {
@@ -133,8 +157,17 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
     new Set(['spouses', 'children', 'parents'])
   );
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const [validationMessage, setValidationMessage] = useState<string | null>(null);
   const fadeAnim = useState(new Animated.Value(0))[0];
+
+  // ===== FIX M4: Debounced search with 300ms delay =====
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   // Animation on mount
   useEffect(() => {
@@ -157,11 +190,65 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
     });
   }, []);
 
+  // ===== FIX H2: Validation rules =====
+  const validateHeirUpdate = useCallback((
+    heirKey: HeirType,
+    newCount: number,
+    currentMap: Map<HeirType, number>
+  ): string | null => {
+    // Cannot be negative
+    if (newCount < 0) return 'العدد لا يمكن أن يكون سالباً';
+    
+    // Max 100 as safety limit
+    if (newCount > 100) return 'العدد كبير جداً (الحد الأقصى 100)';
+    
+    // Husband max 1
+    if (heirKey === 'husband' && newCount > 1) {
+      return 'يمكن أن يكون هناك زوج واحد فقط';
+    }
+    
+    // Wife max 4
+    if (heirKey === 'wife' && newCount > 4) {
+      return 'الحد الأقصى للزوجات هو 4';
+    }
+    
+    // Spouse conflict
+    if (heirKey === 'husband' && newCount > 0 && (currentMap.get('wife') || 0) > 0) {
+      return 'لا يمكن إضافة الزوج مع وجود زوجة';
+    }
+    if (heirKey === 'wife' && newCount > 0 && (currentMap.get('husband') || 0) > 0) {
+      return 'لا يمكن إضافة زوجة مع وجود زوج';
+    }
+    
+    // Single-count limits
+    const singleCountHeirs: HeirType[] = ['father', 'mother', 'grandfather'];
+    if (singleCountHeirs.includes(heirKey) && newCount > 1) {
+      return `يمكن أن يكون هناك واحد فقط من ${heirKey === 'father' ? 'الأب' : 
+        heirKey === 'mother' ? 'الأم' : 'الجد'}`;
+    }
+    
+    return null;
+  }, []);
+
+  // ===== FIX C3 & H2: Enhanced update function =====
   const updateHeirCount = useCallback((heirKey: HeirType, delta: number) => {
     setHeirs(prev => {
+      const currentCount = prev.get(heirKey) || 0;
+      const newCount = currentCount + delta;
+      
+      // Validate the update
+      const validationError = validateHeirUpdate(heirKey, newCount, prev);
+      if (validationError) {
+        setValidationMessage(validationError);
+        // Auto-clear after 3 seconds
+        setTimeout(() => setValidationMessage(null), 3000);
+        return prev; // Reject the change
+      }
+      
+      // Clear any previous validation message
+      setValidationMessage(null);
+      
       const newMap = new Map(prev);
-      const currentCount = newMap.get(heirKey) || 0;
-      const newCount = Math.max(0, currentCount + delta);
       
       if (newCount === 0) {
         newMap.delete(heirKey);
@@ -178,7 +265,38 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
       
       return newMap;
     });
-  }, [onHeirsChange]);
+  }, [onHeirsChange, validateHeirUpdate]);
+
+  // ===== FIX C3: Direct count input handler =====
+  const handleCountInput = useCallback((heirKey: HeirType, text: string) => {
+    const newCount = parseSafeInteger(text);
+    
+    setHeirs(prev => {
+      const validationError = validateHeirUpdate(heirKey, newCount, prev);
+      if (validationError) {
+        setValidationMessage(validationError);
+        setTimeout(() => setValidationMessage(null), 3000);
+        return prev;
+      }
+      
+      setValidationMessage(null);
+      const newMap = new Map(prev);
+      
+      if (newCount === 0) {
+        newMap.delete(heirKey);
+      } else {
+        newMap.set(heirKey, newCount);
+      }
+      
+      const heirsData: HeirsData = {};
+      newMap.forEach((value, key) => {
+        heirsData[key] = value;
+      });
+      onHeirsChange?.(heirsData);
+      
+      return newMap;
+    });
+  }, [onHeirsChange, validateHeirUpdate]);
 
   const removeHeir = useCallback((heirKey: HeirType) => {
     setHeirs(prev => {
@@ -196,15 +314,28 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
   }, [onHeirsChange]);
 
   const clearAll = useCallback(() => {
-    setHeirs(new Map());
-    onHeirsChange?.({});
+    Alert.alert(
+      'مسح الكل',
+      'هل أنت متأكد من مسح جميع الورثة؟',
+      [
+        { text: 'إلغاء', onPress: () => {} },
+        {
+          text: 'مسح',
+          onPress: () => {
+            setHeirs(new Map());
+            onHeirsChange?.({});
+            setValidationMessage(null);
+          }
+        }
+      ]
+    );
   }, [onHeirsChange]);
 
-  // Filter heirs based on search
+  // ===== FIX M4: Memoized filtered categories using debounced search =====
   const filteredCategories = useMemo(() => {
-    if (!searchQuery.trim()) return HEIR_CATEGORIES;
+    if (!debouncedSearchQuery.trim()) return HEIR_CATEGORIES;
     
-    const query = searchQuery.toLowerCase();
+    const query = debouncedSearchQuery.toLowerCase();
     return HEIR_CATEGORIES.map(category => ({
       ...category,
       heirs: category.heirs.filter(heir => 
@@ -212,7 +343,7 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
         heir.labelEn.toLowerCase().includes(query)
       )
     })).filter(category => category.heirs.length > 0);
-  }, [searchQuery]);
+  }, [debouncedSearchQuery]);
 
   const totalHeirs = useMemo(() => {
     let sum = 0;
@@ -224,6 +355,14 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
 
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+      {/* Validation Message Banner */}
+      {validationMessage && (
+        <Animated.View style={styles.validationBanner}>
+          <MaterialCommunityIcons name="alert-circle" size={20} color="#fff" />
+          <Text style={styles.validationText}>{validationMessage}</Text>
+        </Animated.View>
+      )}
+
       {/* Header with Search */}
       <View style={styles.header}>
         <View style={styles.searchContainer}>
@@ -345,9 +484,35 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
                             <MaterialCommunityIcons name="minus" size={16} color={count === 0 ? '#ccc' : '#666'} />
                           </TouchableOpacity>
 
-                          <View style={styles.countContainer}>
-                            <Text style={styles.countText}>{count}</Text>
-                          </View>
+                          <TouchableOpacity
+                            onPress={() => {
+                              // Simple tap to increment
+                              updateHeirCount(heir.key, 1);
+                            }}
+                            onLongPress={() => {
+                              // Long press to show input for direct number entry
+                              Alert.prompt(
+                                'تعديل العدد',
+                                `أدخل العدد الجديد لـ ${heir.label}`,
+                                [
+                                  { text: 'إلغاء', onPress: () => {} },
+                                  {
+                                    text: 'موافق',
+                                    onPress: (text) => {
+                                      if (text) handleCountInput(heir.key, text);
+                                    }
+                                  }
+                                ],
+                                'plain-text',
+                                count.toString(),
+                                'numeric'
+                              );
+                            }}
+                          >
+                            <View style={styles.countContainer}>
+                              <Text style={styles.countText}>{count}</Text>
+                            </View>
+                          </TouchableOpacity>
 
                           <TouchableOpacity
                             style={[
@@ -366,8 +531,13 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
                           </TouchableOpacity>
                         </View>
 
-                        {hasMaxCount(heir) && count >= heir.maxCount && (
-                          <Text style={styles.maxWarning}>الحد الأقصى: {heir.maxCount}</Text>
+                        {hasMaxCount(heir) && (
+                          <Text style={[
+                            styles.maxWarning,
+                            count >= heir.maxCount && styles.maxWarningReached
+                          ]}>
+                            الحد الأقصى: {heir.maxCount} {count >= heir.maxCount ? '(اكتمل)' : ''}
+                          </Text>
                         )}
                       </View>
                     );
@@ -386,6 +556,22 @@ const createStyles = (theme: any) =>
   StyleSheet.create({
     container: {
       flex: 1,
+    },
+    // ===== FIX H2: Validation banner styles =====
+    validationBanner: {
+      backgroundColor: theme.colors.error.main,
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      gap: 8,
+    },
+    validationText: {
+      color: '#fff',
+      fontSize: 13,
+      fontWeight: '500',
+      flex: 1,
+      textAlign: 'right',
     },
     header: {
       paddingHorizontal: 16,
@@ -582,8 +768,11 @@ const createStyles = (theme: any) =>
       opacity: 0.5,
     },
     countContainer: {
-      minWidth: 30,
+      minWidth: 40,
       alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 8,
+      paddingVertical: 4,
     },
     countText: {
       fontSize: 16,
@@ -595,6 +784,10 @@ const createStyles = (theme: any) =>
       color: theme.colors.warning.main,
       marginTop: 6,
       textAlign: 'center',
+    },
+    maxWarningReached: {
+      color: theme.colors.success.main,
+      fontWeight: '600',
     },
   });
 

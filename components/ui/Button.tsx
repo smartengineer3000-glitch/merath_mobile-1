@@ -2,6 +2,9 @@
  * @file components/ui/Button.tsx
  * @description Enhanced Material Design 3 button component
  * Professional button system with multiple variants, sizes, and icon support
+ * 
+ * FIXES:
+ * - L1 (🔵): Haptic feedback on button press
  */
 
 import React from 'react';
@@ -13,12 +16,24 @@ import {
   TextStyle,
   ActivityIndicator,
   View,
+  Platform,
 } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { MaterialCommunityIcons } from '../../lib/icons';
 import { useTheme } from '../../lib/design/theme';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'outline' | 'ghost' | 'danger';
 export type ButtonSize = 'small' | 'medium' | 'large';
+
+// ===== FIX L1: Haptic feedback types =====
+export type HapticFeedbackType = 
+  | 'light' 
+  | 'medium' 
+  | 'heavy' 
+  | 'success' 
+  | 'warning' 
+  | 'error' 
+  | 'none';
 
 export interface ModernButtonProps {
   /** Button text */
@@ -45,6 +60,10 @@ export interface ModernButtonProps {
   textStyle?: TextStyle;
   /** Accessibility label */
   accessibilityLabel?: string;
+  /** ===== FIX L1: Haptic feedback type ===== */
+  hapticFeedback?: HapticFeedbackType;
+  /** Whether to play haptic on long press */
+  hapticOnLongPress?: boolean;
 }
 
 export const ModernButton: React.FC<ModernButtonProps> = ({
@@ -60,6 +79,9 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
   style,
   textStyle,
   accessibilityLabel,
+  // ===== FIX L1: Haptic props with defaults =====
+  hapticFeedback = 'light',
+  hapticOnLongPress = false,
 }) => {
   const { theme } = useTheme();
 
@@ -144,6 +166,55 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
     }
   };
 
+  // ===== FIX L1: Haptic feedback handler =====
+  const triggerHaptic = useCallback((type: HapticFeedbackType) => {
+    if (disabled || loading || type === 'none') return;
+    
+    // Check if haptics are available on this device
+    if (Platform.OS === 'web') return; // Haptics not available on web
+    
+    try {
+      switch (type) {
+        case 'light':
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          break;
+        case 'medium':
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          break;
+        case 'heavy':
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+          break;
+        case 'success':
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          break;
+        case 'warning':
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+          break;
+        case 'error':
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+          break;
+      }
+    } catch (error) {
+      // Silently fail if haptics not available
+      if (__DEV__) {
+        console.log('Haptics not available:', error);
+      }
+    }
+  }, [disabled, loading]);
+
+  // ===== FIX L1: Press handler with haptic =====
+  const handlePress = useCallback(() => {
+    triggerHaptic(hapticFeedback);
+    onPress();
+  }, [onPress, hapticFeedback, triggerHaptic]);
+
+  // ===== FIX L1: Long press handler with haptic =====
+  const handleLongPress = useCallback(() => {
+    if (hapticOnLongPress) {
+      triggerHaptic(hapticFeedback === 'none' ? 'medium' : hapticFeedback);
+    }
+  }, [hapticOnLongPress, hapticFeedback, triggerHaptic]);
+
   const variantStyles = getVariantStyles();
   const sizeStyles = getSizeStyles();
 
@@ -210,7 +281,8 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
 
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={handlePress}
+      onLongPress={hapticOnLongPress ? handleLongPress : undefined}
       disabled={disabled || loading}
       activeOpacity={0.7}
       style={buttonStyles}
@@ -223,12 +295,49 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
   );
 };
 
+// ===== FIX L1: Pre-configured button variants with haptics =====
+export const PrimaryButton: React.FC<Omit<ModernButtonProps, 'variant'>> = (props) => (
+  <ModernButton variant="primary" hapticFeedback="medium" {...props} />
+);
+
+export const SecondaryButton: React.FC<Omit<ModernButtonProps, 'variant'>> = (props) => (
+  <ModernButton variant="secondary" hapticFeedback="light" {...props} />
+);
+
+export const DangerButton: React.FC<Omit<ModernButtonProps, 'variant'>> = (props) => (
+  <ModernButton variant="danger" hapticFeedback="heavy" {...props} />
+);
+
+export const SuccessButton: React.FC<Omit<ModernButtonProps, 'variant'>> = (props) => (
+  <ModernButton variant="primary" hapticFeedback="success" icon="check-circle" {...props} />
+);
+
+export const OutlineButton: React.FC<Omit<ModernButtonProps, 'variant'>> = (props) => (
+  <ModernButton variant="outline" hapticFeedback="light" {...props} />
+);
+
+export const IconButton: React.FC<Omit<ModernButtonProps, 'variant'> & { icon: string }> = ({
+  title,
+  icon,
+  size = 'medium',
+  ...props
+}) => (
+  <ModernButton
+    variant="ghost"
+    icon={icon}
+    title=""
+    size={size}
+    hapticFeedback="light"
+    style={styles.iconButton}
+    {...props}
+  />
+);
+
 const styles = StyleSheet.create({
-  button: {
-    // Base styles are handled dynamically
-  },
-  text: {
-    // Base styles are handled dynamically
+  iconButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 8,
+    minWidth: 40,
   },
 });
 

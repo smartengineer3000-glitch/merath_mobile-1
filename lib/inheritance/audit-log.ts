@@ -1,20 +1,22 @@
-import { db, DBAuditLogEntry } from '../database/db';
-
-
-
 /**
  * نظام تسجيل العمليات الشامل
  * Comprehensive Audit Log System
  * 
  * تسجيل جميع عمليات الحساب والتعديلات مع الطوابع الزمنية والمستخدم
+ * 
+ * FIXES:
+ * - C4 (🔴): Race condition protection with mutex locks and transaction queue
+ * - H1 (🟠): Offline data limitation - upgraded from AsyncStorage to Dexie/IndexedDB
  */
 
 import { MadhhabType, HeirsData, EstateData, CalculationResult } from './types';
 import { generateId, formatTime } from './utils';
+import { db, AuditLogEntry as DBAuditLogEntry } from '../database/db'; // We'll create this next
 
-/**
- * بيانات مدخل السجل الواحد
- */
+// ============================================================================
+// FIX H1: Dexie Database Integration
+// ============================================================================
+// We'll create a separate database file, but for now define the interface
 export interface AuditLogEntry {
   id: string;                           // معرّف فريد للسجل
   timestamp: string;                    // الطابع الزمني (ISO format)
@@ -58,46 +60,234 @@ export interface AuditLogStats {
   lastEntry?: AuditLogEntry;
 }
 
+// ============================================================================
+// FIX C4: Mutex lock for preventing race conditions
+// ============================================================================
+class Mutex {
+  private locking: Promise<void> = Promise.resolve();
+  private locks = 0;
+
+  async lock(): Promise<() => void> {
+    let unlockNext: () => void;
+    const willLock = new Promise<void>((resolve) => (unlockNext = resolve));
+
+    const previousLock = this.locking;
+    this.locking = this.locking.then(() => willLock);
+    this.locks++;
+
+    await previousLock;
+    return () => {
+      unlockNext!();
+      this.locks--;
+      if (this.locks === 0) {
+        this.locking = Promise.resolve();
+      }
+    };
+  }
+
+  get isLocked(): boolean {
+    return this.locks > 0;
+  }
+}
+
+/**
+ * Transaction queue for sequential operations
+ */
+class TransactionQueue {
+  private queue: Array<() => Promise<any>> = [];
+  private processing = false;
+  private mutex = new Mutex();
+
+  async add<T>(operation: () => Promise<T>): Promise<T> {
+    return new Promise((resolve, reject) => {
+      this.queue.push(async () => {
+        try {
+          const result = await operation();
+          resolve(result);
+        } catch (error) {
+          reject(error);
+        }
+      });
+      this.process();
+    });
+  }
+
+  private async process() {
+    if (this.processing) return;
+    this.processing = true;
+
+    while (this.queue.length > 0) {
+      const operation = this.queue.shift();
+      if (operation) {
+        const unlock = await this.mutex.lock();
+        try {
+          await operation();
+        } finally {
+          unlock();
+        }
+      }
+    }
+
+    this.processing = false;
+  }
+}
+
 /**
  * فئة نظام تسجيل العمليات
  */
 export class AuditLog {
-  private entries: AuditLogEntry[] = [];
-  private maxEntries: number = 1000; // الحد الأقصى للسجلات
+  private entries: AuditLogEntry[] = []; // In-memory cache
+  private maxEntries: number = 10000; // الحد الأقصى للسجلات (زيادة لاستيعاب IndexedDB)
   private storageKey: string = 'merath_audit_log';
   private enableLocalStorage: boolean = true;
+  
+  // ===== FIX C4: Race condition protection =====
+  private transactionQueue = new TransactionQueue();
+  private pendingWrites = new Map<string, Promise<void>>();
+  
+  // ===== FIX H1: Database ready flag =====
+  private dbReady: boolean = false;
+  private initPromise: Promise<void>;
 
-  constructor(enableLocalStorage: boolean = true, maxEntries: number = 1000) {
+  constructor(enableLocalStorage: boolean = true, maxEntries: number = 10000) {
     this.enableLocalStorage = enableLocalStorage;
     this.maxEntries = maxEntries;
-    if (this.enableLocalStorage) {
-      this.loadFromStorage();
+    
+    // ===== FIX H1: Initialize database connection =====
+    this.initPromise = this.initializeDatabase();
+  }
+
+  /**
+   * ===== FIX H1: Initialize IndexedDB connection =====
+   */
+  private async initializeDatabase(): Promise<void> {
+    try {
+      // Check if db is available
+      if (db && typeof db.auditLogs !== 'undefined') {
+        // Load existing entries from IndexedDB into memory cache
+        const dbEntries = await db.auditLogs
+          .orderBy('timestamp')
+          .reverse()
+          .limit(this.maxEntries)
+          .toArray();
+        
+        // Convert DB entries to our format
+        this.entries = dbEntries.map(this.convertFromDBEntry);
+        this.dbReady = true;
+        
+        console.log(`[AuditLog] Loaded ${this.entries.length} entries from IndexedDB`);
+      } else {
+        // Fallback to localStorage only
+        if (this.enableLocalStorage) {
+          this.loadFromStorage();
+        }
+      }
+    } catch (error) {
+      console.error('[AuditLog] Failed to initialize database:', error);
+      // Fallback to localStorage
+      if (this.enableLocalStorage) {
+        this.loadFromStorage();
+      }
     }
   }
 
   /**
-   * إضافة مدخل جديد للسجل
+   * ===== FIX H1: Convert DB entry to AuditLogEntry =====
    */
-  addEntry(entry: Omit<AuditLogEntry, 'id' | 'timestamp'>): AuditLogEntry {
-    const newEntry: AuditLogEntry = {
-      ...entry,
-      id: generateId(),
-      timestamp: new Date().toISOString()
+  private convertFromDBEntry(dbEntry: any): AuditLogEntry {
+    return {
+      id: dbEntry.id,
+      timestamp: dbEntry.timestamp,
+      operation: dbEntry.operation,
+      madhab: dbEntry.madhab,
+      heirs: dbEntry.heirs,
+      estate: dbEntry.estate,
+      result: dbEntry.result,
+      userAgent: dbEntry.userAgent,
+      metadata: dbEntry.metadata
     };
+  }
 
-    this.entries.push(newEntry);
+  /**
+   * ===== FIX H1: Convert to DB entry format =====
+   */
+  private convertToDBEntry(entry: AuditLogEntry): any {
+    return {
+      id: entry.id,
+      timestamp: entry.timestamp,
+      operation: entry.operation,
+      madhab: entry.madhab,
+      heirs: entry.heirs,
+      estate: entry.estate,
+      result: entry.result,
+      userAgent: entry.userAgent,
+      metadata: entry.metadata,
+      // Add indexed fields for querying
+      year: new Date(entry.timestamp).getFullYear(),
+      month: new Date(entry.timestamp).getMonth() + 1,
+      day: new Date(entry.timestamp).getDate(),
+      success: entry.metadata.success,
+      duration: entry.metadata.duration || 0
+    };
+  }
 
-    // إبقاء السجل ضمن الحد الأقصى
-    if (this.entries.length > this.maxEntries) {
-      this.entries.shift(); // حذف الأقدم
+  /**
+   * إضافة مدخل جديد للسجل
+   * ===== FIX C4: Protected by transaction queue =====
+   */
+  addEntry(entry: Omit<AuditLogEntry, 'id' | 'timestamp'>): Promise<AuditLogEntry> {
+    return this.transactionQueue.add(async () => {
+      const newEntry: AuditLogEntry = {
+        ...entry,
+        id: generateId(),
+        timestamp: new Date().toISOString()
+      };
+
+      // Add to memory cache
+      this.entries.push(newEntry);
+
+      // إبقاء السجل ضمن الحد الأقصى
+      if (this.entries.length > this.maxEntries) {
+        const removed = this.entries.shift(); // حذف الأقدم
+        // Also remove from database if using IndexedDB
+        if (this.dbReady && removed) {
+          await db.auditLogs.delete(removed.id).catch(() => {});
+        }
+      }
+
+      // Save to persistent storage
+      await this.saveEntryToStorage(newEntry);
+
+      return newEntry;
+    });
+  }
+
+  /**
+   * ===== FIX H1: Save single entry to IndexedDB =====
+   */
+  private async saveEntryToStorage(entry: AuditLogEntry): Promise<void> {
+    // Check if there's already a pending write for this ID
+    const existing = this.pendingWrites.get(entry.id);
+    if (existing) {
+      return existing;
     }
 
-    // حفظ في التخزين المحلي
-    if (this.enableLocalStorage) {
-      this.saveToStorage();
-    }
+    const writePromise = (async () => {
+      try {
+        if (this.dbReady) {
+          // Use IndexedDB
+          await db.auditLogs.put(this.convertToDBEntry(entry));
+        } else if (this.enableLocalStorage) {
+          // Fallback to localStorage (save all entries)
+          this.saveToStorage();
+        }
+      } finally {
+        this.pendingWrites.delete(entry.id);
+      }
+    })();
 
-    return newEntry;
+    this.pendingWrites.set(entry.id, writePromise);
+    await writePromise;
   }
 
   /**
@@ -110,7 +300,7 @@ export class AuditLog {
     result: CalculationResult,
     duration: number,
     notes?: string
-  ): AuditLogEntry {
+  ): Promise<AuditLogEntry> {
     return this.addEntry({
       operation: 'calculate',
       madhab,
@@ -135,8 +325,68 @@ export class AuditLog {
 
   /**
    * البحث والتصفية
+   * ===== FIX H1: Enhanced filtering using IndexedDB when available =====
    */
-  filter(filterCriteria: AuditLogFilter): AuditLogEntry[] {
+  async filter(filterCriteria: AuditLogFilter): Promise<AuditLogEntry[]> {
+    if (this.dbReady) {
+      return this.filterUsingIndexedDB(filterCriteria);
+    } else {
+      return this.filterInMemory(filterCriteria);
+    }
+  }
+
+  /**
+   * ===== FIX H1: IndexedDB-based filtering (fast, indexed) =====
+   */
+  private async filterUsingIndexedDB(filterCriteria: AuditLogFilter): Promise<AuditLogEntry[]> {
+    try {
+      let query = db.auditLogs.orderBy('timestamp').reverse();
+
+      // Apply filters
+      if (filterCriteria.madhab) {
+        query = query.filter(entry => entry.madhab === filterCriteria.madhab) as any;
+      }
+
+      if (filterCriteria.operation) {
+        query = query.filter(entry => entry.operation === filterCriteria.operation) as any;
+      }
+
+      if (filterCriteria.successOnly !== undefined) {
+        query = query.filter(entry => entry.metadata.success === filterCriteria.successOnly) as any;
+      }
+
+      if (filterCriteria.dateFrom) {
+        const fromDate = new Date(filterCriteria.dateFrom);
+        query = query.filter(entry => new Date(entry.timestamp) >= fromDate) as any;
+      }
+
+      if (filterCriteria.dateTo) {
+        const toDate = new Date(filterCriteria.dateTo);
+        toDate.setHours(23, 59, 59, 999);
+        query = query.filter(entry => new Date(entry.timestamp) <= toDate) as any;
+      }
+
+      // Apply pagination
+      if (filterCriteria.offset) {
+        query = query.offset(filterCriteria.offset) as any;
+      }
+
+      if (filterCriteria.limit) {
+        query = query.limit(filterCriteria.limit) as any;
+      }
+
+      const dbEntries = await query.toArray();
+      return dbEntries.map(this.convertFromDBEntry);
+    } catch (error) {
+      console.error('[AuditLog] IndexedDB filter failed, falling back to memory:', error);
+      return this.filterInMemory(filterCriteria);
+    }
+  }
+
+  /**
+   * ===== FIX H1: In-memory filtering (fallback) =====
+   */
+  private filterInMemory(filterCriteria: AuditLogFilter): AuditLogEntry[] {
     let filtered = [...this.entries];
 
     // تصفية حسب المذهب
@@ -158,6 +408,7 @@ export class AuditLog {
     // تصفية حسب التاريخ (إلى)
     if (filterCriteria.dateTo) {
       const toDate = new Date(filterCriteria.dateTo);
+      toDate.setHours(23, 59, 59, 999);
       filtered = filtered.filter(e => new Date(e.timestamp) <= toDate);
     }
 
@@ -167,7 +418,7 @@ export class AuditLog {
     }
 
     // الترتيب: الأحدث أولاً
-    filtered.reverse();
+    filtered.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
     // التطبيق الترقيمي
     if (filterCriteria.offset) {
@@ -184,50 +435,100 @@ export class AuditLog {
   /**
    * الحصول على سجل واحد بـ ID
    */
-  getEntry(id: string): AuditLogEntry | null {
-    return this.entries.find(e => e.id === id) || null;
+  async getEntry(id: string): Promise<AuditLogEntry | null> {
+    // Check memory cache first
+    const cached = this.entries.find(e => e.id === id);
+    if (cached) return cached;
+
+    // Check IndexedDB
+    if (this.dbReady) {
+      try {
+        const dbEntry = await db.auditLogs.get(id);
+        return dbEntry ? this.convertFromDBEntry(dbEntry) : null;
+      } catch (error) {
+        console.error('[AuditLog] Failed to get entry from DB:', error);
+      }
+    }
+
+    return null;
   }
 
   /**
    * حذف سجل واحد
+   * ===== FIX C4: Protected by transaction queue =====
    */
-  deleteEntry(id: string): boolean {
-    const index = this.entries.findIndex(e => e.id === id);
-    if (index >= 0) {
-      this.entries.splice(index, 1);
-      if (this.enableLocalStorage) {
-        this.saveToStorage();
+  async deleteEntry(id: string): Promise<boolean> {
+    return this.transactionQueue.add(async () => {
+      // Remove from memory cache
+      const index = this.entries.findIndex(e => e.id === id);
+      if (index >= 0) {
+        this.entries.splice(index, 1);
       }
-      return true;
-    }
-    return false;
+
+      // Remove from persistent storage
+      try {
+        if (this.dbReady) {
+          await db.auditLogs.delete(id);
+        } else if (this.enableLocalStorage) {
+          this.saveToStorage();
+        }
+        return true;
+      } catch (error) {
+        console.error('[AuditLog] Failed to delete entry:', error);
+        return false;
+      }
+    });
   }
 
   /**
    * حذف جميع السجلات
    */
-  clearAll(): number {
-    const count = this.entries.length;
-    this.entries = [];
-    if (this.enableLocalStorage) {
-      this.saveToStorage();
-    }
-    return count;
+  async clearAll(): Promise<number> {
+    return this.transactionQueue.add(async () => {
+      const count = this.entries.length;
+      this.entries = [];
+
+      try {
+        if (this.dbReady) {
+          await db.auditLogs.clear();
+        } else if (this.enableLocalStorage) {
+          this.saveToStorage();
+        }
+      } catch (error) {
+        console.error('[AuditLog] Failed to clear entries:', error);
+      }
+
+      return count;
+    });
   }
 
   /**
    * حذف السجلات القديمة
    */
-  deleteOlderThan(days: number): number {
+  async deleteOlderThan(days: number): Promise<number> {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - days);
 
     const initialLength = this.entries.length;
+    
+    // Filter out old entries from memory
     this.entries = this.entries.filter(
       e => new Date(e.timestamp) > cutoffDate
     );
 
-    if (this.enableLocalStorage) {
+    // Delete from IndexedDB
+    if (this.dbReady) {
+      try {
+        const oldEntries = await db.auditLogs
+          .where('timestamp')
+          .below(cutoffDate.toISOString())
+          .toArray();
+        
+        await Promise.all(oldEntries.map(e => db.auditLogs.delete(e.id)));
+      } catch (error) {
+        console.error('[AuditLog] Failed to delete old entries:', error);
+      }
+    } else if (this.enableLocalStorage) {
       this.saveToStorage();
     }
 
@@ -278,20 +579,33 @@ export class AuditLog {
   /**
    * تصدير البيانات بصيغة JSON
    */
-  exportAsJSON(): string {
-    return JSON.stringify(this.entries, null, 2);
+  async exportAsJSON(): Promise<string> {
+    let entriesToExport = this.entries;
+    
+    // If using IndexedDB, get all entries (not just cache)
+    if (this.dbReady && this.entries.length < (await db.auditLogs.count())) {
+      entriesToExport = (await db.auditLogs.toArray()).map(this.convertFromDBEntry);
+    }
+
+    return JSON.stringify(entriesToExport, null, 2);
   }
 
   /**
    * تصدير البيانات بصيغة CSV
    */
-  exportAsCSV(): string {
-    if (this.entries.length === 0) {
+  async exportAsCSV(): Promise<string> {
+    let entriesToExport = this.entries;
+    
+    if (this.dbReady && this.entries.length < (await db.auditLogs.count())) {
+      entriesToExport = (await db.auditLogs.toArray()).map(this.convertFromDBEntry);
+    }
+
+    if (entriesToExport.length === 0) {
       return 'ID,Timestamp,Operation,Madhab,Success,Duration,Notes\n';
     }
 
     const headers = 'ID,Timestamp,Operation,Madhab,Success,Duration,Notes\n';
-    const rows = this.entries.map(entry => {
+    const rows = entriesToExport.map(entry => {
       const notes = entry.metadata.notes || '';
       const duration = entry.metadata.duration || '';
       return `${entry.id},"${entry.timestamp}","${entry.operation}","${entry.madhab}",${entry.metadata.success},"${duration}","${notes}"`;
@@ -303,37 +617,54 @@ export class AuditLog {
   /**
    * استيراد البيانات من JSON
    */
-  importFromJSON(jsonString: string): number {
-    try {
-      const data = JSON.parse(jsonString) as AuditLogEntry[];
-      if (!Array.isArray(data)) {
-        throw new Error('بيانات غير صحيحة: يجب أن تكون array');
-      }
-
-      // التحقق من صحة البيانات
-      for (const entry of data) {
-        if (!this.isValidEntry(entry)) {
-          throw new Error('بيانات غير صحيحة في السجل');
+  async importFromJSON(jsonString: string): Promise<number> {
+    return this.transactionQueue.add(async () => {
+      try {
+        const data = JSON.parse(jsonString) as AuditLogEntry[];
+        if (!Array.isArray(data)) {
+          throw new Error('بيانات غير صحيحة: يجب أن تكون array');
         }
+
+        // التحقق من صحة البيانات
+        for (const entry of data) {
+          if (!this.isValidEntry(entry)) {
+            throw new Error('بيانات غير صحيحة في السجل');
+          }
+        }
+
+        // Add all entries
+        if (this.dbReady) {
+          // Batch insert for better performance
+          const batch = data.map(entry => this.convertToDBEntry(entry));
+          await db.auditLogs.bulkPut(batch);
+          
+          // Refresh memory cache
+          const dbEntries = await db.auditLogs
+            .orderBy('timestamp')
+            .reverse()
+            .limit(this.maxEntries)
+            .toArray();
+          this.entries = dbEntries.map(this.convertFromDBEntry);
+        } else {
+          // Add to memory
+          this.entries.push(...data);
+
+          // الحفاظ على الحد الأقصى
+          if (this.entries.length > this.maxEntries) {
+            this.entries = this.entries.slice(-this.maxEntries);
+          }
+
+          if (this.enableLocalStorage) {
+            this.saveToStorage();
+          }
+        }
+
+        return data.length;
+      } catch (error) {
+        console.error('خطأ في الاستيراد:', error);
+        return 0;
       }
-
-      // إضافة البيانات
-      this.entries.push(...data);
-
-      // الحفاظ على الحد الأقصى
-      if (this.entries.length > this.maxEntries) {
-        this.entries = this.entries.slice(-this.maxEntries);
-      }
-
-      if (this.enableLocalStorage) {
-        this.saveToStorage();
-      }
-
-      return data.length;
-    } catch (error) {
-      console.error('خطأ في الاستيراد:', error);
-      return 0;
-    }
+    });
   }
 
   /**
@@ -352,7 +683,7 @@ export class AuditLog {
   }
 
   /**
-   * حفظ السجلات في التخزين المحلي
+   * حفظ السجلات في التخزين المحلي (localStorage fallback)
    */
   private saveToStorage(): void {
     try {
@@ -368,7 +699,7 @@ export class AuditLog {
   }
 
   /**
-   * تحميل السجلات من التخزين المحلي
+   * تحميل السجلات من التخزين المحلي (localStorage fallback)
    */
   private loadFromStorage(): void {
     try {
@@ -387,25 +718,36 @@ export class AuditLog {
   /**
    * الحصول على حجم التخزين المستخدم
    */
-  getStorageSize(): { entries: number; bytes: number } {
-    const jsonString = JSON.stringify(this.entries);
+  async getStorageSize(): Promise<{ entries: number; bytes: number }> {
+    let entriesCount = this.entries.length;
+    let bytes = 0;
+
+    if (this.dbReady) {
+      entriesCount = await db.auditLogs.count();
+      // Estimate size (IndexedDB doesn't give exact size)
+      bytes = entriesCount * 2000; // Rough estimate: 2KB per entry
+    } else {
+      const jsonString = JSON.stringify(this.entries);
+      bytes = new Blob([jsonString]).size;
+    }
+
     return {
-      entries: this.entries.length,
-      bytes: new Blob([jsonString]).size
+      entries: entriesCount,
+      bytes
     };
   }
 
   /**
    * الحصول على معلومات تفصيلية عن السجل
    */
-  getDetailedInfo(): {
+  async getDetailedInfo(): Promise<{
     totalEntries: number;
     stats: AuditLogStats;
     storageSize: { entries: number; bytes: number };
     timespan: { from: string; to: string } | null;
-  } {
+  }> {
     const stats = this.getStats();
-    const storageSize = this.getStorageSize();
+    const storageSize = await this.getStorageSize();
 
     let timespan = null;
     if (this.entries.length > 0) {
@@ -422,6 +764,13 @@ export class AuditLog {
       timespan
     };
   }
+
+  /**
+   * Wait for database to be ready
+   */
+  async ready(): Promise<void> {
+    await this.initPromise;
+  }
 }
 
 /**
@@ -434,8 +783,8 @@ export function createAuditLog(enableLocalStorage?: boolean): AuditLog {
 /**
  * دالة مساعدة: الحصول على إحصائيات سريعة
  */
-export function getAuditLogStats(log: AuditLog): string {
-  const info = log.getDetailedInfo();
+export async function getAuditLogStats(log: AuditLog): Promise<string> {
+  const info = await log.getDetailedInfo();
   return `
 📊 إحصائيات السجل:
 ├── إجمالي السجلات: ${info.totalEntries}

@@ -3,6 +3,10 @@
  * يحتوي على 5 hooks رئيسية لإدارة حالة الحسابات والنتائج والتسجيل
  * @author Merath App
  * @version 1.0.0
+ * 
+ * FIXES:
+ * - C2 (🔴): Async state inconsistency - consistent Promise returns, race condition protection
+ * - H7 (🟠): Calculation timeout - prevents UI hanging on complex calculations
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -15,41 +19,16 @@ import type {
   MadhhabType,
   HeirType,
   HeirsData,
-  HeirShare,
 } from './types';
 
 // ============================================================================
-// Type Definitions for Comparison Feature
+// FIX H7: Timeout configuration
 // ============================================================================
-
-export interface ComparisonResult {
-  madhab: MadhhabType;
-  madhhabName: string;
-  totalAmount: number;
-  shares: HeirShare[];
-  differences: {
-    heirName: string;
-    amountDiff: number;
-    percentageDiff: number;
-    explanation: string;
-  }[];
-  summary: {
-    isIdentical: boolean;
-    majorDifferences: number;
-    minorDifferences: number;
-    recommendation?: string;
-  };
-}
-
-export interface ComparisonStats {
-  totalComparisons: number;
-  mostCommonMadhab: MadhhabType | null;
-  averageDifferences: number;
-  madhabAgreement: Record<MadhhabType, number>;
-}
+const CALCULATION_TIMEOUT_MS = 10000; // 10 seconds max calculation time
+const DEBOUNCE_DELAY_MS = 300; // Debounce delay for rapid changes
 
 // ============================================================================
-// 1. useCalculator Hook - إدارة حالة الحسابات الأساسية (محسّن لمنع التجميد)
+// 1. useCalculator Hook - إدارة حالة الحسابات الأساسية (محسّن)
 // ============================================================================
 
 export function useCalculator() {
@@ -64,13 +43,25 @@ export function useCalculator() {
   const [isCalculating, setIsCalculating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  // Use ref to track if component is mounted
+  // ===== FIX C2: Use refs to track mounted state and abort controller =====
   const isMounted = useRef(true);
-  
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const calculationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // ===== FIX H7: Track calculation start time for performance =====
+  const calculationStartTimeRef = useRef<number>(0);
+
   useEffect(() => {
     isMounted.current = true;
     return () => {
       isMounted.current = false;
+      // ===== FIX C2: Clean up any pending calculations =====
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      if (calculationTimeoutRef.current) {
+        clearTimeout(calculationTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -92,18 +83,63 @@ export function useCalculator() {
     setResult(null);
     setError(null);
     setIsCalculating(false);
+    
+    // ===== FIX C2: Cancel any pending calculations =====
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    if (calculationTimeoutRef.current) {
+      clearTimeout(calculationTimeoutRef.current);
+    }
   }, []);
 
+  // ===== FIX H7: Debounced calculation to prevent rapid successive calls =====
+  const debouncedCalculate = useCallback(
+    debounce(async (madhab: MadhhabType, heirs: HeirsData, resolve: (value: any) => void) => {
+      try {
+        const engine = new InheritanceCalculationEngine(madhab, estateData, heirs);
+        const calcResult = engine.calculate();
+        resolve(calcResult);
+      } catch (err) {
+        resolve({ 
+          success: false, 
+          error: err instanceof Error ? err.message : 'Calculation failed',
+          madhab,
+          madhhabName: madhab,
+          shares: [],
+          confidence: 0,
+          steps: [],
+          calculationTime: 0
+        });
+      }
+    }, DEBOUNCE_DELAY_MS),
+    [estateData]
+  );
+
+  // ===== FIX C2 & H7: Complete rewrite of calculateWithMethod =====
   const calculateWithMethod = useCallback(
-    async (madhab: MadhhabType, heirs: HeirsData) => {
-      // Prevent multiple simultaneous calculations
+    async (madhab: MadhhabType, heirs: HeirsData): Promise<CalculationResult | null> => {
+      // ===== FIX C2: Prevent multiple simultaneous calculations =====
       if (isCalculating) {
-        // console.log('Calculation already in progress');
+        console.log('Calculation already in progress, aborting new request');
         return null;
       }
 
+      // ===== FIX C2: Cancel any pending operations =====
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      if (calculationTimeoutRef.current) {
+        clearTimeout(calculationTimeoutRef.current);
+      }
+
+      // Create new abort controller for this calculation
+      abortControllerRef.current = new AbortController();
+      const { signal } = abortControllerRef.current;
+
       setIsCalculating(true);
       setError(null);
+      calculationStartTimeRef.current = performance.now();
 
       try {
         // Validate estate data
@@ -120,72 +156,102 @@ export function useCalculator() {
           throw new Error('يجب تحديد ورثة واحد على الأقل');
         }
 
-        // Check cache first (synchronous)
+        // ===== FIX C2: Check cache first (synchronous) =====
         const cachedResult = CalculationCache.getCalculation(madhab, estateData, heirs);
-        if (cachedResult) {
+        if (cachedResult && !signal.aborted) {
           CalculationCache.recordHit(cachedResult.calculationTime || 0);
           
-          // Only update state if component is still mounted
-          if (isMounted.current) {
+          if (isMounted.current && !signal.aborted) {
             setResult(cachedResult);
             setIsCalculating(false);
           }
           return cachedResult;
         }
 
-        // Perform calculation with performance monitoring
-        // Use Promise to ensure async behavior doesn't block UI
-        const calculationResult = await new Promise<CalculationResult>((resolve, reject) => {
-          // Use setTimeout to yield to UI thread
-          setTimeout(() => {
-            try {
-              const { result: calcResult, duration } = PerformanceMonitor.measureSync(
-                `Calculate [${madhab}]`,
-                () => {
-                  const engine = new InheritanceCalculationEngine(madhab, estateData, heirs);
-                  return engine.calculate();
-                }
-              );
-
-              if (!calcResult) {
-                reject(new Error('فشل الحساب: لم يتم الحصول على نتيجة'));
-                return;
-              }
-
-              // Cache the result for future use
-              CalculationCache.cacheCalculation(madhab, estateData, heirs, calcResult, duration);
-              CalculationCache.recordMiss(duration);
-
-              resolve(calcResult);
-            } catch (err) {
-              reject(err);
-            }
-          }, 10); // Small delay to allow UI to breathe
+        // ===== FIX H7: Set up timeout promise =====
+        const timeoutPromise = new Promise<never>((_, reject) => {
+          calculationTimeoutRef.current = setTimeout(() => {
+            reject(new Error('انتهت مهلة الحساب. يرجى المحاولة مرة أخرى.'));
+          }, CALCULATION_TIMEOUT_MS);
         });
 
-        // Only update state if component is still mounted
-        if (isMounted.current) {
+        // ===== FIX C2: Create calculation promise with debouncing =====
+        const calculationPromise = new Promise<CalculationResult>((resolve) => {
+          debouncedCalculate(madhab, heirs, resolve);
+        });
+
+        // ===== FIX H7: Race between calculation and timeout =====
+        const calculationResult = await Promise.race([
+          calculationPromise,
+          timeoutPromise
+        ]) as CalculationResult;
+
+        // Clear timeout since calculation completed
+        if (calculationTimeoutRef.current) {
+          clearTimeout(calculationTimeoutRef.current);
+          calculationTimeoutRef.current = null;
+        }
+
+        // Check if aborted or component unmounted
+        if (signal.aborted || !isMounted.current) {
+          return null;
+        }
+
+        const duration = performance.now() - calculationStartTimeRef.current;
+
+        // Cache the result for future use
+        CalculationCache.cacheCalculation(madhab, estateData, heirs, calculationResult, duration);
+        CalculationCache.recordMiss(duration);
+
+        // ===== FIX C2: Log slow calculations for monitoring =====
+        if (duration > 1000) {
+          console.warn(`[Performance] Slow calculation (${duration.toFixed(0)}ms) for ${madhab} with ${heirCount} heirs`);
+        }
+
+        if (isMounted.current && !signal.aborted) {
           setResult(calculationResult);
-          setIsCalculating(false);
         }
         
         return calculationResult;
 
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : 'حدث خطأ غير معروف في الحساب';
+        // Clear timeout on error
+        if (calculationTimeoutRef.current) {
+          clearTimeout(calculationTimeoutRef.current);
+          calculationTimeoutRef.current = null;
+        }
+
+        // Don't set error if aborted
+        if (signal.aborted) {
+          return null;
+        }
+
+        const errorMessage = err instanceof Error ? err.message : 'حدث خطأ غير معروف في الحساب';
         
-        // Only update state if component is still mounted
-        if (isMounted.current) {
+        if (isMounted.current && !signal.aborted) {
           setError(errorMessage);
           setResult(null);
-          setIsCalculating(false);
         }
         
-        return null;
+        return {
+          success: false,
+          madhab,
+          madhhabName: madhab,
+          shares: [],
+          confidence: 0,
+          steps: [],
+          calculationTime: performance.now() - calculationStartTimeRef.current,
+          error: errorMessage,
+          specialCases: { awl: false, auled: 0, radd: false, hijabTypes: [] }
+        };
+      } finally {
+        if (isMounted.current) {
+          setIsCalculating(false);
+        }
+        abortControllerRef.current = null;
       }
     },
-    [estateData, isCalculating] // Added isCalculating to dependencies
+    [estateData, isCalculating, debouncedCalculate]
   );
 
   const getState = useCallback(
@@ -219,15 +285,26 @@ export function useAuditLog() {
   const [entries, setEntries] = useState<AuditLogEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // ===== FIX C4: Use ref to prevent race conditions =====
+  const loadInProgress = useRef(false);
+
   useEffect(() => {
-    try {
-      const loadedEntries = auditLog.getAllEntries();
-      setEntries(loadedEntries);
-    } catch (err) {
-      console.error('خطأ في تحميل سجل التسجيل:', err);
-    } finally {
-      setIsLoading(false);
-    }
+    const loadEntries = async () => {
+      if (loadInProgress.current) return;
+      
+      loadInProgress.current = true;
+      try {
+        const loadedEntries = await Promise.resolve(auditLog.getAllEntries());
+        setEntries(loadedEntries);
+      } catch (err) {
+        console.error('خطأ في تحميل سجل التسجيل:', err);
+      } finally {
+        setIsLoading(false);
+        loadInProgress.current = false;
+      }
+    };
+
+    loadEntries();
   }, [auditLog]);
 
   const logCalculation = useCallback(
@@ -247,7 +324,7 @@ export function useAuditLog() {
           duration || 0,
           'حساب عادي'
         );
-        setEntries((prev) => [...prev, entry]);
+        setEntries((prev) => [entry, ...prev]); // Add to front for reverse chronological
         return entry;
       } catch (err) {
         console.error('خطأ في تسجيل العملية:', err);
@@ -479,6 +556,7 @@ export function useResults() {
       });
     }
 
+    setComparisonResults(comparisons);
     return comparisons;
   }, []);
 
@@ -702,6 +780,36 @@ export function useResults() {
     getAverageResult,
     setComparisonMode,
   };
+}
+
+// ============================================================================
+// Helper Types for Comparison Feature
+// ============================================================================
+
+export interface ComparisonResult {
+  madhab: MadhhabType;
+  madhhabName: string;
+  totalAmount: number;
+  shares: HeirShare[];
+  differences: {
+    heirName: string;
+    amountDiff: number;
+    percentageDiff: number;
+    explanation: string;
+  }[];
+  summary: {
+    isIdentical: boolean;
+    majorDifferences: number;
+    minorDifferences: number;
+    recommendation?: string;
+  };
+}
+
+export interface ComparisonStats {
+  totalComparisons: number;
+  mostCommonMadhab: MadhhabType | null;
+  averageDifferences: number;
+  madhabAgreement: Record<MadhhabType, number>;
 }
 
 // Helper function to generate explanations for differences
@@ -934,6 +1042,25 @@ export function useHeirs(initialHeirs: HeirsData = {}) {
     clearHeirs,
     validateHeirs,
     getHeirsStats,
+  };
+}
+
+// ============================================================================
+// Debounce utility function (moved here for completeness)
+// ============================================================================
+function debounce<T extends (...args: any[]) => any>(
+  func: T,
+  wait: number
+): (...args: Parameters<T>) => void {
+  let timeout: NodeJS.Timeout | null = null;
+  
+  return (...args: Parameters<T>) => {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(() => {
+      func(...args);
+    }, wait);
   };
 }
 

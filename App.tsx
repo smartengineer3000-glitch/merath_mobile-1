@@ -1,312 +1,447 @@
 /**
- * Main Application Entry Point
- * Phase 6: App Integration & Navigation
+ * @file App.tsx
+ * @description Root application component with providers, navigation, and global features
  * 
- * Root application component that initializes navigation,
- * sets up gesture handlers, and configures the status bar
+ * FIXES:
+ * - H8 (🟠): Network state detection with offline indicator
+ * - M2 (🟡): Onboarding for new users
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { 
+  SafeAreaProvider, 
+  initialWindowMetrics 
+} from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { View, Text, StyleSheet, ActivityIndicator, Platform, StatusBar } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { View, Text, StyleSheet, AppState, AppStateStatus, Platform } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SplashScreen from 'expo-splash-screen';
+
+import { ThemeProvider, useAppTheme } from './lib/context/ThemeProvider';
 import { SettingsProvider } from './lib/context/SettingsContext';
-import { ThemeProvider } from './lib/context/ThemeProvider';
-import RootNavigator from './navigation/RootNavigator';
+import { RootNavigator } from './navigation/RootNavigator';
 import DisclaimersModal from './components/DisclaimersModal';
 import LoadingScreen from './components/LoadingScreen';
 
-// Keep the splash screen visible while app initializes
-SplashScreen.preventAutoHideAsync().catch(() => {
-  // Handle error if preventAutoHideAsync fails
-  console.warn('Failed to prevent auto-hiding splash screen');
-});
+// ===== FIX M2: Onboarding storage key =====
+const ONBOARDING_COMPLETED_KEY = '@merath_onboarding_completed';
+const APP_LAUNCH_COUNT_KEY = '@merath_launch_count';
 
-// Define a safety timeout to hide splash if stuck
-const SPLASH_HIDE_TIMEOUT = 15000; // 15 seconds max
-
-/**
- * Error Boundary Component
- * Catches and handles errors in the application
- */
-class ErrorBoundary extends React.Component<
-  { children: React.ReactNode },
-  { hasError: boolean; error: Error | null; errorInfo: React.ErrorInfo | null }
-> {
-  constructor(props: { children: React.ReactNode }) {
-    super(props);
-    this.state = { hasError: false, error: null, errorInfo: null };
-  }
-
-  static getDerivedStateFromError(error: Error) {
-    return { hasError: true, error };
-  }
-
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('=== App Error ===');
-    console.error('Error:', error);
-    console.error('Error Info:', errorInfo);
-    console.error('Component Stack:', errorInfo.componentStack);
-    
-    // Update state to include error info for debugging
-    this.setState({ errorInfo });
-  }
-
-  render() {
-    if (this.state.hasError) {
-      // Return a minimal fallback UI to prevent total crash (React Native compatible)
-      return (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorTitle}>⚠️ Application Error</Text>
-          <Text style={styles.errorMessage}>
-            The application encountered an unexpected error.
-          </Text>
-          <Text style={styles.errorDetail}>
-            {this.state.error?.message || 'Unknown error'}
-          </Text>
-          {__DEV__ && this.state.errorInfo && (
-            <Text style={styles.errorDetail}>
-              {this.state.errorInfo.componentStack}
-            </Text>
-          )}
-          <Text style={styles.errorRestart}>
-            Please restart the application.
-          </Text>
-        </View>
-      );
-    }
-
-    // Render children instead of hardcoding RootNavigator
-    return this.props.children;
-  }
-}
-
-/**
- * App Component
- * 
- * Wraps the application with necessary providers and configuration:
- * - GestureHandlerRootView: Enables gesture handling for navigation
- * - SafeAreaProvider: Handles safe area insets for notched devices
- * - SettingsProvider: Provides global settings context
- * - ThemeProvider: Provides theme context
- * - DisclaimersModal: Shows legal disclaimers on first launch
- * - RootNavigator: Main navigation container
- */
-export default function App() {
-  const [disclaimersAccepted, setDisclaimersAccepted] = useState(false);
-  const [disclaimersLoaded, setDisclaimersLoaded] = useState(false);
-  const [appReady, setAppReady] = useState(false);
-  const [initError, setInitError] = useState<string | null>(null);
-  const [loadingProgress, setLoadingProgress] = useState(0);
-  const [loadingMessage, setLoadingMessage] = useState('جاري التحميل...');
+// ===== FIX H8: Network status component =====
+const NetworkStatusIndicator = () => {
+  const { theme } = useAppTheme();
+  const [isConnected, setIsConnected] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
-    // Simulate loading progress for better UX
-    const progressInterval = setInterval(() => {
-      setLoadingProgress(prev => {
-        if (prev >= 0.9) return prev;
-        return prev + 0.1;
-      });
-    }, 500);
-
-    // Update loading messages
-    const messages = [
-      'جاري التحميل...',
-      'تحميل الإعدادات...',
-      'تجهيز البيانات...',
-      'تهيئة النظام...',
-    ];
-    
-    let messageIndex = 0;
-    const messageInterval = setInterval(() => {
-      messageIndex = (messageIndex + 1) % messages.length;
-      setLoadingMessage(messages[messageIndex]);
-    }, 1200);
-
-    // Check if user has already accepted disclaimers
-    checkDisclaimerAcceptance();
-
-    // Safety timeout: force hide splash screen after max time
-    const splashTimeout = setTimeout(() => {
-      SplashScreen.hideAsync().catch((err) => {
-        console.warn('Safety timeout: Failed to hide splash screen:', err);
-      });
-    }, SPLASH_HIDE_TIMEOUT);
+    const unsubscribe = NetInfo.addEventListener(state => {
+      const connected = state.isConnected ?? true;
+      
+      // Only show indicator when connection status changes to disconnected
+      if (!connected && isConnected) {
+        setIsVisible(true);
+        // Auto-hide after 3 seconds
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        timeoutRef.current = setTimeout(() => setIsVisible(false), 3000);
+      }
+      
+      setIsConnected(connected);
+    });
 
     return () => {
-      clearInterval(progressInterval);
-      clearInterval(messageInterval);
-      clearTimeout(splashTimeout);
+      unsubscribe();
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [isConnected]);
+
+  if (isConnected || !isVisible) return null;
+
+  return (
+    <View style={[styles.networkIndicator, { backgroundColor: theme.colors.error.main }]}>
+      <Text style={styles.networkIndicatorText}>
+        ⚠️ لا يوجد اتصال بالإنترنت - بعض الميزات قد لا تعمل
+      </Text>
+    </View>
+  );
+};
+
+// ===== FIX M2: Onboarding modal =====
+const OnboardingModal = ({ visible, onComplete }: { visible: boolean; onComplete: () => void }) => {
+  const { theme } = useAppTheme();
+  const [step, setStep] = useState(1);
+  const totalSteps = 3;
+
+  const handleNext = () => {
+    if (step < totalSteps) {
+      setStep(step + 1);
+    } else {
+      onComplete();
+    }
+  };
+
+  const handleSkip = () => {
+    onComplete();
+  };
+
+  const getStepContent = () => {
+    switch (step) {
+      case 1:
+        return {
+          icon: '🕌',
+          title: 'مرحباً بك في ميراث',
+          description: 'التطبيق الشامل لحساب المواريث الشرعية وفق المذاهب الأربعة',
+          details: 'يدعم التطبيق المذاهب: الحنفي، المالكي، الشافعي، الحنبلي'
+        };
+      case 2:
+        return {
+          icon: '⚖️',
+          title: 'كيفية الحساب',
+          description: 'أدخل بيانات التركة والورثة بدقة',
+          details: '• المبلغ الإجمالي للتركة\n• تكاليف التجهيز والديون\n• الوصية (لا تتجاوز الثلث)'
+        };
+      case 3:
+        return {
+          icon: '📊',
+          title: 'النتائج والمشاركة',
+          description: 'احصل على توزيع دقيق للميراث',
+          details: '• عرض النسب والمبالغ\n• تصدير PDF ومشاركة النتائج\n• حفظ سجل العمليات'
+        };
+      default:
+        return { icon: '', title: '', description: '', details: '' };
+    }
+  };
+
+  const content = getStepContent();
+
+  return (
+    <View style={[styles.onboardingOverlay, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
+      <View style={[styles.onboardingCard, { backgroundColor: theme.colors.background.light }]}>
+        <View style={styles.onboardingHeader}>
+          <Text style={styles.onboardingStep}>{step}/{totalSteps}</Text>
+          <TouchableOpacity onPress={handleSkip}>
+            <Text style={styles.onboardingSkip}>تخطي</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.onboardingIconContainer}>
+          <Text style={styles.onboardingIcon}>{content.icon}</Text>
+        </View>
+
+        <Text style={[styles.onboardingTitle, { color: theme.colors.primary.main }]}>
+          {content.title}
+        </Text>
+        
+        <Text style={[styles.onboardingDescription, { color: theme.colors.neutral.dark300 }]}>
+          {content.description}
+        </Text>
+        
+        <Text style={[styles.onboardingDetails, { color: theme.colors.neutral.dark200 }]}>
+          {content.details}
+        </Text>
+
+        <View style={styles.onboardingDots}>
+          {[1, 2, 3].map((i) => (
+            <View
+              key={i}
+              style={[
+                styles.onboardingDot,
+                { backgroundColor: i === step ? theme.colors.primary.main : theme.colors.neutral.light300 }
+              ]}
+            />
+          ))}
+        </View>
+
+        <TouchableOpacity
+          style={[styles.onboardingButton, { backgroundColor: theme.colors.primary.main }]}
+          onPress={handleNext}
+        >
+          <Text style={styles.onboardingButtonText}>
+            {step === totalSteps ? 'ابدأ الآن' : 'التالي'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+// Need to import TouchableOpacity
+import { TouchableOpacity } from 'react-native';
+
+// Main App Content with theme access
+const AppContent = () => {
+  const { theme } = useAppTheme();
+  const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
+  const [showDisclaimers, setShowDisclaimers] = useState(true);
+  const [appReady, setAppReady] = useState(false);
+  
+  // ===== FIX M2: Onboarding state =====
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingLoading, setOnboardingLoading] = useState(true);
+  
+  // ===== FIX H8: Network state =====
+  const [networkStatus, setNetworkStatus] = useState({ isConnected: true, type: 'unknown' });
+  
+  // ===== FIX H8: Monitor network changes =====
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setNetworkStatus({
+        isConnected: state.isConnected ?? true,
+        type: state.type ?? 'unknown'
+      });
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // ===== FIX M2: Check if onboarding should be shown =====
+  useEffect(() => {
+    const checkOnboardingStatus = async () => {
+      try {
+        const [completed, launchCount] = await Promise.all([
+          AsyncStorage.getItem(ONBOARDING_COMPLETED_KEY),
+          AsyncStorage.getItem(APP_LAUNCH_COUNT_KEY)
+        ]);
+
+        const count = launchCount ? parseInt(launchCount, 10) : 0;
+        
+        // Show onboarding if:
+        // 1. Never completed OR
+        // 2. First launch (count === 0)
+        if (!completed || count === 0) {
+          setShowOnboarding(true);
+        }
+
+        // Increment launch count
+        await AsyncStorage.setItem(APP_LAUNCH_COUNT_KEY, (count + 1).toString());
+      } catch (error) {
+        console.error('Failed to check onboarding status:', error);
+        // Default to not showing onboarding on error
+        setShowOnboarding(false);
+      } finally {
+        setOnboardingLoading(false);
+      }
+    };
+
+    checkOnboardingStatus();
+  }, []);
+
+  // ===== FIX M2: Handle onboarding complete =====
+  const handleOnboardingComplete = useCallback(async () => {
+    try {
+      await AsyncStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true');
+      setShowOnboarding(false);
+    } catch (error) {
+      console.error('Failed to save onboarding status:', error);
+      setShowOnboarding(false); // Still hide even if save fails
+    }
+  }, []);
+
+  // Handle disclaimer acceptance
+  const handleAcceptDisclaimers = useCallback(() => {
+    setDisclaimerAccepted(true);
+    setShowDisclaimers(false);
+  }, []);
+
+  const handleDeclineDisclaimers = useCallback(() => {
+    // In a real app, you might want to exit the app here
+    // For now, just show an alert and keep showing disclaimers
+    alert('يجب قبول الشروط لاستخدام التطبيق');
+  }, []);
+
+  // Simulate app loading
+  useEffect(() => {
+    const prepare = async () => {
+      try {
+        // Keep splash screen visible while loading
+        await SplashScreen.preventAutoHideAsync();
+        
+        // Simulate loading resources
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+      } catch (e) {
+        console.warn('Error loading app:', e);
+      } finally {
+        setAppReady(true);
+        await SplashScreen.hideAsync();
+      }
+    };
+
+    prepare();
+  }, []);
+
+  // Don't render anything until app is ready and onboarding check is complete
+  if (!appReady || onboardingLoading) {
+    return <LoadingScreen message="جاري تحميل التطبيق..." />;
+  }
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme.colors.background.light }]}>
+      <StatusBar style={theme.mode === 'dark' ? 'light' : 'dark'} />
+      
+      {/* ===== FIX H8: Network status indicator ===== */}
+      <NetworkStatusIndicator />
+      
+      {/* Main App Navigation */}
+      <RootNavigator />
+      
+      {/* Legal Disclaimers Modal */}
+      <DisclaimersModal
+        visible={showDisclaimers}
+        onAccept={handleAcceptDisclaimers}
+        onDecline={handleDeclineDisclaimers}
+        showPrivacyPolicy={true}
+      />
+      
+      {/* ===== FIX M2: Onboarding Modal ===== */}
+      {showOnboarding && (
+        <OnboardingModal
+          visible={showOnboarding}
+          onComplete={handleOnboardingComplete}
+        />
+      )}
+    </View>
+  );
+};
+
+// Root App component with providers
+export default function App() {
+  const [appState, setAppState] = useState(AppState.currentState);
+
+  // ===== FIX H8: Monitor app state for network changes =====
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      setAppState(nextAppState);
+    });
+
+    return () => {
+      subscription.remove();
     };
   }, []);
 
-  // Hide splash screen once app is ready
-  useEffect(() => {
-    if (disclaimersLoaded && !initError) {
-      SplashScreen.hideAsync().catch((err) => {
-        console.warn('Failed to hide splash screen:', err);
-      });
-      
-      // Small delay to ensure smooth transition
-      setTimeout(() => {
-        setAppReady(true);
-        setLoadingProgress(1);
-      }, 500);
-    }
-  }, [disclaimersLoaded, initError]);
-
-  const checkDisclaimerAcceptance = async () => {
-    try {
-      setLoadingMessage('التحقق من الموافقات...');
-      const accepted = await AsyncStorage.getItem('disclaimers_accepted');
-      if (accepted === 'true') {
-        setDisclaimersAccepted(true);
-      }
-    } catch (error) {
-      console.error('Error checking disclaimer acceptance:', error);
-      setInitError(`Storage error: ${error instanceof Error ? error.message : String(error)}`);
-    } finally {
-      setDisclaimersLoaded(true);
-    }
-  };
-
-  const handleDisclaimersAccept = async () => {
-    try {
-      setLoadingMessage('حفظ الإعدادات...');
-      // Store acceptance in AsyncStorage
-      await AsyncStorage.setItem('disclaimers_accepted', 'true');
-      await AsyncStorage.setItem('disclaimers_accepted_date', new Date().toISOString());
-      
-      setDisclaimersAccepted(true);
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      console.error('Error saving disclaimer acceptance:', error);
-      setInitError(`Failed to save preferences: ${errorMsg}`);
-    }
-  };
-
-  const handleDisclaimersDecline = () => {
-    // User declined - exit app
-    // console.log('User declined disclaimers');
-  };
-
-  const handleRetry = () => {
-    setInitError(null);
-    checkDisclaimerAcceptance();
-  };
-
-  // Show error state if initialization failed
-  if (initError && disclaimersLoaded) {
-    return (
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <SafeAreaProvider>
-          <ThemeProvider>
-            <SettingsProvider>
-              <LoadingScreen 
-                error={initError}
-                onRetry={handleRetry}
-                message="حدث خطأ أثناء التهيئة"
-              />
-            </SettingsProvider>
-          </ThemeProvider>
-        </SafeAreaProvider>
-      </GestureHandlerRootView>
-    );
-  }
-
-  if (!disclaimersLoaded) {
-    // Show professional loading screen while checking disclaimer acceptance
-    return (
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <SafeAreaProvider>
-          <ThemeProvider>
-            <SettingsProvider>
-              <LoadingScreen 
-                message={loadingMessage}
-                progress={loadingProgress}
-              />
-            </SettingsProvider>
-          </ThemeProvider>
-        </SafeAreaProvider>
-      </GestureHandlerRootView>
-    );
-  }
-
-  // Main app render with all providers
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <ErrorBoundary>
-          {/* Status Bar Configuration */}
-          <StatusBar
-            backgroundColor="transparent"
-            translucent
-            barStyle="dark-content"
-          />
-          
-          {/* Wrap everything with SettingsProvider and ThemeProvider */}
+      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+        <ThemeProvider>
           <SettingsProvider>
-            <ThemeProvider>
-              {/* Disclaimers Modal - Shows if not yet accepted */}
-              <DisclaimersModal
-                visible={!disclaimersAccepted}
-                onAccept={handleDisclaimersAccept}
-                onDecline={handleDisclaimersDecline}
-              />
-              
-              {/* Main Navigation - Only shown after disclaimers accepted */}
-              {disclaimersAccepted && (
-                appReady ? (
-                  <RootNavigator />
-                ) : (
-                  <LoadingScreen 
-                    message="جاري تجهيز التطبيق..."
-                    progress={loadingProgress}
-                  />
-                )
-              )}
-            </ThemeProvider>
+            <AppContent />
           </SettingsProvider>
-        </ErrorBoundary>
+        </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }
 
-// Styles for error boundary UI
 const styles = StyleSheet.create({
-  errorContainer: {
+  container: {
     flex: 1,
+  },
+  // ===== FIX H8: Network indicator styles =====
+  networkIndicator: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 50 : 0,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  networkIndicatorText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  // ===== FIX M2: Onboarding styles =====
+  onboardingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 2000,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
     padding: 20,
   },
-  errorTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#d32f2f',
-    marginBottom: 12,
-    textAlign: 'center',
+  onboardingCard: {
+    width: '100%',
+    maxWidth: 400,
+    borderRadius: 24,
+    padding: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
   },
-  errorMessage: {
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 12,
-    textAlign: 'center',
+  onboardingHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
   },
-  errorDetail: {
-    fontSize: 12,
-    color: '#666',
-    marginVertical: 10,
-    textAlign: 'center',
-  },
-  errorRestart: {
-    fontSize: 12,
+  onboardingStep: {
+    fontSize: 14,
+    fontWeight: '600',
     color: '#999',
-    marginTop: 20,
+  },
+  onboardingSkip: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1976d2',
+    padding: 8,
+  },
+  onboardingIconContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  onboardingIcon: {
+    fontSize: 64,
+  },
+  onboardingTitle: {
+    fontSize: 24,
+    fontWeight: '700',
     textAlign: 'center',
+    marginBottom: 12,
+  },
+  onboardingDescription: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 16,
+    lineHeight: 24,
+  },
+  onboardingDetails: {
+    fontSize: 14,
+    textAlign: 'right',
+    marginBottom: 24,
+    lineHeight: 22,
+    paddingHorizontal: 8,
+  },
+  onboardingDots: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
+    gap: 8,
+  },
+  onboardingDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  onboardingButton: {
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  onboardingButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });

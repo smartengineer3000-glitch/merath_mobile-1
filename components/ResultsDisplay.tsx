@@ -1,10 +1,14 @@
 /**
  * @file ResultsDisplay.tsx
- * @description عرض النتائج والتوزيع مع مشاركة متقدمة
- * Results Display Component with Comprehensive Sharing
+ * @description عرض النتائج والتوزيع مع مشاركة متقدمة ورسوم متحركة
+ * Results Display Component with Comprehensive Sharing and Animations
+ * 
+ * FIXES:
+ * - M6 (🟡): Share preview before sharing
+ * - L2 (🔵): Results counting animation
  */
 
-import React, { useState, useMemo, useCallback, useRef } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -17,6 +21,8 @@ import {
   Platform,
   Clipboard,
   Modal,
+  Animated,
+  Easing,
 } from 'react-native';
 import { MaterialCommunityIcons } from '../lib/icons';
 import * as Print from 'expo-print';
@@ -37,6 +43,151 @@ export interface ResultsDisplayProps {
 type ShareFormat = 'pdf' | 'text' | 'image' | 'clipboard';
 type ShareStatus = 'idle' | 'generating' | 'sharing' | 'success' | 'error';
 
+// ===== FIX L2: Animated number component =====
+const AnimatedNumber = ({ 
+  value, 
+  duration = 1000,
+  format = true 
+}: { 
+  value: number; 
+  duration?: number;
+  format?: boolean;
+}) => {
+  const [displayValue, setDisplayValue] = useState(0);
+  const animationRef = useRef<Animated.Value>(new Animated.Value(0));
+  const previousValueRef = useRef(0);
+
+  useEffect(() => {
+    if (value === displayValue) return;
+
+    // Stop any ongoing animation
+    animationRef.current.stopAnimation();
+
+    // Start new animation
+    Animated.timing(animationRef.current, {
+      toValue: 1,
+      duration,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    }).start(({ finished }) => {
+      if (finished) {
+        setDisplayValue(value);
+        previousValueRef.current = value;
+      }
+    });
+
+    // Listen to animation progress
+    const listener = animationRef.current.addListener(({ value: progress }) => {
+      const newValue = previousValueRef.current + (value - previousValueRef.current) * progress;
+      setDisplayValue(newValue);
+    });
+
+    return () => {
+      animationRef.current.removeListener(listener);
+    };
+  }, [value, duration]);
+
+  const formattedValue = format 
+    ? displayValue.toFixed(2).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[parseInt(d)] || d)
+    : Math.round(displayValue).toString().replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[parseInt(d)] || d);
+
+  return <Text>{formattedValue}</Text>;
+};
+
+// ===== FIX M6: Share preview modal =====
+const SharePreviewModal = ({
+  visible,
+  onClose,
+  onConfirm,
+  result,
+  format,
+  previewHTML,
+}: {
+  visible: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  result: CalculationResult;
+  format: ShareFormat;
+  previewHTML: string;
+}) => {
+  const { theme } = useAppTheme();
+
+  const getFormatIcon = () => {
+    switch (format) {
+      case 'pdf': return 'file-pdf-box';
+      case 'image': return 'image';
+      case 'text': return 'text';
+      case 'clipboard': return 'content-copy';
+      default: return 'share';
+    }
+  };
+
+  const getFormatName = () => {
+    switch (format) {
+      case 'pdf': return 'PDF';
+      case 'image': return 'صورة';
+      case 'text': return 'نص';
+      case 'clipboard': return 'نسخ';
+      default: return 'مشاركة';
+    }
+  };
+
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      onRequestClose={onClose}
+    >
+      <View style={styles.previewOverlay}>
+        <View style={[styles.previewContent, { backgroundColor: theme.colors.background.light }]}>
+          <View style={styles.previewHeader}>
+            <View style={styles.previewHeaderLeft}>
+              <MaterialCommunityIcons name={getFormatIcon()} size={24} color={theme.colors.primary.main} />
+              <Text style={styles.previewTitle}>معاينة المشاركة - {getFormatName()}</Text>
+            </View>
+            <TouchableOpacity onPress={onClose}>
+              <MaterialCommunityIcons name="close" size={24} color={theme.colors.neutral.dark200} />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView style={styles.previewScroll}>
+            {format === 'html' || format === 'pdf' ? (
+              <View style={styles.previewHTML}>
+                <Text style={styles.previewHTMLText}>{previewHTML.substring(0, 500)}...</Text>
+              </View>
+            ) : format === 'image' ? (
+              <View style={styles.previewImagePlaceholder}>
+                <MaterialCommunityIcons name="image" size={48} color={theme.colors.neutral.light300} />
+                <Text style={styles.previewImageText}>معاينة الصورة</Text>
+              </View>
+            ) : (
+              <View style={styles.previewText}>
+                <Text style={styles.previewTextContent}>{previewHTML}</Text>
+              </View>
+            )}
+          </ScrollView>
+
+          <View style={styles.previewActions}>
+            <TouchableOpacity
+              style={[styles.previewButton, styles.previewCancelButton]}
+              onPress={onClose}
+            >
+              <Text style={styles.previewCancelText}>إلغاء</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.previewButton, styles.previewConfirmButton, { backgroundColor: theme.colors.primary.main }]}
+              onPress={onConfirm}
+            >
+              <Text style={styles.previewConfirmText}>مشاركة</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
 export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
   const { theme } = useAppTheme();
   const viewShotRef = useRef<ViewShot>(null);
@@ -51,9 +202,19 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
   const [shareError, setShareError] = useState<string | null>(null);
   const [shareFormat, setShareFormat] = useState<ShareFormat>('pdf');
   
+  // ===== FIX M6: Preview state =====
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [previewHTML, setPreviewHTML] = useState('');
+  const [pendingShare, setPendingShare] = useState<{ format: ShareFormat } | null>(null);
+
   // Export states
   const [exportLoading, setExportLoading] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
+
+  // ===== FIX L2: Animation values for counting =====
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current;
+  const [totalAmount, setTotalAmount] = useState(0);
 
   // Get comparison data from the enhanced hook
   const { 
@@ -65,6 +226,30 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
 
   const currentResult = result || results[0];
   const previousResults = results.slice(1, 4);
+
+  // ===== FIX L2: Animate entrance =====
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  // ===== FIX L2: Calculate total for animation =====
+  useEffect(() => {
+    if (currentResult?.success) {
+      const total = currentResult.shares.reduce((sum, s) => sum + s.amount, 0);
+      setTotalAmount(total);
+    }
+  }, [currentResult]);
 
   const stats_data = useMemo(() => {
     return {
@@ -233,15 +418,6 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
             padding-top: 20px;
             border-top: 1px solid #e0e0e0;
           }
-          .share-button {
-            background: #667eea;
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            margin-top: 20px;
-            font-weight: bold;
-          }
         </style>
       </head>
       <body>
@@ -313,16 +489,13 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
     }
   }, []);
 
-  // Share via native share dialog - USING THE CORRECT EXPO FILE SYSTEM API
+  // Share via native share dialog
   const shareViaNative = useCallback(async (content: string, type: 'text' | 'html') => {
     try {
       if (type === 'html') {
-        // For HTML, we'll create a temporary file and share it
         const fileName = `merath-${Date.now()}.html`;
         
-        // Check if we're on web platform
         if (Platform.OS === 'web') {
-          // For web, use a different approach
           const blob = new Blob([content], { type: 'text/html' });
           const url = URL.createObjectURL(blob);
           await Share.share({
@@ -332,8 +505,6 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
           return;
         }
         
-        // For native platforms, use the document directory
-        // The documentDirectory is available at runtime even if types don't show it
         const documentDir = (FileSystem as any).documentDirectory;
         if (!documentDir) {
           throw new Error('لا يمكن الوصول إلى نظام الملفات');
@@ -341,12 +512,10 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
         
         const filePath = `${documentDir}${fileName}`;
         
-        // Write the file
         await FileSystem.writeAsStringAsync(filePath, content, {
-  encoding: 'utf8', // Use string directly instead of Enum
-});
+          encoding: 'utf8',
+        });
         
-        // Check if sharing is available
         const isAvailable = await Sharing.isAvailableAsync();
         if (!isAvailable) {
           throw new Error('المشاركة غير متوفرة على هذا الجهاز');
@@ -375,7 +544,6 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
     }
     
     try {
-      // Use type assertion for capture method
       const captureMethod = (viewShotRef.current as any).capture;
       if (!captureMethod) {
         throw new Error('Capture method not available');
@@ -409,26 +577,48 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
     }
   }, [captureAsImage]);
 
-  // Main share handler
-  const handleShare = useCallback(async (format: ShareFormat) => {
+  // ===== FIX M6: Show preview before sharing =====
+  const showPreview = useCallback((format: ShareFormat) => {
     if (!currentResult || !currentResult.success) {
       Alert.alert('خطأ', 'لا توجد نتائج صحيحة للمشاركة');
       return;
     }
 
+    let previewContent = '';
+    switch (format) {
+      case 'text':
+      case 'clipboard':
+        previewContent = generateShareText(currentResult, true);
+        break;
+      case 'pdf':
+      case 'image':
+        previewContent = generateShareHTML(currentResult);
+        break;
+    }
+
+    setPreviewHTML(previewContent);
     setShareFormat(format);
+    setPreviewVisible(true);
+  }, [currentResult, generateShareText, generateShareHTML]);
+
+  // ===== FIX M6: Execute share after preview =====
+  const executeShare = useCallback(async () => {
+    setPreviewVisible(false);
+    setShareModalVisible(false);
+    
+    setShareFormat(shareFormat);
     setShareStatus('generating');
     setShareError(null);
 
     try {
-      switch (format) {
+      switch (shareFormat) {
         case 'text': {
-          const text = generateShareText(currentResult, true);
+          const text = generateShareText(currentResult!, true);
           await shareViaNative(text, 'text');
           break;
         }
         case 'clipboard': {
-          const text = generateShareText(currentResult, true);
+          const text = generateShareText(currentResult!, true);
           await shareToClipboard(text);
           break;
         }
@@ -441,7 +631,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
           const timestamp = new Date().toLocaleDateString('ar-SA');
           const filename = `تقرير-التركة-${timestamp}`;
           
-          await PDFExporter.generateAndShare(currentResult, {
+          await PDFExporter.generateAndShare(currentResult!, {
             filename,
             includeCalculationSteps: true,
             theme: 'light'
@@ -449,10 +639,10 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
           
           ErrorLogger.logError(
             'PDF_EXPORT_SUCCESS',
-            `PDF exported successfully for madhab: ${currentResult.madhhabName}`,
+            `PDF exported successfully for madhab: ${currentResult!.madhhabName}`,
             'تم تصدير التقرير بنجاح',
             'info',
-            { madhab: currentResult.madhhabName }
+            { madhab: currentResult!.madhhabName }
           );
           break;
         }
@@ -460,7 +650,6 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
       
       setShareStatus('success');
       setTimeout(() => {
-        setShareModalVisible(false);
         setShareStatus('idle');
       }, 1000);
       
@@ -474,17 +663,17 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
         errorMessage,
         'حدث خطأ أثناء المشاركة',
         'error',
-        { format }
+        { format: shareFormat }
       );
     } finally {
       setExportLoading(false);
     }
-  }, [currentResult, generateShareText, shareViaNative, shareToClipboard, shareAsImage]);
+  }, [shareFormat, currentResult, generateShareText, shareViaNative, shareToClipboard, shareAsImage]);
 
-  // Handle PDF Export (legacy)
+  // Handle PDF Export
   const handleExportPDF = useCallback(async () => {
-    await handleShare('pdf');
-  }, [handleShare]);
+    showPreview('pdf');
+  }, [showPreview]);
 
   const handleExportComparison = useCallback(() => {
     if (!comparisonResults || comparisonResults.length === 0) {
@@ -509,7 +698,11 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
 
   return (
     <ViewShot ref={viewShotRef} options={{ format: 'png', quality: 0.9 }}>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <Animated.ScrollView 
+        style={[styles.container, { opacity: fadeAnim }]} 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ transform: [{ translateY: slideAnim }] }}
+      >
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.madhhabBadge}>
@@ -566,29 +759,35 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>جدول التوزيع</Text>
           <View style={styles.table}>
+            {/* Table Header */}
             <View style={styles.tableHeader}>
               <Text style={styles.tableHeaderCell}>المبلغ</Text>
               <Text style={styles.tableHeaderCell}>النسبة</Text>
               <Text style={styles.tableHeaderCell}>الوارث</Text>
             </View>
 
-            {currentResult.shares && currentResult.shares.map((share: any, index: number) => (
-              <View
-                key={index}
-                style={[
-                  styles.tableRow,
-                  index % 2 === 1 && styles.tableRowAlternate
-                ]}
-              >
-                <Text style={styles.tableCell}>
-                  {share.amount.toFixed(2)} ر.س
-                </Text>
-                <Text style={styles.tableCell}>
-                  {share.fraction.numerator}/{share.fraction.denominator}
-                </Text>
-                <Text style={styles.tableCell}>{share.name}</Text>
-              </View>
-            ))}
+            {/* Table Rows with Animated Numbers */}
+            {currentResult.shares && currentResult.shares.map((share: any, index: number) => {
+              const percentage = (share.amount / totalAmount) * 100;
+              
+              return (
+                <View
+                  key={index}
+                  style={[
+                    styles.tableRow,
+                    index % 2 === 1 && styles.tableRowAlternate
+                  ]}
+                >
+                  <Text style={styles.tableCell}>
+                    <AnimatedNumber value={share.amount} /> ر.س
+                  </Text>
+                  <Text style={styles.tableCell}>
+                    <AnimatedNumber value={percentage} format={false} />%
+                  </Text>
+                  <Text style={styles.tableCell}>{share.name}</Text>
+                </View>
+              );
+            })}
           </View>
         </View>
 
@@ -599,7 +798,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>إجمالي التركة:</Text>
               <Text style={styles.summaryValue}>
-                {currentResult.shares.reduce((sum: number, s: any) => sum + s.amount, 0).toFixed(2)} ر.س
+                <AnimatedNumber value={totalAmount} /> ر.س
               </Text>
             </View>
 
@@ -609,7 +808,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
                 styles.summaryValue,
                 { color: currentResult.confidence > 90 ? '#4caf50' : '#ff9800' }
               ]}>
-                {currentResult.confidence}%
+                <AnimatedNumber value={currentResult.confidence} format={false} />%
               </Text>
             </View>
           </View>
@@ -767,7 +966,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
         )}
 
         <View style={{ height: 20 }} />
-      </ScrollView>
+      </Animated.ScrollView>
 
       {/* Share Modal */}
       <Modal
@@ -795,7 +994,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
             <View style={styles.shareOptions}>
               <TouchableOpacity
                 style={[styles.shareOption, shareStatus !== 'idle' && styles.shareOptionDisabled]}
-                onPress={() => handleShare('pdf')}
+                onPress={() => showPreview('pdf')}
                 disabled={shareStatus !== 'idle'}
               >
                 <View style={[styles.shareIcon, { backgroundColor: '#d32f2f' }]}>
@@ -811,7 +1010,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
 
               <TouchableOpacity
                 style={[styles.shareOption, shareStatus !== 'idle' && styles.shareOptionDisabled]}
-                onPress={() => handleShare('image')}
+                onPress={() => showPreview('image')}
                 disabled={shareStatus !== 'idle'}
               >
                 <View style={[styles.shareIcon, { backgroundColor: '#2196f3' }]}>
@@ -827,7 +1026,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
 
               <TouchableOpacity
                 style={[styles.shareOption, shareStatus !== 'idle' && styles.shareOptionDisabled]}
-                onPress={() => handleShare('text')}
+                onPress={() => showPreview('text')}
                 disabled={shareStatus !== 'idle'}
               >
                 <View style={[styles.shareIcon, { backgroundColor: '#4caf50' }]}>
@@ -843,7 +1042,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
 
               <TouchableOpacity
                 style={[styles.shareOption, shareStatus !== 'idle' && styles.shareOptionDisabled]}
-                onPress={() => handleShare('clipboard')}
+                onPress={() => showPreview('clipboard')}
                 disabled={shareStatus !== 'idle'}
               >
                 <View style={[styles.shareIcon, { backgroundColor: '#ff9800' }]}>
@@ -874,6 +1073,16 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
           </View>
         </View>
       </Modal>
+
+      {/* ===== FIX M6: Share Preview Modal ===== */}
+      <SharePreviewModal
+        visible={previewVisible}
+        onClose={() => setPreviewVisible(false)}
+        onConfirm={executeShare}
+        result={currentResult}
+        format={shareFormat}
+        previewHTML={previewHTML}
+      />
     </ViewShot>
   );
 }
@@ -1387,6 +1596,107 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#666',
+  },
+  // ===== FIX M6: Preview modal styles =====
+  previewOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  previewContent: {
+    width: '100%',
+    maxWidth: 400,
+    maxHeight: '80%',
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  previewHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  previewHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  previewTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+  },
+  previewScroll: {
+    maxHeight: 300,
+  },
+  previewHTML: {
+    padding: 16,
+    backgroundColor: '#f5f5f5',
+    margin: 16,
+    borderRadius: 8,
+  },
+  previewHTMLText: {
+    fontSize: 11,
+    color: '#666',
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+  },
+  previewImagePlaceholder: {
+    height: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    margin: 16,
+    borderRadius: 8,
+    gap: 12,
+  },
+  previewImageText: {
+    fontSize: 14,
+    color: '#999',
+  },
+  previewText: {
+    padding: 16,
+    backgroundColor: '#f5f5f5',
+    margin: 16,
+    borderRadius: 8,
+  },
+  previewTextContent: {
+    fontSize: 12,
+    color: '#333',
+    lineHeight: 18,
+    textAlign: 'right',
+  },
+  previewActions: {
+    flexDirection: 'row',
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+    gap: 12,
+  },
+  previewButton: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  previewCancelButton: {
+    backgroundColor: '#f5f5f5',
+  },
+  previewConfirmButton: {
+    // Dynamic color from theme
+  },
+  previewCancelText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#666',
+  },
+  previewConfirmText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#fff',
   },
 });
 
