@@ -7,7 +7,7 @@
  * - L1 (🔵): Haptic feedback on button press
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   TouchableOpacity,
   Text,

@@ -190,7 +190,7 @@ export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps)
             onChangeText={handleTotalChange}
             keyboardType="numeric"
             returnKeyType="next"
-            onSubmitEditing={() => focusNext(funeralInputRef)}
+            onSubmitEditing={() => funeralInputRef.current?.focus()}
             blurOnSubmit={false}
           />
         </View>
@@ -207,7 +207,7 @@ export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps)
             onChangeText={handleFuneralChange}
             keyboardType="numeric"
             returnKeyType="next"
-            onSubmitEditing={() => focusNext(debtsInputRef)}
+            onSubmitEditing={() => debtsInputRef.current?.focus()}
             blurOnSubmit={false}
           />
         </View>
@@ -224,7 +224,7 @@ export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps)
             onChangeText={handleDebtsChange}
             keyboardType="numeric"
             returnKeyType="next"
-            onSubmitEditing={() => focusNext(willInputRef)}
+            onSubmitEditing={() => willInputRef.current?.focus()}
             blurOnSubmit={false}
           />
         </View>

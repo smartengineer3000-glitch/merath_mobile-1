@@ -14,7 +14,9 @@
     "test": "vitest run",
     "db:push": "drizzle-kit generate && drizzle-kit migrate",
     "android": "expo run:android",
-    "qr": "node scripts/generate_qr.mjs"
+    "qr": "node scripts/generate_qr.mjs",
+    "fix:types": "node scripts/fix-typescript-errors.js",
+    "fix:all": "npm run fix:types && npm run check"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

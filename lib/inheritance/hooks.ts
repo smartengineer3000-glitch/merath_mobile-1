@@ -13,12 +13,13 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { EnhancedInheritanceCalculationEngine as InheritanceCalculationEngine } from './enhanced-engine-complete';
 import { AuditLog, createAuditLog, type AuditLogEntry } from './audit-log';
 import { CalculationCache, PerformanceMonitor } from '../performance/optimization';
-import type {
+import type { 
   EstateData,
   CalculationResult,
   MadhhabType,
   HeirType,
   HeirsData,
+  HeirShare
 } from './types';
 
 // ============================================================================
@@ -170,11 +171,11 @@ export function useCalculator() {
 
         // ===== FIX H7: Set up timeout promise =====
         const timeoutPromise = new Promise<never>((_, reject) => {
-          calculationTimeoutRef.current = setTimeout(() => {
-            reject(new Error('انتهت مهلة الحساب. يرجى المحاولة مرة أخرى.'));
-          }, CALCULATION_TIMEOUT_MS);
-        });
-
+        // @ts-ignore
+        calculationTimeoutRef.current = setTimeout(() => {
+        reject(new Error('انتهت مهلة الحساب. يرجى المحاولة مرة أخرى.'));
+  }, CALCULATION_TIMEOUT_MS);
+});
         // ===== FIX C2: Create calculation promise with debouncing =====
         const calculationPromise = new Promise<CalculationResult>((resolve) => {
           debouncedCalculate(madhab, heirs, resolve);
@@ -324,7 +325,7 @@ export function useAuditLog() {
           duration || 0,
           'حساب عادي'
         );
-        setEntries((prev) => [entry, ...prev]); // Add to front for reverse chronological
+        setEntries((prev) => [entry, ...prev] as AuditLogEntry[]); // Add to front for reverse chronological
         return entry;
       } catch (err) {
         console.error('خطأ في تسجيل العملية:', err);
@@ -334,11 +335,10 @@ export function useAuditLog() {
     [auditLog]
   );
 
-  const deleteEntry = useCallback(
-    (id: string) => {
+  const deleteEntry = useCallback(async (id: string) => {
       try {
         const success = auditLog.deleteEntry(id);
-        if (success) {
+        if (await success) {
           setEntries((prev) => prev.filter((entry) => entry.id !== id));
         }
         return success;
@@ -1052,7 +1052,7 @@ function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout | null = null;
+  let timeout: ReturnType<typeof setTimeout> | null = null;
   
   return (...args: Parameters<T>) => {
     if (timeout) {

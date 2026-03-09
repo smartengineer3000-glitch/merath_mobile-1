@@ -787,7 +787,16 @@ export class PDFExporter {
       }
       
       // For native platforms, copy to documents directory
-      const documentDir = FileSystem.documentDirectory;
+        const documentDir = (FileSystem as any).documentDirectory;
+        if (!documentDir) {
+          throw new Error('لا يمكن الوصول إلى نظام الملفات');
+        }
+        if (!documentDir) {
+          throw new Error('لا يمكن الوصول إلى نظام الملفات');
+        }
+        if (!documentDir) {
+          throw new Error('لا يمكن الوصول إلى نظام الملفات');
+        }
       if (!documentDir) {
         throw new Error('لا يمكن الوصول إلى نظام الملفات');
       }

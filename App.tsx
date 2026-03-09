@@ -2,9 +2,7 @@
  * @file App.tsx
  * @description Root application component with providers, navigation, and global features
  * 
- * FIXES:
- * - H8 (🟠): Network state detection with offline indicator
- * - M2 (🟡): Onboarding for new users
+ * FIXES: Timeout ref type, add missing imports
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -14,7 +12,7 @@ import {
 } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import { View, Text, StyleSheet, AppState, AppStateStatus, Platform } from 'react-native';
+import { View, Text, StyleSheet, AppState, AppStateStatus, Platform, TouchableOpacity } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SplashScreen from 'expo-splash-screen';
@@ -25,27 +23,30 @@ import { RootNavigator } from './navigation/RootNavigator';
 import DisclaimersModal from './components/DisclaimersModal';
 import LoadingScreen from './components/LoadingScreen';
 
-// ===== FIX M2: Onboarding storage key =====
+// ===== FIX: Onboarding storage key =====
 const ONBOARDING_COMPLETED_KEY = '@merath_onboarding_completed';
 const APP_LAUNCH_COUNT_KEY = '@merath_launch_count';
 
-// ===== FIX H8: Network status component =====
+// ===== FIX: Network status component =====
 const NetworkStatusIndicator = () => {
   const { theme } = useAppTheme();
   const [isConnected, setIsConnected] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  
+  // ===== FIX: Proper timeout ref type =====
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
       const connected = state.isConnected ?? true;
       
-      // Only show indicator when connection status changes to disconnected
       if (!connected && isConnected) {
         setIsVisible(true);
-        // Auto-hide after 3 seconds
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        timeoutRef.current = setTimeout(() => setIsVisible(false), 3000);
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+        // ===== FIX: Assign timeout correctly =====
+        timeoutRef.current = setTimeout(() => setIsVisible(false), 3000) as any;
       }
       
       setIsConnected(connected);
@@ -53,7 +54,9 @@ const NetworkStatusIndicator = () => {
 
     return () => {
       unsubscribe();
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
   }, [isConnected]);
 
@@ -68,7 +71,7 @@ const NetworkStatusIndicator = () => {
   );
 };
 
-// ===== FIX M2: Onboarding modal =====
+// ===== FIX: Onboarding modal =====
 const OnboardingModal = ({ visible, onComplete }: { visible: boolean; onComplete: () => void }) => {
   const { theme } = useAppTheme();
   const [step, setStep] = useState(1);
@@ -167,9 +170,6 @@ const OnboardingModal = ({ visible, onComplete }: { visible: boolean; onComplete
   );
 };
 
-// Need to import TouchableOpacity
-import { TouchableOpacity } from 'react-native';
-
 // Main App Content with theme access
 const AppContent = () => {
   const { theme } = useAppTheme();
@@ -177,14 +177,14 @@ const AppContent = () => {
   const [showDisclaimers, setShowDisclaimers] = useState(true);
   const [appReady, setAppReady] = useState(false);
   
-  // ===== FIX M2: Onboarding state =====
+  // ===== FIX: Onboarding state =====
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingLoading, setOnboardingLoading] = useState(true);
   
-  // ===== FIX H8: Network state =====
+  // ===== FIX: Network state =====
   const [networkStatus, setNetworkStatus] = useState({ isConnected: true, type: 'unknown' });
   
-  // ===== FIX H8: Monitor network changes =====
+  // ===== FIX: Monitor network changes =====
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
       setNetworkStatus({
@@ -196,7 +196,7 @@ const AppContent = () => {
     return () => unsubscribe();
   }, []);
 
-  // ===== FIX M2: Check if onboarding should be shown =====
+  // ===== FIX: Check if onboarding should be shown =====
   useEffect(() => {
     const checkOnboardingStatus = async () => {
       try {
@@ -207,18 +207,13 @@ const AppContent = () => {
 
         const count = launchCount ? parseInt(launchCount, 10) : 0;
         
-        // Show onboarding if:
-        // 1. Never completed OR
-        // 2. First launch (count === 0)
         if (!completed || count === 0) {
           setShowOnboarding(true);
         }
 
-        // Increment launch count
         await AsyncStorage.setItem(APP_LAUNCH_COUNT_KEY, (count + 1).toString());
       } catch (error) {
         console.error('Failed to check onboarding status:', error);
-        // Default to not showing onboarding on error
         setShowOnboarding(false);
       } finally {
         setOnboardingLoading(false);
@@ -228,39 +223,31 @@ const AppContent = () => {
     checkOnboardingStatus();
   }, []);
 
-  // ===== FIX M2: Handle onboarding complete =====
+  // ===== FIX: Handle onboarding complete =====
   const handleOnboardingComplete = useCallback(async () => {
     try {
       await AsyncStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true');
       setShowOnboarding(false);
     } catch (error) {
       console.error('Failed to save onboarding status:', error);
-      setShowOnboarding(false); // Still hide even if save fails
+      setShowOnboarding(false);
     }
   }, []);
 
-  // Handle disclaimer acceptance
   const handleAcceptDisclaimers = useCallback(() => {
     setDisclaimerAccepted(true);
     setShowDisclaimers(false);
   }, []);
 
   const handleDeclineDisclaimers = useCallback(() => {
-    // In a real app, you might want to exit the app here
-    // For now, just show an alert and keep showing disclaimers
     alert('يجب قبول الشروط لاستخدام التطبيق');
   }, []);
 
-  // Simulate app loading
   useEffect(() => {
     const prepare = async () => {
       try {
-        // Keep splash screen visible while loading
         await SplashScreen.preventAutoHideAsync();
-        
-        // Simulate loading resources
         await new Promise(resolve => setTimeout(resolve, 1500));
-        
       } catch (e) {
         console.warn('Error loading app:', e);
       } finally {
@@ -272,7 +259,6 @@ const AppContent = () => {
     prepare();
   }, []);
 
-  // Don't render anything until app is ready and onboarding check is complete
   if (!appReady || onboardingLoading) {
     return <LoadingScreen message="جاري تحميل التطبيق..." />;
   }
@@ -280,22 +266,14 @@ const AppContent = () => {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background.light }]}>
       <StatusBar style={theme.mode === 'dark' ? 'light' : 'dark'} />
-      
-      {/* ===== FIX H8: Network status indicator ===== */}
       <NetworkStatusIndicator />
-      
-      {/* Main App Navigation */}
       <RootNavigator />
-      
-      {/* Legal Disclaimers Modal */}
       <DisclaimersModal
         visible={showDisclaimers}
         onAccept={handleAcceptDisclaimers}
         onDecline={handleDeclineDisclaimers}
         showPrivacyPolicy={true}
       />
-      
-      {/* ===== FIX M2: Onboarding Modal ===== */}
       {showOnboarding && (
         <OnboardingModal
           visible={showOnboarding}
@@ -310,7 +288,6 @@ const AppContent = () => {
 export default function App() {
   const [appState, setAppState] = useState(AppState.currentState);
 
-  // ===== FIX H8: Monitor app state for network changes =====
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {
       setAppState(nextAppState);
@@ -338,7 +315,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  // ===== FIX H8: Network indicator styles =====
   networkIndicator: {
     position: 'absolute',
     top: Platform.OS === 'ios' ? 50 : 0,
@@ -356,7 +332,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
   },
-  // ===== FIX M2: Onboarding styles =====
   onboardingOverlay: {
     position: 'absolute',
     top: 0,

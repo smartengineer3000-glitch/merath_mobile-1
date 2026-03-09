@@ -7,7 +7,7 @@
  * - C7 (🔴): Settings persistence conflict - debounced saves, version tracking, conflict resolution
  */
 
-import React, { createContext, useContext, useReducer, useCallback, useRef, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useCallback, useRef, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Language } from '../i18n';
 
@@ -118,7 +118,7 @@ function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout | null = null;
+  let timeout: ReturnType<typeof setTimeout> | null = null;
   
   return (...args: Parameters<T>) => {
     if (timeout) {
@@ -141,7 +141,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   
   // ===== FIX C7: Refs for tracking pending saves =====
   const pendingSaveRef = useRef<Promise<void> | null>(null);
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mountedRef = useRef(true);
   const lastSavedStateRef = useRef<string>('');
 

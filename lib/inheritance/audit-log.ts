@@ -11,7 +11,8 @@
 
 import { MadhhabType, HeirsData, EstateData, CalculationResult } from './types';
 import { generateId, formatTime } from './utils';
-import { db, AuditLogEntry as DBAuditLogEntry } from '../database/db'; // We'll create this next
+import { db } from '../database/db';
+import type { DBAuditLogEntry } from '../database/db'; // We'll create this next
 
 // ============================================================================
 // FIX H1: Dexie Database Integration

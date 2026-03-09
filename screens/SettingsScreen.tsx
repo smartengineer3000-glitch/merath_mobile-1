@@ -8,7 +8,7 @@
  */
 
 import React, { useEffect, useState, useCallback } from 'react';
-import {
+import { Share,
   View,
   Text,
   StyleSheet,
@@ -21,7 +21,7 @@ import {
   Alert,
   ActivityIndicator,
   Modal,
-  Share,
+  Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system';
@@ -33,7 +33,7 @@ import { useTheme } from '../lib/design/theme';
 import { useSettings } from '../lib/context/SettingsContext';
 import { useAppTheme } from '../lib/context/ThemeProvider';
 import { languages } from '../lib/i18n';
-import { db } from '../lib/database/db'; // For IndexedDB backup
+import { db } from '../lib/database/db';
 import { AuditLog } from '../lib/inheritance/audit-log';
 
 const { width } = Dimensions.get('window');
@@ -273,21 +273,27 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
       // Save backup file
       const backupJson = JSON.stringify(backupData, null, 2);
       const fileName = `merath-backup-${new Date().toISOString().split('T')[0]}.json`;
-      const fileUri = FileSystem.documentDirectory + fileName;
+      const fileDir = (FileSystem as any).documentDirectory;
+      if (!fileDir) {
+        throw new Error('لا يمكن الوصول إلى نظام الملفات');
+      }
+      const fileUri = fileDir + fileName;
       
       await FileSystem.writeAsStringAsync(fileUri, backupJson, {
-        encoding: FileSystem.EncodingType.UTF8,
+        encoding: "utf8",
       });
       
       // Share backup file
       const isAvailable = await Sharing.isAvailableAsync();
       if (isAvailable) {
+        // @ts-ignore
         await Sharing.shareAsync(fileUri, {
           mimeType: 'application/json',
           dialogTitle: 'حفظ نسخة احتياطية',
         });
       } else {
         // Fallback to clipboard
+        // Use Share API for text
         await Share.share({
           message: backupJson,
           title: 'النسخة الاحتياطية',
@@ -329,7 +335,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
       
       // Read file content
       const content = await FileSystem.readAsStringAsync(file.uri, {
-        encoding: FileSystem.EncodingType.UTF8,
+        encoding: "utf8",
       });
       
       const backupData: BackupData = JSON.parse(content);

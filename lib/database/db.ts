@@ -73,9 +73,20 @@ export class MerathDatabase extends Dexie {
   /**
    * Get storage estimate
    */
+  /**
+   * Get storage estimate
+   */
   async getStorageEstimate(): Promise<{ usage: number; quota: number }> {
-    if (navigator && navigator.storage && navigator.storage.estimate) {
-      return await navigator.storage.estimate();
+    try {
+      if (typeof navigator !== 'undefined' && navigator.storage && navigator.storage.estimate) {
+        const estimate = await navigator.storage.estimate();
+        return {
+          usage: estimate.usage ?? 0,
+          quota: estimate.quota ?? 0
+        };
+      }
+    } catch (error) {
+      console.warn('Failed to get storage estimate:', error);
     }
     return { usage: 0, quota: 0 };
   }
@@ -124,6 +135,8 @@ export class MerathDatabase extends Dexie {
 
 // Export a singleton instance
 export const db = new MerathDatabase();
+
+// export type { DBAuditLogEntry }; // Already exported
 
 // Initialize database
 db.on('ready', () => {

@@ -498,7 +498,7 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
                                   { text: 'إلغاء', onPress: () => {} },
                                   {
                                     text: 'موافق',
-                                    onPress: (text) => {
+                                    onPress: (text?: string) => {
                                       if (text) handleCountInput(heir.key, text);
                                     }
                                   }

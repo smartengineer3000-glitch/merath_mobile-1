@@ -152,7 +152,7 @@ const SharePreviewModal = ({
           </View>
 
           <ScrollView style={styles.previewScroll}>
-            {format === 'html' || format === 'pdf' ? (
+            {format === 'pdf' ? (
               <View style={styles.previewHTML}>
                 <Text style={styles.previewHTMLText}>{previewHTML.substring(0, 500)}...</Text>
               </View>

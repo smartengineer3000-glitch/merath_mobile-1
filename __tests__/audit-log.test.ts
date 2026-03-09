@@ -10,13 +10,13 @@ import { CalculationResult } from '../lib/inheritance/types';
 describe('AuditLog System', () => {
   let auditLog: AuditLog;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     auditLog = new AuditLog(false); // بدون Local Storage للاختبار
   });
 
   describe('Basic Operations', () => {
-    it('should create a new audit log entry', () => {
-      const entry = auditLog.addEntry({
+    it('should create a new audit log entry', async () => {
+      const entry = await auditLog.addEntry({
         operation: 'calculate',
         madhab: 'shafii',
         heirs: { husband: 1, daughter: 1 },
@@ -28,14 +28,14 @@ describe('AuditLog System', () => {
         }
       });
 
-      expect(entry.id).toBeDefined();
-      expect(entry.timestamp).toBeDefined();
-      expect(entry.operation).toBe('calculate');
-      expect(entry.madhab).toBe('shafii');
+      expect(entry?.id).toBeDefined();
+      expect(entry?.timestamp).toBeDefined();
+      expect(entry?.operation).toBe('calculate');
+      expect(entry?.madhab).toBe('shafii');
     });
 
-    it('should get all entries', () => {
-      auditLog.addEntry({
+    it('should get all entries', async () => {
+      await auditLog.addEntry({
         operation: 'calculate',
         madhab: 'shafii',
         heirs: { husband: 1 },
@@ -44,7 +44,7 @@ describe('AuditLog System', () => {
         metadata: { success: true }
       });
 
-      auditLog.addEntry({
+      await auditLog.addEntry({
         operation: 'calculate',
         madhab: 'hanafi',
         heirs: { wife: 1 },
@@ -57,8 +57,8 @@ describe('AuditLog System', () => {
       expect(entries.length).toBe(2);
     });
 
-    it('should delete a specific entry', () => {
-      const entry = auditLog.addEntry({
+    it('should delete a specific entry', async () => {
+      const entry = await auditLog.addEntry({
         operation: 'calculate',
         madhab: 'shafii',
         heirs: { husband: 1 },
@@ -68,13 +68,13 @@ describe('AuditLog System', () => {
       });
 
       expect(auditLog.getAllEntries().length).toBe(1);
-      const deleted = auditLog.deleteEntry(entry.id);
+      const deleted = await auditLog.deleteEntry(entry.id);
       expect(deleted).toBe(true);
       expect(auditLog.getAllEntries().length).toBe(0);
     });
 
-    it('should clear all entries', () => {
-      auditLog.addEntry({
+    it('should clear all entries', async () => {
+      await auditLog.addEntry({
         operation: 'calculate',
         madhab: 'shafii',
         heirs: { husband: 1 },
@@ -83,7 +83,7 @@ describe('AuditLog System', () => {
         metadata: { success: true }
       });
 
-      auditLog.addEntry({
+      await auditLog.addEntry({
         operation: 'calculate',
         madhab: 'hanafi',
         heirs: { wife: 1 },
@@ -92,15 +92,15 @@ describe('AuditLog System', () => {
         metadata: { success: true }
       });
 
-      const cleared = auditLog.clearAll();
+      const cleared = await auditLog.clearAll();
       expect(cleared).toBe(2);
       expect(auditLog.getAllEntries().length).toBe(0);
     });
   });
 
   describe('Filtering', () => {
-    beforeEach(() => {
-      auditLog.addEntry({
+    beforeEach(async () => {
+      await auditLog.addEntry({
         operation: 'calculate',
         madhab: 'shafii',
         heirs: { husband: 1 },
@@ -109,7 +109,7 @@ describe('AuditLog System', () => {
         metadata: { success: true }
       });
 
-      auditLog.addEntry({
+      await auditLog.addEntry({
         operation: 'calculate',
         madhab: 'hanafi',
         heirs: { wife: 1 },
@@ -118,7 +118,7 @@ describe('AuditLog System', () => {
         metadata: { success: true }
       });
 
-      auditLog.addEntry({
+      await auditLog.addEntry({
         operation: 'calculate',
         madhab: 'shafii',
         heirs: { father: 1 },
@@ -128,28 +128,28 @@ describe('AuditLog System', () => {
       });
     });
 
-    it('should filter by madhab', () => {
-      const filtered = auditLog.filter({ madhab: 'shafii' });
+    it('should filter by madhab', async () => {
+      const filtered = await auditLog.filter({ madhab: 'shafii' });
       expect(filtered.length).toBe(2);
     });
 
-    it('should filter by operation', () => {
-      const filtered = auditLog.filter({ operation: 'calculate' });
+    it('should filter by operation', async () => {
+      const filtered = await auditLog.filter({ operation: 'calculate' });
       expect(filtered.length).toBe(3);
     });
 
-    it('should filter successful operations only', () => {
-      const filtered = auditLog.filter({ successOnly: true });
+    it('should filter successful operations only', async () => {
+      const filtered = await auditLog.filter({ successOnly: true });
       expect(filtered.length).toBe(2);
     });
 
-    it('should apply limit and offset', () => {
-      const filtered = auditLog.filter({ limit: 1, offset: 0 });
+    it('should apply limit and offset', async () => {
+      const filtered = await auditLog.filter({ limit: 1, offset: 0 });
       expect(filtered.length).toBe(1);
     });
 
-    it('should combine multiple filters', () => {
-      const filtered = auditLog.filter({
+    it('should combine multiple filters', async () => {
+      const filtered = await auditLog.filter({
         madhab: 'shafii',
         successOnly: true
       });
@@ -158,8 +158,8 @@ describe('AuditLog System', () => {
   });
 
   describe('Statistics', () => {
-    it('should calculate correct statistics', () => {
-      auditLog.addEntry({
+    it('should calculate correct statistics', async () => {
+      await auditLog.addEntry({
         operation: 'calculate',
         madhab: 'shafii',
         heirs: { husband: 1 },
@@ -168,7 +168,7 @@ describe('AuditLog System', () => {
         metadata: { success: true }
       });
 
-      auditLog.addEntry({
+      await auditLog.addEntry({
         operation: 'calculate',
         madhab: 'hanafi',
         heirs: { wife: 1 },
@@ -187,8 +187,8 @@ describe('AuditLog System', () => {
       expect(stats.madhabs.hanafi).toBe(1);
     });
 
-    it('should track operations statistics', () => {
-      auditLog.addEntry({
+    it('should track operations statistics', async () => {
+      await auditLog.addEntry({
         operation: 'calculate',
         madhab: 'shafii',
         heirs: { husband: 1 },
@@ -203,8 +203,8 @@ describe('AuditLog System', () => {
   });
 
   describe('Export Functionality', () => {
-    beforeEach(() => {
-      auditLog.addEntry({
+    beforeEach(async () => {
+      await auditLog.addEntry({
         operation: 'calculate',
         madhab: 'shafii',
         heirs: { husband: 1 },
@@ -214,8 +214,8 @@ describe('AuditLog System', () => {
       });
     });
 
-    it('should export as JSON', () => {
-      const json = auditLog.exportAsJSON();
+    it('should export as JSON', async () => {
+      const json = await auditLog.exportAsJSON();
       expect(json).toContain('calculate');
       expect(json).toContain('shafii');
 
@@ -224,8 +224,8 @@ describe('AuditLog System', () => {
       expect(parsed.length).toBe(1);
     });
 
-    it('should export as CSV', () => {
-      const csv = auditLog.exportAsCSV();
+    it('should export as CSV', async () => {
+      const csv = await auditLog.exportAsCSV();
       expect(csv).toContain('ID');
       expect(csv).toContain('Timestamp');
       expect(csv).toContain('Operation');
@@ -234,8 +234,8 @@ describe('AuditLog System', () => {
   });
 
   describe('Import Functionality', () => {
-    it('should import valid JSON data', () => {
-      const entry1 = auditLog.addEntry({
+    it('should import valid JSON data', async () => {
+      const entry1 = await auditLog.addEntry({
         operation: 'calculate',
         madhab: 'shafii',
         heirs: { husband: 1 },
@@ -244,7 +244,7 @@ describe('AuditLog System', () => {
         metadata: { success: true }
       });
 
-      const json = auditLog.exportAsJSON();
+      const json = await auditLog.exportAsJSON();
       const newLog = new AuditLog(false);
       const imported = newLog.importFromJSON(json);
 
@@ -252,21 +252,21 @@ describe('AuditLog System', () => {
       expect(newLog.getAllEntries().length).toBe(1);
     });
 
-    it('should handle invalid JSON gracefully', () => {
-      const imported = auditLog.importFromJSON('invalid json');
+    it('should handle invalid JSON gracefully', async () => {
+      const imported = await auditLog.importFromJSON('invalid json');
       expect(imported).toBe(0);
     });
 
-    it('should handle invalid data structure gracefully', () => {
+    it('should handle invalid data structure gracefully', async () => {
       const invalidData = '[{"invalid": "data"}]';
-      const imported = auditLog.importFromJSON(invalidData);
+      const imported = await auditLog.importFromJSON(invalidData);
       expect(imported).toBe(0);
     });
   });
 
   describe('Storage Management', () => {
-    it('should get storage size information', () => {
-      auditLog.addEntry({
+    it('should get storage size information', async () => {
+      await auditLog.addEntry({
         operation: 'calculate',
         madhab: 'shafii',
         heirs: { husband: 1 },
@@ -275,13 +275,13 @@ describe('AuditLog System', () => {
         metadata: { success: true }
       });
 
-      const size = auditLog.getStorageSize();
+      const size = await auditLog.getStorageSize();
       expect(size.entries).toBe(1);
       expect(size.bytes).toBeGreaterThan(0);
     });
 
-    it('should get detailed information', () => {
-      auditLog.addEntry({
+    it('should get detailed information', async () => {
+      await auditLog.addEntry({
         operation: 'calculate',
         madhab: 'shafii',
         heirs: { husband: 1 },
@@ -290,15 +290,15 @@ describe('AuditLog System', () => {
         metadata: { success: true }
       });
 
-      const info = auditLog.getDetailedInfo();
+      const info = await auditLog.getDetailedInfo();
       expect(info.totalEntries).toBe(1);
       expect(info.stats).toBeDefined();
       expect(info.storageSize).toBeDefined();
       expect(info.timespan).toBeDefined();
     });
 
-    it('should delete entries older than specified days', () => {
-      const entry1 = auditLog.addEntry({
+    it('should delete entries older than specified days', async () => {
+      const entry1 = await auditLog.addEntry({
         operation: 'calculate',
         madhab: 'shafii',
         heirs: { husband: 1 },
@@ -313,15 +313,15 @@ describe('AuditLog System', () => {
       oldDate.setDate(oldDate.getDate() - 10);
       entries[0].timestamp = oldDate.toISOString();
 
-      const deleted = auditLog.deleteOlderThan(5);
+      const deleted = await auditLog.deleteOlderThan(5);
       expect(deleted).toBe(1);
       expect(auditLog.getAllEntries().length).toBe(0);
     });
   });
 
   describe('Helper Functions', () => {
-    it('should generate statistics summary', () => {
-      auditLog.addEntry({
+    it('should generate statistics summary', async () => {
+      await auditLog.addEntry({
         operation: 'calculate',
         madhab: 'shafii',
         heirs: { husband: 1 },
@@ -338,7 +338,7 @@ describe('AuditLog System', () => {
   });
 
   describe('Logging Calculation', () => {
-    it('should log calculation operation', () => {
+    it('should log calculation operation', async () => {
       const mockResult: CalculationResult = {
         success: true,
         madhab: 'shafii',
@@ -355,7 +355,7 @@ describe('AuditLog System', () => {
         calculationTime: 5
       };
 
-      const entry = auditLog.logCalculation(
+      const entry = await auditLog.logCalculation(
         'shafii',
         { husband: 1 },
         { total: 120000, funeral: 0, debts: 0, will: 0 },
@@ -364,7 +364,7 @@ describe('AuditLog System', () => {
         'اختبار'
       );
 
-      expect(entry.operation).toBe('calculate');
+      expect(entry?.operation).toBe('calculate');
       expect(entry.metadata.duration).toBe(5);
       expect(entry.metadata.notes).toBe('اختبار');
       expect(entry.result?.success).toBe(true);
