@@ -152,7 +152,7 @@ describe('AuditLog Core Functionality', () => {
 
     const exported = await auditLog.exportAsJSON();
     const newAuditLog = createAuditLog();
-    newAuditLog.importFromJSON(exported);
+    await await newAuditLog.importFromJSON(exported);
 
     const importedEntries = newAuditLog.getAllEntries();
     expect(importedEntries.length).toBe(1);
@@ -363,7 +363,7 @@ describe('Integration Tests', () => {
 
     const engine = new InheritanceCalculationEngine('hanafi', estate, heirs);
     const result = engine.calculate();
-    auditLog1.logCalculation('hanafi', heirs, estate, result, 75, 'Export test');
+    await auditLog1.logCalculation('hanafi', heirs, estate, result, 75, 'Export test');
 
     const json = auditLog1.exportAsJSON();
 
