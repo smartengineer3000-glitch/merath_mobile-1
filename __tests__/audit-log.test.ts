@@ -246,7 +246,7 @@ describe('AuditLog System', () => {
 
       const json = await auditLog.exportAsJSON();
       const newLog = new AuditLog(false);
-      const imported = newLog.importFromJSON(json);
+      const imported = await newLog.importFromJSON(json);
 
       expect(imported).toBe(1);
       expect(newLog.getAllEntries().length).toBe(1);
@@ -330,7 +330,7 @@ describe('AuditLog System', () => {
         metadata: { success: true }
       });
 
-      const summary = getAuditLogStats(auditLog);
+      const summary = await getAuditLogStats(auditLog);
       expect(summary).toContain('📊');
       expect(summary).toContain('إجمالي السجلات');
       expect(summary).toContain('معدل النجاح');
