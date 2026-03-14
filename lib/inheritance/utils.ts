@@ -28,10 +28,18 @@ export const HEIR_NAMES: Record<HeirType, string> = {
   paternal_sister: 'الأخت لأب',
   maternal_brother: 'الأخ لأم',
   maternal_sister: 'الأخت لأم',
+  half_brother_paternal: 'نصف أخ لأب',
+  half_sister_paternal: 'نصف أخت لأب',
   full_nephew: 'ابن الأخ الشقيق',
   paternal_nephew: 'ابن الأخ لأب',
+  nephew_from_brother: 'ابن الأخ',
+  niece_from_brother: 'بنت الأخ',
   full_uncle: 'العم الشقيق',
   paternal_uncle: 'العم لأب',
+  uncle_paternal: 'العم',
+  uncle_maternal: 'الخال',
+  aunt_paternal: 'العمة',
+  aunt_maternal: 'الخالة',
   full_cousin: 'ابن العم الشقيق',
   paternal_cousin: 'ابن العم لأب',
   maternal_uncle: 'الخال',
@@ -40,17 +48,9 @@ export const HEIR_NAMES: Record<HeirType, string> = {
   daughter_son: 'ابن البنت',
   daughter_daughter: 'بنت البنت',
   sister_children: 'أولاد الأخت',
-  half_brother_paternal: 'نصف أخ لأب',
-  half_sister_paternal: 'نصف أخت لأب',
-  half_brother_maternal: 'نصف أخ لأم',
-  half_sister_maternal: 'نصف أخت لأم',
-  nephew_from_brother: 'ابن الأخ',
-  niece_from_brother: 'بنت الأخ',
-  uncle_paternal: 'العم',
-  uncle_maternal: 'الخال',
-  aunt_paternal: 'العمة',
-  aunt_maternal: 'الخالة',
-  treasury: 'بيت المال'
+  treasury: 'بيت المال',
+  // Added for Musharraka special case
+  shared_siblings: 'الإخوة لأم والأشقاء'
 };
 
 /**
@@ -252,13 +252,8 @@ export function sortHeirsByPriority(heirs: HeirType[]): HeirType[] {
     paternal_sister: 10,
     maternal_brother: 9,
     maternal_sister: 10,
-    daughter_son: 3,
-    daughter_daughter: 4,
-    sister_children: 11,
     half_brother_paternal: 11,
     half_sister_paternal: 12,
-    half_brother_maternal: 13,
-    half_sister_maternal: 14,
     full_nephew: 15,
     paternal_nephew: 15,
     nephew_from_brother: 15,
@@ -266,7 +261,6 @@ export function sortHeirsByPriority(heirs: HeirType[]): HeirType[] {
     full_uncle: 17,
     paternal_uncle: 17,
     uncle_paternal: 17,
-    maternal_uncle: 19,
     uncle_maternal: 19,
     full_cousin: 21,
     paternal_cousin: 21,
@@ -274,7 +268,13 @@ export function sortHeirsByPriority(heirs: HeirType[]): HeirType[] {
     paternal_aunt: 18,
     aunt_maternal: 20,
     maternal_aunt: 20,
-    treasury: 100
+    maternal_uncle: 19,
+    daughter_son: 3,
+    daughter_daughter: 4,
+    sister_children: 11,
+    treasury: 100,
+    // Added for Musharraka
+    shared_siblings: 9, // Between full_brother and others
   };
 
   return [...heirs].sort((a, b) => priority[a] - priority[b]);

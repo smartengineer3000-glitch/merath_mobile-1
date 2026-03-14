@@ -31,7 +31,7 @@ export const FIQH_DATABASE = {
       color: '#4ECDC4',
       icon: '📖',
       rules: {
-        grandfather_with_siblings: 'musharak' as const,
+        grandfather_with_siblings: 'hijab' as const, // Changed from 'musharak' to 'hijab'
         mother_with_father_children: 'sixth' as const,
         mother_with_father_only: 'third' as const,
         spouse_radd: true,
@@ -59,7 +59,7 @@ export const FIQH_DATABASE = {
       color: '#F7DC6F',
       icon: '📜',
       rules: {
-        grandfather_with_siblings: 'hijab' as const,
+        grandfather_with_siblings: 'musharak' as const, // Changed from 'hijab' to 'musharak'
         mother_with_father_children: 'sixth' as const,
         mother_with_father_only: 'third' as const,
         spouse_radd: false,

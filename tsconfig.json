@@ -1,14 +1,14 @@
 {
-  "extends": "expo/tsconfig.base.json",
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
     "skipLibCheck": true,
-    "types": ["node", "vitest/globals"],
+    "types": ["react-native", "vitest/globals", "node"],
     "paths": {
       "@/*": ["./*"],
       "@shared/*": ["./shared/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist", "build", "coverage"]
 }

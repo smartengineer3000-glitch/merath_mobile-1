@@ -31,8 +31,6 @@ export type HeirType =
   | 'maternal_sister'
   | 'half_brother_paternal'
   | 'half_sister_paternal'
-  | 'half_brother_maternal'
-  | 'half_sister_maternal'
   | 'full_nephew'
   | 'paternal_nephew'
   | 'nephew_from_brother'
@@ -48,7 +46,9 @@ export type HeirType =
   | 'aunt_maternal'
   | 'maternal_aunt'
   | 'paternal_aunt'
-  | 'treasury';
+  | 'treasury'
+  // Special case keys
+  | 'shared_siblings';
 
 // ====== بيانات التركة ======
 export interface EstateData {
@@ -111,7 +111,7 @@ export interface CalculationResult {
   raddApplied?: boolean;
   bloodRelativesApplied?: boolean;
   confidence: number;
-  confidenceFactors?: string[]; // ADD THIS LINE
+  confidenceFactors?: string[];
   steps: CalculationStep[];
   calculationTime: number;
   error?: string;

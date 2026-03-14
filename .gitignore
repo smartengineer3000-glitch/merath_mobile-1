@@ -67,3 +67,42 @@ eas-build-on-simulator.sh
 
 # Development
 .expo-shared/
+# Test coverage
+coverage/
+.nyc_output/
+
+# Test reports
+test-results/
+test-reports/
+
+# Temp files
+*.log
+*.tmp
+*.temp
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build
+dist/
+build/
+*.apk
+*.aab
+
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
