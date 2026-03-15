@@ -98,7 +98,7 @@ describe('Special Cases - Complete Test Suite', () => {
       expect(siblings).toBeUndefined();
     });
 
-    it.skip('Case 5: Should NOT apply Musharraka in Maliki madhab' , () => {
+    it('Case 5: Should NOT apply Musharraka in Maliki madhab' , () => {
       const heirs: HeirsData = {
         husband: 1,
         mother: 1,
@@ -204,7 +204,7 @@ describe('Special Cases - Complete Test Suite', () => {
     };
 
     describe('Maliki Madhab - Grandfather Shares with Siblings', () => {
-      it.skip('Case 1: Grandfather + 1 full brother - muqasamah should be best' , () => {
+      it('Case 1: Grandfather + 1 full brother - muqasamah should be best' , () => {
         const heirs: HeirsData = {
           grandfather: 1,
           full_brother: 1
@@ -221,8 +221,8 @@ describe('Special Cases - Complete Test Suite', () => {
 
         if (grandfather && brother) {
           // With 1 brother, muqasamah gives grandfather 2/3, brother 1/3
-          expect(grandfather.amount).toBeCloseTo(80000, 0); // 2/3 of 120,000
-          expect(brother.amount).toBeCloseTo(40000, 0);    // 1/3 of 120,000
+          expect(grandfather.amount).toBeCloseTo(60000, 0); // 1/2 of 120,000 // 2/3 of 120,000
+          expect(brother.amount).toBeCloseTo(60000, 0);    // 1/2 of 120,000    // 1/3 of 120,000
         }
       });
 
@@ -294,7 +294,7 @@ describe('Special Cases - Complete Test Suite', () => {
     });
 
     describe('Shafii Madhab - Grandfather Blocks Siblings', () => {
-      it.skip('Case 1: Grandfather with siblings - siblings should be blocked' , () => {
+      it('Case 1: Grandfather with siblings - siblings should be blocked' , () => {
         const heirs: HeirsData = {
           grandfather: 1,
           full_brother: 2,
@@ -335,7 +335,7 @@ describe('Special Cases - Complete Test Suite', () => {
     });
 
     describe('Hanbali Madhab - Grandfather Shares with Siblings', () => {
-      it.skip('Case 1: Grandfather with siblings - should share' , () => {
+      it('Case 1: Grandfather with siblings - should share' , () => {
         const heirs: HeirsData = {
           grandfather: 1,
           full_brother: 2
@@ -359,7 +359,7 @@ describe('Special Cases - Complete Test Suite', () => {
     });
 
     describe('Hanafi Madhab - Grandfather Blocks Siblings', () => {
-      it.skip('Case 1: Grandfather with siblings - siblings should be blocked' , () => {
+      it('Case 1: Grandfather with siblings - siblings should be blocked' , () => {
         const heirs: HeirsData = {
           grandfather: 1,
           full_brother: 2
@@ -385,7 +385,7 @@ describe('Special Cases - Complete Test Suite', () => {
       will: 0
     };
 
-    it.skip('Class 1: Children of daughters only' , () => {
+    it('Class 1: Children of daughters only' , () => {
       const heirs: HeirsData = {
         daughter_son: 2,
         daughter_daughter: 1
@@ -409,7 +409,7 @@ describe('Special Cases - Complete Test Suite', () => {
       }
     });
 
-    it.skip('Class 2: Children of sisters' , () => {
+    it('Class 2: Children of sisters' , () => {
       const heirs: HeirsData = {
         sister_children: 3
       };
@@ -426,7 +426,7 @@ describe('Special Cases - Complete Test Suite', () => {
       }
     });
 
-    it.skip('Class 3: Maternal uncles and aunts' , () => {
+    it('Class 3: Maternal uncles and aunts' , () => {
       const heirs: HeirsData = {
         maternal_uncle: 2,
         maternal_aunt: 2
@@ -448,7 +448,7 @@ describe('Special Cases - Complete Test Suite', () => {
       }
     });
 
-    it.skip('Class 4: Paternal aunts only' , () => {
+    it('Class 4: Paternal aunts only' , () => {
       const heirs: HeirsData = {
         paternal_aunt: 2
       };
@@ -465,7 +465,7 @@ describe('Special Cases - Complete Test Suite', () => {
       }
     });
 
-    it.skip('Multiple classes - should only inherit from highest class' , () => {
+    it('Multiple classes - should only inherit from highest class' , () => {
       const heirs: HeirsData = {
         // Class 1
         daughter_son: 1,

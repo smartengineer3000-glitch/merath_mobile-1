@@ -13,6 +13,7 @@
  */
 
 import { FractionClass } from './fraction';
+import { FIQH_DATABASE } from './constants';
 import type { EstateData, HeirsData, MadhhabType, CalculationResult, HeirShare } from './types';
 import { HijabSystem } from './hijab-system';
 
@@ -26,7 +27,6 @@ interface HeirShareObject {
   addToExisting?: boolean;
 }
 
-// Add state interface with confidenceFactors
 interface EngineState {
   blockedHeirs: string[];
   hijabTypes: string[];
@@ -66,15 +66,11 @@ export class EnhancedInheritanceCalculationEngine {
     this.hijabSystem = new HijabSystem(madhab);
   }
 
-  /**
-   * Main calculation flow - matches HTML's 13-step process
-   */
   calculate(): CalculationResult {
     const startTime = performance.now();
     const steps: string[] = [];
     
     try {
-      // Step 1: Validate inputs
       const validation = this.validateInput();
       if (!validation.valid) {
         const endTime = performance.now();
@@ -102,21 +98,17 @@ export class EnhancedInheritanceCalculationEngine {
       }
       steps.push('التحقق من البيانات: validate');
 
-      // Step 2: Calculate net estate (total - funeral - debts - will)
       const netEstate = this.calculateNetEstate();
       steps.push('حساب التركة الصافية: estate_calculation');
 
-      // Step 3: Apply hijab (blocking rules)
       const hijabResult = this.hijabSystem.applyHijab(this.heirs);
       const validHeirs = hijabResult.heirs;
       const hijabLog = hijabResult.log || [];
       this.state.blockedHeirs = hijabLog;
       steps.push('تطبيق الحجب: hijab');
 
-      // Check for special cases FIRST
       let fixedShares: HeirShareObject[] = [];
       
-      // Step 3.5: Check for Musharraka (special case)
       if (this.isMusharraka()) {
         fixedShares = this.computeMusharraka();
         this.state.specialCases.push({
@@ -126,7 +118,6 @@ export class EnhancedInheritanceCalculationEngine {
         });
         steps.push('المشتركة: musharraka');
       }
-      // Step 3.6: Check for Akdariyya (special case)
       else if (this.isAkdariyya()) {
         fixedShares = this.computeAkdariyya();
         this.state.specialCases.push({
@@ -137,12 +128,10 @@ export class EnhancedInheritanceCalculationEngine {
         steps.push('الأكدرية: akdariyya');
       }
       else {
-        // Step 4: Compute fixed shares (fards) - normal case
         fixedShares = this.computeFixedShares(validHeirs);
         steps.push('الفروض: fixed_shares');
       }
 
-      // Step 5: Apply awl if needed
       const totalFixed = this.sumFractions(fixedShares.map(s => s.fraction));
       let adjustedFixed = fixedShares;
       
@@ -152,24 +141,19 @@ export class EnhancedInheritanceCalculationEngine {
         steps.push('الأول: awl');
       }
 
-      // Step 6: Calculate remainder
       const remainder = new FractionClass(1, 1).subtract(totalFixed);
       steps.push('حساب الباقي: remainder');
 
-      // Step 7: Compute asaba distribution
       const asabaShares = this.computeAsaba(adjustedFixed, remainder, validHeirs);
       steps.push('العصبات: asaba');
 
-      // Step 8: Merge fixed + asaba shares
       const allShares = this.mergeShares(adjustedFixed, asabaShares);
       steps.push('دمج الفروض والعصبات: merge');
 
-      // Step 9: Recalculate total & remainder
       const totalAllShares = this.sumFractions(allShares.map(s => s.fraction));
       const finalRemainder = new FractionClass(1, 1).subtract(totalAllShares);
       steps.push('إعادة حساب الباقي: recalculate');
 
-      // Step 10: Apply radd if remainder > 0 and no asaba
       let finalShares = allShares;
       if (finalRemainder.toDecimal() > 0.0001 && asabaShares.length === 0) {
         finalShares = this.applyRadd(allShares, finalRemainder);
@@ -177,9 +161,12 @@ export class EnhancedInheritanceCalculationEngine {
         steps.push('الرد: radd');
       }
 
-      // Step 11: Distribute to blood relatives if still remainder
-      if (finalRemainder.toDecimal() > 0.0001 && asabaShares.length === 0) {
-        const bloodDistribution = this.distributeToBloodRelatives(finalShares, finalRemainder);
+      // Recalculate remainder after radd
+      const totalAfterRadd = this.sumFractions(finalShares.map(s => s.fraction));
+      const remainderAfterRadd = new FractionClass(1, 1).subtract(totalAfterRadd);
+
+      if (remainderAfterRadd.toDecimal() > 0.0001 && asabaShares.length === 0) {
+        const bloodDistribution = this.distributeToBloodRelatives(finalShares, remainderAfterRadd);
         finalShares = bloodDistribution.shares;
         if (bloodDistribution.bloodRelatives.length > 0) {
           this.state.bloodRelativesApplied = true;
@@ -192,11 +179,9 @@ export class EnhancedInheritanceCalculationEngine {
         }
       }
 
-      // Step 12: Convert to amounts
       const results = this.calculateFinalAmounts(finalShares, netEstate);
       steps.push('تحويل للمبالغ: amounts');
 
-      // Step 13: Calculate confidence score
       const confidence = this.calculateConfidence(results, validHeirs);
       steps.push('حساب مستوى الثقة: confidence');
 
@@ -259,15 +244,11 @@ export class EnhancedInheritanceCalculationEngine {
     }
   }
 
-  /**
-   * Step 2: Calculate net estate (deduct will, funeral, debts)
-   */
   private calculateNetEstate(): number {
     let net = this.estate.total;
     net -= this.estate.funeral || 0;
     net -= this.estate.debts || 0;
 
-    // Enforce will ≤ 1/3 of (total - funeral - debts)
     const remainderAfterFuneral = this.estate.total - (this.estate.funeral || 0) - (this.estate.debts || 0);
     const maxWill = remainderAfterFuneral / 3;
     const actualWill = Math.min(this.estate.will || 0, maxWill);
@@ -277,142 +258,125 @@ export class EnhancedInheritanceCalculationEngine {
     return Math.max(0, net);
   }
 
-  /**
-   * Step 3: Apply hijab (blocking rules)
-   */
   private applyHijab(heirs: HeirsData): HeirsData {
     const result = this.hijabSystem.applyHijab(heirs);
     return result.heirs;
   }
 
-  /**
-   * ===== FIX C1: Check for Musharraka (المشتركة/الحمارية) =====
-   */
-  /**
- * ===== FIX C1: Check for Musharraka (المشتركة/الحمارية) =====
- */
-private isMusharraka(): boolean {
-  const h = this.heirs;
-  const hasHusband = (h.husband || 0) > 0;
-  const hasMother = (h.mother || 0) > 0;
-  const hasGrandmother = (h.grandmother_mother || 0) > 0;
-  const hasMotherOrGrandmother = hasMother || hasGrandmother;
-  const maternalCount = this.getMaternalSiblingsCount();
-  const fullSiblingsExist = this.getFullSiblingsCount() > 0;
-  const noDescendants = !this.hasDescendants();
-  const noFather = (h.father || 0) === 0;
-  const noGrandfather = (h.grandfather || 0) === 0;
-  console.log('isMusharraka check:', {
-    hasHusband,
-    hasMother,
-    hasGrandmother,
-    hasMotherOrGrandmother,
-    maternalCount,
-    fullSiblingsExist,
-    noDescendants,
-    noFather,
-    noGrandfather,
-    result: hasHusband && hasMotherOrGrandmother && maternalCount >= 2 && 
-           fullSiblingsExist && noDescendants && noFather && noGrandfather
-  });
-
-  return hasHusband && hasMotherOrGrandmother && maternalCount >= 2 && 
-         fullSiblingsExist && noDescendants && noFather && noGrandfather;
-}
-
-/**
- * ===== FIX C1: Compute Musharraka (المشتركة/الحمارية) =====
- */
-private computeMusharraka(): HeirShareObject[] {
-  const shares: HeirShareObject[] = [];
-  const h = this.heirs;
-  
-  // Husband gets 1/2
-  shares.push({
-    key: 'husband',
-    name: 'الزوج',
-    type: 'فرض',
-    fraction: new FractionClass(1, 2),
-    count: 1,
-    reason: '½ لعدم وجود فرع وارث'
-  });
-  
-  // Mother or grandmother gets 1/6
-  if (h.mother && h.mother > 0) {
-    shares.push({
-      key: 'mother',
-      name: 'الأم',
-      type: 'فرض',
-      fraction: new FractionClass(1, 6),
-      count: 1,
-      reason: '⅙ لوجود جمع من الإخوة'
-    });
-  } else if (h.grandmother_mother && h.grandmother_mother > 0) {
-    shares.push({
-      key: 'grandmother_mother',
-      name: 'الجدة لأم',
-      type: 'فرض',
-      fraction: new FractionClass(1, 6),
-      count: 1,
-      reason: '⅙'
-    });
+  private isMusharraka(): boolean {
+  // Musharraka is only recognized in Shafii madhab (and maybe others, but definitely not Maliki)
+  if (this.madhab !== 'shafii') {
+    return false;
   }
-  
-  // Siblings share 1/3 equally among all maternal and full siblings
-  const maternalCount = (h.maternal_brother || 0) + (h.maternal_sister || 0);
-  const fullCount = (h.full_brother || 0) + (h.full_sister || 0);
-  const totalSiblings = maternalCount + fullCount;
-  
-  shares.push({
-    key: 'shared_siblings',
-    name: 'الإخوة لأم والأشقاء',
-    type: 'فرض',
-    fraction: new FractionClass(1, 3),
-    count: totalSiblings,
-    reason: '⅓ يشتركون فيه بالتساوي (المسألة المشتركة)'
-  });
-  
-  this.steps.push({
-    step: 'المسألة المشتركة (الحمارية)',
-    description: `تم تطبيق المشتركة: الزوج (½), الأم (⅙), الإخوة (⅓)`,
-    code: 'musharraka',
-    data: { shares: shares.length }
-  });
-  
-  return shares;
-}
+    const h = this.heirs;
+    const hasHusband = (h.husband || 0) > 0;
+    const hasMother = (h.mother || 0) > 0;
+    const hasGrandmother = (h.grandmother_mother || 0) > 0;
+    const hasMotherOrGrandmother = hasMother || hasGrandmother;
+    const maternalCount = this.getMaternalSiblingsCount();
+    const fullSiblingsExist = this.getFullSiblingsCount() > 0;
+    const noDescendants = !this.hasDescendants();
+    const noFather = (h.father || 0) === 0;
+    const noGrandfather = (h.grandfather || 0) === 0;
+    console.log('isMusharraka check:', {
+      hasHusband,
+      hasMother,
+      hasGrandmother,
+      hasMotherOrGrandmother,
+      maternalCount,
+      fullSiblingsExist,
+      noDescendants,
+      noFather,
+      noGrandfather,
+      result: hasHusband && hasMotherOrGrandmother && maternalCount >= 2 && 
+             fullSiblingsExist && noDescendants && noFather && noGrandfather
+    });
 
-  /**
-   * ===== FIX C2: Check for Akdariyya (الأكدرية/الغراء) =====
-   */
+    return hasHusband && hasMotherOrGrandmother && maternalCount >= 2 && 
+           fullSiblingsExist && noDescendants && noFather && noGrandfather;
+  }
+
+  private computeMusharraka(): HeirShareObject[] {
+    const shares: HeirShareObject[] = [];
+    const h = this.heirs;
+    
+    shares.push({
+      key: 'husband',
+      name: 'الزوج',
+      type: 'فرض',
+      fraction: new FractionClass(1, 2),
+      count: 1,
+      reason: '½ لعدم وجود فرع وارث'
+    });
+    
+    if (h.mother && h.mother > 0) {
+      shares.push({
+        key: 'mother',
+        name: 'الأم',
+        type: 'فرض',
+        fraction: new FractionClass(1, 6),
+        count: 1,
+        reason: '⅙ لوجود جمع من الإخوة'
+      });
+    } else if (h.grandmother_mother && h.grandmother_mother > 0) {
+      shares.push({
+        key: 'grandmother_mother',
+        name: 'الجدة لأم',
+        type: 'فرض',
+        fraction: new FractionClass(1, 6),
+        count: 1,
+        reason: '⅙'
+      });
+    }
+    
+    const maternalCount = (h.maternal_brother || 0) + (h.maternal_sister || 0);
+    const fullCount = (h.full_brother || 0) + (h.full_sister || 0);
+    const totalSiblings = maternalCount + fullCount;
+    
+    shares.push({
+      key: 'shared_siblings',
+      name: 'الإخوة لأم والأشقاء',
+      type: 'فرض',
+      fraction: new FractionClass(1, 3),
+      count: totalSiblings,
+      reason: '⅓ يشتركون فيه بالتساوي (المسألة المشتركة)'
+    });
+    
+    this.steps.push({
+      step: 'المسألة المشتركة (الحمارية)',
+      description: `تم تطبيق المشتركة: الزوج (½), الأم (⅙), الإخوة (⅓)`,
+      code: 'musharraka',
+      data: { shares: shares.length }
+    });
+    
+    return shares;
+  }
+
   private isAkdariyya(): boolean {
-  const h = this.heirs;
-  const result = (h.husband || 0) > 0 && 
-                 (h.mother || 0) > 0 && 
-                 (h.grandfather || 0) > 0 && 
-                 (h.full_sister || 0) === 1 &&
-                 !this.hasDescendants() &&
-                 (h.father || 0) === 0 &&
-                 (h.full_brother || 0) === 0;
-  console.log('isAkdariyya:', result, {
-    husband: (h.husband || 0),
-    mother: (h.mother || 0),
-    grandfather: (h.grandfather || 0),
-    full_sister: (h.full_sister || 0),
-    hasDescendants: this.hasDescendants(),
-    father: (h.father || 0),
-    full_brother: (h.full_brother || 0)
-  });
-  return result;
-}
-  /**
-   * ===== FIX C2: Compute Akdariyya (الأكدرية/الغراء) =====
-   */
+    const h = this.heirs;
+    const result = (h.husband || 0) > 0 && 
+                   (h.mother || 0) > 0 && 
+                   (h.grandfather || 0) > 0 && 
+                   (h.full_sister || 0) === 1 &&
+                   !this.hasDescendants() &&
+                   (h.father || 0) === 0 &&
+                   (h.full_brother || 0) === 0;
+    console.log('isAkdariyya:', result, {
+      husband: (h.husband || 0),
+      mother: (h.mother || 0),
+      grandfather: (h.grandfather || 0),
+      full_sister: (h.full_sister || 0),
+      hasDescendants: this.hasDescendants(),
+      father: (h.father || 0),
+      full_brother: (h.full_brother || 0)
+    });
+    return result;
+  }
+
   private computeAkdariyya(): HeirShareObject[] {
     console.log('computeAkdariyya called');
     const shares: HeirShareObject[] = [];
     
-    // Final shares from 27
     shares.push({
       key: 'husband',
       name: 'الزوج',
@@ -461,17 +425,11 @@ private computeMusharraka(): HeirShareObject[] {
     return shares;
   }
 
-  /**
-   * Step 4: Compute fixed shares (fards)
-   */
   private computeFixedShares(heirs: HeirsData): HeirShareObject[] {
     const shares: HeirShareObject[] = [];
     const hasDescendants = this.hasDescendants();
-
-    // Special case: Umariyyah (spouse + both parents)
     const isUmariyyah = this.isUmariyyah(heirs);
 
-    // ===== SPOUSE =====
     if (heirs.husband && heirs.husband > 0) {
       const fraction = hasDescendants ? new FractionClass(1, 4) : new FractionClass(1, 2);
       shares.push({
@@ -496,14 +454,12 @@ private computeMusharraka(): HeirShareObject[] {
       });
     }
 
-    // ===== MOTHER =====
     if (heirs.mother && heirs.mother > 0) {
       let fraction: FractionClass;
       let reason: string;
 
       if (isUmariyyah) {
-        // Umariyyah: mother gets 1/3 of remainder after spouse
-        fraction = new FractionClass(1, 6); // 1/3 × 1/2 or 1/3 × 3/4
+        fraction = new FractionClass(1, 6);
         reason = 'ثلث الباقي (العمرية)';
       } else if (hasDescendants) {
         fraction = new FractionClass(1, 6);
@@ -526,7 +482,6 @@ private computeMusharraka(): HeirShareObject[] {
       });
     }
 
-    // ===== DAUGHTERS (no sons) =====
     if (heirs.daughter && heirs.daughter > 0 && (!heirs.son || heirs.son === 0)) {
       const fraction = heirs.daughter === 1 ? new FractionClass(1, 2) : new FractionClass(2, 3);
       shares.push({
@@ -539,7 +494,6 @@ private computeMusharraka(): HeirShareObject[] {
       });
     }
 
-    // ===== GRANDDAUGHTERS (no sons, no grandsons) =====
     if (heirs.granddaughter && heirs.granddaughter > 0 && 
         (!heirs.grandson || heirs.grandson === 0) && 
         (!heirs.son || heirs.son === 0)) {
@@ -555,7 +509,6 @@ private computeMusharraka(): HeirShareObject[] {
           reason: heirs.granddaughter === 1 ? '½' : '⅔'
         });
       } else if (heirs.daughter === 1) {
-        // 1/6 as completion to 2/3 with one daughter
         shares.push({
           key: 'granddaughter',
           name: heirs.granddaughter > 1 ? 'بنات الابن' : 'بنت الابن',
@@ -567,7 +520,6 @@ private computeMusharraka(): HeirShareObject[] {
       }
     }
 
-    // ===== SISTERS (no brothers, no male descendants) =====
     if ((heirs.full_sister || 0) > 0 && (!heirs.full_brother || heirs.full_brother === 0)) {
       if (!hasDescendants && !heirs.father && !heirs.grandfather) {
         const fraction = heirs.full_sister === 1 ? new FractionClass(1, 2) : new FractionClass(2, 3);
@@ -582,7 +534,6 @@ private computeMusharraka(): HeirShareObject[] {
       }
     }
 
-    // ===== PATERNAL SISTERS (similar logic) =====
     if ((heirs.half_sister_paternal || 0) > 0 && 
         (!heirs.full_brother || heirs.full_brother === 0) &&
         (!heirs.half_brother_paternal || heirs.half_brother_paternal === 0)) {
@@ -599,26 +550,22 @@ private computeMusharraka(): HeirShareObject[] {
       }
     }
 
-    // ===== MATERNAL SIBLINGS =====
     const maternalCount = (heirs.maternal_brother || 0) + (heirs.maternal_sister || 0);
     if (maternalCount > 0 && !hasDescendants && !heirs.father && !heirs.grandfather) {
-    const fraction = maternalCount === 1 ? new FractionClass(1, 6) : new FractionClass(1, 3);
-    shares.push({
-    key: 'maternal_siblings',
-    name: 'الإخوة لأم',
-    type: 'فرض',
-    fraction: fraction,
-    count: maternalCount,
-    reason: maternalCount === 1 ? '⅙' : '⅓'
-    });
-  }
+      const fraction = maternalCount === 1 ? new FractionClass(1, 6) : new FractionClass(1, 3);
+      shares.push({
+        key: 'maternal_siblings',
+        name: 'الإخوة لأم',
+        type: 'فرض',
+        fraction: fraction,
+        count: maternalCount,
+        reason: maternalCount === 1 ? '⅙' : '⅓'
+      });
+    }
 
     return shares;
   }
 
-  /**
-   * Step 5: Apply awl (augmentation of denominator)
-   */
   private applyAwl(
     shares: HeirShareObject[],
     totalFraction: FractionClass
@@ -635,10 +582,6 @@ private computeMusharraka(): HeirShareObject[] {
     }));
   }
 
-  /**
-   * Step 7: Compute asaba (residuary distribution)
-   * ===== FIX C3: Grandfather with siblings optimal selection =====
-   */
   private computeAsaba(
     fixedShares: HeirShareObject[],
     remainder: FractionClass,
@@ -650,8 +593,6 @@ private computeMusharraka(): HeirShareObject[] {
 
     const asabaShares: HeirShareObject[] = [];
 
-    // Hierarchy of asaba:
-    // 1. Sons (2:1 ratio with daughters)
     if (heirs.son && heirs.son > 0) {
       const totalHeads = heirs.son * 2 + (heirs.daughter || 0);
       const sonWeight = heirs.son * 2;
@@ -682,7 +623,6 @@ private computeMusharraka(): HeirShareObject[] {
       return asabaShares;
     }
 
-    // 2. Grandsons and granddaughters
     if (heirs.grandson && heirs.grandson > 0) {
       const totalHeads = heirs.grandson * 2 + (heirs.granddaughter || 0);
       
@@ -709,7 +649,6 @@ private computeMusharraka(): HeirShareObject[] {
       return asabaShares;
     }
 
-    // 3. Father
     if (heirs.father && heirs.father > 0) {
       asabaShares.push({
         key: 'father',
@@ -723,13 +662,23 @@ private computeMusharraka(): HeirShareObject[] {
       return asabaShares;
     }
 
-    // ===== FIX C3: Grandfather with siblings - optimal selection =====
     if (heirs.grandfather && heirs.grandfather > 0 && !heirs.father) {
       const siblingsCount = this.getFullAndPaternalSiblingsCount();
+      console.log('Grandfather block entered. siblingsCount:', siblingsCount, 'madhab:', this.madhab);
       
-      // If siblings exist, need to choose best option
-      if (siblingsCount > 0) {
-        // Calculate total heads for muqasamah (2 for grandfather, 2 per male sibling, 1 per female sibling)
+      const madhabConfig = FIQH_DATABASE.madhabs[this.madhab];
+      const shouldShare = madhabConfig?.rules.grandfather_with_siblings === 'musharak';
+      
+      console.log('Madhab config from constants:', madhabConfig);
+      console.log('Rule value from config:', madhabConfig?.rules.grandfather_with_siblings);
+      console.log('Should share based on rule?', shouldShare);
+      
+      if (siblingsCount > 0 && shouldShare) {
+        console.log('Entering sharing branch (muqasamah)');
+        console.log('heirs.full_brother:', heirs.full_brother);
+        console.log('heirs.full_sister:', heirs.full_sister);
+        const totalHeadsCalc = 2 + (heirs.full_brother || 0) * 2 + (heirs.full_sister || 0) + (heirs.half_brother_paternal || 0) * 2 + (heirs.half_sister_paternal || 0);
+        console.log('totalHeads calculated:', totalHeadsCalc);
         const totalHeads = 2 + 
                           (heirs.full_brother || 0) * 2 + 
                           (heirs.full_sister || 0) + 
@@ -740,7 +689,16 @@ private computeMusharraka(): HeirShareObject[] {
         const byThird = new FractionClass(1, 3);
         const bySixth = new FractionClass(1, 6);
         
-        // Choose best for grandfather
+        console.log('Grandfather options:', {
+          totalHeads,
+          byMuqasamah: byMuqasamah.toString(),
+          byMuqasamahDecimal: byMuqasamah.toDecimal(),
+          byThird: byThird.toString(),
+          byThirdDecimal: byThird.toDecimal(),
+          bySixth: bySixth.toString(),
+          bySixthDecimal: bySixth.toDecimal()
+        });
+        
         let bestOption = byMuqasamah;
         let bestReason = 'muqasamah';
         let bestValue = byMuqasamah.toDecimal();
@@ -759,7 +717,8 @@ private computeMusharraka(): HeirShareObject[] {
           bestValue = sixthValue;
         }
         
-        // Log which option was chosen
+        console.log('Chosen option:', { bestReason, bestOption: bestOption.toString() });
+        
         this.steps.push({
           step: 'اختيار الأفضل للجد مع الإخوة',
           description: `تم اختيار ${bestReason === 'muqasamah' ? 'المقاسمة' : 
@@ -768,7 +727,6 @@ private computeMusharraka(): HeirShareObject[] {
           data: { bestOption: bestOption.toString(), bestReason }
         });
         
-        // Grandfather gets his share
         asabaShares.push({
           key: 'grandfather',
           name: 'الجد',
@@ -780,27 +738,29 @@ private computeMusharraka(): HeirShareObject[] {
           addToExisting: true
         });
         
-        // Siblings share the remainder (if any) - but in muqasamah case, remainder is already distributed
         if (bestReason === 'muqasamah') {
-          // In muqasamah, siblings already got their shares through the calculation
-          // We need to add their shares explicitly
+          console.log('Adding siblings shares via muqasamah. remainder:', remainder.toString());
           if (heirs.full_brother && heirs.full_brother > 0) {
+            const brotherFrac = remainder.multiply(new FractionClass(heirs.full_brother * 2, totalHeads));
+            console.log('full_brother fraction:', brotherFrac.toString());
             asabaShares.push({
               key: 'full_brother',
               name: 'الأخ الشقيق',
               type: 'تعصيب',
-              fraction: remainder.multiply(new FractionClass(heirs.full_brother * 2, totalHeads)),
+              fraction: brotherFrac,
               count: heirs.full_brother || 0,
               reason: 'مع الجد بالمقاسمة'
             });
           }
           
           if (heirs.full_sister && heirs.full_sister > 0) {
+            const sisterFrac = remainder.multiply(new FractionClass(heirs.full_sister, totalHeads));
+            console.log('full_sister fraction:', sisterFrac.toString());
             asabaShares.push({
               key: 'full_sister',
               name: 'الأخت الشقيقة',
               type: 'تعصيب',
-              fraction: remainder.multiply(new FractionClass(heirs.full_sister, totalHeads)),
+              fraction: sisterFrac,
               count: heirs.full_sister || 0,
               reason: 'مع الجد بالمقاسمة'
             });
@@ -830,8 +790,20 @@ private computeMusharraka(): HeirShareObject[] {
         }
         
         return asabaShares;
+      } else if (siblingsCount > 0 && !shouldShare) {
+        console.log('Entering blocking branch (grandfather takes all)');
+        asabaShares.push({
+          key: 'grandfather',
+          name: 'الجد',
+          type: 'تعصيب',
+          fraction: remainder,
+          count: 1,
+          reason: 'الجد يرث الباقي (يَحجب الإخوة)',
+          addToExisting: true
+        });
+        return asabaShares;
       } else {
-        // Grandfather alone, no siblings
+        console.log('Entering no-siblings branch');
         asabaShares.push({
           key: 'grandfather',
           name: 'الجد',
@@ -845,7 +817,6 @@ private computeMusharraka(): HeirShareObject[] {
       }
     }
 
-    // 5. Full brothers and sisters
     if (heirs.full_brother && heirs.full_brother > 0) {
       const totalHeads = heirs.full_brother * 2 + (heirs.full_sister || 0);
       
@@ -872,7 +843,6 @@ private computeMusharraka(): HeirShareObject[] {
       return asabaShares;
     }
 
-    // 6. Paternal brothers and sisters
     if (heirs.half_brother_paternal && heirs.half_brother_paternal > 0) {
       const totalHeads = heirs.half_brother_paternal * 2 + (heirs.half_sister_paternal || 0);
       
@@ -899,7 +869,6 @@ private computeMusharraka(): HeirShareObject[] {
       return asabaShares;
     }
 
-    // 7. Uncles
     if (heirs.uncle_paternal && heirs.uncle_paternal > 0) {
       asabaShares.push({
         key: 'uncle_paternal',
@@ -912,7 +881,6 @@ private computeMusharraka(): HeirShareObject[] {
       return asabaShares;
     }
 
-    // 8. Cousins
     if (heirs.nephew_from_brother && heirs.nephew_from_brother > 0) {
       asabaShares.push({
         key: 'nephew_from_brother',
@@ -928,9 +896,6 @@ private computeMusharraka(): HeirShareObject[] {
     return asabaShares;
   }
 
-  /**
-   * Step 10: Apply radd (return excess to fixed-share heirs proportionally)
-   */
   private applyRadd(
     shares: HeirShareObject[],
     remainder: FractionClass
@@ -939,7 +904,6 @@ private computeMusharraka(): HeirShareObject[] {
       return shares;
     }
 
-    // Filter eligible heirs for radd (not spouses, not asaba)
     const eligible = shares.filter(
       s => s.key !== 'husband' && s.key !== 'wife' && !s.type.includes('تعصيب')
     );
@@ -954,14 +918,12 @@ private computeMusharraka(): HeirShareObject[] {
       description: 'توزيع الفائض على أصحاب الفروض'
     });
 
-    // Calculate total of eligible fractions
     const totalEligible = this.sumFractions(eligible.map(s => s.fraction));
 
     if (totalEligible.toDecimal() <= 0) {
       return shares;
     }
 
-    // Distribute remainder proportionally
     return shares.map(share => {
       if (eligible.includes(share)) {
         const proportion = share.fraction.divide(totalEligible);
@@ -976,14 +938,11 @@ private computeMusharraka(): HeirShareObject[] {
     });
   }
 
-  /**
-   * Step 11: Distribute to blood relatives (ذوو الأرحام)
-   * ===== FIX C4: Class-based priority system =====
-   */
   private distributeToBloodRelatives(
     shares: HeirShareObject[],
     remainder: FractionClass
   ): { shares: HeirShareObject[]; bloodRelatives: HeirShareObject[] } {
+    console.log('distributeToBloodRelatives called with remainder:', remainder.toString());
     const bloodRelatives: HeirShareObject[] = [];
 
     if (remainder.toDecimal() <= 0.0001) {
@@ -992,29 +951,23 @@ private computeMusharraka(): HeirShareObject[] {
 
     const h = this.heirs;
     
-    // Define blood relatives by class (in priority order)
     const classes = [
-      // Class 1: Children of daughters
       [
         { key: 'daughter_son', name: 'ابن البنت', weight: 1 },
         { key: 'daughter_daughter', name: 'بنت البنت', weight: 1 }
       ],
-      // Class 2: Children of sisters
       [
         { key: 'sister_children', name: 'أولاد الأخت', weight: 1 }
       ],
-      // Class 3: Maternal uncles/aunts
       [
         { key: 'maternal_uncle', name: 'الخال', weight: 1 },
         { key: 'maternal_aunt', name: 'الخالة', weight: 1 }
       ],
-      // Class 4: Paternal aunts
       [
         { key: 'paternal_aunt', name: 'العمة', weight: 1 }
       ]
     ];
 
-    // Find first class with any heirs
     let inheritingClass: Array<{ key: string; name: string; count: number; weight: number }> = [];
     
     for (let classIndex = 0; classIndex < classes.length; classIndex++) {
@@ -1030,6 +983,7 @@ private computeMusharraka(): HeirShareObject[] {
       
       if (classHeirs.length > 0) {
         inheritingClass = classHeirs;
+        console.log(`Found inheriting class ${classIndex+1} with heirs:`, classHeirs);
         this.steps.push({
           step: `ذوو الأرحام - الصنف ${classIndex + 1}`,
           description: `الوارثون من الصنف ${classIndex + 1} يرثون الباقي`,
@@ -1041,6 +995,7 @@ private computeMusharraka(): HeirShareObject[] {
     }
 
     if (inheritingClass.length === 0) {
+      console.log('No blood relatives found');
       return { shares, bloodRelatives };
     }
 
@@ -1050,25 +1005,24 @@ private computeMusharraka(): HeirShareObject[] {
       description: 'توزيع الباقي على ذوي الأرحام'
     });
 
-    // Distribute equally within the class
     const totalCount = inheritingClass.reduce((sum, h) => sum + h.count, 0);
+    console.log('Total count in inheriting class:', totalCount);
     inheritingClass.forEach(heir => {
+      const fraction = remainder.multiply(new FractionClass(heir.count, totalCount));
+      console.log(`Adding ${heir.name} with fraction ${fraction.toString()}`);
       bloodRelatives.push({
         key: heir.key,
         name: heir.name,
         type: 'ذو رحم',
-        fraction: remainder.multiply(new FractionClass(heir.count, totalCount)),
+        fraction: fraction,
         count: heir.count,
         reason: `من ذوي الأرحام - الصنف ${inheritingClass[0] === heir ? 'الوارث' : ''}`
       });
     });
 
-    return { shares, bloodRelatives };
+    return { shares: [...shares, ...bloodRelatives], bloodRelatives };
   }
 
-  /**
-   * Step 12: Convert fractions to amounts
-   */
   private calculateFinalAmounts(shares: HeirShareObject[], netEstate: number): HeirShare[] {
     return shares.map(share => ({
       key: share.key as any,
@@ -1088,9 +1042,6 @@ private computeMusharraka(): HeirShareObject[] {
     }));
   }
 
-  /**
-   * Step 13: Calculate confidence score with enhanced factors
-   */
   private calculateConfidence(
     results: HeirShare[],
     heirs: HeirsData
@@ -1098,7 +1049,6 @@ private computeMusharraka(): HeirShareObject[] {
     let confidence = 100;
     const factors: string[] = [];
 
-    // ===== FACTOR 1: Complexity based on number of heirs =====
     const heirCount = Object.values(heirs).filter(v => v && v > 0).length;
     if (heirCount > 8) {
       confidence -= 15;
@@ -1111,7 +1061,6 @@ private computeMusharraka(): HeirShareObject[] {
       factors.push('عدد قليل من الورثة (4-5)');
     }
 
-    // ===== FACTOR 2: Special cases applied =====
     if (this.state.awlApplied) {
       confidence -= 8;
       factors.push('تم تطبيق العول');
@@ -1127,7 +1076,6 @@ private computeMusharraka(): HeirShareObject[] {
       factors.push('تم توزيع الباقي على ذوي الأرحام');
     }
     
-    // Check for special cases in the array
     if (this.specialCases.some(sc => sc.type === 'musharraka')) {
       confidence -= 8;
       factors.push('المسألة المشتركة (الحمارية)');
@@ -1138,7 +1086,6 @@ private computeMusharraka(): HeirShareObject[] {
       factors.push('مسألة الأكدرية');
     }
 
-    // ===== FACTOR 3: Multiple generations =====
     const hasChildren = heirs.son || heirs.daughter;
     const hasParents = heirs.father || heirs.mother;
     const hasGrandparents = heirs.grandfather || heirs.grandmother_mother || heirs.grandmother_father;
@@ -1149,7 +1096,6 @@ private computeMusharraka(): HeirShareObject[] {
       factors.push('وجود عدة أجيال من الورثة');
     }
 
-    // ===== FACTOR 4: Distant heirs present =====
     const distantHeirs = [
       'full_nephew', 'paternal_nephew', 'full_uncle', 'paternal_uncle',
       'full_cousin', 'paternal_cousin', 'daughter_son', 'daughter_daughter',
@@ -1162,7 +1108,6 @@ private computeMusharraka(): HeirShareObject[] {
       factors.push('وجود ورثة من الدرجات البعيدة');
     }
 
-    // ===== FACTOR 5: Grandfather with siblings (madhab-specific) =====
     const hasGrandfatherWithSiblings = 
       heirs.grandfather && (heirs.full_brother || heirs.paternal_brother);
     if (hasGrandfatherWithSiblings) {
@@ -1170,16 +1115,13 @@ private computeMusharraka(): HeirShareObject[] {
       factors.push('حالة الجد مع الإخوة (تختلف باختلاف المذهب)');
     }
 
-    // ===== FACTOR 6: Multiple wives =====
     if (heirs.wife && heirs.wife > 1) {
       confidence -= 3;
       factors.push('وجود عدة زوجات');
     }
 
-    // Ensure confidence stays within 0-100 range
     confidence = Math.max(50, Math.min(100, confidence));
 
-    // Add confidence factors explanation
     this.state.confidenceFactors = [];
     
     if (factors.length > 0) {
@@ -1191,17 +1133,11 @@ private computeMusharraka(): HeirShareObject[] {
     return confidence;
   }
 
-  /**
-   * Get total count of full and paternal siblings
-   */
   private getFullAndPaternalSiblingsCount(): number {
     return (this.heirs.full_brother || 0) + (this.heirs.full_sister || 0) +
            (this.heirs.half_brother_paternal || 0) + (this.heirs.half_sister_paternal || 0);
   }
 
-  /**
-   * Check if estate has descendants
-   */
   private hasDescendants(): boolean {
     return (this.heirs.son || 0) > 0 || 
            (this.heirs.daughter || 0) > 0 ||
@@ -1209,9 +1145,6 @@ private computeMusharraka(): HeirShareObject[] {
            (this.heirs.granddaughter || 0) > 0;
   }
 
-  /**
-   * Check if Umariyyah special case applies
-   */
   private isUmariyyah(heirs: HeirsData): boolean {
     const hasSpouse = (heirs.husband || 0) > 0 || (heirs.wife || 0) > 0;
     const hasParents = (heirs.father || 0) > 0 && (heirs.mother || 0) > 0;
@@ -1220,33 +1153,21 @@ private computeMusharraka(): HeirShareObject[] {
     return hasSpouse && hasParents && !hasDescendants;
   }
 
-  /**
-   * Get total siblings count
-   */
   private getSiblingsCount(heirs: HeirsData): number {
     return (heirs.full_brother || 0) + (heirs.full_sister || 0) +
            (heirs.half_brother_paternal || 0) + (heirs.half_sister_paternal || 0) +
            (heirs.half_brother_maternal || 0) + (heirs.half_sister_maternal || 0);
   }
 
-  /**
-   * Get maternal siblings count
-   */
   private getMaternalSiblingsCount(): number {
-  const h = this.heirs;
-  return (h.maternal_brother || 0) + (h.maternal_sister || 0);
-}
+    const h = this.heirs;
+    return (h.maternal_brother || 0) + (h.maternal_sister || 0);
+  }
 
-  /**
-   * Get full siblings count
-   */
   private getFullSiblingsCount(): number {
     return (this.heirs.full_brother || 0) + (this.heirs.full_sister || 0);
   }
 
-  /**
-   * Sum array of fractions
-   */
   private sumFractions(fractions: FractionClass[]): FractionClass {
     return fractions.reduce(
       (sum, frac) => sum.add(frac),
@@ -1254,9 +1175,6 @@ private computeMusharraka(): HeirShareObject[] {
     );
   }
 
-  /**
-   * Merge fixed and asaba shares
-   */
   private mergeShares(
     fixedShares: HeirShareObject[],
     asabaShares: HeirShareObject[]
@@ -1276,49 +1194,41 @@ private computeMusharraka(): HeirShareObject[] {
     return merged;
   }
 
-  /**
-   * Normalize heir counts to valid ranges
-   */
   private normalizeHeirs(heirs: HeirsData): HeirsData {
-  return {
-    husband: Math.min(heirs.husband || 0, 1),
-    wife: Math.min(heirs.wife || 0, 4),
-    son: heirs.son || 0,
-    daughter: heirs.daughter || 0,
-    father: Math.min(heirs.father || 0, 1),
-    mother: Math.min(heirs.mother || 0, 1),
-    grandfather: Math.min(heirs.grandfather || 0, 1),
-    grandmother: Math.min(heirs.grandmother || 0, 1),
-    // Add these two lines:
-    grandmother_mother: heirs.grandmother_mother || 0,
-    grandmother_father: heirs.grandmother_father || 0,
-    full_brother: heirs.full_brother || 0,
-    full_sister: heirs.full_sister || 0,
-    half_brother_paternal: heirs.half_brother_paternal || 0,
-    half_sister_paternal: heirs.half_sister_paternal || 0,
-    maternal_brother: heirs.maternal_brother || 0,
-    maternal_sister: heirs.maternal_sister || 0,
-    grandson: heirs.grandson || 0,
-    granddaughter: heirs.granddaughter || 0,
-    nephew_from_brother: heirs.nephew_from_brother || 0,
-    niece_from_brother: heirs.niece_from_brother || 0,
-    uncle_paternal: heirs.uncle_paternal || 0,
-    uncle_maternal: heirs.uncle_maternal || 0,
-    aunt_paternal: heirs.aunt_paternal || 0,
-    aunt_maternal: heirs.aunt_maternal || 0,
-    // Blood relatives
-    daughter_son: heirs.daughter_son || 0,
-    daughter_daughter: heirs.daughter_daughter || 0,
-    sister_children: heirs.sister_children || 0,
-    maternal_uncle: heirs.maternal_uncle || 0,
-    maternal_aunt: heirs.maternal_aunt || 0,
-    paternal_aunt: heirs.paternal_aunt || 0
-  };
-}
+    return {
+      husband: Math.min(heirs.husband || 0, 1),
+      wife: Math.min(heirs.wife || 0, 4),
+      son: heirs.son || 0,
+      daughter: heirs.daughter || 0,
+      father: Math.min(heirs.father || 0, 1),
+      mother: Math.min(heirs.mother || 0, 1),
+      grandfather: Math.min(heirs.grandfather || 0, 1),
+      grandmother: Math.min(heirs.grandmother || 0, 1),
+      grandmother_mother: heirs.grandmother_mother || 0,
+      grandmother_father: heirs.grandmother_father || 0,
+      full_brother: heirs.full_brother || 0,
+      full_sister: heirs.full_sister || 0,
+      half_brother_paternal: heirs.half_brother_paternal || 0,
+      half_sister_paternal: heirs.half_sister_paternal || 0,
+      maternal_brother: heirs.maternal_brother || 0,
+      maternal_sister: heirs.maternal_sister || 0,
+      grandson: heirs.grandson || 0,
+      granddaughter: heirs.granddaughter || 0,
+      nephew_from_brother: heirs.nephew_from_brother || 0,
+      niece_from_brother: heirs.niece_from_brother || 0,
+      uncle_paternal: heirs.uncle_paternal || 0,
+      uncle_maternal: heirs.uncle_maternal || 0,
+      aunt_paternal: heirs.aunt_paternal || 0,
+      aunt_maternal: heirs.aunt_maternal || 0,
+      daughter_son: heirs.daughter_son || 0,
+      daughter_daughter: heirs.daughter_daughter || 0,
+      sister_children: heirs.sister_children || 0,
+      maternal_uncle: heirs.maternal_uncle || 0,
+      maternal_aunt: heirs.maternal_aunt || 0,
+      paternal_aunt: heirs.paternal_aunt || 0
+    };
+  }
 
-  /**
-   * Validate input data
-   */
   private validateInput() {
     if (!this.estate.total || this.estate.total <= 0) {
       return {

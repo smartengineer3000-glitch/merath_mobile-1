@@ -62,38 +62,37 @@ export class HijabSystem {
       }
     }
 
-    // ===== MADHAB-SPECIFIC RULE: Grandfather with siblings =====
-    const hasGrandfather = (heirs.grandfather || 0) > 0;
-    const hasSiblings = (heirs.full_brother || 0) > 0 || 
-                        (heirs.full_sister || 0) > 0 ||
-                        (heirs.half_brother_paternal || 0) > 0 ||
-                        (heirs.half_sister_paternal || 0) > 0;
+// ===== MADHAB-SPECIFIC RULE: Grandfather with siblings =====
+const hasGrandfather = (heirs.grandfather || 0) > 0;
+const hasSiblings = (heirs.full_brother || 0) > 0 || 
+                    (heirs.full_sister || 0) > 0 ||
+                    (heirs.half_brother_paternal || 0) > 0 ||
+                    (heirs.half_sister_paternal || 0) > 0;
 
-    if (hasGrandfather && hasSiblings) {
-      // Shafii & Hanbali: Grandfather BLOCKS siblings
-      if (this.madhab === 'shafii' || this.madhab === 'hanbali') {
-        this.hijabLog.push(
-          `في المذهب ${this.madhab === 'shafii' ? 'الشافعي' : 'الحنبلي'}: الجد يحجب الإخوة`,
-          `In ${this.madhab} madhab: Grandfather blocks siblings`
-        );
-        
-        // Block all siblings
-        heirs.full_brother = 0;
-        heirs.full_sister = 0;
-        heirs.half_brother_paternal = 0;
-        heirs.half_sister_paternal = 0;
-      }
-      
-      // Hanafi & Maliki: Grandfather SHARES with siblings (handled in computeAsaba, not hijab)
-      else if (this.madhab === 'hanafi' || this.madhab === 'maliki') {
-        this.hijabLog.push(
-          `في المذهب ${this.madhab === 'hanafi' ? 'الحنفي' : 'المالكي'}: الجد يقاسم الإخوة (يعالج في العصبات)`,
-          `In ${this.madhab} madhab: Grandfather shares with siblings (handled in asaba)`
-        );
-        // No blocking - shares will be calculated in computeAsaba
-      }
-    }
-
+if (hasGrandfather && hasSiblings) {
+  // Shafii & Hanafi: Grandfather BLOCKS siblings
+  if (this.madhab === 'shafii' || this.madhab === 'hanafi') {
+    this.hijabLog.push(
+      `في المذهب ${this.madhab === 'shafii' ? 'الشافعي' : 'الحنفي'}: الجد يحجب الإخوة`,
+      `In ${this.madhab} madhab: Grandfather blocks siblings`
+    );
+    
+    // Block all siblings
+    heirs.full_brother = 0;
+    heirs.full_sister = 0;
+    heirs.half_brother_paternal = 0;
+    heirs.half_sister_paternal = 0;
+  }
+  
+  // Maliki & Hanbali: Grandfather SHARES with siblings (handled in computeAsaba, not hijab)
+  else if (this.madhab === 'maliki' || this.madhab === 'hanbali') {
+    this.hijabLog.push(
+      `في المذهب ${this.madhab === 'maliki' ? 'المالكي' : 'الحنبلي'}: الجد يقاسم الإخوة (يعالج في العصبات)`,
+      `In ${this.madhab} madhab: Grandfather shares with siblings (handled in asaba)`
+    );
+    // No blocking - shares will be calculated in computeAsaba
+  }
+}
     // ===== Granddaughter blocking by daughters =====
     // Rule: 2+ daughters block granddaughters (unless grandson exists)
     if ((heirs.daughter || 0) >= 2 && (heirs.granddaughter || 0) > 0) {
