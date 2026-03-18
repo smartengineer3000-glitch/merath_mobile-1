@@ -1,3 +1,4 @@
+import FavoritesScreen from '../screens/FavoritesScreen';
 /**
  * Root Navigator Configuration
  * Phase 6: App Integration & Navigation

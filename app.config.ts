@@ -79,7 +79,7 @@ const config: ExpoConfig = {
         category: ["BROWSABLE", "DEFAULT"],
       },
     ],
-    versionCode: 2,  // Increment for each build
+    versionCode: Math.floor(Date.now() / 1000),  // Increment for each build
   },
   web: {
     output: "static",
