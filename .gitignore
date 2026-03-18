@@ -105,4 +105,4 @@ yarn.lock
 
 # OS
 .DS_Store
-Thumbs.db
+Thumbs.db.expo/
