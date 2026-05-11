@@ -35,6 +35,7 @@ import { useAppTheme } from '../lib/context/ThemeProvider';
 import { languages } from '../lib/i18n';
 import { db } from '../lib/database/db';
 import { AuditLog } from '../lib/inheritance/audit-log';
+import { CalculationCache } from '../lib/performance/optimization';
 
 const { width } = Dimensions.get('window');
 const STORAGE_KEYS = {
@@ -90,6 +91,14 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
   // ===== FIX L3: Theme options modal =====
   const [themeModalVisible, setThemeModalVisible] = useState(false);
 
+  // Performance stats
+  const [performanceStats, setPerformanceStats] = useState({
+    totalCalculations: 0,
+    hitRate: 0,
+    avgCalculationTime: 0,
+    cacheSize: 0,
+  });
+
   // Load settings on mount
   useEffect(() => {
     const loadSettings = async () => {
@@ -123,6 +132,9 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
 
         // ===== FIX M1: Load last backup info =====
         await loadBackupInfo();
+
+        // Load performance stats
+        loadPerformanceStats();
         
       } catch (error) {
         console.error('Failed to load settings:', error);
@@ -161,6 +173,12 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     } catch (error) {
       console.error('Failed to load backup info:', error);
     }
+  };
+
+  // Load performance stats
+  const loadPerformanceStats = () => {
+    const stats = CalculationCache.getStats();
+    setPerformanceStats(stats);
   };
 
   // ===== FIX M1: Format file size =====
@@ -670,6 +688,35 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
               trackColor={{ false: '#d1d5db', true: theme.colors.primary.light200 }}
               thumbColor={state.notifications ? theme.colors.primary.main : '#f3f4f6'}
             />
+          </View>
+        </View>
+
+        {/* Performance Section */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <MaterialCommunityIcons name="speedometer" size={24} color={theme.colors.primary.main} />
+            <Text style={styles.sectionTitle}>الأداء والإحصائيات</Text>
+          </View>
+          <View style={styles.aboutCard}>
+            <View style={styles.aboutRow}>
+              <Text style={styles.aboutLabel}>إجمالي الحسابات</Text>
+              <Text style={styles.aboutValue}>{performanceStats.totalCalculations}</Text>
+            </View>
+            <View style={styles.divider} />
+            <View style={styles.aboutRow}>
+              <Text style={styles.aboutLabel}>معدل الإصابة في الذاكرة المؤقتة</Text>
+              <Text style={styles.aboutValue}>{performanceStats.hitRate.toFixed(1)}%</Text>
+            </View>
+            <View style={styles.divider} />
+            <View style={styles.aboutRow}>
+              <Text style={styles.aboutLabel}>متوسط وقت الحساب</Text>
+              <Text style={styles.aboutValue}>{performanceStats.avgCalculationTime.toFixed(0)}ms</Text>
+            </View>
+            <View style={styles.divider} />
+            <View style={styles.aboutRow}>
+              <Text style={styles.aboutLabel}>حجم الذاكرة المؤقتة</Text>
+              <Text style={styles.aboutValue}>{performanceStats.cacheSize} عنصر</Text>
+            </View>
           </View>
         </View>
 

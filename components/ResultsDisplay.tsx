@@ -216,7 +216,8 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
   const [madhabComparisonResults, setMadhabComparisonResults] = useState<ComparisonResult[]>([]);
   const [comparisonLoading, setComparisonLoading] = useState(false);
 
-  // ===== FIX L2: Animation values for counting =====n  const fadeAnim = useRef(new Animated.Value(0)).current;
+  // ===== FIX L2: Animation values for counting =====
+  const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
   const [totalAmount, setTotalAmount] = useState(0);
 

@@ -4,7 +4,6 @@ import * as DocumentPicker from 'expo-document-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import { db } from '../database/db';
-import { FavoriteItem } from '../context/FavoritesContext';
 import { SettingsState } from '../context/SettingsContext';
 
 export interface BackupData {
@@ -13,7 +12,7 @@ export interface BackupData {
   appVersion: string;
   data: {
     settings: SettingsState | null;
-    favorites: FavoriteItem[];
+    favorites: unknown[];
     auditLog: any[];
   };
 }

@@ -42,6 +42,7 @@ export default function CalculatorScreen() {
     calculateWithMethod, 
     isCalculating, 
     result,
+    error,
     resetCalculator 
   } = useCalculator();
   
@@ -132,10 +133,12 @@ export default function CalculatorScreen() {
           scrollViewRef.current?.scrollToEnd({ animated: true });
         }, 300);
       } else {
-        Alert.alert(t('common.error'), calculationResult?.error || t('results.error'));
+        // Error is now displayed in UI via the error state
+        console.warn('Calculation failed:', calculationResult?.error);
       }
     } catch (error) {
-      Alert.alert(t('common.error'), error instanceof Error ? error.message : t('common.error'));
+      // Error is now displayed in UI via the error state
+      console.error('Calculation error:', error);
     }
   }, [madhab, estateData, calculateWithMethod, validateInputs, validationErrors, getHeirsData, saveResult, logCalculation]);
 
@@ -257,6 +260,23 @@ export default function CalculatorScreen() {
               {validationErrors.map((error, index) => (
                 <Text key={index} style={styles.errorText}>• {error}</Text>
               ))}
+            </View>
+          )}
+
+          {/* Calculation Error */}
+          {error && (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>⚠️ {error}</Text>
+              <TouchableOpacity
+                style={styles.retryButton}
+                onPress={() => {
+                  // Clear error and retry calculation
+                  // The error will be cleared when calculateWithMethod is called again
+                  handleCalculate();
+                }}
+              >
+                <Text style={styles.retryButtonText}>{t('common.retry')}</Text>
+              </TouchableOpacity>
             </View>
           )}
 
@@ -418,6 +438,19 @@ const createStyles = (theme: any) =>
       color: theme.colors.error.main,
       marginVertical: 2,
       textAlign: 'right',
+    },
+    retryButton: {
+      marginTop: 8,
+      alignSelf: 'flex-start',
+      backgroundColor: theme.colors.primary.main,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 6,
+    },
+    retryButtonText: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: '#fff',
     },
     resultsContainer: {
       marginHorizontal: 16,
