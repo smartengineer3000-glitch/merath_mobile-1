@@ -36,6 +36,9 @@ __tests__/
 *.test.tsx
 *.spec.ts
 *.spec.tsx
+test-reports/
+coverage/
+.nyc_output/
 
 # Development files
 .expo-shared/
@@ -44,10 +47,16 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Documentation
+# Documentation and support
 *.md
 CHANGELOG.md
 README.md
+support documents/
+docs/
+scripts/
+
+# Miscellaneous
+e2e/config.json
 PHASES_*.md
 support\\ documents/
 
