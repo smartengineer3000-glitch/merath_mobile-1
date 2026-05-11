@@ -10,13 +10,10 @@ import {
   StyleSheet,
   Animated,
   Easing,
-  Dimensions,
   ActivityIndicator,
 } from 'react-native';
 import { MaterialCommunityIcons } from '../lib/icons';
 import { useAppTheme } from '../lib/context/ThemeProvider';
-
-const { width } = Dimensions.get('window');
 
 export interface LoadingScreenProps {
   message?: string;
@@ -71,7 +68,7 @@ export function LoadingScreen({
         }),
       ])
     ).start();
-  }, []);
+  }, [fadeAnim, pulseAnim, scaleAnim]);
 
   // Progress bar animation
   useEffect(() => {
@@ -83,7 +80,7 @@ export function LoadingScreen({
         easing: Easing.out(Easing.cubic),
       }).start();
     }
-  }, [progress]);
+  }, [progress, progressAnim]);
 
   const progressWidth = progressAnim.interpolate({
     inputRange: [0, 1],

@@ -6,7 +6,6 @@
 import React from 'react';
 import {
   View,
-  StyleSheet,
   ViewStyle,
   Pressable,
 } from 'react-native';
@@ -92,11 +91,5 @@ export const ModernCard: React.FC<ModernCardProps> = ({
 
   return <View style={[cardStyle, style]}>{children}</View>;
 };
-
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: 12,
-  },
-});
 
 export default ModernCard;

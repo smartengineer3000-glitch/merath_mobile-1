@@ -18,8 +18,10 @@ import {
   Animated,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../lib/design/theme';
 import { useCalculator, useMadhab, useHeirs, useAuditLog, useResults } from '../lib/inheritance/hooks';
+import { PrimaryButton, OutlineButton } from '../components/ui/Button';
 import MadhhabSelector from '../components/MadhhabSelector';
 import EstateInput from '../components/EstateInput';
 import HeirSelector from '../components/HeirSelector';
@@ -27,6 +29,7 @@ import ResultsDisplay from '../components/ResultsDisplay';
 import type { HeirsData } from '../lib/inheritance/types';
 
 export default function CalculatorScreen() {
+  const { t } = useTranslation();
   const { theme } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
   const fadeAnim = useState(new Animated.Value(0))[0];
@@ -95,12 +98,12 @@ export default function CalculatorScreen() {
     const errors: string[] = [];
     
     if (!estateData.total || estateData.total <= 0) {
-      errors.push('الرجاء إدخال مبلغ التركة');
+      errors.push(t('results.invalidEstate'));
     }
     
     const totalHeirs = getTotalHeirsCount();
     if (totalHeirs === 0) {
-      errors.push('الرجاء إضافة وارث واحد على الأقل');
+      errors.push(t('results.noHeirs'));
     }
     
     setValidationErrors(errors);
@@ -110,7 +113,7 @@ export default function CalculatorScreen() {
   // Handle calculation
   const handleCalculate = useCallback(async () => {
     if (!validateInputs()) {
-      Alert.alert('تنبيه', validationErrors.join('\n'));
+      Alert.alert(t('common.warning'), validationErrors.join('\n'));
       return;
     }
 
@@ -129,22 +132,22 @@ export default function CalculatorScreen() {
           scrollViewRef.current?.scrollToEnd({ animated: true });
         }, 300);
       } else {
-        Alert.alert('خطأ', calculationResult?.error || 'فشل في إجراء الحساب');
+        Alert.alert(t('common.error'), calculationResult?.error || t('results.error'));
       }
     } catch (error) {
-      Alert.alert('خطأ', error instanceof Error ? error.message : 'حدث خطأ غير متوقع');
+      Alert.alert(t('common.error'), error instanceof Error ? error.message : t('common.error'));
     }
   }, [madhab, estateData, calculateWithMethod, validateInputs, validationErrors, getHeirsData, saveResult, logCalculation]);
 
   // Handle reset - clears ALL fields including madhab and heirs
   const handleReset = useCallback(() => {
     Alert.alert(
-      'تأكيد إعادة التعيين',
-      'هل أنت متأكد من مسح جميع البيانات؟',
+      t('calculator.resetConfirmationTitle'),
+      t('calculator.resetConfirmationMessage'),
       [
-        { text: 'إلغاء', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'مسح',
+          text: t('calculator.clear'),
           style: 'destructive',
           onPress: () => {
             // Reset to default madhab
@@ -183,15 +186,15 @@ export default function CalculatorScreen() {
           {/* Header */}
           <View style={styles.header}>
             <MaterialCommunityIcons name="scale-balance" size={32} color={theme.colors.primary.main} />
-            <Text style={styles.headerTitle}>حاسبة المواريث الشرعية</Text>
-            <Text style={styles.headerSubtitle}>Islamic Inheritance Calculator</Text>
+            <Text style={styles.headerTitle}>{t('calculator.title')}</Text>
+            <Text style={styles.headerSubtitle}>{t('app.subtitle')}</Text>
           </View>
 
           {/* Madhab Section */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <MaterialCommunityIcons name="school" size={20} color={theme.colors.primary.main} />
-              <Text style={styles.sectionTitle}>اختر المذهب الفقهي</Text>
+              <Text style={styles.sectionTitle}>{t('madhab.title')}</Text>
             </View>
             <MadhhabSelector selectedMadhab={madhab} onSelect={changeMadhab} />
           </View>
@@ -200,7 +203,7 @@ export default function CalculatorScreen() {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <MaterialCommunityIcons name="currency-usd" size={20} color={theme.colors.success.main} />
-              <Text style={styles.sectionTitle}>بيانات التركة</Text>
+              <Text style={styles.sectionTitle}>{t('estate.title')}</Text>
             </View>
             <EstateInput onEstateChange={updateEstateData} initialEstate={estateData} />
           </View>
@@ -209,7 +212,7 @@ export default function CalculatorScreen() {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <MaterialCommunityIcons name="account-group" size={20} color={theme.colors.warning.main} />
-              <Text style={styles.sectionTitle}>الورثة</Text>
+              <Text style={styles.sectionTitle}>{t('heirs.title')}</Text>
               {heirsMap.size > 0 && (
                 <View style={styles.heirBadge}>
                   <Text style={styles.heirBadgeText}>
@@ -218,35 +221,34 @@ export default function CalculatorScreen() {
                 </View>
               )}
             </View>
-            {/* IMPORTANT: Pass the onHeirsChange prop */}
             <HeirSelector onHeirsChange={handleHeirsChange} />
           </View>
 
           {/* Action Buttons */}
           <View style={styles.actionContainer}>
-            <TouchableOpacity
-              style={[styles.primaryButton, isCalculating && styles.buttonDisabled]}
+            <PrimaryButton
+              title={t('calculator.calculate')}
+              icon="calculator"
+              iconPosition="left"
+              fullWidth
+              loading={isCalculating}
+              disabled={isCalculating}
               onPress={handleCalculate}
-              disabled={isCalculating}
-            >
-              {isCalculating ? (
-                <ActivityIndicator size="small" color="#fff" />
-              ) : (
-                <>
-                  <MaterialCommunityIcons name="calculator" size={20} color="#fff" />
-                  <Text style={styles.primaryButtonText}>حساب الميراث</Text>
-                </>
-              )}
-            </TouchableOpacity>
+              style={styles.primaryButton}
+              accessibilityLabel={t('calculator.calculate')}
+            />
 
-            <TouchableOpacity
-              style={styles.secondaryButton}
-              onPress={handleReset}
+            <OutlineButton
+              title={t('calculator.clear')}
+              icon="refresh"
+              iconPosition="left"
+              fullWidth
               disabled={isCalculating}
-            >
-              <MaterialCommunityIcons name="refresh" size={20} color={theme.colors.primary.main} />
-              <Text style={styles.secondaryButtonText}>إعادة تعيين</Text>
-            </TouchableOpacity>
+              onPress={handleReset}
+              style={styles.secondaryButton}
+              textStyle={styles.secondaryButtonText}
+              accessibilityLabel={t('calculator.clear')}
+            />
           </View>
 
           {/* Validation Errors */}
@@ -285,60 +287,80 @@ const createStyles = (theme: any) =>
     header: {
       alignItems: 'center',
       paddingVertical: 24,
-      backgroundColor: '#fff',
-      marginBottom: 8,
+      paddingHorizontal: 16,
+      backgroundColor: theme.colors.primary.main,
+      marginBottom: 12,
+      borderBottomLeftRadius: 24,
+      borderBottomRightRadius: 24,
+      shadowColor: theme.colors.primary.main,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.15,
+      shadowRadius: 8,
+      elevation: 4,
     },
     headerTitle: {
-      fontSize: 20,
-      fontWeight: '600',
-      color: theme.colors.neutral.dark300,
+      fontSize: 24,
+      fontWeight: '700',
+      color: '#fff',
       marginTop: 12,
       marginBottom: 4,
+      textAlign: 'center',
     },
     headerSubtitle: {
-      fontSize: 12,
-      color: theme.colors.neutral.dark200,
+      fontSize: 13,
+      color: 'rgba(255,255,255,0.9)',
+      fontWeight: '400',
     },
     section: {
       backgroundColor: '#fff',
-      marginHorizontal: 16,
-      marginVertical: 8,
+      marginHorizontal: 12,
+      marginVertical: 10,
       borderRadius: 16,
       padding: 16,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.05,
-      shadowRadius: 8,
-      elevation: 2,
+      shadowOpacity: 0.08,
+      shadowRadius: 12,
+      elevation: 3,
+      borderWidth: 1,
+      borderColor: 'rgba(0,0,0,0.03)',
     },
     sectionHeader: {
       flexDirection: 'row',
       alignItems: 'center',
       marginBottom: 16,
-      gap: 8,
+      gap: 12,
+      paddingBottom: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.neutral.light200,
     },
     sectionTitle: {
-      fontSize: 14,
+      fontSize: 15,
       fontWeight: '600',
       color: theme.colors.neutral.dark300,
       flex: 1,
+      letterSpacing: 0.2,
     },
     heirBadge: {
       backgroundColor: theme.colors.primary.light,
-      borderRadius: 12,
-      paddingHorizontal: 8,
-      paddingVertical: 2,
+      borderRadius: 14,
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderWidth: 1,
+      borderColor: theme.colors.primary.main,
+      minWidth: 32,
+      alignItems: 'center',
     },
     heirBadgeText: {
       fontSize: 12,
-      fontWeight: '600',
+      fontWeight: '700',
       color: theme.colors.primary.main,
     },
     actionContainer: {
       flexDirection: 'row',
-      marginHorizontal: 16,
-      marginVertical: 16,
-      gap: 12,
+      marginHorizontal: 12,
+      marginVertical: 20,
+      gap: 10,
     },
     primaryButton: {
       flex: 2,
@@ -346,37 +368,44 @@ const createStyles = (theme: any) =>
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: theme.colors.primary.main,
-      paddingVertical: 14,
-      borderRadius: 12,
+      paddingVertical: 16,
+      borderRadius: 14,
       gap: 8,
+      shadowColor: theme.colors.primary.main,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.2,
+      shadowRadius: 8,
+      elevation: 4,
     },
     primaryButtonText: {
-      fontSize: 14,
+      fontSize: 15,
       fontWeight: '600',
       color: '#fff',
+      letterSpacing: 0.3,
     },
     secondaryButton: {
       flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: '#fff',
-      paddingVertical: 14,
-      borderRadius: 12,
-      borderWidth: 1,
+      backgroundColor: theme.colors.neutral.light50,
+      paddingVertical: 16,
+      borderRadius: 14,
+      borderWidth: 1.5,
       borderColor: theme.colors.primary.main,
-      gap: 8,
+      gap: 6,
     },
     secondaryButtonText: {
       fontSize: 14,
       fontWeight: '600',
       color: theme.colors.primary.main,
+      letterSpacing: 0.25,
     },
     buttonDisabled: {
       opacity: 0.6,
     },
     errorContainer: {
-      marginHorizontal: 16,
+      marginHorizontal: 12,
       marginVertical: 8,
       padding: 12,
       backgroundColor: theme.colors.error.light,

@@ -3,14 +3,12 @@
  * @description Compact Madhab selector with dropdown alternative
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
-  Modal,
-  FlatList,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '../lib/design/theme';
@@ -30,10 +28,6 @@ const MADHAB_DATA = [
 
 export function MadhhabSelector({ selectedMadhab = 'hanafi', onSelect }: MadhhabSelectorProps) {
   const { theme } = useTheme();
-  const [modalVisible, setModalVisible] = useState(false);
-  
-  const selected = MADHAB_DATA.find(m => m.id === selectedMadhab);
-
   const styles = createStyles(theme);
 
   // Option 1: Compact Grid (2x2)

@@ -8,7 +8,6 @@ import {
   TextInput,
   View,
   Text,
-  StyleSheet,
   ViewStyle,
   TextStyle,
   Pressable,
@@ -133,26 +132,4 @@ export const ModernInput: React.FC<ModernInputProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 12,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 8,
-  },
-  input: {
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    fontSize: 14,
-  },
-  error: {
-    fontSize: 12,
-    marginTop: 4,
-  },
-});
 
-export default ModernInput;

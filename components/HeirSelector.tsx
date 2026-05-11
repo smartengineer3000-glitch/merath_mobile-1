@@ -16,15 +16,12 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
-  Dimensions,
   Animated,
   Alert,
 } from 'react-native';
 import { MaterialCommunityIcons } from '../lib/icons';
 import { useTheme } from '../lib/design/theme';
 import type { HeirsData, HeirType } from '../lib/inheritance/types';
-
-const { width } = Dimensions.get('window');
 
 interface HeirSelectorProps {
   onHeirsChange?: (heirs: HeirsData) => void;
@@ -73,14 +70,14 @@ const hasMaxCount = (heir: HeirItem): heir is HeirWithMaxCount => {
 };
 
 // Organized heir data with categories
-const HEIR_CATEGORIES: Array<{
+const HEIR_CATEGORIES: {
   id: string;
   name: string;
   nameEn: string;
   icon: string;
   color: string;
   heirs: HeirItem[];
-}> = [
+}[] = [
   {
     id: 'spouses',
     name: 'الزوجان',
@@ -150,7 +147,7 @@ const HEIR_CATEGORIES: Array<{
   }
 ];
 
-export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
+export const HeirSelector = React.memo(function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
   const { theme } = useTheme();
   const [heirs, setHeirs] = useState<Map<HeirType, number>>(new Map());
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
@@ -176,7 +173,7 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
       duration: 500,
       useNativeDriver: true,
     }).start();
-  }, []);
+  }, [fadeAnim]);
 
   const toggleCategory = useCallback((categoryId: string) => {
     setExpandedCategories(prev => {
@@ -550,7 +547,7 @@ export function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
       </ScrollView>
     </Animated.View>
   );
-}
+});
 
 const createStyles = (theme: any) =>
   StyleSheet.create({

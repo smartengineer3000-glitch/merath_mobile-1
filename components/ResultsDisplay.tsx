@@ -24,12 +24,12 @@ import {
   Animated,
   Easing,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '../lib/icons';
-import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import ViewShot from 'react-native-view-shot';
-import { useResults } from '../lib/inheritance/hooks';
+import { useResults, useCalculator, type ComparisonResult } from '../lib/inheritance/hooks';
 import { useAppTheme } from '../lib/context/ThemeProvider';
 import type { CalculationResult } from '../lib/inheritance/types';
 import { PDFExporter } from '../lib/export/PDFExporter';
@@ -60,11 +60,13 @@ const AnimatedNumber = ({
   useEffect(() => {
     if (value === displayValue) return;
 
+    const animation = animationRef.current;
+
     // Stop any ongoing animation
-    animationRef.current.stopAnimation();
+    animation.stopAnimation();
 
     // Start new animation
-    Animated.timing(animationRef.current, {
+    Animated.timing(animation, {
       toValue: 1,
       duration,
       easing: Easing.out(Easing.cubic),
@@ -77,15 +79,15 @@ const AnimatedNumber = ({
     });
 
     // Listen to animation progress
-    const listener = animationRef.current.addListener(({ value: progress }) => {
+    const listener = animation.addListener(({ value: progress }) => {
       const newValue = previousValueRef.current + (value - previousValueRef.current) * progress;
       setDisplayValue(newValue);
     });
 
     return () => {
-      animationRef.current.removeListener(listener);
+      animation.removeListener(listener);
     };
-  }, [value, duration]);
+  }, [value, duration, displayValue]);
 
   const formattedValue = format 
     ? displayValue.toFixed(2).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[parseInt(d)] || d)
@@ -110,6 +112,7 @@ const SharePreviewModal = ({
   format: ShareFormat;
   previewHTML: string;
 }) => {
+  const { t } = useTranslation();
   const { theme } = useAppTheme();
 
   const getFormatIcon = () => {
@@ -124,11 +127,11 @@ const SharePreviewModal = ({
 
   const getFormatName = () => {
     switch (format) {
-      case 'pdf': return 'PDF';
-      case 'image': return 'صورة';
-      case 'text': return 'نص';
-      case 'clipboard': return 'نسخ';
-      default: return 'مشاركة';
+      case 'pdf': return t('results.shareFormat.pdf');
+      case 'image': return t('results.shareFormat.image');
+      case 'text': return t('results.shareFormat.text');
+      case 'clipboard': return t('results.shareFormat.clipboard');
+      default: return t('calculator.share');
     }
   };
 
@@ -144,10 +147,10 @@ const SharePreviewModal = ({
           <View style={styles.previewHeader}>
             <View style={styles.previewHeaderLeft}>
               <MaterialCommunityIcons name={getFormatIcon()} size={24} color={theme.colors.primary.main} />
-              <Text style={styles.previewTitle}>معاينة المشاركة - {getFormatName()}</Text>
+              <Text style={styles.previewTitle}>{t('results.previewTitle', { format: getFormatName() })}</Text>
             </View>
             <TouchableOpacity onPress={onClose}>
-              <MaterialCommunityIcons name="close" size={24} color={theme.colors.neutral.dark200} />
+              <MaterialCommunityIcons name="close" size={24} color="#666" />
             </TouchableOpacity>
           </View>
 
@@ -159,7 +162,7 @@ const SharePreviewModal = ({
             ) : format === 'image' ? (
               <View style={styles.previewImagePlaceholder}>
                 <MaterialCommunityIcons name="image" size={48} color={theme.colors.neutral.light300} />
-                <Text style={styles.previewImageText}>معاينة الصورة</Text>
+                <Text style={styles.previewImageText}>{t('results.previewImage')}</Text>
               </View>
             ) : (
               <View style={styles.previewText}>
@@ -173,13 +176,13 @@ const SharePreviewModal = ({
               style={[styles.previewButton, styles.previewCancelButton]}
               onPress={onClose}
             >
-              <Text style={styles.previewCancelText}>إلغاء</Text>
+              <Text style={styles.previewCancelText}>{t('common.cancel')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.previewButton, styles.previewConfirmButton, { backgroundColor: theme.colors.primary.main }]}
               onPress={onConfirm}
             >
-              <Text style={styles.previewConfirmText}>مشاركة</Text>
+              <Text style={styles.previewConfirmText}>{t('calculator.share')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -189,10 +192,12 @@ const SharePreviewModal = ({
 };
 
 export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
+  const { t } = useTranslation();
   const { theme } = useAppTheme();
   const viewShotRef = useRef<ViewShot>(null);
   const hooksResults = useResults();
-  const results = hooksResults?.previousResults || [];
+  const calculator = useCalculator();
+  const results = useMemo(() => hooksResults?.previousResults || [], [hooksResults]);
   const [showComparison, setShowComparison] = useState(false);
   const [selectedResultId, setSelectedResultId] = useState<number | null>(null);
   
@@ -205,26 +210,24 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
   // ===== FIX M6: Preview state =====
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewHTML, setPreviewHTML] = useState('');
-  const [pendingShare, setPendingShare] = useState<{ format: ShareFormat } | null>(null);
 
   // Export states
-  const [exportLoading, setExportLoading] = useState(false);
-  const [exportError, setExportError] = useState<string | null>(null);
+  const [, setExportLoading] = useState(false);
+  const [madhabComparisonResults, setMadhabComparisonResults] = useState<ComparisonResult[]>([]);
+  const [comparisonLoading, setComparisonLoading] = useState(false);
 
-  // ===== FIX L2: Animation values for counting =====
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  // ===== FIX L2: Animation values for counting =====n  const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
   const [totalAmount, setTotalAmount] = useState(0);
 
   // Get comparison data from the enhanced hook
   const { 
-    comparisonMode, 
     comparisonResults, 
     generateComparisonReport,
-    compareWithPrevious 
   } = hooksResults;
 
-  const currentResult = result || results[0];
+  const activeComparisons = madhabComparisonResults.length > 0 ? madhabComparisonResults : comparisonResults;
+  const currentResult = result || calculator.result || results[0];
   const previousResults = results.slice(1, 4);
 
   // ===== FIX L2: Animate entrance =====
@@ -241,7 +244,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
         useNativeDriver: true,
       }),
     ]).start();
-  }, []);
+  }, [fadeAnim, slideAnim]);
 
   // ===== FIX L2: Calculate total for animation =====
   useEffect(() => {
@@ -484,7 +487,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
     try {
       await Clipboard.setString(text);
       Alert.alert('تم', 'تم نسخ النتائج إلى الحافظة');
-    } catch (error) {
+    } catch {
       throw new Error('فشل في النسخ إلى الحافظة');
     }
   }, []);
@@ -671,26 +674,22 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
   }, [shareFormat, currentResult, generateShareText, shareViaNative, shareToClipboard, shareAsImage]);
 
   // Handle PDF Export
-  const handleExportPDF = useCallback(async () => {
-    showPreview('pdf');
-  }, [showPreview]);
-
   const handleExportComparison = useCallback(() => {
-    if (!comparisonResults || comparisonResults.length === 0) {
+    if (!activeComparisons || activeComparisons.length === 0) {
       Alert.alert('تنبيه', 'لا توجد نتائج مقارنة للتصدير');
       return;
     }
 
-    const html = generateComparisonReport(comparisonResults);
+    generateComparisonReport(activeComparisons);
     Alert.alert('تم', 'تقرير المقارنة جاهز للتصدير');
-  }, [comparisonResults, generateComparisonReport]);
+  }, [activeComparisons, generateComparisonReport]);
 
   if (!currentResult || !currentResult.success) {
     return (
       <View style={styles.container}>
         <View style={styles.emptyState}>
-          <Text style={styles.emptyStateTitle}>لا توجد نتائج</Text>
-          <Text style={styles.emptyStateText}>قم بإجراء عملية حساب أولاً</Text>
+          <Text style={styles.emptyStateTitle}>{t('results.noResults')}</Text>
+          <Text style={styles.emptyStateText}>{t('results.performCalculation')}</Text>
         </View>
       </View>
     );
@@ -708,10 +707,10 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
           <View style={styles.madhhabBadge}>
             <Text style={styles.madhhabBadgeText}>{currentResult.madhhabName}</Text>
           </View>
-          <Text style={styles.title}>نتائج التوزيع</Text>
+          <Text style={styles.title}>{t('results.title')}</Text>
           {currentResult.calculationTime && (
             <Text style={styles.calculationTime}>
-              وقت الحساب: {currentResult.calculationTime}ms
+              {t('results.calculationTime')}: {currentResult.calculationTime}ms
             </Text>
           )}
           
@@ -721,31 +720,31 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
             onPress={() => setShareModalVisible(true)}
           >
             <MaterialCommunityIcons name="share" size={20} color="#fff" />
-            <Text style={styles.headerShareText}>مشاركة</Text>
+            <Text style={styles.headerShareText}>{t('calculator.share')}</Text>
           </TouchableOpacity>
         </View>
 
         {/* Special Cases */}
         {currentResult.specialCases && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>حالات خاصة</Text>
+            <Text style={styles.sectionTitle}>{t('results.specialCases')}</Text>
             <View style={styles.specialCases}>
               {currentResult.awlApplied && (
                 <View style={styles.specialCaseItem}>
-                  <Text style={styles.specialCaseLabel}>العول:</Text>
-                  <Text style={styles.specialCaseValue}>مطبق</Text>
+                  <Text style={styles.specialCaseLabel}>{t('results.awl')}:</Text>
+                  <Text style={styles.specialCaseValue}>{t('results.applied')}</Text>
                 </View>
               )}
               {currentResult.raddApplied && (
                 <View style={styles.specialCaseItem}>
-                  <Text style={styles.specialCaseLabel}>الرد:</Text>
-                  <Text style={styles.specialCaseValue}>مطبق</Text>
+                  <Text style={styles.specialCaseLabel}>{t('results.radd')}:</Text>
+                  <Text style={styles.specialCaseValue}>{t('results.applied')}</Text>
                 </View>
               )}
               {currentResult.blockedHeirs && 
                 currentResult.blockedHeirs.length > 0 && (
                 <View style={styles.hijabContainer}>
-                  <Text style={styles.hijabLabel}>المحجوبون:</Text>
+                  <Text style={styles.hijabLabel}>{t('results.blockedHeirs')}:</Text>
                   {currentResult.blockedHeirs.map((heir: string, idx: number) => (
                     <Text key={idx} style={styles.hijabType}>• {heir}</Text>
                   ))}
@@ -757,13 +756,13 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
 
         {/* Distribution Table */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>جدول التوزيع</Text>
+          <Text style={styles.sectionTitle}>{t('results.distributionTable')}</Text>
           <View style={styles.table}>
             {/* Table Header */}
             <View style={styles.tableHeader}>
-              <Text style={styles.tableHeaderCell}>المبلغ</Text>
-              <Text style={styles.tableHeaderCell}>النسبة</Text>
-              <Text style={styles.tableHeaderCell}>الوارث</Text>
+              <Text style={styles.tableHeaderCell}>{t('results.amount')}</Text>
+              <Text style={styles.tableHeaderCell}>{t('results.fraction')}</Text>
+              <Text style={styles.tableHeaderCell}>{t('results.heir')}</Text>
             </View>
 
             {/* Table Rows with Animated Numbers */}
@@ -793,17 +792,17 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
 
         {/* Financial Summary */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>الملخص المالي</Text>
+          <Text style={styles.sectionTitle}>{t('results.financialSummary')}</Text>
           <View style={styles.summaryContainer}>
             <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>إجمالي التركة:</Text>
+              <Text style={styles.summaryLabel}>{t('estate.netEstate')}:</Text>
               <Text style={styles.summaryValue}>
                 <AnimatedNumber value={totalAmount} /> ر.س
               </Text>
             </View>
 
             <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>مستوى الثقة:</Text>
+              <Text style={styles.summaryLabel}>{t('results.trustLevel')}:</Text>
               <Text style={[
                 styles.summaryValue,
                 { color: currentResult.confidence > 90 ? '#4caf50' : '#ff9800' }
@@ -817,7 +816,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
         {/* Calculation Steps */}
         {currentResult.steps && currentResult.steps.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>خطوات الحساب</Text>
+            <Text style={styles.sectionTitle}>{t('results.calculationSteps')}</Text>
             <ScrollView style={styles.stepsContainer} scrollEnabled={true}>
               {currentResult.steps.map((step: any, index: number) => (
                 <View key={index} style={styles.step}>
@@ -835,7 +834,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
         {/* Previous Results */}
         {previousResults && previousResults.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>النتائج السابقة</Text>
+            <Text style={styles.sectionTitle}>{t('results.previousResults')}</Text>
             <ScrollView style={styles.historyContainer} scrollEnabled={true}>
               {previousResults.map((prevResult: any, index: number) => (
                 <TouchableOpacity
@@ -863,7 +862,31 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
             onPress={() => setShowComparison(!showComparison)}
           >
             <Text style={styles.comparisonButtonText}>
-              {showComparison ? '▼ مقارنة المذاهب' : '▶ مقارنة المذاهب'}
+              {showComparison ? t('results.hideComparison') : t('results.showComparison')}
+            </Text>
+          </TouchableOpacity>
+        )}
+
+        {/* Compare Across Madhabs Button */}
+        {currentResult && (
+          <TouchableOpacity
+            style={[styles.comparisonButton, { backgroundColor: theme.colors.secondary.main }]}
+            onPress={async () => {
+              setComparisonLoading(true);
+              try {
+                const comparisons = await calculator.compareAcrossMadhabs();
+                setMadhabComparisonResults(comparisons);
+                setShowComparison(true);
+              } catch (error) {
+                console.error('Failed to compare across madhabs:', error);
+                Alert.alert('خطأ', 'فشل في مقارنة المذاهب. يرجى المحاولة لاحقاً.');
+              } finally {
+                setComparisonLoading(false);
+              }
+            }}
+          >
+            <Text style={styles.comparisonButtonText}>
+              مقارنة المذاهب الأربعة
             </Text>
           </TouchableOpacity>
         )}
@@ -871,22 +894,22 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
         {/* Statistics */}
         {showComparison && stats_data && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>الإحصائيات</Text>
+            <Text style={styles.sectionTitle}>{t('results.statistics')}</Text>
             <View style={styles.statsContainer}>
               <View style={styles.statRow}>
                 <Text style={styles.statValue}>{stats_data.totalResults}</Text>
-                <Text style={styles.statLabel}>إجمالي الحسابات</Text>
+                <Text style={styles.statLabel}>{t('results.totalCalculations')}</Text>
               </View>
               <View style={styles.statRow}>
                 <Text style={styles.statValue}>{stats_data.currentResult}</Text>
-                <Text style={styles.statLabel}>النتيجة الحالية</Text>
+                <Text style={styles.statLabel}>{t('results.currentResult')}</Text>
               </View>
             </View>
           </View>
         )}
 
         {/* Comparison Results */}
-        {showComparison && comparisonResults && comparisonResults.length > 0 && (
+        {showComparison && activeComparisons && activeComparisons.length > 0 && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <MaterialCommunityIcons
@@ -894,13 +917,13 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
                 size={24}
                 color={theme.colors.primary.main}
               />
-              <Text style={styles.sectionTitle}>مقارنة المذاهب</Text>
-            </View>
+<Text style={styles.sectionTitle}>{t('results.comparison')}</Text>
+          </View>
 
-            {comparisonResults.map((comparison, idx) => (
-              <View key={idx} style={styles.comparisonCard}>
-                <Text style={styles.comparisonTitle}>
-                  مقارنة مع {comparison.madhhabName}
+          {activeComparisons.map((comparison, idx) => (
+            <View key={idx} style={styles.comparisonCard}>
+              <Text style={styles.comparisonTitle}>
+                {t('results.compareWith', { madhab: comparison.madhhabName })}
                 </Text>
                 
                 <View style={styles.comparisonSummary}>
@@ -1090,84 +1113,97 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#eff5fb'
   },
   header: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    marginBottom: 12,
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 18,
+    paddingTop: 18,
+    paddingBottom: 20,
+    borderRadius: 20,
+    marginHorizontal: 12,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
     position: 'relative',
   },
   madhhabBadge: {
     backgroundColor: '#e3f2fd',
-    borderRadius: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    borderRadius: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     alignSelf: 'flex-end',
-    marginBottom: 6
+    marginBottom: 10,
   },
   madhhabBadgeText: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '700',
     color: '#1976d2'
   },
   title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#111827',
     textAlign: 'center',
-    marginBottom: 6
+    marginBottom: 6,
   },
   calculationTime: {
-    fontSize: 11,
-    color: '#999',
-    textAlign: 'center'
+    fontSize: 12,
+    color: '#6b7280',
+    textAlign: 'center',
   },
   headerShareButton: {
     position: 'absolute',
-    top: 12,
-    left: 16,
+    top: 16,
+    right: 16,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#1976d2',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    gap: 4,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 999,
+    gap: 6,
+    shadowColor: '#1976d2',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 3,
   },
   headerShareText: {
     color: '#fff',
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: 13,
+    fontWeight: '700',
   },
   section: {
     marginHorizontal: 12,
-    marginBottom: 12,
-    backgroundColor: '#fff',
-    borderRadius: 6,
-    padding: 12,
+    marginBottom: 14,
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: 16,
     borderWidth: 1,
-    borderColor: '#e0e0e0'
+    borderColor: '#e5e7eb',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
   },
   sectionTitle: {
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: '700',
-    color: '#333',
-    marginBottom: 10,
-    paddingBottom: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    color: '#111827',
+    marginBottom: 12,
+    letterSpacing: 0.2,
     textAlign: 'right'
   },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 12,
-    gap: 8,
+    gap: 10,
   },
   emptyState: {
     paddingVertical: 40,
@@ -1224,37 +1260,38 @@ const styles = StyleSheet.create({
   },
   table: {
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 4,
+    borderColor: '#e2e8f0',
+    borderRadius: 12,
     overflow: 'hidden'
   },
   tableHeader: {
     flexDirection: 'row',
     backgroundColor: '#1976d2',
-    padding: 8
+    paddingVertical: 10,
+    paddingHorizontal: 12,
   },
   tableHeaderCell: {
     flex: 1,
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '700',
     color: '#fff',
     textAlign: 'center'
   },
   tableRow: {
     flexDirection: 'row',
-    paddingVertical: 8,
-    paddingHorizontal: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    backgroundColor: '#f9f9f9'
+    borderBottomColor: '#e5e7eb',
+    backgroundColor: '#f8fafc'
   },
   tableRowAlternate: {
-    backgroundColor: '#fff'
+    backgroundColor: '#ffffff'
   },
   tableCell: {
     flex: 1,
-    fontSize: 11,
-    color: '#333',
+    fontSize: 12,
+    color: '#111827',
     textAlign: 'center'
   },
   summaryContainer: {
@@ -1343,23 +1380,24 @@ const styles = StyleSheet.create({
   comparisonButton: {
     marginHorizontal: 12,
     marginBottom: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     backgroundColor: '#e3f2fd',
-    borderRadius: 4,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#1976d2'
+    borderColor: '#1976d2',
+    alignItems: 'center',
   },
   comparisonButtonText: {
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: 13,
+    fontWeight: '700',
     color: '#1976d2',
     textAlign: 'center'
   },
   statsContainer: {
     backgroundColor: '#f3e5f5',
-    borderRadius: 4,
-    padding: 10,
+    borderRadius: 12,
+    padding: 14,
     borderWidth: 1,
     borderColor: '#ce93d8'
   },
@@ -1464,32 +1502,32 @@ const styles = StyleSheet.create({
   },
   exportComparisonButton: {
     backgroundColor: '#1976d2',
-    borderRadius: 6,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    borderRadius: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 18,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    marginTop: 8,
+    marginTop: 12,
   },
   exportComparisonText: {
-    fontSize: 13,
-    fontWeight: '600',
+    fontSize: 14,
+    fontWeight: '700',
     color: '#fff',
   },
   closeButton: {
     marginHorizontal: 12,
-    marginTop: 12,
-    paddingVertical: 12,
+    marginTop: 14,
+    paddingVertical: 14,
     paddingHorizontal: 16,
     backgroundColor: '#d32f2f',
-    borderRadius: 6,
+    borderRadius: 14,
     alignItems: 'center'
   },
   closeButtonText: {
-    fontSize: 13,
-    fontWeight: '600',
+    fontSize: 14,
+    fontWeight: '700',
     color: '#fff'
   },
   // Modal Styles
@@ -1541,16 +1579,21 @@ const styles = StyleSheet.create({
   },
   shareOption: {
     width: '48%',
-    backgroundColor: '#f8f9fa',
-    borderRadius: 12,
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
     padding: 16,
     marginBottom: 12,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: '#e2e8f0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    elevation: 2,
   },
   shareOptionDisabled: {
-    opacity: 0.5,
+    opacity: 0.45,
   },
   shareIcon: {
     width: 48,
@@ -1558,44 +1601,46 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 10,
   },
   shareOptionText: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 2,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 4,
   },
   shareOptionDesc: {
-    fontSize: 10,
-    color: '#999',
+    fontSize: 11,
+    color: '#6b7280',
     textAlign: 'center',
+    lineHeight: 16,
   },
   modalSuccess: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#e8f5e9',
-    padding: 12,
-    borderRadius: 8,
+    padding: 14,
+    borderRadius: 14,
     marginBottom: 16,
     gap: 8,
   },
   modalSuccessText: {
     fontSize: 13,
-    color: '#4caf50',
+    color: '#2e7d32',
     flex: 1,
   },
   modalCancelButton: {
     paddingVertical: 14,
-    borderRadius: 12,
+    borderRadius: 14,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: '#e5e7eb',
+    backgroundColor: '#f9fafb',
   },
   modalCancelButtonText: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#666',
+    fontWeight: '700',
+    color: '#374151',
   },
   // ===== FIX M6: Preview modal styles =====
   previewOverlay: {

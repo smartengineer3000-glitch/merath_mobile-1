@@ -152,11 +152,6 @@ export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps)
     });
   }, [total, funeral, debts, validateAndUpdate]);
 
-  // ===== FIX H6: Focus management =====
-  const focusNext = (nextRef: React.RefObject<TextInput>) => {
-    nextRef.current?.focus();
-  };
-
   const styles = createStyles(theme);
 
   return (
@@ -192,6 +187,9 @@ export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps)
             returnKeyType="next"
             onSubmitEditing={() => funeralInputRef.current?.focus()}
             blurOnSubmit={false}
+            accessibilityLabel="إجمالي التركة"
+            accessibilityHint="أدخل المبلغ الإجمالي للتركة بالريال"
+            accessible={true}
           />
         </View>
 
@@ -208,8 +206,9 @@ export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps)
             keyboardType="numeric"
             returnKeyType="next"
             onSubmitEditing={() => debtsInputRef.current?.focus()}
-            blurOnSubmit={false}
-          />
+            blurOnSubmit={false}            accessibilityLabel="تكاليف التجهيز"
+            accessibilityHint="أدخل تكاليف التجهيز والدفن"
+            accessible={true}          />
         </View>
 
         {/* الديون */}
@@ -226,6 +225,9 @@ export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps)
             returnKeyType="next"
             onSubmitEditing={() => willInputRef.current?.focus()}
             blurOnSubmit={false}
+            accessibilityLabel="الديون"
+            accessibilityHint="أدخل المبلغ الإجمالي للديون"
+            accessible={true}
           />
         </View>
 
@@ -242,6 +244,9 @@ export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps)
             keyboardType="numeric"
             returnKeyType="done"
             onSubmitEditing={Keyboard.dismiss}
+            accessibilityLabel="الوصية"
+            accessibilityHint="أدخل مبلغ الوصية إن وجدت"
+            accessible={true}
           />
         </View>
 
@@ -257,6 +262,9 @@ export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps)
             setValidationResult(null);
             Alert.alert('تم', 'تم مسح جميع البيانات');
           }}
+          accessibilityLabel="إعادة تعيين البيانات"
+          accessibilityHint="امسح جميع البيانات وأعد التعيين"
+          accessible={true}
         >
           <Text style={styles.resetButtonText}>↺ مسح البيانات</Text>
         </TouchableOpacity>

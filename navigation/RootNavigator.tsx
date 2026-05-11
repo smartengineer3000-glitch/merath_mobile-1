@@ -1,4 +1,3 @@
-import FavoritesScreen from '../screens/FavoritesScreen';
 /**
  * Root Navigator Configuration
  * Phase 6: App Integration & Navigation
@@ -7,13 +6,14 @@ import FavoritesScreen from '../screens/FavoritesScreen';
  * Integrates all screens and navigation flows
  */
 
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, I18nManager, Platform } from 'react-native';
 import { Ionicons } from '../lib/icons';
-import { I18nManager, Platform } from 'react-native';
+import { useSettings } from '../lib/context/SettingsContext';
+import { languages } from '../lib/i18n';
 
 // Types
 import type { RootStackParamList, TabParamList } from './types';
@@ -22,15 +22,13 @@ import { linking } from './linking';
 // Screens
 import CalculatorScreen from '../screens/CalculatorScreen';
 import HistoryScreen from '../screens/HistoryScreen';
-import AuditTrailScreen from '../screens/AuditTrailScreen';
+import AuditTrail from '../screens/AuditTrailScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import AboutScreen from '../screens/AboutScreen';
 
-// Initialize RTL once at module load time
-let rtlInitialized = false;
-if (!rtlInitialized && Platform.OS !== 'web') {
-  I18nManager.forceRTL(true);
-  rtlInitialized = true;
+// Allow RTL layouts on supported platforms, and dynamically update direction based on selected language.
+if (Platform.OS !== 'web') {
+  I18nManager.allowRTL(true);
 }
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -108,7 +106,7 @@ export function TabNavigator() {
       />
       <Tab.Screen
         name="AuditTrail"
-        component={AuditTrailScreen}
+        component={AuditTrail}
         options={{
           title: 'سجل التدقيق',
           tabBarLabel: 'التدقيق',
@@ -139,16 +137,22 @@ export function TabNavigator() {
  * Main navigation container with stack for handling modals/errors
  */
 export function RootNavigator() {
-  const [isReady, setIsReady] = useState(false);
   const navigationRef = React.useRef<any>(null);
+  const { state } = useSettings();
+
+  useEffect(() => {
+    if (Platform.OS !== 'web') {
+      const desiredRTL = languages[state.language]?.rtl ?? false;
+      if (I18nManager.isRTL !== desiredRTL) {
+        I18nManager.forceRTL(desiredRTL);
+      }
+    }
+  }, [state.language]);
 
   return (
     <NavigationContainer 
       ref={navigationRef}
       linking={linking}
-      onReady={() => {
-        setIsReady(true);
-      }}
       fallback={
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator size="large" color="#4F46E5" />

@@ -23,6 +23,29 @@ import type {
 } from './types';
 
 // ============================================================================
+// Comparison Types (defined early for use in hooks)
+// ============================================================================
+
+export interface ComparisonResult {
+  madhab: MadhhabType;
+  madhhabName: string;
+  totalAmount: number;
+  shares: HeirShare[];
+  differences: {
+    heirName: string;
+    amountDiff: number;
+    percentageDiff: number;
+    explanation: string;
+  }[];
+  summary: {
+    isIdentical: boolean;
+    majorDifferences: number;
+    minorDifferences: number;
+    recommendation?: string;
+  };
+}
+
+// ============================================================================
 // FIX H7: Timeout configuration
 // ============================================================================
 const CALCULATION_TIMEOUT_MS = 10000; // 10 seconds max calculation time
@@ -43,6 +66,7 @@ export function useCalculator() {
   const [result, setResult] = useState<CalculationResult | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [lastHeirsData, setLastHeirsData] = useState<HeirsData | null>(null);
   
   // ===== FIX C2: Use refs to track mounted state and abort controller =====
   const isMounted = useRef(true);
@@ -157,11 +181,13 @@ export function useCalculator() {
           throw new Error('يجب تحديد ورثة واحد على الأقل');
         }
 
+        setLastHeirsData(heirs);
+
         // ===== FIX C2: Check cache first (synchronous) =====
         const cachedResult = CalculationCache.getCalculation(madhab, estateData, heirs);
         if (cachedResult && !signal.aborted) {
           CalculationCache.recordHit(cachedResult.calculationTime || 0);
-          
+
           if (isMounted.current && !signal.aborted) {
             setResult(cachedResult);
             setIsCalculating(false);
@@ -171,11 +197,11 @@ export function useCalculator() {
 
         // ===== FIX H7: Set up timeout promise =====
         const timeoutPromise = new Promise<never>((_, reject) => {
-        // @ts-ignore
-        calculationTimeoutRef.current = setTimeout(() => {
-        reject(new Error('انتهت مهلة الحساب. يرجى المحاولة مرة أخرى.'));
-  }, CALCULATION_TIMEOUT_MS);
-});
+          // @ts-ignore
+          calculationTimeoutRef.current = setTimeout(() => {
+            reject(new Error('انتهت مهلة الحساب. يرجى المحاولة مرة أخرى.'));
+          }, CALCULATION_TIMEOUT_MS);
+        });
         // ===== FIX C2: Create calculation promise with debouncing =====
         const calculationPromise = new Promise<CalculationResult>((resolve) => {
           debouncedCalculate(madhab, heirs, resolve);
@@ -265,6 +291,117 @@ export function useCalculator() {
     [estateData, result, isCalculating, error]
   );
 
+  const compareCalculationResults = useCallback(
+    (baseline: CalculationResult, other: CalculationResult): ComparisonResult => {
+      const differences: { heirName: string; amountDiff: number; percentageDiff: number; explanation: string }[] = [];
+      const allHeirs = new Set<string>([
+        ...baseline.shares.map(s => s.key ?? ''),
+        ...other.shares.map(s => s.key ?? '')
+      ].filter(Boolean) as string[]);
+
+      let totalBaseline = 0;
+      let totalOther = 0;
+
+      allHeirs.forEach((heirKey) => {
+        const baselineShare = baseline.shares.find(s => s.key === heirKey);
+        const otherShare = other.shares.find(s => s.key === heirKey);
+
+        const baselineAmount = baselineShare?.amount || 0;
+        const otherAmount = otherShare?.amount || 0;
+        totalBaseline += baselineAmount;
+        totalOther += otherAmount;
+
+        const amountDiff = otherAmount - baselineAmount;
+        const percentageDiff = baselineAmount > 0
+          ? (amountDiff / baselineAmount) * 100
+          : otherAmount > 0 ? 100 : 0;
+
+        if (Math.abs(amountDiff) > 0.01) {
+          const explanation = baselineShare && !otherShare
+            ? `محجوب في المذهب ${other.madhhabName}`
+            : !baselineShare && otherShare
+            ? `يرث في المذهب ${other.madhhabName} فقط`
+            : generateDifferenceExplanation(
+                heirKey,
+                baseline.madhab,
+                other.madhab,
+                amountDiff
+              );
+
+          differences.push({
+            heirName: baselineShare?.name || otherShare?.name || heirKey,
+            amountDiff,
+            percentageDiff,
+            explanation,
+          });
+        }
+      });
+
+      const isIdentical = differences.length === 0 &&
+        Math.abs(totalBaseline - totalOther) < 0.01;
+
+      const majorDifferences = differences.filter(d =>
+        Math.abs(d.percentageDiff) > 10 || Math.abs(d.amountDiff) > 1000
+      ).length;
+
+      const minorDifferences = differences.length - majorDifferences;
+      let recommendation = '';
+      if (isIdentical) {
+        recommendation = 'النتائج متطابقة في كلا المذهبين';
+      } else if (majorDifferences > 0) {
+        recommendation = `يوجد اختلافات جوهرية في ${majorDifferences} من الورثة. يوصى باستشارة متخصص.`;
+      } else if (minorDifferences > 0) {
+        recommendation = 'اختلافات طفيفة بين المذهبين - يمكن اختيار أي منهما';
+      }
+
+      return {
+        madhab: other.madhab,
+        madhhabName: other.madhhabName,
+        totalAmount: totalOther,
+        shares: other.shares,
+        differences,
+        summary: {
+          isIdentical,
+          majorDifferences,
+          minorDifferences,
+          recommendation,
+        }
+      };
+    },
+    []
+  );
+
+  // ===== NEW: Compare current scenario across all madhabs =====
+  const compareAcrossMadhabs = useCallback(async (): Promise<ComparisonResult[]> => {
+    if (!result || !estateData || !lastHeirsData) return [];
+
+    const madhabs: MadhhabType[] = ['shafii', 'hanafi', 'maliki', 'hanbali'];
+    const results: CalculationResult[] = [];
+    const primaryMadhab = result.madhab;
+
+    for (const madhab of madhabs) {
+      try {
+        const engine = new InheritanceCalculationEngine(madhab, estateData, lastHeirsData);
+        const calcResult = await engine.calculate();
+        if (calcResult.success) {
+          results.push(calcResult);
+        }
+      } catch (error) {
+        console.error(`Failed to calculate for ${madhab}:`, error);
+      }
+    }
+
+    const comparisons: ComparisonResult[] = [];
+    const primaryResult = results.find(r => r.madhab === primaryMadhab);
+    if (!primaryResult) return [];
+
+    for (const calcResult of results) {
+      if (calcResult.madhab === primaryMadhab) continue;
+      comparisons.push(compareCalculationResults(primaryResult, calcResult));
+    }
+
+    return comparisons;
+  }, [result, estateData, lastHeirsData, compareCalculationResults]);
   return {
     estateData,
     result,
@@ -273,6 +410,7 @@ export function useCalculator() {
     updateEstateData,
     resetCalculator,
     calculateWithMethod,
+    compareAcrossMadhabs,
     getState,
   };
 }
@@ -779,31 +917,13 @@ export function useResults() {
     getResultsStats,
     getAverageResult,
     setComparisonMode,
+    setComparisonResults,
   };
 }
 
 // ============================================================================
 // Helper Types for Comparison Feature
 // ============================================================================
-
-export interface ComparisonResult {
-  madhab: MadhhabType;
-  madhhabName: string;
-  totalAmount: number;
-  shares: HeirShare[];
-  differences: {
-    heirName: string;
-    amountDiff: number;
-    percentageDiff: number;
-    explanation: string;
-  }[];
-  summary: {
-    isIdentical: boolean;
-    majorDifferences: number;
-    minorDifferences: number;
-    recommendation?: string;
-  };
-}
 
 export interface ComparisonStats {
   totalComparisons: number;

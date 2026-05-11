@@ -17,7 +17,7 @@ import {
   Modal,
   Alert
 } from 'react-native';
-import { LEGAL_DISCLAIMERS, getDisclaimer } from '../lib/legal/Disclaimers';
+import { getDisclaimer } from '../lib/legal/Disclaimers';
 
 export interface DisclaimersModalProps {
   visible: boolean;

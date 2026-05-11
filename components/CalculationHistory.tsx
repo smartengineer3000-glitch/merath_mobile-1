@@ -56,9 +56,8 @@ export function CalculationHistory({ onEntrySelect }: CalculationHistoryProps) {
 
   const handleExport = useCallback(() => {
     if (!auditLog) return;
-    const json = auditLog.exportAsJSON();
+    void auditLog.exportAsJSON();
     // في تطبيق حقيقي، سيتم حفظ الملف أو مشاركته
-    // console.log('Export Data:', json);
   }, [auditLog]);
 
   const handleClearHistory = useCallback(() => {

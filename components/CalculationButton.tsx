@@ -38,7 +38,7 @@ export function CalculationButton({
   disabled = false,
   showPDFButton = true
 }: CalculationButtonProps) {
-  const { calculateWithMethod, result, isCalculating, error } = useCalculator();
+  const { calculateWithMethod, result, error } = useCalculator();
   const [localError, setLocalError] = useState<string | null>(null);
   
   // ===== FIX H4: Enhanced loading state =====

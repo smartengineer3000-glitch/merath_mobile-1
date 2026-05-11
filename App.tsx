@@ -16,6 +16,7 @@ import { View, Text, StyleSheet, AppState, AppStateStatus, Platform, TouchableOp
 import NetInfo from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SplashScreen from 'expo-splash-screen';
+import './lib/i18n';
 
 import { ThemeProvider, useAppTheme } from './lib/context/ThemeProvider';
 import { SettingsProvider } from './lib/context/SettingsContext';

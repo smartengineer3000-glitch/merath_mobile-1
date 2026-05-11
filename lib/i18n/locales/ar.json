@@ -16,12 +16,14 @@
     "title": "آلة حاسبة الميراث",
     "estate": "التركة",
     "heirs": "الورثة",
-    "calculate": "احسب",
+    "calculate": "احسب الميراث",
     "results": "النتائج",
     "calculating": "جارٍ الحساب...",
     "clear": "مسح",
     "copy": "نسخ",
-    "share": "مشاركة"
+    "share": "مشاركة",
+    "resetConfirmationTitle": "تأكيد إعادة التعيين",
+    "resetConfirmationMessage": "هل أنت متأكد من رغبتك في إعادة تعيين جميع البيانات؟ لا يمكن التراجع عن هذا الإجراء."
   },
 
   "estate": {
@@ -81,7 +83,37 @@
     "error": "خطأ في الحساب",
     "noHeirs": "يرجى إضافة وارث واحد على الأقل",
     "invalidEstate": "يرجى إدخال مبلغ تركة صحيح",
-    "invalidData": "يرجى التحقق من بيانات الإدخال"
+    "invalidData": "يرجى التحقق من بيانات الإدخال",
+    "title": "نتائج التوزيع",
+    "calculationTime": "وقت الحساب",
+    "shareFormat": {
+      "pdf": "ملف PDF",
+      "image": "صورة",
+      "text": "نص",
+      "clipboard": "نسخ إلى الحافظة"
+    },
+    "previewTitle": "معاينة المشاركة - {{format}}",
+    "previewImage": "سيتم إنشاء معاينة الصورة",
+    "noResults": "لا توجد نتائج متاحة",
+    "performCalculation": "يرجى إجراء حساب أولاً لرؤية النتائج",
+    "specialCases": "حالات خاصة",
+    "awl": "العول - التوزيع الزائد",
+    "radd": "الرد",
+    "applied": "تم التطبيق",
+    "blockedHeirs": "الورثة المحجوبون",
+    "distributionTable": "جدول التوزيع",
+    "heir": "الوارث",
+    "financialSummary": "الملخص المالي",
+    "trustLevel": "مستوى الثقة",
+    "calculationSteps": "خطوات الحساب",
+    "previousResults": "النتائج السابقة",
+    "comparison": "المقارنة مع المذاهب الأخرى",
+    "compareWith": "المقارنة مع مذهب {{madhab}}",
+    "hideComparison": "إخفاء المقارنة",
+    "showComparison": "عرض المقارنة",
+    "statistics": "الإحصائيات",
+    "totalCalculations": "إجمالي الحسابات",
+    "currentResult": "النتيجة الحالية"
   },
 
   "settings": {

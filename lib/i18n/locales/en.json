@@ -16,12 +16,14 @@
     "title": "Inheritance Calculator",
     "estate": "Estate",
     "heirs": "Heirs",
-    "calculate": "Calculate",
+    "calculate": "Calculate Inheritance",
     "results": "Results",
     "calculating": "Calculating...",
     "clear": "Clear",
     "copy": "Copy",
-    "share": "Share"
+    "share": "Share",
+    "resetConfirmationTitle": "Confirm Reset",
+    "resetConfirmationMessage": "Are you sure you want to reset all data? This action cannot be undone."
   },
 
   "estate": {
@@ -81,7 +83,37 @@
     "error": "Calculation error",
     "noHeirs": "Please add at least one heir",
     "invalidEstate": "Please enter a valid estate amount",
-    "invalidData": "Please check your input data"
+    "invalidData": "Please check your input data",
+    "title": "Distribution Results",
+    "calculationTime": "Calculation Time",
+    "shareFormat": {
+      "pdf": "PDF",
+      "image": "Image",
+      "text": "Text",
+      "clipboard": "Copy to Clipboard"
+    },
+    "previewTitle": "Share Preview - {{format}}",
+    "previewImage": "Image preview will be generated",
+    "noResults": "No results available",
+    "performCalculation": "Please perform a calculation first to see results",
+    "specialCases": "Special Cases",
+    "awl": "Al-Awl (Excess Distribution)",
+    "radd": "Al-Radd (Return)",
+    "applied": "Applied",
+    "blockedHeirs": "Blocked Heirs",
+    "distributionTable": "Distribution Table",
+    "heir": "Heir",
+    "financialSummary": "Financial Summary",
+    "trustLevel": "Confidence Level",
+    "calculationSteps": "Calculation Steps",
+    "previousResults": "Previous Results",
+    "comparison": "Comparison with Other Madhabs",
+    "compareWith": "Compare with {{madhab}} madhab",
+    "hideComparison": "Hide Comparison",
+    "showComparison": "Show Comparison",
+    "statistics": "Statistics",
+    "totalCalculations": "Total Calculations",
+    "currentResult": "Current Result"
   },
 
   "settings": {

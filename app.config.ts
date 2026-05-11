@@ -13,7 +13,7 @@ const env = {
 
 const config: ExpoConfig = {
   name: env.appName,
-  slug: 'mertahmobile',
+  slug: env.appSlug,
   version: "1.0.0",
   orientation: "portrait",
   icon: "./assets/icon.png",
@@ -79,7 +79,7 @@ const config: ExpoConfig = {
         category: ["BROWSABLE", "DEFAULT"],
       },
     ],
-    versionCode: Math.floor(Date.now() / 1000),  // Increment for each build
+    versionCode: process.env.EAS_BUILD_NUMBER ? parseInt(process.env.EAS_BUILD_NUMBER, 10) : 1,
   },
   web: {
     output: "static",
