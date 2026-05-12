@@ -1,12 +1,12 @@
 /**
  * Navigation Type Definitions
- * Phase 6: App Integration & Navigation
- * 
+ * Complete redesign with drawer navigation
+ *
  * Defines all navigation types and parameter lists for the app
  */
 
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import type { DrawerNavigationProp } from '@react-navigation/drawer';
 
 /**
  * Root Stack Parameter List
@@ -19,19 +19,19 @@ export type RootStackParamList = {
 };
 
 /**
- * Tab Parameter List
- * Defines bottom tab screens
+ * Drawer Parameter List
+ * Defines drawer screens
  */
-export type TabParamList = {
+export type DrawerParamList = {
   Calculator: undefined;
-  History: undefined;
-  AuditTrail: undefined;
+  MadhhabComparison: undefined;
+  Test: undefined;
   Settings: undefined;
   About: undefined;
 };
 
 /**
- * Calculator Tab Param List
+ * Calculator Drawer Param List
  * Specific parameters for calculator navigation
  */
 export type CalculatorParamList = {
@@ -41,9 +41,9 @@ export type CalculatorParamList = {
 
 /**
  * Navigation Props Type
- * For use in any bottom tab screen
+ * For use in any drawer screen
  */
-export type TabNavigationProp = BottomTabNavigationProp<TabParamList>;
+export type DrawerNavigationProp = DrawerNavigationProp<DrawerParamList>;
 
 /**
  * Stack Navigation Props Type

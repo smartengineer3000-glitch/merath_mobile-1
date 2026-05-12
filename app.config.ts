@@ -27,7 +27,18 @@ const config: ExpoConfig = {
   splash: {
     image: "./assets/splash.png",
     resizeMode: "contain",
-    backgroundColor: "#ffffff"
+    backgroundColor: "#FFFFFF"
+  },
+
+  // Modern design theme
+  theme: {
+    primary: "#2E7D32", // Dark green
+    secondary: "#1976D2", // Deep blue
+    background: "#FFFFFF",
+    surface: "#F5F5F5",
+    text: "#333333",
+    textSecondary: "#666666",
+    border: "#E5E7EB",
   },
 
   updates: {
@@ -58,6 +69,11 @@ const config: ExpoConfig = {
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
     package: env.androidPackage,
+    config: {
+      googleMaps: {
+        apiKey: process.env.GOOGLE_MAPS_API_KEY,
+      },
+    },
     permissions: [],
     blockedPermissions: [
       "WRITE_EXTERNAL_STORAGE",

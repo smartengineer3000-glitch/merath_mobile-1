@@ -1,85 +1,30 @@
-/**
- * About Screen
- * Phase 6: App Integration & Navigation
- * 
- * Information about the application, features, and version
- */
-
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Linking,
+} from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-interface AboutScreenProps {
-  navigation?: any;
+interface FeatureItemProps {
+  title: string;
+  description: string;
 }
 
-export default function AboutScreen({ navigation }: AboutScreenProps) {
-  return (
-    <ScrollView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.appName}>حاسبة المواريث الشرعية</Text>
-        <Text style={styles.version}>الإصدار 1.0.0</Text>
-      </View>
-
-      {/* Description */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>حول التطبيق</Text>
-        <Text style={styles.description}>
-          تطبيق شامل وموثوق لحساب المواريث وفقاً لأحكام الشريعة الإسلامية. يدعم التطبيق المذاهب الفقهية الأربعة (الحنفي، المالكي، الشافعي، والحنبلي) مع دعم كامل للحالات الشرعية المعقدة.
-        </Text>
-      </View>
-
-      {/* Features */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>المميزات الرئيسية</Text>
-        <FeatureItem title="حسابات دقيقة" description="حسابات شرعية دقيقة لتقسيم التركات" />
-        <FeatureItem title="دعم المذاهب الأربعة" description="الحنفي والمالكي والشافعي والحنبلي" />
-        <FeatureItem title="حالات شرعية شاملة" description="دعم العول والرد والحجب والتعصيب" />
-        <FeatureItem title="سجل العمليات" description="تتبع كامل للعمليات والحسابات" />
-        <FeatureItem title="واجهة سهلة الاستخدام" description="تصميم بديهي وسهل التنقل" />
-        <FeatureItem title="دعم اللغة العربية" description="دعم كامل للعربية والتخطيط من اليمين لليسار" />
-      </View>
-
-      {/* Fiqh Methods */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>المذاهب الفقهية المدعومة</Text>
-        <MethodItem name="المذهب الحنفي" scholar="أبو حنيفة النعمان" />
-        <MethodItem name="المذهب المالكي" scholar="مالك بن أنس" />
-        <MethodItem name="المذهب الشافعي" scholar="محمد بن إدريس الشافعي" />
-        <MethodItem name="المذهب الحنبلي" scholar="أحمد بن حنبل" />
-      </View>
-
-      {/* Special Cases */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>الحالات الشرعية</Text>
-        <CaseItem name="العول" description="زيادة الفروض على التركة" />
-        <CaseItem name="الرد" description="رد الفاضل على ذوي الفروض" />
-        <CaseItem name="الحجب" description="منع الوارث أو تنقيص حده" />
-        <CaseItem name="التعصيب" description="الإرث بلا حد معين" />
-      </View>
-
-      {/* Legal */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>الحقوق والترخيص</Text>
-        <Text style={styles.text}>
-          © 2026 Merath Application. جميع الحقوق محفوظة.
-        </Text>
-        <Text style={styles.text}>
-          تم تطوير هذا التطبيق بعناية لضمان دقة الحسابات وفقاً للشريعة الإسلامية.
-        </Text>
-      </View>
-
-      {/* Footer */}
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>
-          شكراً لاستخدامك تطبيق حاسبة المواريث الشرعية
-        </Text>
-      </View>
-    </ScrollView>
-  );
+interface MethodItemProps {
+  name: string;
+  scholar: string;
 }
 
-function FeatureItem({ title, description }: { title: string; description: string }) {
+interface CaseItemProps {
+  name: string;
+  description: string;
+}
+
+function FeatureItem({ title, description }: FeatureItemProps) {
   return (
     <View style={styles.featureItem}>
       <View style={styles.featureDot} />
@@ -91,7 +36,7 @@ function FeatureItem({ title, description }: { title: string; description: strin
   );
 }
 
-function MethodItem({ name, scholar }: { name: string; scholar: string }) {
+function MethodItem({ name, scholar }: MethodItemProps) {
   return (
     <View style={styles.methodItem}>
       <Text style={styles.methodName}>{name}</Text>
@@ -100,7 +45,7 @@ function MethodItem({ name, scholar }: { name: string; scholar: string }) {
   );
 }
 
-function CaseItem({ name, description }: { name: string; description: string }) {
+function CaseItem({ name, description }: CaseItemProps) {
   return (
     <View style={styles.caseItem}>
       <Text style={styles.caseName}>{name}</Text>
@@ -109,129 +54,299 @@ function CaseItem({ name, description }: { name: string; description: string }) 
   );
 }
 
+export default function AboutScreen() {
+  const features = [
+    {
+      title: 'Islamic Inheritance Calculator',
+      description: 'Calculate inheritance shares according to Islamic law',
+    },
+    {
+      title: 'Multi-Madhhab Support',
+      description: 'Supports Hanafi, Maliki, Shafi\'i, and Hanbali schools',
+    },
+    {
+      title: 'Comprehensive Heirs',
+      description: 'All types of heirs: spouses, children, parents, siblings',
+    },
+    {
+      title: 'Real-time Calculations',
+      description: 'Instant calculation with immediate feedback',
+    },
+    {
+      title: 'Export & Share',
+      description: 'Export results and share with family',
+    },
+    {
+      title: 'Educational Content',
+      description: 'Learn about Islamic inheritance laws',
+    },
+  ];
+
+  const madhabs = [
+    { name: 'Hanafi', scholar: 'Imam Abu Hanifa' },
+    { name: 'Maliki', scholar: 'Imam Malik' },
+    { name: 'Shafi\'i', scholar: 'Imam Shafi\'i' },
+    { name: 'Hanbali', scholar: 'Imam Ahmad ibn Hanbal' },
+  ];
+
+  const specialCases = [
+    { name: 'Umm Walad', description: 'Rules for freed concubines' },
+    { name: 'Dhawu al-Arham', description: 'Inheritance by blood relation' },
+    { name: 'Radd (Return)', description: 'Estate returned to heirs' },
+    { name: 'Aul (Increase)', description: 'Portions increased when needed' },
+  ];
+
+  const handleContact = (type: string) => {
+    let url = '';
+    switch (type) {
+      case 'email':
+        url = 'mailto:support@merath.app';
+        break;
+      case 'website':
+        url = 'https://merath.app';
+        break;
+      case 'github':
+        url = 'https://github.com/merath';
+        break;
+    }
+    if (url) {
+      Linking.openURL(url).catch(() => {});
+    }
+  };
+
+  return (
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
+        <MaterialCommunityIcons name="islam" size={48} color="#2E7D32" />
+        <Text style={styles.title}>Merath</Text>
+        <Text style={styles.subtitle}>Islamic Inheritance Calculator</Text>
+        <Text style={styles.version}>Version 1.1.3</Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Features</Text>
+        {features.map((feature, index) => (
+          <FeatureItem
+            key={index}
+            title={feature.title}
+            description={feature.description}
+          />
+        ))}
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Supported Madhabs</Text>
+        {madhabs.map((madhab, index) => (
+          <MethodItem
+            key={index}
+            name={madhab.name}
+            scholar={madhab.scholar}
+          />
+        ))}
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Special Cases</Text>
+        {specialCases.map((case_, index) => (
+          <CaseItem
+            key={index}
+            name={case_.name}
+            description={case_.description}
+          />
+        ))}
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>About Islamic Inheritance</Text>
+        <Text style={styles.description}>
+          Islamic inheritance law (Fara'id) is based on the Quran and Sunnah.
+          It ensures fair distribution of wealth among heirs according to prescribed shares.
+        </Text>
+        <Text style={styles.description}>
+          This calculator follows the traditional Islamic inheritance rules for all Sunni schools.
+        </Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Contact Us</Text>
+        <TouchableOpacity
+          style={styles.contactButton}
+          onPress={() => handleContact('email')}
+        >
+          <MaterialCommunityIcons name="email" size={24} color="#2E7D32" />
+          <Text style={styles.contactButtonText}>Email Support</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.contactButton}
+          onPress={() => handleContact('website')}
+        >
+          <MaterialCommunityIcons name="web" size={24} color="#2E7D32" />
+          <Text style={styles.contactButtonText}>Visit Website</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.contactButton}
+          onPress={() => handleContact('github')}
+        >
+          <MaterialCommunityIcons name="github" size={24} color="#2E7D32" />
+          <Text style={styles.contactButtonText}>GitHub</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>
+          شكراً لاستخدامك تطبيق حاسبة المواريث الشرعية
+        </Text>
+      </View>
+    </ScrollView>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F9FAFB',
-    paddingTop: 16,
+    padding: 16,
   },
   header: {
-    backgroundColor: '#4F46E5',
-    paddingVertical: 32,
-    paddingHorizontal: 16,
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 32,
+    paddingTop: 16,
   },
-  appName: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: 'white',
-    marginBottom: 8,
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#2E7D32',
+    marginTop: 16,
+    fontFamily: 'Inter-Bold',
+  },
+  subtitle: {
+    fontSize: 18,
+    color: '#666666',
+    marginTop: 8,
+    textAlign: 'center',
+    fontFamily: 'Inter-Regular',
   },
   version: {
     fontSize: 14,
-    color: '#E0E7FF',
+    color: '#999999',
+    marginTop: 4,
+    fontFamily: 'Inter-Regular',
   },
   section: {
-    backgroundColor: 'white',
-    marginVertical: 8,
-    marginHorizontal: 16,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    marginBottom: 32,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1F2937',
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333333',
     marginBottom: 16,
+    fontFamily: 'Inter-Bold',
   },
   description: {
-    fontSize: 14,
-    color: '#4B5563',
-    lineHeight: 22,
-  },
-  text: {
-    fontSize: 14,
-    color: '#4B5563',
-    lineHeight: 22,
+    fontSize: 16,
+    color: '#666666',
+    lineHeight: 24,
     marginBottom: 12,
+    fontFamily: 'Inter-Regular',
   },
   featureItem: {
     flexDirection: 'row',
+    marginBottom: 16,
     alignItems: 'flex-start',
-    marginBottom: 12,
-    paddingVertical: 8,
   },
   featureDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#4F46E5',
-    marginRight: 12,
+    backgroundColor: '#2E7D32',
     marginTop: 6,
+    marginRight: 12,
   },
   featureContent: {
     flex: 1,
   },
   featureTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#1F2937',
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333333',
     marginBottom: 4,
+    fontFamily: 'Inter-Bold',
   },
   featureDescription: {
-    fontSize: 13,
-    color: '#6B7280',
+    fontSize: 14,
+    color: '#666666',
     lineHeight: 20,
+    fontFamily: 'Inter-Regular',
   },
   methodItem: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    padding: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
   methodName: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#1F2937',
-    flex: 1,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333333',
+    fontFamily: 'Inter-Bold',
   },
   methodScholar: {
-    fontSize: 13,
-    color: '#6B7280',
+    fontSize: 14,
+    color: '#666666',
+    fontFamily: 'Inter-Regular',
   },
   caseItem: {
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    padding: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
   caseName: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#1F2937',
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333333',
     marginBottom: 4,
+    fontFamily: 'Inter-Bold',
   },
   caseDescription: {
-    fontSize: 13,
-    color: '#6B7280',
+    fontSize: 14,
+    color: '#666666',
+    lineHeight: 20,
+    fontFamily: 'Inter-Regular',
+  },
+  contactButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    marginBottom: 8,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  contactButtonText: {
+    fontSize: 16,
+    marginLeft: 12,
+    color: '#2E7D32',
+    fontFamily: 'Inter-Regular',
   },
   footer: {
-    paddingHorizontal: 16,
-    paddingVertical: 32,
     alignItems: 'center',
-    marginBottom: 16,
+    marginTop: 32,
+    marginBottom: 32,
+    padding: 16,
   },
   footerText: {
-    fontSize: 13,
-    color: '#9CA3AF',
+    fontSize: 16,
+    color: '#666666',
     textAlign: 'center',
-    lineHeight: 20,
+    fontFamily: 'Inter-Regular',
   },
 });

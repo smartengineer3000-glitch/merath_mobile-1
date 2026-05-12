@@ -1,28 +1,28 @@
 /**
  * Root Navigator Configuration
- * Phase 6: App Integration & Navigation
- * 
- * Main navigation orchestration with bottom tab navigation
- * Integrates all screens and navigation flows
+ * Complete redesign with drawer navigation
+ *
+ * Modern navigation using drawer with dropdown sections
+ * Integrates required screens only
  */
 
 import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, ActivityIndicator, I18nManager, Platform } from 'react-native';
-import { Ionicons } from '../lib/icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSettings } from '../lib/context/SettingsContext';
 import { languages } from '../lib/i18n';
 
 // Types
-import type { RootStackParamList, TabParamList } from './types';
+import type { RootStackParamList, DrawerParamList } from './types';
 import { linking } from './linking';
 
 // Screens
 import CalculatorScreen from '../screens/CalculatorScreen';
-import HistoryScreen from '../screens/HistoryScreen';
-import AuditTrail from '../screens/AuditTrailScreen';
+import MadhhabComparisonScreen from '../screens/MadhhabComparisonScreen';
+import TestScreen from '../screens/TestScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import AboutScreen from '../screens/AboutScreen';
 
@@ -31,16 +31,16 @@ if (Platform.OS !== 'web') {
   I18nManager.allowRTL(true);
 }
 
-const Tab = createBottomTabNavigator<TabParamList>();
+const Drawer = createDrawerNavigator<DrawerParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 /**
- * Tab Navigator
- * Provides bottom tab navigation between main screens
+ * Drawer Navigator
+ * Provides drawer navigation with modern design
  */
-export function TabNavigator() {
+export function DrawerNavigator() {
   return (
-    <Tab.Navigator
+    <Drawer.Navigator
       screenOptions={({ route }) => ({
         headerShown: true,
         headerStyle: {
@@ -48,87 +48,70 @@ export function TabNavigator() {
           borderBottomWidth: 1,
           borderBottomColor: '#E5E7EB',
         },
+        headerTintColor: '#2E7D32',
         headerTitleStyle: {
+          fontFamily: 'Inter-Bold',
           fontSize: 18,
-          fontWeight: '600',
-          color: '#1F2937',
         },
-        headerTitleAlign: 'center',
-        tabBarStyle: {
+        drawerStyle: {
           backgroundColor: '#FFFFFF',
-          borderTopWidth: 1,
-          borderTopColor: '#E5E7EB',
-          height: Platform.OS === 'ios' ? 85 : 65,
-          paddingBottom: Platform.OS === 'ios' ? 20 : 8,
+          width: 280,
         },
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '500',
-          marginTop: 4,
+        drawerLabelStyle: {
+          fontFamily: 'Inter-Regular',
+          fontSize: 16,
         },
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName: keyof typeof Ionicons.glyphMap = 'calculator';
-
-          if (route.name === 'Calculator') {
-            iconName = focused ? 'calculator' : 'calculator-outline';
-          } else if (route.name === 'History') {
-            iconName = focused ? 'time' : 'time-outline';
-          } else if (route.name === 'AuditTrail') {
-            iconName = focused ? 'list' : 'list-outline';
-          } else if (route.name === 'Settings') {
-            iconName = focused ? 'settings' : 'settings-outline';
-          } else if (route.name === 'About') {
-            iconName = focused ? 'information-circle' : 'information-circle-outline';
-          }
-
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: '#4F46E5',
-        tabBarInactiveTintColor: '#9CA3AF',
-        lazy: true,
+        drawerActiveTintColor: '#2E7D32',
+        drawerInactiveTintColor: '#666666',
       })}
     >
-      <Tab.Screen
+      <Drawer.Screen
         name="Calculator"
         component={CalculatorScreen}
         options={{
-          title: 'حاسبة المواريث',
-          tabBarLabel: 'الحاسبة',
+          drawerIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="calculator" color={color} size={size} />
+          ),
         }}
       />
-      <Tab.Screen
-        name="History"
-        component={HistoryScreen}
+      <Drawer.Screen
+        name="MadhhabComparison"
+        component={MadhhabComparisonScreen}
         options={{
-          title: 'سجل العمليات',
-          tabBarLabel: 'السجل',
+          title: 'Madhhab Comparison',
+          drawerIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="compare" color={color} size={size} />
+          ),
         }}
       />
-      <Tab.Screen
-        name="AuditTrail"
-        component={AuditTrail}
+      <Drawer.Screen
+        name="Test"
+        component={TestScreen}
         options={{
-          title: 'سجل التدقيق',
-          tabBarLabel: 'التدقيق',
+          drawerIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="test-tube" color={color} size={size} />
+          ),
         }}
       />
-      <Tab.Screen
+      <Drawer.Screen
         name="Settings"
         component={SettingsScreen}
         options={{
-          title: 'الإعدادات',
-          tabBarLabel: 'الإعدادات',
+          drawerIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="cog" color={color} size={size} />
+          ),
         }}
       />
-      <Tab.Screen
+      <Drawer.Screen
         name="About"
         component={AboutScreen}
         options={{
-          title: 'حول التطبيق',
-          tabBarLabel: 'حول',
+          drawerIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="information" color={color} size={size} />
+          ),
         }}
       />
-    </Tab.Navigator>
+    </Drawer.Navigator>
   );
 }
 
@@ -150,19 +133,19 @@ export function RootNavigator() {
   }, [state.language]);
 
   return (
-    <NavigationContainer 
+    <NavigationContainer
       ref={navigationRef}
       linking={linking}
       fallback={
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color="#4F46E5" />
+          <ActivityIndicator size="large" color="#2E7D32" />
         </View>
       }
     >
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen
           name="MainApp"
-          component={TabNavigator}
+          component={DrawerNavigator}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
