@@ -23,6 +23,7 @@ import { ThemeProvider, useAppTheme } from './lib/context/ThemeProvider';
 import { SettingsProvider } from './lib/context/SettingsContext';
 import { MadhabProvider } from './lib/context/MadhabContext';
 import { RootNavigator } from './navigation/RootNavigator';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import DisclaimersModal from './components/DisclaimersModal';
 import LoadingScreen from './components/LoadingScreen';
 
@@ -38,7 +39,7 @@ const NetworkStatusIndicator = () => {
   const [isVisible, setIsVisible] = useState(false);
   
   // ===== FIX: Proper timeout ref type =====
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
@@ -50,7 +51,7 @@ const NetworkStatusIndicator = () => {
           clearTimeout(timeoutRef.current);
         }
         // ===== FIX: Assign timeout correctly =====
-        timeoutRef.current = setTimeout(() => setIsVisible(false), 3000) as any;
+        timeoutRef.current = setTimeout(() => setIsVisible(false), 3000);
       }
       
       setIsConnected(connected);
@@ -273,7 +274,9 @@ const AppContent = () => {
     <View style={[styles.container, { backgroundColor: theme.colors.background.light }]}>
       <StatusBar style={theme.mode === 'dark' ? 'light' : 'dark'} />
       <NetworkStatusIndicator />
-      <RootNavigator />
+      <ErrorBoundary>
+        <RootNavigator />
+      </ErrorBoundary>
       <DisclaimersModal
         visible={showDisclaimers}
         onAccept={handleAcceptDisclaimers}

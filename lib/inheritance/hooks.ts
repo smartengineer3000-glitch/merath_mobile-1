@@ -492,7 +492,7 @@ export function useAuditLog() {
       try {
         const results = auditLog.filter({
           madhab,
-          operation: operation as any,
+          operation: operation as AuditLogEntry['operation'],
           limit,
         });
         return results;

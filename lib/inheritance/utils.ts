@@ -100,10 +100,10 @@ export function isValidHeirType(heir: any): heir is HeirType {
 /**
  * تنسيق المبلغ كعملة
  */
-export function formatCurrency(amount: number): string {
+export function formatCurrency(amount: number, currency = 'SAR'): string {
   return new Intl.NumberFormat('ar-SA', {
     style: 'currency',
-    currency: 'SAR',
+    currency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   }).format(amount);

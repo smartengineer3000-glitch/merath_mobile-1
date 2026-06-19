@@ -84,15 +84,17 @@ export function DrawerNavigator() {
           ),
         }}
       />
-      <Drawer.Screen
-        name="Test"
-        component={TestScreen}
-        options={{
-          drawerIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="test-tube" color={color} size={size} />
-          ),
-        }}
-      />
+      {__DEV__ && (
+        <Drawer.Screen
+          name="Test"
+          component={TestScreen}
+          options={{
+            drawerIcon: ({ color, size }) => (
+              <MaterialCommunityIcons name="test-tube" color={color} size={size} />
+            ),
+          }}
+        />
+      )}
       <Drawer.Screen
         name="Settings"
         component={SettingsScreen}

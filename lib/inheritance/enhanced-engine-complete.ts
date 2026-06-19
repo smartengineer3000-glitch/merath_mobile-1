@@ -14,7 +14,7 @@
 
 import { FractionClass } from './fraction';
 import { FIQH_DATABASE } from './constants';
-import type { EstateData, HeirsData, MadhhabType, CalculationResult, HeirShare } from './types';
+import type { EstateData, HeirsData, MadhhabType, CalculationResult, HeirShare, HeirType } from './types';
 import { HijabSystem } from './hijab-system';
 
 interface HeirShareObject {
@@ -972,7 +972,7 @@ export class EnhancedInheritanceCalculationEngine {
 
   private calculateFinalAmounts(shares: HeirShareObject[], netEstate: number): HeirShare[] {
     return shares.map(share => ({
-      key: share.key as any,
+      key: share.key as HeirType,
       name: share.name,
       type: share.type,
       count: share.count,

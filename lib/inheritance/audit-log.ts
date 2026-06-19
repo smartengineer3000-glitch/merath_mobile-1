@@ -341,43 +341,32 @@ export class AuditLog {
    */
   private async filterUsingIndexedDB(filterCriteria: AuditLogFilter): Promise<AuditLogEntry[]> {
     try {
-      let query = db.auditLogs.orderBy('timestamp').reverse();
+      const dbEntries = await db.auditLogs.orderBy('timestamp').reverse().toArray();
 
-      // Apply filters
-      if (filterCriteria.madhab) {
-        query = query.filter(entry => entry.madhab === filterCriteria.madhab) as any;
-      }
+      let filtered = dbEntries.filter(entry => {
+        if (filterCriteria.madhab && entry.madhab !== filterCriteria.madhab) return false;
+        if (filterCriteria.operation && entry.operation !== filterCriteria.operation) return false;
+        if (filterCriteria.successOnly !== undefined && entry.metadata.success !== filterCriteria.successOnly) return false;
+        if (filterCriteria.dateFrom) {
+          const fromDate = new Date(filterCriteria.dateFrom);
+          if (new Date(entry.timestamp) < fromDate) return false;
+        }
+        if (filterCriteria.dateTo) {
+          const toDate = new Date(filterCriteria.dateTo);
+          toDate.setHours(23, 59, 59, 999);
+          if (new Date(entry.timestamp) > toDate) return false;
+        }
+        return true;
+      });
 
-      if (filterCriteria.operation) {
-        query = query.filter(entry => entry.operation === filterCriteria.operation) as any;
-      }
-
-      if (filterCriteria.successOnly !== undefined) {
-        query = query.filter(entry => entry.metadata.success === filterCriteria.successOnly) as any;
-      }
-
-      if (filterCriteria.dateFrom) {
-        const fromDate = new Date(filterCriteria.dateFrom);
-        query = query.filter(entry => new Date(entry.timestamp) >= fromDate) as any;
-      }
-
-      if (filterCriteria.dateTo) {
-        const toDate = new Date(filterCriteria.dateTo);
-        toDate.setHours(23, 59, 59, 999);
-        query = query.filter(entry => new Date(entry.timestamp) <= toDate) as any;
-      }
-
-      // Apply pagination
       if (filterCriteria.offset) {
-        query = query.offset(filterCriteria.offset) as any;
+        filtered = filtered.slice(filterCriteria.offset);
       }
-
       if (filterCriteria.limit) {
-        query = query.limit(filterCriteria.limit) as any;
+        filtered = filtered.slice(0, filterCriteria.limit);
       }
 
-      const dbEntries = await query.toArray();
-      return dbEntries.map(this.convertFromDBEntry);
+      return filtered.map(this.convertFromDBEntry);
     } catch (error) {
       console.error('[AuditLog] IndexedDB filter failed, falling back to memory:', error);
       return this.filterInMemory(filterCriteria);
