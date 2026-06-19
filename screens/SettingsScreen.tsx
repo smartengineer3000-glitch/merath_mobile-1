@@ -19,7 +19,6 @@ import * as Sharing from 'expo-sharing';
 import * as DocumentPicker from 'expo-document-picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../lib/design/theme';
 import { useAppTheme } from '../lib/context/ThemeProvider';
 import { useSettings } from '../lib/context/SettingsContext';
 import { Card } from '../components/ui/Card';
@@ -64,8 +63,7 @@ const languages: Record<string, { name: string; nativeName: string; rtl: boolean
 
 export default function SettingsScreen() {
   const { t, i18n } = useTranslation();
-  const { theme } = useTheme();
-  const { toggleTheme, isDark } = useAppTheme();
+  const { theme, toggleTheme, isDark } = useAppTheme();
   const { state, setLanguage, setNotifications, setRoundingDecimals, setAutoSave } = useSettings();
 
   const [isLoading, setIsLoading] = useState(false);

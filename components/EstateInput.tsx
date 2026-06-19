@@ -17,7 +17,7 @@ import {
   Platform,
   Keyboard,
 } from 'react-native';
-import { useTheme } from '../lib/design/theme';
+import { useAppTheme } from '../lib/context/ThemeProvider';
 import { useCalculator } from '../lib/inheritance/hooks';
 import { EstateData } from '../lib/inheritance/types';
 import { EstateValidator } from '../lib/validation/InputValidator';
@@ -30,7 +30,7 @@ export interface EstateInputProps {
 }
 
 export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps) {
-  const { theme } = useTheme();
+  const { theme } = useAppTheme();
   const { estateData, updateEstateData } = useCalculator();
   
   // ===== FIX H6: Keyboard handling refs =====

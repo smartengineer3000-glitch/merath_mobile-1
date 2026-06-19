@@ -148,6 +148,23 @@
     "terms": "Terms of Service"
   },
 
+  "onboarding": {
+    "welcome": "Welcome to Merath",
+    "welcomeDescription": "The comprehensive app for calculating Islamic inheritance shares according to the four schools of law",
+    "welcomeDetails": "Supports: Hanafi, Maliki, Shafi'i, Hanbali",
+    "howToCalculate": "How to Calculate",
+    "howToCalculateDescription": "Enter estate data and heirs accurately",
+    "resultsAndSharing": "Results & Sharing",
+    "resultsAndSharingDescription": "Get precise inheritance distribution",
+    "startNow": "Start Now",
+    "next": "Next",
+    "mustAcceptTerms": "You must accept the terms to use the app"
+  },
+
+  "loading": {
+    "appLoading": "Loading app..."
+  },
+
   "common": {
     "ok": "OK",
     "cancel": "Cancel",
@@ -163,6 +180,7 @@
     "warning": "Warning",
     "info": "Information",
     "empty": "No data",
-    "noResults": "No results found"
+    "noResults": "No results found",
+    "noNetwork": "No internet connection - some features may not work"
   }
 }

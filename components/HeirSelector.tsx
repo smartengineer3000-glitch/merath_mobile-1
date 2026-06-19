@@ -20,7 +20,7 @@ import {
   Alert,
 } from 'react-native';
 import { MaterialCommunityIcons } from '../lib/icons';
-import { useTheme } from '../lib/design/theme';
+import { useAppTheme } from '../lib/context/ThemeProvider';
 import type { HeirsData, HeirType } from '../lib/inheritance/types';
 import { parseSafeInteger } from '../lib/utils/parsers';
 
@@ -129,7 +129,7 @@ const HEIR_CATEGORIES: {
 ];
 
 export const HeirSelector = React.memo(function HeirSelector({ onHeirsChange }: HeirSelectorProps) {
-  const { theme } = useTheme();
+  const { theme } = useAppTheme();
   const [heirs, setHeirs] = useState<Map<HeirType, number>>(new Map());
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
     new Set(['spouses', 'children', 'parents'])

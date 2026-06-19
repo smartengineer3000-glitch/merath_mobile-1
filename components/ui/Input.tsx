@@ -12,7 +12,7 @@ import {
   TextStyle,
   Pressable,
 } from 'react-native';
-import { useTheme } from '../../lib/design/theme';
+import { useAppTheme } from '../../lib/context/ThemeProvider';
 
 export interface ModernInputProps {
   label?: string;
@@ -52,7 +52,7 @@ export const ModernInput: React.FC<ModernInputProps> = ({
   maxLength,
 }) => {
   const [focused, setFocused] = useState(false);
-  const { theme } = useTheme();
+  const { theme } = useAppTheme();
 
   const containerStyle: ViewStyle = {
     marginBottom: theme.spacing.md,

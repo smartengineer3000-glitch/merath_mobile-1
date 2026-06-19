@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SplashScreen from 'expo-splash-screen';
 import './lib/i18n';
 
+import { useTranslation } from 'react-i18next';
 import { ThemeProvider, useAppTheme } from './lib/context/ThemeProvider';
 import { SettingsProvider } from './lib/context/SettingsContext';
 import { MadhabProvider } from './lib/context/MadhabContext';
@@ -32,6 +33,7 @@ const APP_LAUNCH_COUNT_KEY = '@merath_launch_count';
 // ===== FIX: Network status component =====
 const NetworkStatusIndicator = () => {
   const { theme } = useAppTheme();
+  const { t } = useTranslation();
   const [isConnected, setIsConnected] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   
@@ -67,7 +69,7 @@ const NetworkStatusIndicator = () => {
   return (
     <View style={[styles.networkIndicator, { backgroundColor: theme.colors.error.main }]}>
       <Text style={styles.networkIndicatorText}>
-        ⚠️ لا يوجد اتصال بالإنترنت - بعض الميزات قد لا تعمل
+        {t('common.noNetwork')}
       </Text>
     </View>
   );
@@ -76,6 +78,7 @@ const NetworkStatusIndicator = () => {
 // ===== FIX: Onboarding modal =====
 const OnboardingModal = ({ visible, onComplete }: { visible: boolean; onComplete: () => void }) => {
   const { theme } = useAppTheme();
+  const { t } = useTranslation();
   const [step, setStep] = useState(1);
   const totalSteps = 3;
 
@@ -96,23 +99,23 @@ const OnboardingModal = ({ visible, onComplete }: { visible: boolean; onComplete
       case 1:
         return {
           icon: '🕌',
-          title: 'مرحباً بك في ميراث',
-          description: 'التطبيق الشامل لحساب المواريث الشرعية وفق المذاهب الأربعة',
-          details: 'يدعم التطبيق المذاهب: الحنفي، المالكي، الشافعي، الحنبلي'
+          title: t('onboarding.welcome'),
+          description: t('onboarding.welcomeDescription'),
+          details: t('onboarding.welcomeDetails'),
         };
       case 2:
         return {
           icon: '⚖️',
-          title: 'كيفية الحساب',
-          description: 'أدخل بيانات التركة والورثة بدقة',
-          details: '• المبلغ الإجمالي للتركة\n• تكاليف التجهيز والديون\n• الوصية (لا تتجاوز الثلث)'
+          title: t('onboarding.howToCalculate'),
+          description: t('onboarding.howToCalculateDescription'),
+          details: '',
         };
       case 3:
         return {
           icon: '📊',
-          title: 'النتائج والمشاركة',
-          description: 'احصل على توزيع دقيق للميراث',
-          details: '• عرض النسب والمبالغ\n• تصدير PDF ومشاركة النتائج\n• حفظ سجل العمليات'
+          title: t('onboarding.resultsAndSharing'),
+          description: t('onboarding.resultsAndSharingDescription'),
+          details: '',
         };
       default:
         return { icon: '', title: '', description: '', details: '' };
@@ -127,7 +130,7 @@ const OnboardingModal = ({ visible, onComplete }: { visible: boolean; onComplete
         <View style={styles.onboardingHeader}>
           <Text style={styles.onboardingStep}>{step}/{totalSteps}</Text>
           <TouchableOpacity onPress={handleSkip}>
-            <Text style={styles.onboardingSkip}>تخطي</Text>
+            <Text style={styles.onboardingSkip}>{t('common.close')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -164,7 +167,7 @@ const OnboardingModal = ({ visible, onComplete }: { visible: boolean; onComplete
           onPress={handleNext}
         >
           <Text style={styles.onboardingButtonText}>
-            {step === totalSteps ? 'ابدأ الآن' : 'التالي'}
+            {step === totalSteps ? t('onboarding.startNow') : t('onboarding.next')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -175,6 +178,7 @@ const OnboardingModal = ({ visible, onComplete }: { visible: boolean; onComplete
 // Main App Content with theme access
 const AppContent = () => {
   const { theme } = useAppTheme();
+  const { t } = useTranslation();
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
   const [showDisclaimers, setShowDisclaimers] = useState(true);
   const [appReady, setAppReady] = useState(false);
@@ -242,7 +246,7 @@ const AppContent = () => {
   }, []);
 
   const handleDeclineDisclaimers = useCallback(() => {
-    alert('يجب قبول الشروط لاستخدام التطبيق');
+    alert(t('onboarding.mustAcceptTerms'));
   }, []);
 
   useEffect(() => {
@@ -262,7 +266,7 @@ const AppContent = () => {
   }, []);
 
   if (!appReady || onboardingLoading) {
-    return <LoadingScreen message="جاري تحميل التطبيق..." />;
+    return <LoadingScreen message={t('loading.appLoading')} />;
   }
 
   return (

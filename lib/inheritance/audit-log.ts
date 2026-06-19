@@ -176,7 +176,7 @@ export class AuditLog {
         this.entries = dbEntries.map(this.convertFromDBEntry);
         this.dbReady = true;
         
-        console.log(`[AuditLog] Loaded ${this.entries.length} entries from IndexedDB`);
+
       } else {
         // Fallback to localStorage only
         if (this.enableLocalStorage) {
