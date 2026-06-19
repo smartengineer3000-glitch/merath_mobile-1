@@ -340,4 +340,5 @@ const styles = StyleSheet.create({
   },
 });
 
+export { ModernButton as Button };
 export default ModernButton;

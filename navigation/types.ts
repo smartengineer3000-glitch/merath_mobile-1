@@ -7,6 +7,7 @@
 
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { DrawerNavigationProp } from '@react-navigation/drawer';
+import type { RouteProp } from '@react-navigation/native';
 
 /**
  * Root Stack Parameter List
@@ -43,13 +44,13 @@ export type CalculatorParamList = {
  * Navigation Props Type
  * For use in any drawer screen
  */
-export type DrawerNavigationProp = DrawerNavigationProp<DrawerParamList>;
+export type AppDrawerNavigationProp = DrawerNavigationProp<DrawerParamList>;
 
 /**
  * Stack Navigation Props Type
  * For use in any stack screen
  */
-export type StackNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+export type AppStackNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 /**
  * Calculator Navigation Props
@@ -57,17 +58,8 @@ export type StackNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export type CalculatorNavigationProp = NativeStackNavigationProp<CalculatorParamList>;
 
 /**
- * Generic navigation prop extractor
- * Usage: type Props = { navigation: NavigationOf<ScreenName> }
- */
-export type NavigationOf<T extends keyof TabParamList> = BottomTabNavigationProp<
-  TabParamList,
-  T
->;
-
-/**
  * Route Props Types
  */
 export type CalculatorRouteParams = {
-  route: import('@react-navigation/native').RouteProp<CalculatorParamList, 'Results'>;
+  route: RouteProp<CalculatorParamList, 'Results'>;
 };

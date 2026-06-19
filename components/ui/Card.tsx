@@ -92,4 +92,5 @@ export const ModernCard: React.FC<ModernCardProps> = ({
   return <View style={[cardStyle, style]}>{children}</View>;
 };
 
+export { ModernCard as Card };
 export default ModernCard;

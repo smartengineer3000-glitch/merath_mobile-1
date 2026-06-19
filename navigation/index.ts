@@ -5,6 +5,6 @@
  * Central export point for all navigation-related modules
  */
 
-export { RootNavigator, TabNavigator } from './RootNavigator';
+export { RootNavigator } from './RootNavigator';
 export * from './types';
 export { linking, getDeepLink } from './linking';

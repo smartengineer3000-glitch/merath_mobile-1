@@ -22,30 +22,11 @@ import {
 import { MaterialCommunityIcons } from '../lib/icons';
 import { useTheme } from '../lib/design/theme';
 import type { HeirsData, HeirType } from '../lib/inheritance/types';
+import { parseSafeInteger } from '../lib/utils/parsers';
 
 interface HeirSelectorProps {
   onHeirsChange?: (heirs: HeirsData) => void;
 }
-
-// ===== FIX C3: Safe number parser =====
-const parseSafeInteger = (value: string): number => {
-  if (!value || typeof value !== 'string') return 0;
-  
-  // Convert Arabic numerals to Western
-  const arabicToWestern = value.replace(/[٠-٩]/g, (d) => {
-    const map: Record<string, string> = {
-      '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
-      '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
-    };
-    return map[d] || d;
-  });
-
-  // Remove all non-digit characters
-  const cleaned = arabicToWestern.replace(/[^0-9]/g, '');
-  
-  const parsed = parseInt(cleaned, 10);
-  return isNaN(parsed) ? 0 : parsed;
-};
 
 // Base heir type
 interface BaseHeirItem {

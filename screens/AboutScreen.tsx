@@ -117,7 +117,7 @@ export default function AboutScreen() {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <MaterialCommunityIcons name="islam" size={48} color="#2E7D32" />
+        <MaterialCommunityIcons name="star-crescent" size={48} color="#2E7D32" />
         <Text style={styles.title}>Merath</Text>
         <Text style={styles.subtitle}>Islamic Inheritance Calculator</Text>
         <Text style={styles.version}>Version 1.1.3</Text>

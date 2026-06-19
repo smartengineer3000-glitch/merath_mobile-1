@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -11,78 +11,70 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Picker } from '@react-native-picker/picker';
-import Animated, { FadeInUp } from 'react-native-reanimated';
 import { useMadhab } from '../lib/context/MadhabContext';
 import { useCalculator } from '../lib/hooks/useCalculator';
 import { useResults } from '../lib/hooks/useResults';
 import { EstateInput } from '../components/EstateInput';
 import { HeirSelector } from '../components/HeirSelector';
-import { CalculationButton } from '../components/CalculationButton';
+import { MadhhabSelector } from '../components/MadhhabSelector';
 import { ResultsDisplay } from '../components/ResultsDisplay';
 import { Card } from '../components/ui/Card';
+import type { EstateData, HeirsData, MadhhabType, CalculationResult } from '../lib/inheritance/types';
 
 export default function CalculatorScreen() {
   const { madhab, setMadhab } = useMadhab();
-  const { calculateInheritance } = useCalculator();
-  const { result, setResult } = useResults();
-  const [estateValue, setEstateValue] = useState('');
-  const [selectedHeirs, setSelectedHeirs] = useState<string[]>([]);
+  const { calculateWithMethod } = useCalculator();
+  const { result, setResult, clearResults } = useResults();
   const [showResults, setShowResults] = useState(false);
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [currentEstate, setCurrentEstate] = useState<EstateData>({
+    total: 0,
+    funeral: 0,
+    debts: 0,
+    will: 0,
+  });
+  const [currentHeirs, setCurrentHeirs] = useState<HeirsData>({});
 
-  const madhabs = [
-    { label: 'Hanafi', value: 'hanafi' },
-    { label: 'Maliki', value: 'maliki' },
-    { label: 'Shafi\'i', value: 'shafii' },
-    { label: 'Hanbali', value: 'hanbali' },
-  ];
+  const handleEstateChange = useCallback((estate: EstateData) => {
+    setCurrentEstate(estate);
+  }, []);
 
-  const heirTypes = [
-    'husband', 'wife', 'son', 'daughter', 'father', 'mother',
-    'paternal_grandfather', 'paternal_grandmother', 'maternal_grandmother',
-    'full_brother', 'full_sister', 'paternal_brother', 'paternal_sister',
-    'maternal_brother', 'maternal_sister',
-  ];
+  const handleHeirsChange = useCallback((heirs: HeirsData) => {
+    setCurrentHeirs(heirs);
+  }, []);
 
-  const handleHeirToggle = (heir: string) => {
-    setSelectedHeirs(prev =>
-      prev.includes(heir)
-        ? prev.filter(h => h !== heir)
-        : [...prev, heir]
-    );
-  };
-
-  const handleCalculate = async () => {
-    if (!estateValue || parseFloat(estateValue) <= 0) {
+  const handleCalculate = useCallback(async () => {
+    if (currentEstate.total <= 0) {
       Alert.alert('Error', 'Please enter a valid estate value');
       return;
     }
 
-    if (selectedHeirs.length === 0) {
+    const hasHeirs = Object.values(currentHeirs).some(v => (v ?? 0) > 0);
+    if (!hasHeirs) {
       Alert.alert('Error', 'Please select at least one heir');
       return;
     }
 
     try {
-      const calculationResult = await calculateInheritance(
-        parseFloat(estateValue),
-        selectedHeirs,
-        madhab
-      );
-
-      setResult(calculationResult);
-      setShowResults(true);
+      setIsCalculating(true);
+      const calculationResult = await calculateWithMethod(madhab, currentHeirs);
+      if (calculationResult) {
+        setResult(calculationResult);
+        setShowResults(true);
+      }
     } catch (error) {
       Alert.alert('Error', 'Calculation failed. Please try again.');
+    } finally {
+      setIsCalculating(false);
     }
-  };
+  }, [madhab, currentEstate, currentHeirs, calculateWithMethod, setResult]);
 
-  const handleReset = () => {
-    setEstateValue('');
-    setSelectedHeirs([]);
-    setResult(null);
+  const handleReset = useCallback(() => {
+    setCurrentEstate({ total: 0, funeral: 0, debts: 0, will: 0 });
+    setCurrentHeirs({});
+    clearResults();
     setShowResults(false);
-  };
+  }, [clearResults]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -90,10 +82,9 @@ export default function CalculatorScreen() {
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <Animated.ScrollView
+        <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
-          entering={FadeInUp.duration(500)}
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.header}>
@@ -104,80 +95,43 @@ export default function CalculatorScreen() {
           <Card style={styles.card}>
             <Text style={styles.cardTitle}>Madhab Selection</Text>
             <Text style={styles.cardSubtitle}>Choose your school of Islamic jurisprudence</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={madhab}
-                onValueChange={setMadhab}
-                style={styles.picker}
-              >
-                {madhabs.map((m) => (
-                  <Picker.Item key={m.value} label={m.label} value={m.value} />
-                ))}
-              </Picker>
-            </View>
+            <MadhhabSelector selectedMadhab={madhab} onSelect={setMadhab} />
           </Card>
 
           <Card style={styles.card}>
-            <EstateInput
-              value={estateValue}
-              onChangeText={setEstateValue}
-              placeholder="Enter estate value"
-            />
+            <EstateInput onEstateChange={handleEstateChange} />
           </Card>
 
           <Card style={styles.card}>
-            <Text style={styles.cardTitle}>Heirs</Text>
-            <Text style={styles.cardSubtitle}>Select all applicable heirs</Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.heirsScrollView}
-            >
-              <View style={styles.heirsContainer}>
-                {heirTypes.map((heir) => (
-                  <TouchableOpacity
-                    key={heir}
-                    style={[
-                      styles.heirChip,
-                      selectedHeirs.includes(heir) && styles.heirChipSelected,
-                    ]}
-                    onPress={() => handleHeirToggle(heir)}
-                  >
-                    <Text
-                      style={[
-                        styles.heirChipText,
-                        selectedHeirs.includes(heir) && styles.heirChipTextSelected,
-                      ]}
-                    >
-                      {heir.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </ScrollView>
+            <HeirSelector onHeirsChange={handleHeirsChange} />
           </Card>
 
           <View style={styles.buttonContainer}>
-            <CalculationButton
-              title="Calculate"
+            <TouchableOpacity
+              style={[styles.calculateButton, isCalculating && styles.buttonDisabled]}
               onPress={handleCalculate}
-              disabled={!estateValue || selectedHeirs.length === 0}
-              style={styles.calculateButton}
-            />
-            <CalculationButton
-              title="Reset"
-              onPress={handleReset}
-              variant="secondary"
+              disabled={isCalculating}
+            >
+              <MaterialCommunityIcons name="calculator" size={20} color="#FFFFFF" />
+              <Text style={styles.calculateButtonText}>
+                {isCalculating ? 'Calculating...' : 'Calculate'}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               style={styles.resetButton}
-            />
+              onPress={handleReset}
+            >
+              <MaterialCommunityIcons name="refresh" size={20} color="#2E7D32" />
+              <Text style={styles.resetButtonText}>Reset</Text>
+            </TouchableOpacity>
           </View>
 
-          {showResults && result && result.success && (
+          {showResults && result && (
             <View style={styles.resultsContainer}>
               <ResultsDisplay result={result} onClose={() => setShowResults(false)} />
             </View>
           )}
-        </Animated.ScrollView>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -228,61 +182,47 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontFamily: 'Inter-Regular',
   },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: '#DDDDDD',
-    borderRadius: 8,
-    backgroundColor: '#FFFFFF',
-  },
-  picker: {
-    height: 50,
-  },
-  heirsScrollView: {
-    marginTop: 8,
-  },
-  heirsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingVertical: 8,
-  },
-  heirChip: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#DDDDDD',
-    borderRadius: 20,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginRight: 8,
-    marginBottom: 8,
-  },
-  heirChipSelected: {
-    backgroundColor: '#2E7D32',
-    borderColor: '#2E7D32',
-  },
-  heirChipText: {
-    fontSize: 14,
-    color: '#666666',
-    fontFamily: 'Inter-Regular',
-  },
-  heirChipTextSelected: {
-    color: '#FFFFFF',
-    fontFamily: 'Inter-Bold',
-  },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 24,
+    gap: 12,
     marginBottom: 16,
   },
   calculateButton: {
     flex: 1,
-    marginRight: 8,
+    backgroundColor: '#2E7D32',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    borderRadius: 8,
+    gap: 8,
+  },
+  buttonDisabled: {
+    opacity: 0.6,
+  },
+  calculateButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   resetButton: {
     flex: 1,
-    marginLeft: 8,
+    backgroundColor: '#FFFFFF',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#2E7D32',
+    gap: 8,
+  },
+  resetButtonText: {
+    color: '#2E7D32',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   resultsContainer: {
-    marginTop: 16,
+    marginBottom: 16,
   },
 });

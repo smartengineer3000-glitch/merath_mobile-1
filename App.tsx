@@ -20,6 +20,7 @@ import './lib/i18n';
 
 import { ThemeProvider, useAppTheme } from './lib/context/ThemeProvider';
 import { SettingsProvider } from './lib/context/SettingsContext';
+import { MadhabProvider } from './lib/context/MadhabContext';
 import { RootNavigator } from './navigation/RootNavigator';
 import DisclaimersModal from './components/DisclaimersModal';
 import LoadingScreen from './components/LoadingScreen';
@@ -304,7 +305,9 @@ export default function App() {
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <ThemeProvider>
           <SettingsProvider>
-            <AppContent />
+            <MadhabProvider>
+              <AppContent />
+            </MadhabProvider>
           </SettingsProvider>
         </ThemeProvider>
       </SafeAreaProvider>

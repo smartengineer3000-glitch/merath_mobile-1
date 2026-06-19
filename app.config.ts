@@ -30,17 +30,6 @@ const config: ExpoConfig = {
     backgroundColor: "#FFFFFF"
   },
 
-  // Modern design theme
-  theme: {
-    primary: "#2E7D32", // Dark green
-    secondary: "#1976D2", // Deep blue
-    background: "#FFFFFF",
-    surface: "#F5F5F5",
-    text: "#333333",
-    textSecondary: "#666666",
-    border: "#E5E7EB",
-  },
-
   updates: {
     enabled: false,
     fallbackToCacheTimeout: 0,
