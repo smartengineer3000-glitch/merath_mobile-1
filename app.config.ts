@@ -14,7 +14,7 @@ const env = {
 const config: ExpoConfig = {
   name: env.appName,
   slug: env.appSlug,
-  version: "1.0.0",
+  version: "1.1.3",
   orientation: "portrait",
   icon: "./assets/icon.png",
   scheme: env.scheme,
@@ -41,7 +41,7 @@ const config: ExpoConfig = {
       projectId: "6e303c44-d7c9-403a-a835-80eff6a802ff"
     },
     appMetadata: {
-      version: "1.0.0",
+      version: "1.1.3",
       buildNumber: 1,
       releaseDate: new Date().toISOString(),
       phase: 6,
@@ -58,11 +58,6 @@ const config: ExpoConfig = {
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
     package: env.androidPackage,
-    config: {
-      googleMaps: {
-        apiKey: process.env.GOOGLE_MAPS_API_KEY,
-      },
-    },
     permissions: [],
     blockedPermissions: [
       "WRITE_EXTERNAL_STORAGE",

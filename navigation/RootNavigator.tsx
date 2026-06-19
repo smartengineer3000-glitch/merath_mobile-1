@@ -13,6 +13,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, ActivityIndicator, I18nManager, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSettings } from '../lib/context/SettingsContext';
+import { useAppTheme } from '../lib/context/ThemeProvider';
 import { languages } from '../lib/i18n';
 
 // Types
@@ -39,30 +40,32 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
  * Provides drawer navigation with modern design
  */
 export function DrawerNavigator() {
+  const { theme } = useAppTheme();
+
   return (
     <Drawer.Navigator
       screenOptions={({ route }) => ({
         headerShown: true,
         headerStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: theme.colors.background.light,
           borderBottomWidth: 1,
-          borderBottomColor: '#E5E7EB',
+          borderBottomColor: theme.colors.neutral.light300,
         },
-        headerTintColor: '#2E7D32',
+        headerTintColor: theme.colors.primary.main,
         headerTitleStyle: {
           fontFamily: 'Inter-Bold',
           fontSize: 18,
         },
         drawerStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: theme.colors.background.light,
           width: 280,
         },
         drawerLabelStyle: {
           fontFamily: 'Inter-Regular',
           fontSize: 16,
         },
-        drawerActiveTintColor: '#2E7D32',
-        drawerInactiveTintColor: '#666666',
+        drawerActiveTintColor: theme.colors.primary.main,
+        drawerInactiveTintColor: theme.colors.neutral.dark200,
       })}
     >
       <Drawer.Screen
@@ -122,7 +125,7 @@ export function DrawerNavigator() {
  * Main navigation container with stack for handling modals/errors
  */
 export function RootNavigator() {
-  const navigationRef = React.useRef<any>(null);
+  const navigationRef = React.useRef(null);
   const { state } = useSettings();
 
   useEffect(() => {

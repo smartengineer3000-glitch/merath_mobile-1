@@ -169,7 +169,7 @@ The app has no React error boundary. A crash in any screen takes down the entire
 
 **Enhancement:** Add an `ErrorBoundary` component wrapping `<RootNavigator />` in `App.tsx`. Show a friendly error screen with a "Try Again" button.
 
-### M2. `App.tsx` Onboarding Modal Renders Outside SafeArea
+### [DONE] M2. `App.tsx` Onboarding Modal Renders Outside SafeArea
 
 The `OnboardingModal` at line 76-170 uses absolute positioning but isn't aware of safe areas, which can cause content to be hidden behind notches.
 
@@ -201,7 +201,7 @@ All five screens are eagerly imported in `RootNavigator.tsx`. For a calculator a
 
 **Enhancement:** Make currency configurable via settings or detect from device locale. Add a `currency` field to `SettingsState`.
 
-### M6. `backup_service.ts` Uses `(FileSystem as any).documentDirectory`
+### [DONE] M6. `backup_service.ts` Uses `(FileSystem as any).documentDirectory`
 
 ```ts
 // BackupService.ts:47
