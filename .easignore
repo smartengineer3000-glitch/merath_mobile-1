@@ -1,36 +1,19 @@
-# .easignore - Files to exclude from EAS Build
+# .easignore – Files to exclude from EAS Build
 
-# Git
+# Git metadata
 .git/
 .gitignore
 
-# Node modules - not needed in build
+# Dependencies (EAS reinstalls these fresh)
 node_modules/
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
 
-# IDE and editor
+# IDE & OS
 .idea/
 .vscode/
-.sublime-project
-.sublime-workspace
-*.swp
-*.swo
-*~
-
-# OS specific
 .DS_Store
 Thumbs.db
-.env.local
 
-# Build artifacts
-build/
-dist/
-.expo/
-.eas/
-
-# Tests
+# Development / Test files
 __tests__/
 *.test.ts
 *.test.tsx
@@ -40,26 +23,19 @@ test-reports/
 coverage/
 .nyc_output/
 
-# Development files
+# Local development configs
 .expo-shared/
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
+*.log
 
-# Documentation and support
+# Documentation
 *.md
 CHANGELOG.md
 README.md
-support documents/
 docs/
 scripts/
 
-# Miscellaneous
-e2e/config.json
-PHASES_*.md
-support\\ documents/
-
-# Temporary files
+# Temporary
 *.tmp
 .cache/
+.eas/

@@ -9,17 +9,16 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
+
+# Environment Variables
 .env
 .env.local
 .env.*.local
 
-# Node
+# Node Modules
 node_modules/
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
 
-# Yarn
+# Yarn (only if you use yarn, otherwise you can remove these 4 lines)
 .yarn/*
 !.yarn/cache
 !.yarn/patches
@@ -27,82 +26,40 @@ pnpm-lock.yaml
 !.yarn/releases
 !.yarn/versions
 
-# Build outputs
-build/
-*.tsbuildinfo
-
-# IDE
-.idea/
+# IDEs
 .vscode/
+.idea/
 *.swp
 *.swo
 *~
 .DS_Store
-*.sublime-workspace
-*.sublime-project
 
 # OS
-.DS_Store
 Thumbs.db
 
-# Testing
-coverage/
-.nyc_output/
+# Build Outputs
+build/
+*.tsbuildinfo
 
 # Logs
 logs/
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
 
-# Temporary files
+# Temporary Files
 *.tmp
 .cache/
 
-# EAS Build
+# EAS Local
 .eas/
 eas-build-on-simulator.sh
 
-# Development
-.expo-shared/
-# Test coverage
+# Testing
 coverage/
 .nyc_output/
-
-# Test reports
 test-results/
 test-reports/
 
-# Temp files
-*.log
-*.tmp
-*.temp
-
-# Environment
-.env
-.env.local
-.env.*.local
-
-# Build
-dist/
-build/
+# Exported APK/IPA (never commit binaries)
 *.apk
 *.aab
-
-# Dependencies
-node_modules/
-package-lock.json
-yarn.lock
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db.expo/
+*.ipa
