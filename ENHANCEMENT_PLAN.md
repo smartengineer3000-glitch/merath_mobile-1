@@ -163,7 +163,7 @@ These are heavy native dependencies that need linking. Expo SDK 54 has `react-na
 
 ## Part 3: Medium-Priority Enhancements
 
-### M1. No Error Boundary
+### [DONE] M1. No Error Boundary
 
 The app has no React error boundary. A crash in any screen takes down the entire app.
 
@@ -175,7 +175,7 @@ The `OnboardingModal` at line 76-170 uses absolute positioning but isn't aware o
 
 **Enhancement:** Wrap modal content in `SafeAreaView` or use Expo's `useSafeAreaInsets()`.
 
-### M3. `any` Type Usage
+### [DONE] M3. `any` Type Usage
 
 The codebase uses `any` in several places despite strict mode being enabled:
 
@@ -195,7 +195,7 @@ All five screens are eagerly imported in `RootNavigator.tsx`. For a calculator a
 
 **Enhancement:** Use `React.lazy()` with `Suspense` for `MadhhabComparisonScreen`, `TestScreen`, `SettingsScreen`, and `AboutScreen`.
 
-### M5. CSV Exporter Has Hardcoded Currency (SAR)
+### [DONE] M5. CSV Exporter Has Hardcoded Currency (SAR)
 
 `CSVExporter.ts` and `utils.ts` (`formatCurrency`) hardcode Saudi Riyal (`SAR`). Users from other countries get wrong currency symbols.
 
@@ -212,7 +212,7 @@ The `any` cast hides a potential `null` value since `documentDirectory` can be n
 
 **Enhancement:** Add a null check: `if (!FileSystem.documentDirectory) throw new Error(...)`.
 
-### M7. Test Screen Exposes Internal Testing in Production
+### [DONE] M7. Test Screen Exposes Internal Testing in Production
 
 `TestScreen.tsx` is accessible from the drawer menu in production builds. Users should not see raw JSON test output.
 

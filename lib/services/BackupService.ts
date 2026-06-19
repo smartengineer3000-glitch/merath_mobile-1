@@ -43,7 +43,11 @@ export class BackupService {
 
       const backupJson = JSON.stringify(backupData, null, 2);
       const fileName = `merath-backup-${new Date().toISOString().split('T')[0]}.json`;
-      const fileUri = (FileSystem as any).documentDirectory + fileName;
+      const docDir = (FileSystem as unknown as { documentDirectory: string | null }).documentDirectory;
+      if (!docDir) {
+        throw new Error('Document directory not available on this platform');
+      }
+      const fileUri = docDir + fileName;
 
       await FileSystem.writeAsStringAsync(fileUri, backupJson, { encoding: 'utf8' });
       return { uri: fileUri, data: backupData };

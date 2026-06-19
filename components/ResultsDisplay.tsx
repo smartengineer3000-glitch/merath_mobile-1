@@ -509,7 +509,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
           return;
         }
         
-        const documentDir = (FileSystem as any).documentDirectory;
+        const documentDir = (FileSystem as unknown as { documentDirectory: string | null }).documentDirectory;
         if (!documentDir) {
           throw new Error('لا يمكن الوصول إلى نظام الملفات');
         }
@@ -548,7 +548,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
     }
     
     try {
-      const captureMethod = (viewShotRef.current as any).capture;
+      const captureMethod = (viewShotRef.current as unknown as { capture?: () => Promise<string> }).capture;
       if (!captureMethod) {
         throw new Error('Capture method not available');
       }

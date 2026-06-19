@@ -8,6 +8,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   SafeAreaProvider, 
+  SafeAreaView,
   initialWindowMetrics 
 } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -127,7 +128,7 @@ const OnboardingModal = ({ visible, onComplete }: { visible: boolean; onComplete
 
   return (
     <View style={[styles.onboardingOverlay, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
-      <View style={[styles.onboardingCard, { backgroundColor: theme.colors.background.light }]}>
+      <SafeAreaView style={[styles.onboardingCard, { backgroundColor: theme.colors.background.light }]}>
         <View style={styles.onboardingHeader}>
           <Text style={styles.onboardingStep}>{step}/{totalSteps}</Text>
           <TouchableOpacity onPress={handleSkip}>
@@ -171,7 +172,7 @@ const OnboardingModal = ({ visible, onComplete }: { visible: boolean; onComplete
             {step === totalSteps ? t('onboarding.startNow') : t('onboarding.next')}
           </Text>
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     </View>
   );
 };
