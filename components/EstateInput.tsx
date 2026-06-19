@@ -17,40 +17,12 @@ import {
   Platform,
   Keyboard,
 } from 'react-native';
-import { useTheme } from '../lib/design/theme';
+import { useAppTheme } from '../lib/context/ThemeProvider';
 import { useCalculator } from '../lib/inheritance/hooks';
 import { EstateData } from '../lib/inheritance/types';
 import { EstateValidator } from '../lib/validation/InputValidator';
 import type { ValidationResult } from '../lib/validation/InputValidator';
-
-// ===== FIX C1: Safe decimal parser =====
-const parseSafeDecimal = (value: string): number => {
-  if (!value || typeof value !== 'string') return 0;
-  
-  // Convert Arabic numerals to Western
-  const arabicToWestern = value.replace(/[٠-٩]/g, (d) => {
-    const map: Record<string, string> = {
-      '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
-      '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
-    };
-    return map[d] || d;
-  });
-
-  // Replace comma with period (European format)
-  const withPeriod = arabicToWestern.replace(/,/g, '.');
-  
-  // Remove all characters except digits, period, and minus sign
-  const cleaned = withPeriod.replace(/[^0-9.-]/g, '');
-  
-  // Handle multiple decimal points - keep only first
-  const parts = cleaned.split('.');
-  const sanitized = parts.length > 1 
-    ? parts[0] + '.' + parts.slice(1).join('')
-    : cleaned;
-  
-  const parsed = parseFloat(sanitized);
-  return isNaN(parsed) ? 0 : parsed;
-};
+import { parseSafeDecimal } from '../lib/utils/parsers';
 
 export interface EstateInputProps {
   onEstateChange?: (estate: EstateData) => void;
@@ -58,7 +30,7 @@ export interface EstateInputProps {
 }
 
 export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps) {
-  const { theme } = useTheme();
+  const { theme } = useAppTheme();
   const { estateData, updateEstateData } = useCalculator();
   
   // ===== FIX H6: Keyboard handling refs =====

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -7,34 +7,43 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useMadhab } from '../lib/context/MadhabContext';
 import { useCalculator } from '../lib/hooks/useCalculator';
 import { useResults } from '../lib/hooks/useResults';
 import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
+import type { MadhhabType, CalculationResult } from '../lib/inheritance/types';
+
+const ALL_MADHABS: MadhhabType[] = ['hanafi', 'shafii', 'maliki', 'hanbali'];
+
+interface ComparisonEntry {
+  madhab: MadhhabType;
+  result: CalculationResult;
+}
 
 export default function MadhhabComparisonScreen() {
   const { madhab, setMadhab } = useMadhab();
-  const { calculateInheritance } = useCalculator();
-  const { results, setResults } = useResults();
-  const [comparisonResults, setComparisonResults] = useState<any[]>([]);
+  const { calculateWithMethod } = useCalculator();
+  const [comparisonResults, setComparisonResults] = useState<ComparisonEntry[]>([]);
+  const [isComparing, setIsComparing] = useState(false);
 
-  const madhabs = ['hanafi', 'shafii', 'maliki', 'hanbali'];
-
-  const handleCompare = async () => {
-    const comparisons = [];
-    for (const m of madhabs) {
-      setMadhab(m);
-      const result = await calculateInheritance();
-      if (result) {
-        comparisons.push({ madhab: m, result });
+  const handleCompare = useCallback(async () => {
+    try {
+      setIsComparing(true);
+      const comparisons: ComparisonEntry[] = [];
+      for (const m of ALL_MADHABS) {
+        const result = await calculateWithMethod(m, {});
+        if (result) {
+          comparisons.push({ madhab: m, result });
+        }
       }
+      setComparisonResults(comparisons);
+    } catch (error) {
+      Alert.alert('Error', 'Comparison failed. Please try again.');
+    } finally {
+      setIsComparing(false);
     }
-    setComparisonResults(comparisons);
-    setResults(comparisons);
-  };
+  }, [calculateWithMethod]);
 
   return (
     <ScrollView style={styles.container}>
@@ -44,12 +53,17 @@ export default function MadhhabComparisonScreen() {
       </View>
 
       <Card style={styles.card}>
-        <Text style={styles.cardTitle}>Select Case</Text>
-        <Text style={styles.cardSubtitle}>Choose heirs and estate details</Text>
-        {/* Add heir selection components here */}
-        <TouchableOpacity style={styles.compareButton} onPress={handleCompare}>
+        <Text style={styles.cardTitle}>Compare</Text>
+        <Text style={styles.cardSubtitle}>Run calculations across all four madhabs</Text>
+        <TouchableOpacity
+          style={[styles.compareButton, isComparing && styles.compareButtonDisabled]}
+          onPress={handleCompare}
+          disabled={isComparing}
+        >
           <MaterialCommunityIcons name="compare" size={24} color="#FFFFFF" />
-          <Text style={styles.compareButtonText}>Compare Across Madhabs</Text>
+          <Text style={styles.compareButtonText}>
+            {isComparing ? 'Comparing...' : 'Compare Across Madhabs'}
+          </Text>
         </TouchableOpacity>
       </Card>
 
@@ -59,7 +73,14 @@ export default function MadhhabComparisonScreen() {
           {comparisonResults.map((comp, index) => (
             <View key={index} style={styles.resultItem}>
               <Text style={styles.madhabName}>{comp.madhab.toUpperCase()}</Text>
-              <Text style={styles.resultText}>{JSON.stringify(comp.result, null, 2)}</Text>
+              {comp.result.shares.map((share, si) => (
+                <View key={si} style={styles.shareRow}>
+                  <Text style={styles.shareName}>{share.name}</Text>
+                  <Text style={styles.shareAmount}>
+                    {share.percentage?.toFixed(2)}%
+                  </Text>
+                </View>
+              ))}
             </View>
           ))}
         </Card>
@@ -111,6 +132,9 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
   },
+  compareButtonDisabled: {
+    opacity: 0.6,
+  },
   compareButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
@@ -143,9 +167,18 @@ const styles = StyleSheet.create({
     color: '#2E7D32',
     marginBottom: 8,
   },
-  resultText: {
+  shareRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 4,
+  },
+  shareName: {
     fontSize: 14,
     color: '#333333',
-    fontFamily: 'Inter-Regular',
+  },
+  shareAmount: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2E7D32',
   },
 });

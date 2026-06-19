@@ -5,8 +5,6 @@
  * Includes: color palettes, typography, spacing, shadows, animations
  */
 
-import { useColorScheme } from 'react-native';
-import { createContext, useContext } from 'react';
 
 // ============================================================================
 // COMPREHENSIVE COLOR PALETTE - Material Design 3
@@ -328,17 +326,6 @@ export const Components = {
   },
 };
 
-// ============================================================================
-// THEME HOOK - With context support for manual theme override
-// ============================================================================
-
-export const ThemeContext = createContext<{
-  mode: ThemeMode;
-  theme: Theme;
-  isDark: boolean;
-  toggleTheme: () => void;
-} | null>(null);
-
 export type ThemeMode = 'light' | 'dark';
 
 export interface ThemeColors {
@@ -409,19 +396,4 @@ export const darkTheme: Theme = {
   components: Components,
 };
 
-export function useTheme() {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    // Fallback to system theme if context not available
-    const scheme = useColorScheme();
-    const isDark = scheme === 'dark';
-    const theme = isDark ? darkTheme : lightTheme;
-    return {
-      mode: isDark ? 'dark' as const : 'light' as const,
-      theme,
-      isDark,
-      toggleTheme: () => {},
-    };
-  }
-  return context;
-}
+

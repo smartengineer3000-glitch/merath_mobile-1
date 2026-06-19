@@ -16,6 +16,7 @@ export interface SettingsState {
   notifications: boolean;
   roundingDecimals: number;
   autoSave: boolean;
+  currency: string;
   // ===== FIX C7: Add version and timestamp for conflict resolution =====
   version: number;
   lastUpdated: string;
@@ -26,6 +27,7 @@ export type SettingsAction =
   | { type: 'SET_NOTIFICATIONS'; payload: boolean }
   | { type: 'SET_ROUNDING'; payload: number }
   | { type: 'SET_AUTO_SAVE'; payload: boolean }
+  | { type: 'SET_CURRENCY'; payload: string }
   | { type: 'LOAD_SETTINGS'; payload: Partial<SettingsState> }
   | { type: 'RESET_SETTINGS' };
 
@@ -34,6 +36,7 @@ export const defaultSettings: SettingsState = {
   notifications: true,
   roundingDecimals: 2,
   autoSave: true,
+  currency: 'SAR',
   version: 2, // ===== FIX C7: Increment version when schema changes =====
   lastUpdated: new Date().toISOString()
 };
@@ -70,6 +73,12 @@ const settingsReducer = (
         autoSave: action.payload,
         lastUpdated: now 
       };
+    case 'SET_CURRENCY':
+      return {
+        ...state,
+        currency: action.payload,
+        lastUpdated: now
+      };
     case 'LOAD_SETTINGS':
       // ===== FIX C7: Merge with version conflict resolution =====
       return {
@@ -94,6 +103,7 @@ interface SettingsContextType {
   setNotifications: (enabled: boolean) => void;
   setRoundingDecimals: (decimals: number) => void;
   setAutoSave: (enabled: boolean) => void;
+  setCurrency: (currency: string) => void;
   resetSettings: () => void;
   saveSettings: () => Promise<void>;
   loadSettings: () => Promise<void>;
@@ -173,6 +183,10 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     dispatch({ type: 'SET_AUTO_SAVE', payload: enabled });
   }, []);
 
+  const setCurrency = useCallback((currency: string) => {
+    dispatch({ type: 'SET_CURRENCY', payload: currency });
+  }, []);
+
   const resetSettings = useCallback(() => {
     dispatch({ type: 'RESET_SETTINGS' });
   }, []);
@@ -194,6 +208,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
         notifications: oldSettings.notifications ?? true,
         roundingDecimals: oldSettings.roundingDecimals ?? 2,
         autoSave: oldSettings.autoSave ?? true,
+        currency: oldSettings.currency || 'SAR',
         version: 2,
         lastUpdated: new Date().toISOString()
       };
@@ -448,6 +463,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     setNotifications,
     setRoundingDecimals,
     setAutoSave,
+    setCurrency,
     resetSettings,
     saveSettings,
     loadSettings,

@@ -19,7 +19,7 @@ import {
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { MaterialCommunityIcons } from '../../lib/icons';
-import { useTheme } from '../../lib/design/theme';
+import { useAppTheme } from '../../lib/context/ThemeProvider';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'outline' | 'ghost' | 'danger';
 export type ButtonSize = 'small' | 'medium' | 'large';
@@ -82,7 +82,7 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
   hapticFeedback = 'light',
   hapticOnLongPress = false,
 }) => {
-  const { theme } = useTheme();
+  const { theme } = useAppTheme();
 
   const getVariantStyles = (): { backgroundColor: string; borderColor?: string; textColor: string } => {
     const baseColor = theme.colors.primary.main;
@@ -340,4 +340,5 @@ const styles = StyleSheet.create({
   },
 });
 
+export { ModernButton as Button };
 export default ModernButton;

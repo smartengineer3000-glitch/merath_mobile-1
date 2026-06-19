@@ -11,7 +11,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useTheme } from '../lib/design/theme';
+import { useAppTheme } from '../lib/context/ThemeProvider';
 import type { MadhhabType } from '../lib/inheritance/types';
 
 interface MadhhabSelectorProps {
@@ -27,7 +27,7 @@ const MADHAB_DATA = [
 ];
 
 export function MadhhabSelector({ selectedMadhab = 'hanafi', onSelect }: MadhhabSelectorProps) {
-  const { theme } = useTheme();
+  const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
   // Option 1: Compact Grid (2x2)

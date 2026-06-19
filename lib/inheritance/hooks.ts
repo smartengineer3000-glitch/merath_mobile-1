@@ -146,7 +146,6 @@ export function useCalculator() {
     async (madhab: MadhhabType, heirs: HeirsData): Promise<CalculationResult | null> => {
       // ===== FIX C2: Prevent multiple simultaneous calculations =====
       if (isCalculating) {
-        console.log('Calculation already in progress, aborting new request');
         return null;
       }
 
@@ -493,7 +492,7 @@ export function useAuditLog() {
       try {
         const results = auditLog.filter({
           madhab,
-          operation: operation as any,
+          operation: operation as AuditLogEntry['operation'],
           limit,
         });
         return results;

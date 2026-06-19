@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -11,34 +11,31 @@ import {
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useCalculator } from '../lib/hooks/useCalculator';
 import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
+import type { CalculationResult } from '../lib/inheritance/types';
 
 export default function TestScreen() {
   const { calculateInheritance } = useCalculator();
-  const [testResults, setTestResults] = useState<any[]>([]);
+  const [testResults, setTestResults] = useState<Array<{ name: string; result: CalculationResult | null; passed: boolean }>>([]);
   const [customInput, setCustomInput] = useState('');
 
-  const runBasicTest = async () => {
-    // Run a basic test case
+  const runBasicTest = useCallback(async () => {
     const result = await calculateInheritance();
     if (result) {
       setTestResults([{ name: 'Basic Test', result, passed: true }]);
     } else {
       setTestResults([{ name: 'Basic Test', result: null, passed: false }]);
     }
-  };
+  }, [calculateInheritance]);
 
-  const runCustomTest = async () => {
-    // Parse custom input and run test
+  const runCustomTest = useCallback(async () => {
     try {
-      const input = JSON.parse(customInput);
-      // Apply custom input to calculator state
+      JSON.parse(customInput);
       const result = await calculateInheritance();
       setTestResults(prev => [...prev, { name: 'Custom Test', result, passed: !!result }]);
-    } catch (error) {
+    } catch (_error) {
       Alert.alert('Error', 'Invalid JSON input');
     }
-  };
+  }, [customInput, calculateInheritance]);
 
   return (
     <ScrollView style={styles.container}>
@@ -182,13 +179,13 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   testName: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#333333',
   },
   resultText: {
-    fontSize: 14,
-    color: '#666666',
+    fontSize: 12,
+    color: '#333333',
     fontFamily: 'Inter-Regular',
   },
 });

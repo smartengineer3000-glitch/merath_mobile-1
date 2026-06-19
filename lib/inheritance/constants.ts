@@ -7,6 +7,13 @@
 
 import { MadhhabConfig, MadhhabRules } from './types';
 
+export interface HijabRule {
+  hijabber: string;
+  hijabbed: string[];
+  type: 'complete' | 'partial';
+  reason?: string;
+}
+
 export const FIQH_DATABASE = {
   // ====== معلومات المذاهب ======
   madhabs: {
@@ -237,12 +244,14 @@ export const FIQH_DATABASE = {
 
 // ====== دالة مساعدة للحصول على معلومات المذهب ======
 export function getMadhhabConfig(madhab: string): MadhhabConfig | null {
-  return (FIQH_DATABASE.madhabs as any)[madhab] || null;
+  const madhabs = FIQH_DATABASE.madhabs as Record<string, MadhhabConfig>;
+  return madhabs[madhab] || null;
 }
 
 // ====== دالة مساعدة للحصول على قواعس الحجب ======
-export function getHijabRules(madhab: string): any[] {
-  return (FIQH_DATABASE.hijabRules as any)[madhab] || [];
+export function getHijabRules(madhab: string): HijabRule[] {
+  const rules = FIQH_DATABASE.hijabRules as Record<string, HijabRule[]>;
+  return rules[madhab] || [];
 }
 
 // ====== دالة مساعدة للتحقق من صحة المذهب ======

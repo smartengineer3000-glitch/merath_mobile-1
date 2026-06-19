@@ -9,7 +9,7 @@ import {
   ViewStyle,
   Pressable,
 } from 'react-native';
-import { useTheme } from '../../lib/design/theme';
+import { useAppTheme } from '../../lib/context/ThemeProvider';
 
 export type CardElevation = 'flat' | 'low' | 'medium' | 'high';
 
@@ -28,7 +28,7 @@ export const ModernCard: React.FC<ModernCardProps> = ({
   style,
   padding,
 }) => {
-  const { theme } = useTheme();
+  const { theme } = useAppTheme();
 
   const getElevationStyles = (): ViewStyle => {
     switch (elevation) {
@@ -92,4 +92,5 @@ export const ModernCard: React.FC<ModernCardProps> = ({
   return <View style={[cardStyle, style]}>{children}</View>;
 };
 
+export { ModernCard as Card };
 export default ModernCard;

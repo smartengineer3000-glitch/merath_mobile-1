@@ -16,9 +16,15 @@ export const linking: LinkingOptions<RootStackParamList> = {
   prefixes: ['merath://', 'https://merath.app', 'https://www.merath.app'],
   config: {
     screens: {
-      MainApp: '/',
-      Details: 'details/:id',
-      Error: 'error/:message',
+      MainApp: {
+        screens: {
+          Calculator: 'calculator',
+          MadhhabComparison: 'comparison',
+          Test: 'test',
+          Settings: 'settings',
+          About: 'about',
+        },
+      },
     },
   },
 };
@@ -26,13 +32,13 @@ export const linking: LinkingOptions<RootStackParamList> = {
 /**
  * Deep link route examples:
  * 
- * merath://
- * merath://details/xyz789
- * merath://error/not-found
+ * merath://calculator
+ * merath://comparison
+ * merath://settings
+ * merath://about
  * 
- * https://merath.app/
- * https://merath.app/details/xyz789
- * https://merath.app/error/not-found
+ * https://merath.app/calculator
+ * https://merath.app/comparison
  */
 
 export const getDeepLink = (screen: string, params?: Record<string, string>): string => {
