@@ -222,27 +222,27 @@ The `any` cast hides a potential `null` value since `documentDirectory` can be n
 
 ## Part 4: Low-Priority / Quality-of-Life
 
-### L1. Version Mismatch
+### [DONE] L1. Version Mismatch
 
 `package.json` says version `1.1.3`, `app.config.ts` says `1.0.0`, `BackupService.ts` says `1.1.3`, `AboutScreen` says `1.1.3`. Consolidate to a single source of truth.
 
 **Enhancement:** Read version from `app.config.ts` via `expo-constants` everywhere, or define a `VERSION` constant.
 
-### L2. Hardcoded Header Styles
+### [DONE] L2. Hardcoded Header Styles
 
 `RootNavigator.tsx` uses hardcoded colors (`#FFFFFF`, `#2E7D32`, `#E5E7EB`) instead of the theme system. When dark mode is toggled, the header stays white.
 
 **Enhancement:** Use theme-aware colors in `screenOptions`.
 
-### L3. Missing `@react-navigation/drawer` Dependency Configuration
+### [DONE] L3. Missing `@react-navigation/drawer` Dependency Configuration
 
 The `@react-navigation/drawer` requires `react-native-gesture-handler` and `react-native-reanimated` to be properly set up. While `react-native-gesture-handler` is listed, `react-native-reanimated` is not.
 
-### L4. `eslint.config.js` and Formatting
+### [DONE] L4. `eslint.config.js` and Formatting
 
 The ESLint config is minimal. Adding import ordering, unused-import detection, and React hooks exhaustive-deps rules would catch many of the issues found above automatically.
 
-### L5. `app.config.ts` References Google Maps API
+### [DONE] L5. `app.config.ts` References Google Maps API
 
 ```ts
 // app.config.ts:74
@@ -251,11 +251,11 @@ googleMaps: { apiKey: process.env.GOOGLE_MAPS_API_KEY }
 
 The app doesn't use Google Maps anywhere. This is dead configuration that could confuse future developers.
 
-### L6. Deep Linking Routes Don't Match Drawer Screens
+### [DONE] L6. Deep Linking Routes Don't Match Drawer Screens
 
 `linking.ts` defines routes for `MainApp`, `Details`, `Error` but the drawer has `Calculator`, `MadhhabComparison`, `Test`, `Settings`, `About`. Deep links won't resolve to specific screens.
 
-### L7. `vitest.config.ts` and `drizzle.config.ts` Review
+### [DONE] L7. `vitest.config.ts` and `drizzle.config.ts` Review
 
 These configs should be validated — Dexie is used as the database (not Drizzle), so the Drizzle config may be vestigial.
 
@@ -288,11 +288,11 @@ App.tsx
   |
   |- RootNavigator (navigation/RootNavigator.tsx)
        |- Drawer Navigator
-            |- CalculatorScreen  [BROKEN: missing imports]
-            |- MadhhabComparison [BROKEN: missing imports, stub]
-            |- TestScreen        [BROKEN: missing imports, stub]
-            |- SettingsScreen    [BROKEN: missing useSettings hook]
-            |- AboutScreen       [OK: static content]
+            |- CalculatorScreen  [FIXED]
+            |- MadhhabComparison [FIXED]
+            |- TestScreen        [FIXED, __DEV__ only]
+            |- SettingsScreen    [FIXED]
+            |- AboutScreen       [OK]
 
 Core Engine (lib/inheritance/):
   enhanced-engine-complete.ts  — 1,250 LOC, main calculation
