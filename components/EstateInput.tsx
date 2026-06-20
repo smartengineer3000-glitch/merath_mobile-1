@@ -19,6 +19,7 @@ import {
 } from 'react-native';
 import { useAppTheme } from '../lib/context/ThemeProvider';
 import { useCalculator } from '../lib/inheritance/hooks';
+import type { Theme } from '../lib/design/theme';
 import { EstateData } from '../lib/inheritance/types';
 import { EstateValidator } from '../lib/validation/InputValidator';
 import type { ValidationResult } from '../lib/validation/InputValidator';
@@ -321,7 +322,7 @@ export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps)
   );
 }
 
-const createStyles = (theme: any) =>
+const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       maxHeight: 500,
@@ -363,7 +364,7 @@ const createStyles = (theme: any) =>
       padding: 12,
       fontSize: 14,
       color: theme.colors.neutral.dark300,
-      backgroundColor: '#fff',
+      backgroundColor: theme.colors.background.light,
       textAlign: 'right',
     },
     inputError: {
@@ -384,7 +385,7 @@ const createStyles = (theme: any) =>
       elevation: 3,
     },
     resetButtonText: {
-      color: '#fff',
+      color: theme.colors.background.light,
       fontSize: 14,
       fontWeight: '700',
     },

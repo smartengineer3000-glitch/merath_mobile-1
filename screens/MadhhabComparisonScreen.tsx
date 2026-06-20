@@ -8,10 +8,10 @@ import {
   Alert,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useMadhab } from '../lib/context/MadhabContext';
+import { useAppTheme } from '../lib/context/ThemeProvider';
 import { useCalculator } from '../lib/hooks/useCalculator';
-import { useResults } from '../lib/hooks/useResults';
 import { Card } from '../components/ui/Card';
+import type { Theme } from '../lib/design/theme';
 import type { MadhhabType, CalculationResult } from '../lib/inheritance/types';
 
 const ALL_MADHABS: MadhhabType[] = ['hanafi', 'shafii', 'maliki', 'hanbali'];
@@ -22,7 +22,7 @@ interface ComparisonEntry {
 }
 
 export default function MadhhabComparisonScreen() {
-  const { madhab, setMadhab } = useMadhab();
+  const { theme } = useAppTheme();
   const { calculateWithMethod } = useCalculator();
   const [comparisonResults, setComparisonResults] = useState<ComparisonEntry[]>([]);
   const [isComparing, setIsComparing] = useState(false);
@@ -45,6 +45,8 @@ export default function MadhhabComparisonScreen() {
     }
   }, [calculateWithMethod]);
 
+  const styles = createStyles(theme);
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -60,7 +62,7 @@ export default function MadhhabComparisonScreen() {
           onPress={handleCompare}
           disabled={isComparing}
         >
-          <MaterialCommunityIcons name="compare" size={24} color="#FFFFFF" />
+          <MaterialCommunityIcons name="compare" size={24} color={theme.colors.background.light} />
           <Text style={styles.compareButtonText}>
             {isComparing ? 'Comparing...' : 'Compare Across Madhabs'}
           </Text>
@@ -89,96 +91,97 @@ export default function MadhhabComparisonScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-    padding: 16,
-  },
-  header: {
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#2E7D32',
-    fontFamily: 'Inter-Bold',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666666',
-    marginTop: 8,
-    fontFamily: 'Inter-Regular',
-  },
-  card: {
-    marginBottom: 16,
-  },
-  cardTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 8,
-  },
-  cardSubtitle: {
-    fontSize: 14,
-    color: '#666666',
-    marginBottom: 16,
-  },
-  compareButton: {
-    backgroundColor: '#2E7D32',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    borderRadius: 8,
-  },
-  compareButtonDisabled: {
-    opacity: 0.6,
-  },
-  compareButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginLeft: 8,
-  },
-  resultsCard: {
-    marginBottom: 16,
-  },
-  resultsTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 16,
-  },
-  resultItem: {
-    marginBottom: 16,
-    padding: 12,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  madhabName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2E7D32',
-    marginBottom: 8,
-  },
-  shareRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 4,
-  },
-  shareName: {
-    fontSize: 14,
-    color: '#333333',
-  },
-  shareAmount: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#2E7D32',
-  },
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background.lightVariant,
+      padding: 16,
+    },
+    header: {
+      marginBottom: 24,
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: 'bold',
+      color: theme.colors.primary.main,
+      fontFamily: 'Inter-Bold',
+    },
+    subtitle: {
+      fontSize: 16,
+      color: theme.colors.neutral.main,
+      marginTop: 8,
+      fontFamily: 'Inter-Regular',
+    },
+    card: {
+      marginBottom: 16,
+    },
+    cardTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: theme.colors.neutral.dark300,
+      marginBottom: 8,
+    },
+    cardSubtitle: {
+      fontSize: 14,
+      color: theme.colors.neutral.main,
+      marginBottom: 16,
+    },
+    compareButton: {
+      backgroundColor: theme.colors.primary.main,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 16,
+      borderRadius: 8,
+    },
+    compareButtonDisabled: {
+      opacity: 0.6,
+    },
+    compareButtonText: {
+      color: theme.colors.background.light,
+      fontSize: 16,
+      fontWeight: 'bold',
+      marginLeft: 8,
+    },
+    resultsCard: {
+      marginBottom: 16,
+    },
+    resultsTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: theme.colors.neutral.dark300,
+      marginBottom: 16,
+    },
+    resultItem: {
+      marginBottom: 16,
+      padding: 12,
+      backgroundColor: theme.colors.background.light,
+      borderRadius: 8,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    madhabName: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: theme.colors.primary.main,
+      marginBottom: 8,
+    },
+    shareRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingVertical: 4,
+    },
+    shareName: {
+      fontSize: 14,
+      color: theme.colors.neutral.dark300,
+    },
+    shareAmount: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: theme.colors.primary.main,
+    },
+  });

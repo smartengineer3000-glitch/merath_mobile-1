@@ -380,14 +380,94 @@ export const lightTheme: Theme = {
 };
 
 // ============================================================================
+// DARK THEME COLORS
+// ============================================================================
+
+const DarkColors: ThemeColors = {
+  primary: {
+    light: '#1a3a1c',
+    lighter: '#1e4d22',
+    light50: '#256329',
+    light100: '#2d7a30',
+    light200: '#35913a',
+    main: '#4CAF50',
+    dark100: '#66BB6A',
+    dark200: '#81C784',
+    dark300: '#A5D6A7',
+    dark: '#C8E6C9',
+  },
+  secondary: {
+    light: '#1a2744',
+    lighter: '#1e3355',
+    light50: '#254066',
+    light100: '#2d4d77',
+    light200: '#3a5f8f',
+    main: '#5C9FFF',
+    dark100: '#7BB3FF',
+    dark200: '#9AC7FF',
+    dark300: '#A8CFFF',
+    dark: '#C4DFFF',
+  },
+  tertiary: {
+    light: '#332200',
+    lighter: '#4d3300',
+    light50: '#664400',
+    light100: '#805500',
+    light200: '#996600',
+    main: '#FFB74D',
+    dark100: '#FFC570',
+    dark200: '#FFD494',
+    dark300: '#FFDCA8',
+    dark: '#FFE8C4',
+  },
+  neutral: {
+    white: '#121212',
+    light50: '#1a1a2e',
+    light100: '#1e1e32',
+    light200: '#2a2a3d',
+    light300: '#3a3a4d',
+    light400: '#8e8ea0',
+    main: '#a0a0b0',
+    dark100: '#c0c0d0',
+    dark200: '#d0d0e0',
+    dark300: '#e0e0f0',
+    black: '#f0f0ff',
+  },
+  background: {
+    light: '#121212',
+    lightVariant: '#1a1a2e',
+    dark: '#f9fafb',
+    darkVariant: '#f3f4f6',
+  },
+  success: {
+    light: '#1a3a1c',
+    main: '#66BB6A',
+    dark: '#A5D6A7',
+  },
+  warning: {
+    light: '#332200',
+    main: '#FFB74D',
+    dark: '#FFD494',
+  },
+  error: {
+    light: '#3a1a1a',
+    main: '#EF5350',
+    dark: '#E57373',
+  },
+  info: {
+    light: '#1a2744',
+    main: '#42A5F5',
+    dark: '#90CAF9',
+  },
+};
+
+// ============================================================================
 // DARK THEME
 // ============================================================================
 
 export const darkTheme: Theme = {
   mode: 'dark',
-  colors: {
-    ...Colors,
-  } as ThemeColors,
+  colors: DarkColors,
   typography: Typography,
   spacing: Spacing,
   borderRadius: BorderRadius,

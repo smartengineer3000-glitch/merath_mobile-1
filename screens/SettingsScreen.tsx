@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -7,32 +7,21 @@ import {
   TouchableOpacity,
   Switch,
   Alert,
-  SafeAreaView,
-  ActivityIndicator,
-  Linking,
-  Platform,
   Share,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
-import * as DocumentPicker from 'expo-document-picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import Constants from 'expo-constants';
 import { useAppTheme } from '../lib/context/ThemeProvider';
 import { useSettings } from '../lib/context/SettingsContext';
 import { Card } from '../components/ui/Card';
 import { db } from '../lib/database/db';
-import { CalculationCache } from '../lib/performance/optimization';
+import type { Theme } from '../lib/design/theme';
 import type { SettingsState } from '../lib/context/SettingsContext';
 import type { Language } from '../lib/i18n';
-
-const STORAGE_KEYS = {
-  LANGUAGE: '@merath_language',
-  NOTIFICATIONS: '@merath_notifications',
-  ROUNDING: '@merath_rounding',
-  AUTO_SAVE: '@merath_auto_save',
-};
 
 const BACKUP_KEYS = {
   SETTINGS: '@merath_settings_v2',
@@ -66,9 +55,7 @@ export default function SettingsScreen() {
   const { theme, toggleTheme, isDark } = useAppTheme();
   const { state, setLanguage, setNotifications, setRoundingDecimals, setAutoSave } = useSettings();
 
-  const [isLoading, setIsLoading] = useState(false);
   const [isBackingUp, setIsBackingUp] = useState(false);
-  const [isRestoring, setIsRestoring] = useState(false);
 
   const handleLanguageChange = useCallback((lang: string) => {
     setLanguage(lang as Language);
@@ -119,7 +106,7 @@ export default function SettingsScreen() {
       const backupData: BackupData = {
         version: '1.0',
         timestamp: new Date().toISOString(),
-        appVersion: '1.1.3',
+        appVersion: Constants.expoConfig?.version ?? '1.1.3',
         data: {
           settings: settingsJson ? JSON.parse(settingsJson) : null,
           favorites: favoritesJson ? JSON.parse(favoritesJson) : [],
@@ -130,7 +117,7 @@ export default function SettingsScreen() {
 
       const backupJson = JSON.stringify(backupData, null, 2);
       const fileName = `merath-backup-${new Date().toISOString().split('T')[0]}.json`;
-      const fileDir = (FileSystem as unknown as { documentDirectory: string | null }).documentDirectory;
+      const fileDir = FileSystem.documentDirectory;
       if (!fileDir) {
         throw new Error('Cannot access file system');
       }
@@ -155,6 +142,9 @@ export default function SettingsScreen() {
       setIsBackingUp(false);
     }
   }, [t]);
+
+  const appVersion = Constants.expoConfig?.version ?? '1.1.3';
+  const styles = createStyles(theme);
 
   return (
     <ScrollView style={styles.container}>
@@ -266,7 +256,7 @@ export default function SettingsScreen() {
         <Text style={styles.cardTitle}>{t('settings.about') || 'About'}</Text>
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>{t('settings.version') || 'Version'}</Text>
-          <Text style={styles.infoValue}>1.1.3</Text>
+          <Text style={styles.infoValue}>{appVersion}</Text>
         </View>
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>{t('settings.developer') || 'Developer'}</Text>
@@ -277,139 +267,142 @@ export default function SettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-    padding: 16,
-  },
-  header: {
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#2E7D32',
-    fontFamily: 'Inter-Bold',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666666',
-    marginTop: 8,
-    fontFamily: 'Inter-Regular',
-  },
-  card: {
-    marginBottom: 16,
-  },
-  cardTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 8,
-  },
-  cardSubtitle: {
-    fontSize: 14,
-    color: '#666666',
-    marginBottom: 16,
-  },
-  languageGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  languageCard: {
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#DDDDDD',
-    backgroundColor: '#FFFFFF',
-    minWidth: 100,
-    alignItems: 'center',
-  },
-  languageCardActive: {
-    borderColor: '#2E7D32',
-    backgroundColor: '#E8F5E9',
-  },
-  languageText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333333',
-  },
-  languageTextActive: {
-    color: '#2E7D32',
-  },
-  languageSubtext: {
-    fontSize: 12,
-    color: '#666666',
-    marginTop: 2,
-  },
-  settingRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  settingLabel: {
-    fontSize: 16,
-    color: '#333333',
-    fontFamily: 'Inter-Regular',
-  },
-  decimalControl: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  decimalButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#E8F5E9',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  decimalButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2E7D32',
-  },
-  decimalValue: {
-    fontSize: 16,
-    fontWeight: '600',
-    minWidth: 20,
-    textAlign: 'center',
-  },
-  actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    marginBottom: 8,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#DDDDDD',
-  },
-  actionButtonText: {
-    fontSize: 16,
-    marginLeft: 12,
-    fontFamily: 'Inter-Regular',
-  },
-  dangerText: {
-    color: '#F44336',
-  },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 8,
-  },
-  infoLabel: {
-    fontSize: 16,
-    color: '#666666',
-    fontFamily: 'Inter-Regular',
-  },
-  infoValue: {
-    fontSize: 16,
-    color: '#333333',
-    fontFamily: 'Inter-Bold',
-  },
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background.lightVariant,
+      padding: 16,
+    },
+    header: {
+      marginBottom: 24,
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: 'bold',
+      color: theme.colors.primary.main,
+      fontFamily: 'Inter-Bold',
+    },
+    subtitle: {
+      fontSize: 16,
+      color: theme.colors.neutral.main,
+      marginTop: 8,
+      fontFamily: 'Inter-Regular',
+    },
+    card: {
+      marginBottom: 16,
+    },
+    cardTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: theme.colors.neutral.dark300,
+      marginBottom: 8,
+    },
+    cardSubtitle: {
+      fontSize: 14,
+      color: theme.colors.neutral.main,
+      marginBottom: 16,
+    },
+    languageGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+    },
+    languageCard: {
+      paddingVertical: 10,
+      paddingHorizontal: 14,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: theme.colors.neutral.light300,
+      backgroundColor: theme.colors.background.light,
+      minWidth: 100,
+      alignItems: 'center',
+    },
+    languageCardActive: {
+      borderColor: theme.colors.primary.main,
+      backgroundColor: theme.colors.primary.light,
+    },
+    languageText: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.colors.neutral.dark300,
+    },
+    languageTextActive: {
+      color: theme.colors.primary.main,
+    },
+    languageSubtext: {
+      fontSize: 12,
+      color: theme.colors.neutral.main,
+      marginTop: 2,
+    },
+    settingRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: 8,
+    },
+    settingLabel: {
+      fontSize: 16,
+      color: theme.colors.neutral.dark300,
+      fontFamily: 'Inter-Regular',
+    },
+    decimalControl: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+    },
+    decimalButton: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: theme.colors.primary.light,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    decimalButtonText: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: theme.colors.primary.main,
+    },
+    decimalValue: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.colors.neutral.dark300,
+      minWidth: 20,
+      textAlign: 'center',
+    },
+    actionButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 12,
+      marginBottom: 8,
+      backgroundColor: theme.colors.background.light,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: theme.colors.neutral.light300,
+    },
+    actionButtonText: {
+      fontSize: 16,
+      color: theme.colors.neutral.dark300,
+      marginLeft: 12,
+      fontFamily: 'Inter-Regular',
+    },
+    dangerText: {
+      color: theme.colors.error.main,
+    },
+    infoRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingVertical: 8,
+    },
+    infoLabel: {
+      fontSize: 16,
+      color: theme.colors.neutral.main,
+      fontFamily: 'Inter-Regular',
+    },
+    infoValue: {
+      fontSize: 16,
+      color: theme.colors.neutral.dark300,
+      fontFamily: 'Inter-Bold',
+    },
+  });

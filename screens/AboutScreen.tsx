@@ -8,23 +8,30 @@ import {
   Linking,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import Constants from 'expo-constants';
+import { useAppTheme } from '../lib/context/ThemeProvider';
+import type { Theme } from '../lib/design/theme';
 
 interface FeatureItemProps {
   title: string;
   description: string;
+  theme: Theme;
 }
 
 interface MethodItemProps {
   name: string;
   scholar: string;
+  theme: Theme;
 }
 
 interface CaseItemProps {
   name: string;
   description: string;
+  theme: Theme;
 }
 
-function FeatureItem({ title, description }: FeatureItemProps) {
+function FeatureItem({ title, description, theme }: FeatureItemProps) {
+  const styles = createStyles(theme);
   return (
     <View style={styles.featureItem}>
       <View style={styles.featureDot} />
@@ -36,7 +43,8 @@ function FeatureItem({ title, description }: FeatureItemProps) {
   );
 }
 
-function MethodItem({ name, scholar }: MethodItemProps) {
+function MethodItem({ name, scholar, theme }: MethodItemProps) {
+  const styles = createStyles(theme);
   return (
     <View style={styles.methodItem}>
       <Text style={styles.methodName}>{name}</Text>
@@ -45,7 +53,8 @@ function MethodItem({ name, scholar }: MethodItemProps) {
   );
 }
 
-function CaseItem({ name, description }: CaseItemProps) {
+function CaseItem({ name, description, theme }: CaseItemProps) {
+  const styles = createStyles(theme);
   return (
     <View style={styles.caseItem}>
       <Text style={styles.caseName}>{name}</Text>
@@ -55,6 +64,10 @@ function CaseItem({ name, description }: CaseItemProps) {
 }
 
 export default function AboutScreen() {
+  const { theme } = useAppTheme();
+  const appVersion = Constants.expoConfig?.version ?? '1.1.3';
+  const styles = createStyles(theme);
+
   const features = [
     {
       title: 'Islamic Inheritance Calculator',
@@ -117,10 +130,10 @@ export default function AboutScreen() {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <MaterialCommunityIcons name="star-crescent" size={48} color="#2E7D32" />
+        <MaterialCommunityIcons name="star-crescent" size={48} color={theme.colors.primary.main} />
         <Text style={styles.title}>Merath</Text>
         <Text style={styles.subtitle}>Islamic Inheritance Calculator</Text>
-        <Text style={styles.version}>Version 1.1.3</Text>
+        <Text style={styles.version}>Version {appVersion}</Text>
       </View>
 
       <View style={styles.section}>
@@ -130,6 +143,7 @@ export default function AboutScreen() {
             key={index}
             title={feature.title}
             description={feature.description}
+            theme={theme}
           />
         ))}
       </View>
@@ -141,6 +155,7 @@ export default function AboutScreen() {
             key={index}
             name={madhab.name}
             scholar={madhab.scholar}
+            theme={theme}
           />
         ))}
       </View>
@@ -152,6 +167,7 @@ export default function AboutScreen() {
             key={index}
             name={case_.name}
             description={case_.description}
+            theme={theme}
           />
         ))}
       </View>
@@ -173,21 +189,21 @@ export default function AboutScreen() {
           style={styles.contactButton}
           onPress={() => handleContact('email')}
         >
-          <MaterialCommunityIcons name="email" size={24} color="#2E7D32" />
+          <MaterialCommunityIcons name="email" size={24} color={theme.colors.primary.main} />
           <Text style={styles.contactButtonText}>Email Support</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.contactButton}
           onPress={() => handleContact('website')}
         >
-          <MaterialCommunityIcons name="web" size={24} color="#2E7D32" />
+          <MaterialCommunityIcons name="web" size={24} color={theme.colors.primary.main} />
           <Text style={styles.contactButtonText}>Visit Website</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.contactButton}
           onPress={() => handleContact('github')}
         >
-          <MaterialCommunityIcons name="github" size={24} color="#2E7D32" />
+          <MaterialCommunityIcons name="github" size={24} color={theme.colors.primary.main} />
           <Text style={styles.contactButtonText}>GitHub</Text>
         </TouchableOpacity>
       </View>
@@ -201,152 +217,153 @@ export default function AboutScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F9FAFB',
-    padding: 16,
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 32,
-    paddingTop: 16,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#2E7D32',
-    marginTop: 16,
-    fontFamily: 'Inter-Bold',
-  },
-  subtitle: {
-    fontSize: 18,
-    color: '#666666',
-    marginTop: 8,
-    textAlign: 'center',
-    fontFamily: 'Inter-Regular',
-  },
-  version: {
-    fontSize: 14,
-    color: '#999999',
-    marginTop: 4,
-    fontFamily: 'Inter-Regular',
-  },
-  section: {
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 16,
-    fontFamily: 'Inter-Bold',
-  },
-  description: {
-    fontSize: 16,
-    color: '#666666',
-    lineHeight: 24,
-    marginBottom: 12,
-    fontFamily: 'Inter-Regular',
-  },
-  featureItem: {
-    flexDirection: 'row',
-    marginBottom: 16,
-    alignItems: 'flex-start',
-  },
-  featureDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#2E7D32',
-    marginTop: 6,
-    marginRight: 12,
-  },
-  featureContent: {
-    flex: 1,
-  },
-  featureTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 4,
-    fontFamily: 'Inter-Bold',
-  },
-  featureDescription: {
-    fontSize: 14,
-    color: '#666666',
-    lineHeight: 20,
-    fontFamily: 'Inter-Regular',
-  },
-  methodItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 12,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-  },
-  methodName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333333',
-    fontFamily: 'Inter-Bold',
-  },
-  methodScholar: {
-    fontSize: 14,
-    color: '#666666',
-    fontFamily: 'Inter-Regular',
-  },
-  caseItem: {
-    padding: 12,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-  },
-  caseName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 4,
-    fontFamily: 'Inter-Bold',
-  },
-  caseDescription: {
-    fontSize: 14,
-    color: '#666666',
-    lineHeight: 20,
-    fontFamily: 'Inter-Regular',
-  },
-  contactButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    marginBottom: 8,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-  },
-  contactButtonText: {
-    fontSize: 16,
-    marginLeft: 12,
-    color: '#2E7D32',
-    fontFamily: 'Inter-Regular',
-  },
-  footer: {
-    alignItems: 'center',
-    marginTop: 32,
-    marginBottom: 32,
-    padding: 16,
-  },
-  footerText: {
-    fontSize: 16,
-    color: '#666666',
-    textAlign: 'center',
-    fontFamily: 'Inter-Regular',
-  },
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background.lightVariant,
+      padding: 16,
+    },
+    header: {
+      alignItems: 'center',
+      marginBottom: 32,
+      paddingTop: 16,
+    },
+    title: {
+      fontSize: 32,
+      fontWeight: 'bold',
+      color: theme.colors.primary.main,
+      marginTop: 16,
+      fontFamily: 'Inter-Bold',
+    },
+    subtitle: {
+      fontSize: 18,
+      color: theme.colors.neutral.main,
+      marginTop: 8,
+      textAlign: 'center',
+      fontFamily: 'Inter-Regular',
+    },
+    version: {
+      fontSize: 14,
+      color: theme.colors.neutral.light400,
+      marginTop: 4,
+      fontFamily: 'Inter-Regular',
+    },
+    section: {
+      marginBottom: 32,
+    },
+    sectionTitle: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: theme.colors.neutral.dark300,
+      marginBottom: 16,
+      fontFamily: 'Inter-Bold',
+    },
+    description: {
+      fontSize: 16,
+      color: theme.colors.neutral.main,
+      lineHeight: 24,
+      marginBottom: 12,
+      fontFamily: 'Inter-Regular',
+    },
+    featureItem: {
+      flexDirection: 'row',
+      marginBottom: 16,
+      alignItems: 'flex-start',
+    },
+    featureDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: theme.colors.primary.main,
+      marginTop: 6,
+      marginRight: 12,
+    },
+    featureContent: {
+      flex: 1,
+    },
+    featureTitle: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: theme.colors.neutral.dark300,
+      marginBottom: 4,
+      fontFamily: 'Inter-Bold',
+    },
+    featureDescription: {
+      fontSize: 14,
+      color: theme.colors.neutral.main,
+      lineHeight: 20,
+      fontFamily: 'Inter-Regular',
+    },
+    methodItem: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: 12,
+      backgroundColor: theme.colors.background.light,
+      borderRadius: 8,
+      marginBottom: 8,
+      borderWidth: 1,
+      borderColor: theme.colors.neutral.light200,
+    },
+    methodName: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: theme.colors.neutral.dark300,
+      fontFamily: 'Inter-Bold',
+    },
+    methodScholar: {
+      fontSize: 14,
+      color: theme.colors.neutral.main,
+      fontFamily: 'Inter-Regular',
+    },
+    caseItem: {
+      padding: 12,
+      backgroundColor: theme.colors.background.light,
+      borderRadius: 8,
+      marginBottom: 8,
+      borderWidth: 1,
+      borderColor: theme.colors.neutral.light200,
+    },
+    caseName: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: theme.colors.neutral.dark300,
+      marginBottom: 4,
+      fontFamily: 'Inter-Bold',
+    },
+    caseDescription: {
+      fontSize: 14,
+      color: theme.colors.neutral.main,
+      lineHeight: 20,
+      fontFamily: 'Inter-Regular',
+    },
+    contactButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 12,
+      marginBottom: 8,
+      backgroundColor: theme.colors.background.light,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: theme.colors.neutral.light200,
+    },
+    contactButtonText: {
+      fontSize: 16,
+      marginLeft: 12,
+      color: theme.colors.primary.main,
+      fontFamily: 'Inter-Regular',
+    },
+    footer: {
+      alignItems: 'center',
+      marginTop: 32,
+      marginBottom: 32,
+      padding: 16,
+    },
+    footerText: {
+      fontSize: 16,
+      color: theme.colors.neutral.main,
+      textAlign: 'center',
+      fontFamily: 'Inter-Regular',
+    },
+  });

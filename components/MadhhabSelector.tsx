@@ -68,66 +68,6 @@ export function MadhhabSelector({ selectedMadhab = 'hanafi', onSelect }: Madhhab
         })}
       </View>
 
-      {/* Alternative: Dropdown Style (commented out - can switch if preferred) */}
-      {/*
-      <TouchableOpacity
-        style={styles.dropdownButton}
-        onPress={() => setModalVisible(true)}
-      >
-        <View style={styles.dropdownContent}>
-          <View style={[styles.dropdownIcon, { backgroundColor: `${selected?.color}15` }]}>
-            <MaterialCommunityIcons name={selected?.icon ?? 'school'} size={20} color={selected?.color} />
-          </View>
-          <View>
-            <Text style={styles.dropdownText}>{selected?.name}</Text>
-            <Text style={styles.dropdownTextEn}>{selected?.nameEn}</Text>
-          </View>
-        </View>
-        <MaterialCommunityIcons name="chevron-down" size={20} color={theme.colors.neutral.dark200} />
-      </TouchableOpacity>
-
-      <Modal
-        visible={modalVisible}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>اختر المذهب</Text>
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <MaterialCommunityIcons name="close" size={24} color={theme.colors.neutral.dark200} />
-              </TouchableOpacity>
-            </View>
-            <FlatList
-              data={MADHAB_DATA}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.modalItem}
-                  onPress={() => {
-                    onSelect(item.id);
-                    setModalVisible(false);
-                  }}
-                >
-                  <View style={[styles.modalItemIcon, { backgroundColor: `${item.color}15` }]}>
-                    <MaterialCommunityIcons name={item.icon} size={20} color={item.color} />
-                  </View>
-                  <View>
-                    <Text style={styles.modalItemText}>{item.name}</Text>
-                    <Text style={styles.modalItemTextEn}>{item.nameEn}</Text>
-                  </View>
-                  {selectedMadhab === item.id && (
-                    <MaterialCommunityIcons name="check" size={20} color={item.color} style={styles.modalItemCheck} />
-                  )}
-                </TouchableOpacity>
-              )}
-            />
-          </View>
-        </View>
-      </Modal>
-      */}
     </View>
   );
 }
@@ -148,7 +88,7 @@ const createStyles = (theme: Theme) =>
       width: '48%',
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: '#fff',
+      backgroundColor: theme.colors.background.light,
       borderRadius: 12,
       padding: 12,
       borderWidth: 1,
@@ -157,7 +97,7 @@ const createStyles = (theme: Theme) =>
     },
     gridItemSelected: {
       borderWidth: 2,
-      backgroundColor: '#f8fafc',
+      backgroundColor: theme.colors.background.lightVariant,
     },
     iconContainer: {
       width: 36,
@@ -189,91 +129,6 @@ const createStyles = (theme: Theme) =>
       borderRadius: 9,
       justifyContent: 'center',
       alignItems: 'center',
-    },
-    // Dropdown Style (commented out)
-    dropdownButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      backgroundColor: '#fff',
-      borderRadius: 12,
-      padding: 12,
-      borderWidth: 1,
-      borderColor: theme.colors.neutral.light200,
-    },
-    dropdownContent: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 8,
-    },
-    dropdownIcon: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    dropdownText: {
-      fontSize: 14,
-      fontWeight: '600',
-      color: theme.colors.neutral.dark300,
-    },
-    dropdownTextEn: {
-      fontSize: 10,
-      color: theme.colors.neutral.dark200,
-    },
-    modalOverlay: {
-      flex: 1,
-      backgroundColor: 'rgba(0,0,0,0.5)',
-      justifyContent: 'flex-end',
-    },
-    modalContent: {
-      backgroundColor: '#fff',
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-      padding: 20,
-      maxHeight: '80%',
-    },
-    modalHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 16,
-      paddingBottom: 12,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.neutral.light200,
-    },
-    modalTitle: {
-      fontSize: 16,
-      fontWeight: '600',
-      color: theme.colors.neutral.dark300,
-    },
-    modalItem: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      padding: 16,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.neutral.light100,
-    },
-    modalItemIcon: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginRight: 12,
-    },
-    modalItemText: {
-      fontSize: 14,
-      fontWeight: '600',
-      color: theme.colors.neutral.dark300,
-    },
-    modalItemTextEn: {
-      fontSize: 11,
-      color: theme.colors.neutral.dark200,
-    },
-    modalItemCheck: {
-      marginLeft: 'auto',
     },
   });
 
