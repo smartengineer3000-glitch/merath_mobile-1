@@ -23,7 +23,13 @@
     "copy": "Copy",
     "share": "Share",
     "resetConfirmationTitle": "Confirm Reset",
-    "resetConfirmationMessage": "Are you sure you want to reset all data? This action cannot be undone."
+    "resetConfirmationMessage": "Are you sure you want to reset all data? This action cannot be undone.",
+    "subtitle": "Calculate Islamic inheritance shares",
+    "reset": "Reset",
+    "resetAllFields": "Reset all fields",
+    "calculationFailed": "Calculation failed. Please try again.",
+    "calculatingInheritance": "Calculating inheritance",
+    "calculateInheritance": "Calculate inheritance"
   },
 
   "estate": {
@@ -67,6 +73,8 @@
 
   "madhab": {
     "title": "School of Law (Madhab)",
+    "selection": "Madhab Selection",
+    "selectionSubtitle": "Choose your school of Islamic jurisprudence",
     "hanafi": "Hanafi",
     "maliki": "Maliki",
     "shafii": "Shafi'i",
@@ -143,6 +151,17 @@
     "about": "About App",
     "version": "Version",
     "developer": "Developer"
+  },
+
+  "comparison": {
+    "title": "Madhhab Comparison",
+    "subtitle": "Compare inheritance calculations across Islamic schools",
+    "compare": "Compare",
+    "compareSubtitle": "Run calculations across all four madhabs",
+    "comparing": "Comparing...",
+    "compareAcross": "Compare Across Madhabs",
+    "results": "Comparison Results",
+    "failed": "Comparison failed. Please try again."
   },
 
   "about": {

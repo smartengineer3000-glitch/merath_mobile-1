@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { MaterialCommunityIcons } from '../lib/icons';
 import { useAppTheme } from '../lib/context/ThemeProvider';
+import type { Theme } from '../lib/design/theme';
 
 export interface LoadingScreenProps {
   message?: string;
@@ -142,7 +143,7 @@ export function LoadingScreen({
   );
 }
 
-const createStyles = (theme: any) =>
+const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,

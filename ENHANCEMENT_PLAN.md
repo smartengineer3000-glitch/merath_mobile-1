@@ -390,3 +390,31 @@ Added `accessibilityRole="button"` and `accessibilityLabel="Try again"` to the e
 - **Lint**: `expo lint` — PASS (0 warnings)
 - **Tests**: 259 passing, 8 skipped (0 failures)
 - **Files Modified**: 12 files across components/, screens/, navigation/, lib/i18n/
+
+---
+
+## Phase 10: ResultsDisplay Theme Integration [DONE]
+
+Converted `ResultsDisplay.tsx` from 133 hardcoded color literals to theme-aware styling. Changed static `StyleSheet.create({})` to dynamic `createStyles(theme: Theme)` pattern using `useAppTheme()` hook. All color properties now reference `theme.colors.*` tokens from `lib/design/theme.ts`.
+
+## Phase 11: Fix Remaining `any` Types [DONE]
+
+Replaced all remaining `any` type annotations with proper TypeScript types:
+- `HeirSelector.tsx`: `createStyles(theme: any)` → `(theme: Theme)`
+- `LoadingScreen.tsx`: `createStyles(theme: any)` → `(theme: Theme)`
+- `ResultsDisplay.tsx`: `.map()` callback `step: { stepNumber; title; description }` → `step: CalculationStep`
+- `BackupService.ts`: `auditLog: any[]` → `auditLog: DBAuditLogEntry[]`
+- `PDFExporter.ts`: `(step: any)` → `(step: CalculationStep)`
+
+## Phase 12: Hardcoded Colors in Components [DONE]
+
+Replaced remaining hardcoded color literals with theme tokens:
+- `HeirSelector.tsx`: 6 `#fff` literals → `theme.colors.background.light`
+- `App.tsx`: 4 hardcoded colors (`#fff`, `#999`, `#1976d2`) → inline theme overrides using `theme.colors.*`
+
+## Phase 13: i18n Completeness [DONE]
+
+Replaced all hardcoded English strings in screens with `t()` calls:
+- `CalculatorScreen.tsx`: 11 hardcoded strings → i18n keys (titles, alerts, button labels, accessibility labels)
+- `MadhhabComparisonScreen.tsx`: 7 hardcoded strings → i18n keys
+- Added new translation keys (`calculator.subtitle`, `calculator.reset`, `madhab.selection`, `comparison.*`, etc.) to all 6 locale files (en, ar, ur, tr, fr, de)

@@ -11,6 +11,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { useMadhab } from '../lib/context/MadhabContext';
 import { useAppTheme } from '../lib/context/ThemeProvider';
 import { useCalculator } from '../lib/hooks/useCalculator';
@@ -24,6 +25,7 @@ import type { Theme } from '../lib/design/theme';
 import type { EstateData, HeirsData } from '../lib/inheritance/types';
 
 export default function CalculatorScreen() {
+  const { t } = useTranslation();
   const { madhab, setMadhab } = useMadhab();
   const { theme } = useAppTheme();
   const { calculateWithMethod } = useCalculator();
@@ -48,13 +50,13 @@ export default function CalculatorScreen() {
 
   const handleCalculate = useCallback(async () => {
     if (currentEstate.total <= 0) {
-      Alert.alert('Error', 'Please enter a valid estate value');
+      Alert.alert(t('common.error'), t('results.invalidEstate'));
       return;
     }
 
     const hasHeirs = Object.values(currentHeirs).some(v => (v ?? 0) > 0);
     if (!hasHeirs) {
-      Alert.alert('Error', 'Please select at least one heir');
+      Alert.alert(t('common.error'), t('results.noHeirs'));
       return;
     }
 
@@ -66,7 +68,7 @@ export default function CalculatorScreen() {
         setShowResults(true);
       }
     } catch (error) {
-      Alert.alert('Error', 'Calculation failed. Please try again.');
+      Alert.alert(t('common.error'), t('calculator.calculationFailed'));
     } finally {
       setIsCalculating(false);
     }
@@ -93,13 +95,13 @@ export default function CalculatorScreen() {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.header}>
-            <Text style={styles.title}>Inheritance Calculator</Text>
-            <Text style={styles.subtitle}>Calculate Islamic inheritance shares</Text>
+            <Text style={styles.title}>{t('calculator.title')}</Text>
+            <Text style={styles.subtitle}>{t('calculator.subtitle')}</Text>
           </View>
 
           <Card style={styles.card}>
-            <Text style={styles.cardTitle}>Madhab Selection</Text>
-            <Text style={styles.cardSubtitle}>Choose your school of Islamic jurisprudence</Text>
+            <Text style={styles.cardTitle}>{t('madhab.selection')}</Text>
+            <Text style={styles.cardSubtitle}>{t('madhab.selectionSubtitle')}</Text>
             <MadhhabSelector selectedMadhab={madhab} onSelect={setMadhab} />
           </Card>
 
@@ -117,22 +119,22 @@ export default function CalculatorScreen() {
               onPress={handleCalculate}
               disabled={isCalculating}
               accessibilityRole="button"
-              accessibilityLabel={isCalculating ? 'Calculating inheritance' : 'Calculate inheritance'}
+              accessibilityLabel={isCalculating ? t('calculator.calculatingInheritance') : t('calculator.calculateInheritance')}
               accessibilityState={{ disabled: isCalculating }}
             >
               <MaterialCommunityIcons name="calculator" size={20} color={theme.colors.background.light} />
               <Text style={styles.calculateButtonText}>
-                {isCalculating ? 'Calculating...' : 'Calculate'}
+                {isCalculating ? t('calculator.calculating') : t('calculator.calculate')}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.resetButton}
               onPress={handleReset}
               accessibilityRole="button"
-              accessibilityLabel="Reset all fields"
+              accessibilityLabel={t('calculator.resetAllFields')}
             >
               <MaterialCommunityIcons name="refresh" size={20} color={theme.colors.primary.main} />
-              <Text style={styles.resetButtonText}>Reset</Text>
+              <Text style={styles.resetButtonText}>{t('calculator.reset')}</Text>
             </TouchableOpacity>
           </View>
 

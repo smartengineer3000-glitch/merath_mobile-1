@@ -31,7 +31,8 @@ import * as FileSystem from 'expo-file-system';
 import ViewShot from 'react-native-view-shot';
 import { useResults, useCalculator, type ComparisonResult } from '../lib/inheritance/hooks';
 import { useAppTheme } from '../lib/context/ThemeProvider';
-import type { CalculationResult } from '../lib/inheritance/types';
+import type { CalculationResult, CalculationStep } from '../lib/inheritance/types';
+import type { Theme } from '../lib/design/theme';
 import { PDFExporter } from '../lib/export/PDFExporter';
 import { ErrorLogger } from '../lib/errors/ErrorHandler';
 
@@ -135,6 +136,8 @@ const SharePreviewModal = ({
     }
   };
 
+  const styles = createStyles(theme);
+
   return (
     <Modal
       visible={visible}
@@ -150,7 +153,7 @@ const SharePreviewModal = ({
               <Text style={styles.previewTitle}>{t('results.previewTitle', { format: getFormatName() })}</Text>
             </View>
             <TouchableOpacity onPress={onClose}>
-              <MaterialCommunityIcons name="close" size={24} color="#666" />
+              <MaterialCommunityIcons name="close" size={24} color={theme.colors.neutral.main} />
             </TouchableOpacity>
           </View>
 
@@ -194,6 +197,7 @@ const SharePreviewModal = ({
 export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
   const { t } = useTranslation();
   const { theme } = useAppTheme();
+  const styles = createStyles(theme);
   const viewShotRef = useRef<ViewShot>(null);
   const hooksResults = useResults();
   const calculator = useCalculator();
@@ -720,7 +724,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
             style={styles.headerShareButton}
             onPress={() => setShareModalVisible(true)}
           >
-            <MaterialCommunityIcons name="share" size={20} color="#fff" />
+            <MaterialCommunityIcons name="share" size={20} color={theme.colors.background.light} />
             <Text style={styles.headerShareText}>{t('calculator.share')}</Text>
           </TouchableOpacity>
         </View>
@@ -767,7 +771,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
             </View>
 
             {/* Table Rows with Animated Numbers */}
-            {currentResult.shares && currentResult.shares.map((share: any, index: number) => {
+            {currentResult.shares && currentResult.shares.map((share: CalculationResult['shares'][number], index: number) => {
               const percentage = (share.amount / totalAmount) * 100;
               
               return (
@@ -806,7 +810,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
               <Text style={styles.summaryLabel}>{t('results.trustLevel')}:</Text>
               <Text style={[
                 styles.summaryValue,
-                { color: currentResult.confidence > 90 ? '#4caf50' : '#ff9800' }
+                { color: currentResult.confidence > 90 ? theme.colors.success.main : theme.colors.warning.main }
               ]}>
                 <AnimatedNumber value={currentResult.confidence} format={false} />%
               </Text>
@@ -819,7 +823,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{t('results.calculationSteps')}</Text>
             <ScrollView style={styles.stepsContainer} scrollEnabled={true}>
-              {currentResult.steps.map((step: any, index: number) => (
+              {currentResult.steps.map((step: CalculationStep, index: number) => (
                 <View key={index} style={styles.step}>
                   <View style={styles.stepHeader}>
                     <Text style={styles.stepNumber}>{step.stepNumber}</Text>
@@ -837,7 +841,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{t('results.previousResults')}</Text>
             <ScrollView style={styles.historyContainer} scrollEnabled={true}>
-              {previousResults.map((prevResult: any, index: number) => (
+              {previousResults.map((prevResult: CalculationResult, index: number) => (
                 <TouchableOpacity
                   key={index}
                   style={[
@@ -848,7 +852,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
                 >
                   <Text style={styles.historyItemMadhab}>{prevResult.madhhabName}</Text>
                   <Text style={styles.historyItemAmount}>
-                    {prevResult.shares.reduce((sum: number, s: any) => sum + s.amount, 0).toFixed(0)} ر.س
+                    {prevResult.shares.reduce((sum: number, s: CalculationResult['shares'][number]) => sum + s.amount, 0).toFixed(0)} ر.س
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -976,7 +980,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
               style={styles.exportComparisonButton}
               onPress={handleExportComparison}
             >
-              <MaterialCommunityIcons name="file-pdf-box" size={20} color="#fff" />
+              <MaterialCommunityIcons name="file-pdf-box" size={20} color={theme.colors.background.light} />
               <Text style={styles.exportComparisonText}>تصدير تقرير المقارنة</Text>
             </TouchableOpacity>
           </View>
@@ -1004,13 +1008,13 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>مشاركة النتائج</Text>
               <TouchableOpacity onPress={() => setShareModalVisible(false)}>
-                <MaterialCommunityIcons name="close" size={24} color="#666" />
+                <MaterialCommunityIcons name="close" size={24} color={theme.colors.neutral.main} />
               </TouchableOpacity>
             </View>
 
             {shareError && (
               <View style={styles.modalError}>
-                <MaterialCommunityIcons name="alert-circle" size={20} color="#d32f2f" />
+                <MaterialCommunityIcons name="alert-circle" size={20} color={theme.colors.error.dark} />
                 <Text style={styles.modalErrorText}>{shareError}</Text>
               </View>
             )}
@@ -1021,11 +1025,11 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
                 onPress={() => showPreview('pdf')}
                 disabled={shareStatus !== 'idle'}
               >
-                <View style={[styles.shareIcon, { backgroundColor: '#d32f2f' }]}>
+                <View style={[styles.shareIcon, { backgroundColor: theme.colors.error.dark }]}>
                   {shareFormat === 'pdf' && shareStatus === 'generating' ? (
-                    <ActivityIndicator size="small" color="#fff" />
+                    <ActivityIndicator size="small" color={theme.colors.background.light} />
                   ) : (
-                    <MaterialCommunityIcons name="file-pdf-box" size={24} color="#fff" />
+                    <MaterialCommunityIcons name="file-pdf-box" size={24} color={theme.colors.background.light} />
                   )}
                 </View>
                 <Text style={styles.shareOptionText}>PDF</Text>
@@ -1037,11 +1041,11 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
                 onPress={() => showPreview('image')}
                 disabled={shareStatus !== 'idle'}
               >
-                <View style={[styles.shareIcon, { backgroundColor: '#2196f3' }]}>
+                <View style={[styles.shareIcon, { backgroundColor: theme.colors.info.main }]}>
                   {shareFormat === 'image' && shareStatus === 'generating' ? (
-                    <ActivityIndicator size="small" color="#fff" />
+                    <ActivityIndicator size="small" color={theme.colors.background.light} />
                   ) : (
-                    <MaterialCommunityIcons name="image" size={24} color="#fff" />
+                    <MaterialCommunityIcons name="image" size={24} color={theme.colors.background.light} />
                   )}
                 </View>
                 <Text style={styles.shareOptionText}>صورة</Text>
@@ -1053,11 +1057,11 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
                 onPress={() => showPreview('text')}
                 disabled={shareStatus !== 'idle'}
               >
-                <View style={[styles.shareIcon, { backgroundColor: '#4caf50' }]}>
+                <View style={[styles.shareIcon, { backgroundColor: theme.colors.success.main }]}>
                   {shareFormat === 'text' && shareStatus === 'generating' ? (
-                    <ActivityIndicator size="small" color="#fff" />
+                    <ActivityIndicator size="small" color={theme.colors.background.light} />
                   ) : (
-                    <MaterialCommunityIcons name="text" size={24} color="#fff" />
+                    <MaterialCommunityIcons name="text" size={24} color={theme.colors.background.light} />
                   )}
                 </View>
                 <Text style={styles.shareOptionText}>نص</Text>
@@ -1069,11 +1073,11 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
                 onPress={() => showPreview('clipboard')}
                 disabled={shareStatus !== 'idle'}
               >
-                <View style={[styles.shareIcon, { backgroundColor: '#ff9800' }]}>
+                <View style={[styles.shareIcon, { backgroundColor: theme.colors.warning.main }]}>
                   {shareFormat === 'clipboard' && shareStatus === 'generating' ? (
-                    <ActivityIndicator size="small" color="#fff" />
+                    <ActivityIndicator size="small" color={theme.colors.background.light} />
                   ) : (
-                    <MaterialCommunityIcons name="content-copy" size={24} color="#fff" />
+                    <MaterialCommunityIcons name="content-copy" size={24} color={theme.colors.background.light} />
                   )}
                 </View>
                 <Text style={styles.shareOptionText}>نسخ</Text>
@@ -1083,7 +1087,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
 
             {shareStatus === 'success' && (
               <View style={styles.modalSuccess}>
-                <MaterialCommunityIcons name="check-circle" size={20} color="#4caf50" />
+                <MaterialCommunityIcons name="check-circle" size={20} color={theme.colors.success.main} />
                 <Text style={styles.modalSuccessText}>تمت المشاركة بنجاح</Text>
               </View>
             )}
@@ -1111,639 +1115,636 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#eff5fb'
-  },
-  header: {
-    backgroundColor: '#ffffff',
-    paddingHorizontal: 18,
-    paddingTop: 18,
-    paddingBottom: 20,
-    borderRadius: 20,
-    marginHorizontal: 12,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4,
-    position: 'relative',
-  },
-  madhhabBadge: {
-    backgroundColor: '#e3f2fd',
-    borderRadius: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    alignSelf: 'flex-end',
-    marginBottom: 10,
-  },
-  madhhabBadgeText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#1976d2'
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#111827',
-    textAlign: 'center',
-    marginBottom: 6,
-  },
-  calculationTime: {
-    fontSize: 12,
-    color: '#6b7280',
-    textAlign: 'center',
-  },
-  headerShareButton: {
-    position: 'absolute',
-    top: 16,
-    right: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#1976d2',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 999,
-    gap: 6,
-    shadowColor: '#1976d2',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  headerShareText: {
-    color: '#fff',
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  section: {
-    marginHorizontal: 12,
-    marginBottom: 14,
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 2,
-  },
-  sectionTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 12,
-    letterSpacing: 0.2,
-    textAlign: 'right'
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-    gap: 10,
-  },
-  emptyState: {
-    paddingVertical: 40,
-    alignItems: 'center'
-  },
-  emptyStateTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 6
-  },
-  emptyStateText: {
-    fontSize: 12,
-    color: '#999'
-  },
-  specialCases: {
-    backgroundColor: '#fff3e0',
-    borderRadius: 4,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ffb74d'
-  },
-  specialCaseItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 4
-  },
-  specialCaseLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#333'
-  },
-  specialCaseValue: {
-    fontSize: 12,
-    color: '#ff9800',
-    fontWeight: '600'
-  },
-  hijabContainer: {
-    marginTop: 8,
-    paddingTop: 8,
-    borderTopWidth: 1,
-    borderTopColor: '#ffe0b2'
-  },
-  hijabLabel: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 4
-  },
-  hijabType: {
-    fontSize: 11,
-    color: '#666',
-    marginVertical: 2
-  },
-  table: {
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    borderRadius: 12,
-    overflow: 'hidden'
-  },
-  tableHeader: {
-    flexDirection: 'row',
-    backgroundColor: '#1976d2',
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-  },
-  tableHeaderCell: {
-    flex: 1,
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#fff',
-    textAlign: 'center'
-  },
-  tableRow: {
-    flexDirection: 'row',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
-    backgroundColor: '#f8fafc'
-  },
-  tableRowAlternate: {
-    backgroundColor: '#ffffff'
-  },
-  tableCell: {
-    flex: 1,
-    fontSize: 12,
-    color: '#111827',
-    textAlign: 'center'
-  },
-  summaryContainer: {
-    backgroundColor: '#e8f5e9',
-    borderRadius: 4,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#81c784'
-  },
-  summaryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 6
-  },
-  summaryLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: '#333'
-  },
-  summaryValue: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#2e7d32'
-  },
-  stepsContainer: {
-    maxHeight: 200
-  },
-  step: {
-    backgroundColor: '#f5f5f5',
-    borderRadius: 4,
-    padding: 10,
-    marginBottom: 8,
-    borderLeftWidth: 3,
-    borderLeftColor: '#1976d2'
-  },
-  stepHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6
-  },
-  stepNumber: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#1976d2',
-    marginRight: 8
-  },
-  stepTitle: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#333',
-    flex: 1
-  },
-  stepDescription: {
-    fontSize: 11,
-    color: '#666',
-    textAlign: 'right'
-  },
-  historyContainer: {
-    maxHeight: 150
-  },
-  historyItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: '#f9f9f9',
-    borderRadius: 4,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    marginBottom: 6,
-    borderWidth: 2,
-    borderColor: 'transparent'
-  },
-  historyItemSelected: {
-    backgroundColor: '#e3f2fd',
-    borderColor: '#1976d2'
-  },
-  historyItemMadhab: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#1976d2'
-  },
-  historyItemAmount: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#333'
-  },
-  comparisonButton: {
-    marginHorizontal: 12,
-    marginBottom: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    backgroundColor: '#e3f2fd',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#1976d2',
-    alignItems: 'center',
-  },
-  comparisonButtonText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#1976d2',
-    textAlign: 'center'
-  },
-  statsContainer: {
-    backgroundColor: '#f3e5f5',
-    borderRadius: 12,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: '#ce93d8'
-  },
-  statRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 6
-  },
-  statLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: '#333'
-  },
-  statValue: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#7b1fa2'
-  },
-  comparisonCard: {
-    backgroundColor: '#f8f9fa',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
-  comparisonTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#1976d2',
-    marginBottom: 8,
-    textAlign: 'right',
-  },
-  comparisonSummary: {
-    backgroundColor: '#fff',
-    borderRadius: 6,
-    padding: 10,
-    marginBottom: 10,
-  },
-  comparisonStatus: {
-    fontSize: 13,
-    fontWeight: '600',
-    marginBottom: 6,
-    textAlign: 'right',
-  },
-  comparisonIdentical: {
-    color: '#4caf50',
-  },
-  comparisonMinor: {
-    color: '#ff9800',
-  },
-  comparisonMajor: {
-    color: '#d32f2f',
-  },
-  comparisonRecommendation: {
-    fontSize: 12,
-    color: '#666',
-    fontStyle: 'italic',
-    textAlign: 'right',
-  },
-  differencesList: {
-    marginTop: 8,
-  },
-  differenceItem: {
-    backgroundColor: '#fff',
-    borderRadius: 6,
-    padding: 8,
-    marginBottom: 6,
-    borderLeftWidth: 3,
-    borderLeftColor: '#1976d2',
-  },
-  differenceHeir: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 4,
-    textAlign: 'right',
-  },
-  differenceAmount: {
-    fontSize: 12,
-    fontWeight: '700',
-    marginBottom: 2,
-    textAlign: 'right',
-  },
-  differencePositive: {
-    color: '#4caf50',
-  },
-  differenceNegative: {
-    color: '#d32f2f',
-  },
-  differenceExplanation: {
-    fontSize: 11,
-    color: '#666',
-    fontStyle: 'italic',
-    textAlign: 'right',
-  },
-  noDifferences: {
-    fontSize: 12,
-    color: '#4caf50',
-    textAlign: 'center',
-    paddingVertical: 8,
-  },
-  exportComparisonButton: {
-    backgroundColor: '#1976d2',
-    borderRadius: 14,
-    paddingVertical: 14,
-    paddingHorizontal: 18,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    marginTop: 12,
-  },
-  exportComparisonText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#fff',
-  },
-  closeButton: {
-    marginHorizontal: 12,
-    marginTop: 14,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    backgroundColor: '#d32f2f',
-    borderRadius: 14,
-    alignItems: 'center'
-  },
-  closeButtonText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#fff'
-  },
-  // Modal Styles
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 20,
-    minHeight: 300,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#333',
-  },
-  modalError: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#ffebee',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 16,
-    gap: 8,
-  },
-  modalErrorText: {
-    fontSize: 13,
-    color: '#d32f2f',
-    flex: 1,
-  },
-  shareOptions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  shareOption: {
-    width: '48%',
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    elevation: 2,
-  },
-  shareOptionDisabled: {
-    opacity: 0.45,
-  },
-  shareIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  shareOptionText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 4,
-  },
-  shareOptionDesc: {
-    fontSize: 11,
-    color: '#6b7280',
-    textAlign: 'center',
-    lineHeight: 16,
-  },
-  modalSuccess: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#e8f5e9',
-    padding: 14,
-    borderRadius: 14,
-    marginBottom: 16,
-    gap: 8,
-  },
-  modalSuccessText: {
-    fontSize: 13,
-    color: '#2e7d32',
-    flex: 1,
-  },
-  modalCancelButton: {
-    paddingVertical: 14,
-    borderRadius: 14,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    backgroundColor: '#f9fafb',
-  },
-  modalCancelButtonText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#374151',
-  },
-  // ===== FIX M6: Preview modal styles =====
-  previewOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  previewContent: {
-    width: '100%',
-    maxWidth: 400,
-    maxHeight: '80%',
-    borderRadius: 20,
-    overflow: 'hidden',
-  },
-  previewHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  previewHeaderLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  previewTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-  },
-  previewScroll: {
-    maxHeight: 300,
-  },
-  previewHTML: {
-    padding: 16,
-    backgroundColor: '#f5f5f5',
-    margin: 16,
-    borderRadius: 8,
-  },
-  previewHTMLText: {
-    fontSize: 11,
-    color: '#666',
-    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
-  },
-  previewImagePlaceholder: {
-    height: 200,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    margin: 16,
-    borderRadius: 8,
-    gap: 12,
-  },
-  previewImageText: {
-    fontSize: 14,
-    color: '#999',
-  },
-  previewText: {
-    padding: 16,
-    backgroundColor: '#f5f5f5',
-    margin: 16,
-    borderRadius: 8,
-  },
-  previewTextContent: {
-    fontSize: 12,
-    color: '#333',
-    lineHeight: 18,
-    textAlign: 'right',
-  },
-  previewActions: {
-    flexDirection: 'row',
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
-    gap: 12,
-  },
-  previewButton: {
-    flex: 1,
-    paddingVertical: 14,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  previewCancelButton: {
-    backgroundColor: '#f5f5f5',
-  },
-  previewConfirmButton: {
-    // Dynamic color from theme
-  },
-  previewCancelText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#666',
-  },
-  previewConfirmText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#fff',
-  },
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background.lightVariant,
+    },
+    header: {
+      backgroundColor: theme.colors.background.light,
+      paddingHorizontal: 18,
+      paddingTop: 18,
+      paddingBottom: 20,
+      borderRadius: 20,
+      marginHorizontal: 12,
+      marginBottom: 16,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.08,
+      shadowRadius: 12,
+      elevation: 4,
+      position: 'relative',
+    },
+    madhhabBadge: {
+      backgroundColor: theme.colors.info.light,
+      borderRadius: 16,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      alignSelf: 'flex-end',
+      marginBottom: 10,
+    },
+    madhhabBadgeText: {
+      fontSize: 12,
+      fontWeight: '700',
+      color: theme.colors.info.main,
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: theme.colors.neutral.black,
+      textAlign: 'center',
+      marginBottom: 6,
+    },
+    calculationTime: {
+      fontSize: 12,
+      color: theme.colors.neutral.main,
+      textAlign: 'center',
+    },
+    headerShareButton: {
+      position: 'absolute',
+      top: 16,
+      right: 16,
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.colors.info.main,
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: 999,
+      gap: 6,
+      shadowColor: theme.colors.info.main,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 8,
+      elevation: 3,
+    },
+    headerShareText: {
+      color: theme.colors.background.light,
+      fontSize: 13,
+      fontWeight: '700',
+    },
+    section: {
+      marginHorizontal: 12,
+      marginBottom: 14,
+      backgroundColor: theme.colors.background.light,
+      borderRadius: 16,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: theme.colors.neutral.light200,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.05,
+      shadowRadius: 10,
+      elevation: 2,
+    },
+    sectionTitle: {
+      fontSize: 15,
+      fontWeight: '700',
+      color: theme.colors.neutral.black,
+      marginBottom: 12,
+      letterSpacing: 0.2,
+      textAlign: 'right',
+    },
+    sectionHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 12,
+      gap: 10,
+    },
+    emptyState: {
+      paddingVertical: 40,
+      alignItems: 'center',
+    },
+    emptyStateTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.colors.neutral.dark300,
+      marginBottom: 6,
+    },
+    emptyStateText: {
+      fontSize: 12,
+      color: theme.colors.neutral.light400,
+    },
+    specialCases: {
+      backgroundColor: theme.colors.warning.light,
+      borderRadius: 4,
+      padding: 10,
+      borderWidth: 1,
+      borderColor: theme.colors.warning.main,
+    },
+    specialCaseItem: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingVertical: 4,
+    },
+    specialCaseLabel: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: theme.colors.neutral.dark300,
+    },
+    specialCaseValue: {
+      fontSize: 12,
+      color: theme.colors.warning.main,
+      fontWeight: '600',
+    },
+    hijabContainer: {
+      marginTop: 8,
+      paddingTop: 8,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.warning.light,
+    },
+    hijabLabel: {
+      fontSize: 11,
+      fontWeight: '600',
+      color: theme.colors.neutral.dark300,
+      marginBottom: 4,
+    },
+    hijabType: {
+      fontSize: 11,
+      color: theme.colors.neutral.main,
+      marginVertical: 2,
+    },
+    table: {
+      borderWidth: 1,
+      borderColor: theme.colors.neutral.light200,
+      borderRadius: 12,
+      overflow: 'hidden',
+    },
+    tableHeader: {
+      flexDirection: 'row',
+      backgroundColor: theme.colors.info.main,
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+    },
+    tableHeaderCell: {
+      flex: 1,
+      fontSize: 12,
+      fontWeight: '700',
+      color: theme.colors.background.light,
+      textAlign: 'center',
+    },
+    tableRow: {
+      flexDirection: 'row',
+      paddingVertical: 12,
+      paddingHorizontal: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.neutral.light200,
+      backgroundColor: theme.colors.neutral.light50,
+    },
+    tableRowAlternate: {
+      backgroundColor: theme.colors.background.light,
+    },
+    tableCell: {
+      flex: 1,
+      fontSize: 12,
+      color: theme.colors.neutral.black,
+      textAlign: 'center',
+    },
+    summaryContainer: {
+      backgroundColor: theme.colors.success.light,
+      borderRadius: 4,
+      padding: 10,
+      borderWidth: 1,
+      borderColor: theme.colors.success.main,
+    },
+    summaryRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingVertical: 6,
+    },
+    summaryLabel: {
+      fontSize: 12,
+      fontWeight: '500',
+      color: theme.colors.neutral.dark300,
+    },
+    summaryValue: {
+      fontSize: 12,
+      fontWeight: '700',
+      color: theme.colors.primary.main,
+    },
+    stepsContainer: {
+      maxHeight: 200,
+    },
+    step: {
+      backgroundColor: theme.colors.neutral.light100,
+      borderRadius: 4,
+      padding: 10,
+      marginBottom: 8,
+      borderLeftWidth: 3,
+      borderLeftColor: theme.colors.info.main,
+    },
+    stepHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 6,
+    },
+    stepNumber: {
+      fontSize: 12,
+      fontWeight: '700',
+      color: theme.colors.info.main,
+      marginRight: 8,
+    },
+    stepTitle: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: theme.colors.neutral.dark300,
+      flex: 1,
+    },
+    stepDescription: {
+      fontSize: 11,
+      color: theme.colors.neutral.main,
+      textAlign: 'right',
+    },
+    historyContainer: {
+      maxHeight: 150,
+    },
+    historyItem: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      backgroundColor: theme.colors.neutral.light50,
+      borderRadius: 4,
+      paddingVertical: 10,
+      paddingHorizontal: 10,
+      marginBottom: 6,
+      borderWidth: 2,
+      borderColor: 'transparent',
+    },
+    historyItemSelected: {
+      backgroundColor: theme.colors.info.light,
+      borderColor: theme.colors.info.main,
+    },
+    historyItemMadhab: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: theme.colors.info.main,
+    },
+    historyItemAmount: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: theme.colors.neutral.dark300,
+    },
+    comparisonButton: {
+      marginHorizontal: 12,
+      marginBottom: 12,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      backgroundColor: theme.colors.info.light,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: theme.colors.info.main,
+      alignItems: 'center',
+    },
+    comparisonButtonText: {
+      fontSize: 13,
+      fontWeight: '700',
+      color: theme.colors.info.main,
+      textAlign: 'center',
+    },
+    statsContainer: {
+      backgroundColor: theme.colors.secondary.light,
+      borderRadius: 12,
+      padding: 14,
+      borderWidth: 1,
+      borderColor: theme.colors.secondary.light200,
+    },
+    statRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingVertical: 6,
+    },
+    statLabel: {
+      fontSize: 12,
+      fontWeight: '500',
+      color: theme.colors.neutral.dark300,
+    },
+    statValue: {
+      fontSize: 12,
+      fontWeight: '700',
+      color: theme.colors.secondary.dark,
+    },
+    comparisonCard: {
+      backgroundColor: theme.colors.neutral.light50,
+      borderRadius: 8,
+      padding: 12,
+      marginBottom: 12,
+      borderWidth: 1,
+      borderColor: theme.colors.neutral.light200,
+    },
+    comparisonTitle: {
+      fontSize: 14,
+      fontWeight: '700',
+      color: theme.colors.info.main,
+      marginBottom: 8,
+      textAlign: 'right',
+    },
+    comparisonSummary: {
+      backgroundColor: theme.colors.background.light,
+      borderRadius: 6,
+      padding: 10,
+      marginBottom: 10,
+    },
+    comparisonStatus: {
+      fontSize: 13,
+      fontWeight: '600',
+      marginBottom: 6,
+      textAlign: 'right',
+    },
+    comparisonIdentical: {
+      color: theme.colors.success.main,
+    },
+    comparisonMinor: {
+      color: theme.colors.warning.main,
+    },
+    comparisonMajor: {
+      color: theme.colors.error.dark,
+    },
+    comparisonRecommendation: {
+      fontSize: 12,
+      color: theme.colors.neutral.main,
+      fontStyle: 'italic',
+      textAlign: 'right',
+    },
+    differencesList: {
+      marginTop: 8,
+    },
+    differenceItem: {
+      backgroundColor: theme.colors.background.light,
+      borderRadius: 6,
+      padding: 8,
+      marginBottom: 6,
+      borderLeftWidth: 3,
+      borderLeftColor: theme.colors.info.main,
+    },
+    differenceHeir: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: theme.colors.neutral.dark300,
+      marginBottom: 4,
+      textAlign: 'right',
+    },
+    differenceAmount: {
+      fontSize: 12,
+      fontWeight: '700',
+      marginBottom: 2,
+      textAlign: 'right',
+    },
+    differencePositive: {
+      color: theme.colors.success.main,
+    },
+    differenceNegative: {
+      color: theme.colors.error.dark,
+    },
+    differenceExplanation: {
+      fontSize: 11,
+      color: theme.colors.neutral.main,
+      fontStyle: 'italic',
+      textAlign: 'right',
+    },
+    noDifferences: {
+      fontSize: 12,
+      color: theme.colors.success.main,
+      textAlign: 'center',
+      paddingVertical: 8,
+    },
+    exportComparisonButton: {
+      backgroundColor: theme.colors.info.main,
+      borderRadius: 14,
+      paddingVertical: 14,
+      paddingHorizontal: 18,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+      marginTop: 12,
+    },
+    exportComparisonText: {
+      fontSize: 14,
+      fontWeight: '700',
+      color: theme.colors.background.light,
+    },
+    closeButton: {
+      marginHorizontal: 12,
+      marginTop: 14,
+      paddingVertical: 14,
+      paddingHorizontal: 16,
+      backgroundColor: theme.colors.error.dark,
+      borderRadius: 14,
+      alignItems: 'center',
+    },
+    closeButtonText: {
+      fontSize: 14,
+      fontWeight: '700',
+      color: theme.colors.background.light,
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      justifyContent: 'flex-end',
+    },
+    modalContent: {
+      backgroundColor: theme.colors.background.light,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      padding: 20,
+      minHeight: 300,
+    },
+    modalHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 20,
+      paddingBottom: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.neutral.light200,
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: theme.colors.neutral.dark300,
+    },
+    modalError: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.colors.error.light,
+      padding: 12,
+      borderRadius: 8,
+      marginBottom: 16,
+      gap: 8,
+    },
+    modalErrorText: {
+      fontSize: 13,
+      color: theme.colors.error.dark,
+      flex: 1,
+    },
+    shareOptions: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      marginBottom: 20,
+    },
+    shareOption: {
+      width: '48%',
+      backgroundColor: theme.colors.background.light,
+      borderRadius: 16,
+      padding: 16,
+      marginBottom: 12,
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: theme.colors.neutral.light200,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.06,
+      shadowRadius: 10,
+      elevation: 2,
+    },
+    shareOptionDisabled: {
+      opacity: 0.45,
+    },
+    shareIcon: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 10,
+    },
+    shareOptionText: {
+      fontSize: 14,
+      fontWeight: '700',
+      color: theme.colors.neutral.black,
+      marginBottom: 4,
+    },
+    shareOptionDesc: {
+      fontSize: 11,
+      color: theme.colors.neutral.main,
+      textAlign: 'center',
+      lineHeight: 16,
+    },
+    modalSuccess: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.colors.success.light,
+      padding: 14,
+      borderRadius: 14,
+      marginBottom: 16,
+      gap: 8,
+    },
+    modalSuccessText: {
+      fontSize: 13,
+      color: theme.colors.primary.main,
+      flex: 1,
+    },
+    modalCancelButton: {
+      paddingVertical: 14,
+      borderRadius: 14,
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: theme.colors.neutral.light200,
+      backgroundColor: theme.colors.neutral.light50,
+    },
+    modalCancelButtonText: {
+      fontSize: 14,
+      fontWeight: '700',
+      color: theme.colors.neutral.dark200,
+    },
+    previewOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.7)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+    },
+    previewContent: {
+      width: '100%',
+      maxWidth: 400,
+      maxHeight: '80%',
+      borderRadius: 20,
+      overflow: 'hidden',
+    },
+    previewHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.neutral.light200,
+    },
+    previewHeaderLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    previewTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.colors.neutral.dark300,
+    },
+    previewScroll: {
+      maxHeight: 300,
+    },
+    previewHTML: {
+      padding: 16,
+      backgroundColor: theme.colors.neutral.light100,
+      margin: 16,
+      borderRadius: 8,
+    },
+    previewHTMLText: {
+      fontSize: 11,
+      color: theme.colors.neutral.main,
+      fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+    },
+    previewImagePlaceholder: {
+      height: 200,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.neutral.light100,
+      margin: 16,
+      borderRadius: 8,
+      gap: 12,
+    },
+    previewImageText: {
+      fontSize: 14,
+      color: theme.colors.neutral.light400,
+    },
+    previewText: {
+      padding: 16,
+      backgroundColor: theme.colors.neutral.light100,
+      margin: 16,
+      borderRadius: 8,
+    },
+    previewTextContent: {
+      fontSize: 12,
+      color: theme.colors.neutral.dark300,
+      lineHeight: 18,
+      textAlign: 'right',
+    },
+    previewActions: {
+      flexDirection: 'row',
+      padding: 16,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.neutral.light200,
+      gap: 12,
+    },
+    previewButton: {
+      flex: 1,
+      paddingVertical: 14,
+      borderRadius: 10,
+      alignItems: 'center',
+    },
+    previewCancelButton: {
+      backgroundColor: theme.colors.neutral.light100,
+    },
+    previewConfirmButton: {},
+    previewCancelText: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: theme.colors.neutral.main,
+    },
+    previewConfirmText: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: theme.colors.background.light,
+    },
+  });
 
 export default ResultsDisplay;
