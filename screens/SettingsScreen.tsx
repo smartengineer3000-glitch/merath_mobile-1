@@ -156,7 +156,7 @@ export default function SettingsScreen() {
       <Card style={styles.card}>
         <Text style={styles.cardTitle}>{t('settings.language') || 'Language'}</Text>
         <Text style={styles.cardSubtitle}>{t('settings.languageSubtitle') || 'Choose your preferred language'}</Text>
-        <View style={styles.languageGrid}>
+        <View style={styles.languageGrid} accessibilityRole="radiogroup" accessibilityLabel="Language selection">
           {Object.entries(languages).map(([code, info]) => (
             <TouchableOpacity
               key={code}
@@ -165,6 +165,9 @@ export default function SettingsScreen() {
                 state.language === code && styles.languageCardActive,
               ]}
               onPress={() => handleLanguageChange(code)}
+              accessibilityRole="radio"
+              accessibilityLabel={`${info.name} language`}
+              accessibilityState={{ selected: state.language === code }}
             >
               <Text style={[
                 styles.languageText,
@@ -186,8 +189,8 @@ export default function SettingsScreen() {
           <Switch
             value={isDark}
             onValueChange={handleThemeToggle}
-            trackColor={{ false: '#DDDDDD', true: '#2E7D32' }}
-            thumbColor='#FFFFFF'
+            trackColor={{ false: theme.colors.neutral.light300, true: theme.colors.primary.main }}
+            thumbColor={theme.colors.background.light}
           />
         </View>
       </Card>
@@ -217,8 +220,8 @@ export default function SettingsScreen() {
           <Switch
             value={state.notifications}
             onValueChange={setNotifications}
-            trackColor={{ false: '#DDDDDD', true: '#2E7D32' }}
-            thumbColor='#FFFFFF'
+            trackColor={{ false: theme.colors.neutral.light300, true: theme.colors.primary.main }}
+            thumbColor={theme.colors.background.light}
           />
         </View>
         <View style={styles.settingRow}>
@@ -226,8 +229,8 @@ export default function SettingsScreen() {
           <Switch
             value={state.autoSave}
             onValueChange={setAutoSave}
-            trackColor={{ false: '#DDDDDD', true: '#2E7D32' }}
-            thumbColor='#FFFFFF'
+            trackColor={{ false: theme.colors.neutral.light300, true: theme.colors.primary.main }}
+            thumbColor={theme.colors.background.light}
           />
         </View>
       </Card>
@@ -239,13 +242,13 @@ export default function SettingsScreen() {
           onPress={handleExportData}
           disabled={isBackingUp}
         >
-          <MaterialCommunityIcons name="download" size={24} color="#2E7D32" />
+          <MaterialCommunityIcons name="download" size={24} color={theme.colors.primary.main} />
           <Text style={styles.actionButtonText}>
             {isBackingUp ? (t('common.loading') || 'Exporting...') : (t('settings.exportData') || 'Export Data')}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionButton} onPress={handleClearData}>
-          <MaterialCommunityIcons name="delete" size={24} color="#F44336" />
+          <MaterialCommunityIcons name="delete" size={24} color={theme.colors.error.main} />
           <Text style={[styles.actionButtonText, styles.dangerText]}>
             {t('settings.clearAllData') || 'Clear All Data'}
           </Text>

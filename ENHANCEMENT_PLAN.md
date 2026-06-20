@@ -315,3 +315,78 @@ Supporting Libraries:
   lib/i18n/                    — 6 languages via i18next
   lib/services/BackupService.ts — JSON backup/restore
 ```
+
+---
+
+## Part 7: Theme System Consolidation (Hardcoded Colors)
+
+### [DONE] T1. ErrorBoundary — Theme-Aware Styling
+
+ErrorBoundary was using hardcoded colors (`#F5F5F5`, `#333333`, `#2E7D32`) that didn't respect dark mode. Converted to accept a `theme` prop and use `createDynamicStyles(theme)` pattern. Also suppressed `console.error` in production.
+
+### [DONE] T2. RootNavigator — Theme-Aware Loading Fallbacks
+
+`LazyFallback` and `NavigationContainer` fallback used hardcoded `#2E7D32` for `ActivityIndicator`. Now uses `theme.colors.primary.main` via `useAppTheme()`.
+
+### [DONE] T3. CalculationButton — Full Theme Integration
+
+Replaced 40+ hardcoded color literals (`#4F46E5`, `#10B981`, `#cbd5e1`, `#f0f9ff`, etc.) with semantic theme references. All states (success, error, warning, info, progress) now respect light/dark mode.
+
+### [DONE] T4. SettingsScreen — Theme-Aware Icons & Switches
+
+Replaced hardcoded icon colors (`#2E7D32`, `#F44336`) and Switch `trackColor`/`thumbColor` with theme references. All 3 Switch components now properly adapt to dark mode.
+
+---
+
+## Part 8: i18n Completion
+
+### [DONE] I1. Missing Translation Keys
+
+Added 15 missing keys to all 6 locale files (en, ar, ur, tr, fr, de):
+
+| Key | Purpose |
+|-----|---------|
+| `settings.subtitle` | Settings page subtitle |
+| `settings.languageSubtitle` | Language section subtitle |
+| `settings.appearance` | Appearance section title |
+| `settings.appearanceSubtitle` | Appearance section subtitle |
+| `settings.roundingDecimals` | Rounding decimals label |
+| `settings.autoSave` | Auto save toggle label |
+| `settings.dataManagement` | Data management section |
+| `settings.exportData` | Export button label |
+| `settings.dataExported` | Export success message |
+| `settings.clearAllData` | Clear data button |
+| `settings.clearAllDataConfirm` | Clear data confirmation |
+| `settings.dataCleared` | Clear success message |
+| `settings.version` | Version label |
+| `settings.developer` | Developer label |
+| `common.clear` | Clear action text |
+
+---
+
+## Part 9: Accessibility (a11y)
+
+### [DONE] A1. CalculatorScreen — Button Accessibility
+
+Added `accessibilityRole="button"`, `accessibilityLabel`, and `accessibilityState` to Calculate and Reset buttons.
+
+### [DONE] A2. MadhhabSelector — RadioGroup Pattern
+
+Added `accessibilityRole="radiogroup"` to the container and `accessibilityRole="radio"` with `accessibilityState={{ selected }}` to each madhab option. Screen readers now announce selection state.
+
+### [DONE] A3. SettingsScreen — Language RadioGroup
+
+Added `accessibilityRole="radiogroup"` to language grid and `accessibilityRole="radio"` with `accessibilityState={{ selected }}` to each language option.
+
+### [DONE] A4. ErrorBoundary — Button Accessibility
+
+Added `accessibilityRole="button"` and `accessibilityLabel="Try again"` to the error recovery button.
+
+---
+
+## Verification Summary (Phase 7-9)
+
+- **TypeScript**: `tsc --noEmit` — PASS (0 errors)
+- **Lint**: `expo lint` — PASS (0 warnings)
+- **Tests**: 259 passing, 8 skipped (0 failures)
+- **Files Modified**: 12 files across components/, screens/, navigation/, lib/i18n/

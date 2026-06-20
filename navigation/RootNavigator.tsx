@@ -30,9 +30,10 @@ const SettingsScreen = React.lazy(() => import('../screens/SettingsScreen'));
 const AboutScreen = React.lazy(() => import('../screens/AboutScreen'));
 
 function LazyFallback() {
+  const { theme } = useAppTheme();
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <ActivityIndicator size="large" color="#2E7D32" />
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background.lightVariant }}>
+      <ActivityIndicator size="large" color={theme.colors.primary.main} />
     </View>
   );
 }
@@ -152,6 +153,7 @@ export function DrawerNavigator() {
 export function RootNavigator() {
   const navigationRef = React.useRef(null);
   const { state } = useSettings();
+  const { theme } = useAppTheme();
 
   useEffect(() => {
     if (Platform.OS !== 'web') {
@@ -168,7 +170,7 @@ export function RootNavigator() {
       linking={linking}
       fallback={
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color="#2E7D32" />
+          <ActivityIndicator size="large" color={theme.colors.primary.main} />
         </View>
       }
     >

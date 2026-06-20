@@ -116,6 +116,9 @@ export default function CalculatorScreen() {
               style={[styles.calculateButton, isCalculating && styles.buttonDisabled]}
               onPress={handleCalculate}
               disabled={isCalculating}
+              accessibilityRole="button"
+              accessibilityLabel={isCalculating ? 'Calculating inheritance' : 'Calculate inheritance'}
+              accessibilityState={{ disabled: isCalculating }}
             >
               <MaterialCommunityIcons name="calculator" size={20} color={theme.colors.background.light} />
               <Text style={styles.calculateButtonText}>
@@ -125,6 +128,8 @@ export default function CalculatorScreen() {
             <TouchableOpacity
               style={styles.resetButton}
               onPress={handleReset}
+              accessibilityRole="button"
+              accessibilityLabel="Reset all fields"
             >
               <MaterialCommunityIcons name="refresh" size={20} color={theme.colors.primary.main} />
               <Text style={styles.resetButtonText}>Reset</Text>

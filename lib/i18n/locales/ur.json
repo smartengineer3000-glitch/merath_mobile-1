@@ -118,17 +118,31 @@
 
   "settings": {
     "title": "ترتیبات",
+    "subtitle": "اپنی ایپ کا تجربہ انفرادی بنائیں",
     "language": "زبان",
+    "languageSubtitle": "اپنی پسندیدہ زبان منتخب کریں",
     "theme": "تھیم",
     "lightMode": "روشن",
-    "darkMode": "تاریک",
+    "darkMode": "ڈارک موڈ",
     "systemMode": "نظام",
+    "appearance": "ظاہری شکل",
+    "appearanceSubtitle": "ایپ کی ظاہری شکل تبدیل کریں",
     "calculationPreferences": "حساب کی ترتیبات",
     "rounding": "گول کرنا",
+    "roundingDecimals": "اعشاریہ گول",
     "precision": "اعشاریہ جگہیں",
     "notifications": "اطلاعات",
     "enableNotifications": "اطلاعات فعال کریں",
-    "about": "ایپ کے بارے میں"
+    "autoSave": "خودکار محفوظ",
+    "dataManagement": "ڈیٹا مینجمنٹ",
+    "exportData": "ڈیٹا برآمد کریں",
+    "dataExported": "ڈیٹا کامیابی سے برآمد ہوا",
+    "clearAllData": "تمام ڈیٹا صاف کریں",
+    "clearAllDataConfirm": "تمام حسابات اور ترتیبات حذف ہو جائیں گی۔ کیا آپ یقینی ہیں؟",
+    "dataCleared": "تمام ڈیٹا صاف ہو گیا",
+    "about": "ایپ کے بارے میں",
+    "version": "ورژن",
+    "developer": "ڈیویلپر"
   },
 
   "about": {
@@ -151,6 +165,7 @@
   "common": {
     "ok": "ٹھیک ہے",
     "cancel": "منسوخ کریں",
+    "clear": "صاف کریں",
     "save": "محفوظ کریں",
     "delete": "حذف کریں",
     "edit": "ترمیم کریں",

@@ -275,7 +275,7 @@ const AppContent = () => {
     <View style={[styles.container, { backgroundColor: theme.colors.background.light }]}>
       <StatusBar style={theme.mode === 'dark' ? 'light' : 'dark'} />
       <NetworkStatusIndicator />
-      <ErrorBoundary>
+      <ErrorBoundary theme={theme}>
         <RootNavigator />
       </ErrorBoundary>
       <DisclaimersModal
