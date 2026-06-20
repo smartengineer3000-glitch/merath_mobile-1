@@ -72,7 +72,7 @@ export default function CalculatorScreen() {
     } finally {
       setIsCalculating(false);
     }
-  }, [madhab, currentEstate, currentHeirs, calculateWithMethod, setResult]);
+  }, [madhab, currentEstate, currentHeirs, calculateWithMethod, setResult, t]);
 
   const handleReset = useCallback(() => {
     setCurrentEstate({ total: 0, funeral: 0, debts: 0, will: 0 });

@@ -45,7 +45,7 @@ export default function MadhhabComparisonScreen() {
     } finally {
       setIsComparing(false);
     }
-  }, [calculateWithMethod]);
+  }, [calculateWithMethod, t]);
 
   const styles = createStyles(theme);
 

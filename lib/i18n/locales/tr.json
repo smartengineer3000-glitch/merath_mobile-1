@@ -171,6 +171,21 @@
     "privacy": "Gizlilik Politikası",
     "terms": "Hizmet Şartları"
   },
+  "onboarding": {
+    "welcome": "Merath'a Hoş Geldiniz",
+    "welcomeDescription": "Dört mezhebe göre İslami miras paylarını hesaplamak için kapsamlı uygulama",
+    "welcomeDetails": "Desteklenen: Hanafi, Maliki, Şafi'i, Hanbali",
+    "howToCalculate": "Nasıl Hesaplanır",
+    "howToCalculateDescription": "Miras ve mirasçı verilerini doğru şekilde girin",
+    "resultsAndSharing": "Sonuçlar ve Paylaşım",
+    "resultsAndSharingDescription": "Kesin miras dağılımını elde edin",
+    "startNow": "Şimdi Başla",
+    "next": "İleri",
+    "mustAcceptTerms": "Uygulamayı kullanmak için şartları kabul etmelisiniz"
+  },
+  "loading": {
+    "appLoading": "Uygulama yükleniyor..."
+  },
   "common": {
     "ok": "Tamam",
     "cancel": "İptal",
@@ -187,6 +202,7 @@
     "warning": "Uyarı",
     "info": "Bilgi",
     "empty": "Veri yok",
-    "noResults": "Sonuç bulunamadı"
+    "noResults": "Sonuç bulunamadı",
+    "noNetwork": "İnternet bağlantısı yok – bazı özellikler çalışmayabilir"
   }
 }
