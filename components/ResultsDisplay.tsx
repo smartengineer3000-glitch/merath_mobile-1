@@ -57,16 +57,18 @@ const AnimatedNumber = ({
   const [displayValue, setDisplayValue] = useState(0);
   const animationRef = useRef<Animated.Value>(new Animated.Value(0));
   const previousValueRef = useRef(0);
+  const displayValueRef = useRef(0);
 
   useEffect(() => {
-    if (value === displayValue) return;
+    if (value === displayValueRef.current) return;
 
     const animation = animationRef.current;
 
-    // Stop any ongoing animation
     animation.stopAnimation();
+    animation.setValue(0);
 
-    // Start new animation
+    const startValue = previousValueRef.current;
+
     Animated.timing(animation, {
       toValue: 1,
       duration,
@@ -74,21 +76,22 @@ const AnimatedNumber = ({
       useNativeDriver: false,
     }).start(({ finished }) => {
       if (finished) {
-        setDisplayValue(value);
         previousValueRef.current = value;
+        displayValueRef.current = value;
+        setDisplayValue(value);
       }
     });
 
-    // Listen to animation progress
     const listener = animation.addListener(({ value: progress }) => {
-      const newValue = previousValueRef.current + (value - previousValueRef.current) * progress;
+      const newValue = startValue + (value - startValue) * progress;
+      displayValueRef.current = newValue;
       setDisplayValue(newValue);
     });
 
     return () => {
       animation.removeListener(listener);
     };
-  }, [value, duration, displayValue]);
+  }, [value, duration]);
 
   const formattedValue = format 
     ? displayValue.toFixed(2).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[parseInt(d)] || d)

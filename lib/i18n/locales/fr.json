@@ -171,6 +171,21 @@
     "privacy": "Politique de confidentialité",
     "terms": "Conditions d'utilisation"
   },
+  "onboarding": {
+    "welcome": "Bienvenue sur Merath",
+    "welcomeDescription": "L'application complète pour calculer les parts de succession islamique selon les quatre écoles juridiques",
+    "welcomeDetails": "Prend en charge : Hanafi, Maliki, Shafi'i, Hanbali",
+    "howToCalculate": "Comment calculer",
+    "howToCalculateDescription": "Saisissez les données de la succession et des héritiers avec précision",
+    "resultsAndSharing": "Résultats et partage",
+    "resultsAndSharingDescription": "Obtenez une distribution précise de la succession",
+    "startNow": "Commencer maintenant",
+    "next": "Suivant",
+    "mustAcceptTerms": "Vous devez accepter les conditions pour utiliser l'application"
+  },
+  "loading": {
+    "appLoading": "Chargement de l'application..."
+  },
   "common": {
     "ok": "OK",
     "cancel": "Annuler",
@@ -187,6 +202,7 @@
     "warning": "Avertissement",
     "info": "Information",
     "empty": "Aucune donnée",
-    "noResults": "Aucun résultat trouvé"
+    "noResults": "Aucun résultat trouvé",
+    "noNetwork": "Pas de connexion Internet – certaines fonctionnalités peuvent ne pas être disponibles"
   }
 }

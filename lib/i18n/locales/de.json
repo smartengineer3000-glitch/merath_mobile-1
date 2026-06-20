@@ -171,6 +171,21 @@
     "privacy": "Datenschutzrichtlinie",
     "terms": "Nutzungsbedingungen"
   },
+  "onboarding": {
+    "welcome": "Willkommen bei Merath",
+    "welcomeDescription": "Die umfassende App zur Berechnung islamischer Erbschaftsanteile nach den vier Rechtsschulen",
+    "welcomeDetails": "Unterstützt: Hanafi, Maliki, Shafi'i, Hanbali",
+    "howToCalculate": "So wird berechnet",
+    "howToCalculateDescription": "Geben Sie die Erbschafts- und Erbendaten genau ein",
+    "resultsAndSharing": "Ergebnisse & Teilen",
+    "resultsAndSharingDescription": "Erhalten Sie eine präzise Erbschaftsverteilung",
+    "startNow": "Jetzt starten",
+    "next": "Weiter",
+    "mustAcceptTerms": "Sie müssen die Bedingungen akzeptieren, um die App zu nutzen"
+  },
+  "loading": {
+    "appLoading": "App wird geladen..."
+  },
   "common": {
     "ok": "OK",
     "cancel": "Abbrechen",
@@ -187,6 +202,7 @@
     "warning": "Warnung",
     "info": "Information",
     "empty": "Keine Daten",
-    "noResults": "Keine Ergebnisse gefunden"
+    "noResults": "Keine Ergebnisse gefunden",
+    "noNetwork": "Keine Internetverbindung – einige Funktionen sind möglicherweise nicht verfügbar"
   }
 }
