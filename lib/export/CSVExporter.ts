@@ -237,7 +237,7 @@ export class CSVExporter {
         }
       } else {
         // Native: save to file and share
-        const fileDir = (FileSystem as any).documentDirectory;
+        const fileDir = (FileSystem as unknown as { documentDirectory: string | null }).documentDirectory;
         if (!fileDir) {
           throw new Error('لا يمكن الوصول إلى نظام الملفات');
         }
@@ -295,7 +295,7 @@ export class CSVExporter {
       a.click();
       URL.revokeObjectURL(url);
     } else {
-      const fileDir = (FileSystem as any).documentDirectory;
+      const fileDir = (FileSystem as unknown as { documentDirectory: string | null }).documentDirectory;
       if (!fileDir) {
         throw new Error('لا يمكن الوصول إلى نظام الملفات');
       }
@@ -341,7 +341,7 @@ export class CSVExporter {
       URL.revokeObjectURL(url);
       return url;
     } else {
-      const fileDir = (FileSystem as any).documentDirectory;
+      const fileDir = (FileSystem as unknown as { documentDirectory: string | null }).documentDirectory;
       if (!fileDir) {
         throw new Error('لا يمكن الوصول إلى نظام الملفات');
       }

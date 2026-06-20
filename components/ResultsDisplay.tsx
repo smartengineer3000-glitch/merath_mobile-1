@@ -214,7 +214,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
   // Export states
   const [, setExportLoading] = useState(false);
   const [madhabComparisonResults, setMadhabComparisonResults] = useState<ComparisonResult[]>([]);
-  const [comparisonLoading, setComparisonLoading] = useState(false);
+  const [, setComparisonLoading] = useState(false);
 
   // ===== FIX L2: Animation values for counting =====
   const fadeAnim = useRef(new Animated.Value(0)).current;

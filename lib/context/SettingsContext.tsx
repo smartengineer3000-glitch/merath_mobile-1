@@ -222,7 +222,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
       // Clear old settings
       await AsyncStorage.removeItem('@merath_settings');
       
-      console.log('[Settings] Migrated old settings to v2');
+      if (__DEV__) console.log('[Settings] Migrated old settings to v2');
       
       return migrated;
     } catch (error) {
@@ -259,7 +259,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
       
       // ===== FIX C7: Version check and migration =====
       if (loadedSettings.version !== defaultSettings.version) {
-        console.log(`[Settings] Version mismatch: loaded v${loadedSettings.version}, current v${defaultSettings.version}`);
+        if (__DEV__) console.log(`[Settings] Version mismatch: loaded v${loadedSettings.version}, current v${defaultSettings.version}`);
         
         // Merge with defaults, preserving user preferences
         const merged: SettingsState = {
@@ -317,7 +317,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
         // Also save a backup copy
         await AsyncStorage.setItem(STORAGE_KEYS.BACKUP, stateJson);
         
-        console.log('[Settings] Saved successfully');
+        if (__DEV__) console.log('[Settings] Saved successfully');
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to save settings';
         setLastSaveError(errorMessage);
@@ -397,7 +397,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
       
       lastSavedStateRef.current = stateJson;
       
-      console.log('[Settings] Saved immediately');
+      if (__DEV__) console.log('[Settings] Saved immediately');
       return true;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to save settings';
@@ -432,7 +432,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
       dispatch({ type: 'LOAD_SETTINGS', payload: backup });
       await saveImmediately();
       
-      console.log('[Settings] Recovered from backup');
+      if (__DEV__) console.log('[Settings] Recovered from backup');
       return true;
     } catch (error) {
       console.error('[Settings] Recovery failed:', error);

@@ -189,7 +189,7 @@ The codebase uses `any` in several places despite strict mode being enabled:
 
 **Enhancement:** Replace `any` casts with proper types. The `FIQH_DATABASE` access can use `Record<string, ...>` type narrowing. The timeout can use `ReturnType<typeof setTimeout>`.
 
-### M4. No Lazy Loading for Screens
+### [DONE] M4. No Lazy Loading for Screens
 
 All five screens are eagerly imported in `RootNavigator.tsx`. For a calculator app this is acceptable, but as screens grow (SettingsScreen is 2K+ lines), lazy loading would improve startup time.
 

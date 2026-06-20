@@ -71,7 +71,7 @@ export function useCalculator() {
   // ===== FIX C2: Use refs to track mounted state and abort controller =====
   const isMounted = useRef(true);
   const abortControllerRef = useRef<AbortController | null>(null);
-  const calculationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const calculationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ===== FIX H7: Track calculation start time for performance =====
   const calculationStartTimeRef = useRef<number>(0);
@@ -196,7 +196,6 @@ export function useCalculator() {
 
         // ===== FIX H7: Set up timeout promise =====
         const timeoutPromise = new Promise<never>((_, reject) => {
-          // @ts-ignore
           calculationTimeoutRef.current = setTimeout(() => {
             reject(new Error('انتهت مهلة الحساب. يرجى المحاولة مرة أخرى.'));
           }, CALCULATION_TIMEOUT_MS);

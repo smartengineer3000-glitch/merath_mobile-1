@@ -559,7 +559,7 @@ export class ErrorRecovery {
         }
         
         const delay = initialDelay * Math.pow(2, attempt - 1);
-        console.log(`Retry attempt ${attempt}/${maxRetries} after ${delay}ms`);
+        if (__DEV__) console.log(`Retry attempt ${attempt}/${maxRetries} after ${delay}ms`);
         await this.sleep(delay);
       }
     }

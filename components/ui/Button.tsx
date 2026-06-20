@@ -21,6 +21,8 @@ import * as Haptics from 'expo-haptics';
 import { MaterialCommunityIcons } from '../../lib/icons';
 import { useAppTheme } from '../../lib/context/ThemeProvider';
 
+type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'outline' | 'ghost' | 'danger';
 export type ButtonSize = 'small' | 'medium' | 'large';
 
@@ -48,7 +50,7 @@ export interface ModernButtonProps {
   /** Loading state (shows spinner) */
   loading?: boolean;
   /** Icon name from MaterialCommunityIcons */
-  icon?: string;
+  icon?: IconName;
   /** Icon position (left/right) */
   iconPosition?: 'left' | 'right';
   /** Take full width of container */
@@ -251,7 +253,7 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
 
     const iconElement = icon ? (
       <MaterialCommunityIcons
-        name={icon as any}
+        name={icon}
         size={sizeStyles.iconSize}
         color={iconColor}
       />
