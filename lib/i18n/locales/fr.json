@@ -21,7 +21,13 @@
     "copy": "Copier",
     "share": "Partager",
     "resetConfirmationTitle": "Confirmer la réinitialisation",
-    "resetConfirmationMessage": "Êtes-vous sûr de vouloir réinitialiser toutes les données ? Cette action ne peut pas être annulée."
+    "resetConfirmationMessage": "Êtes-vous sûr de vouloir réinitialiser toutes les données ? Cette action ne peut pas être annulée.",
+    "subtitle": "Calculez les parts de succession islamique",
+    "reset": "Réinitialiser",
+    "resetAllFields": "Réinitialiser tous les champs",
+    "calculationFailed": "Le calcul a échoué. Veuillez réessayer.",
+    "calculatingInheritance": "Calcul de la succession en cours",
+    "calculateInheritance": "Calculer la succession"
   },
   "estate": {
     "title": "Informations sur la succession",
@@ -62,6 +68,8 @@
   },
   "madhab": {
     "title": "École islamique (Madhab)",
+    "selection": "Sélection du Madhab",
+    "selectionSubtitle": "Choisissez votre école de jurisprudence islamique",
     "hanafi": "Hanafi",
     "maliki": "Maliki",
     "shafii": "Shafi'i",
@@ -136,6 +144,16 @@
     "about": "À propos de l'application",
     "version": "Version",
     "developer": "Développeur"
+  },
+  "comparison": {
+    "title": "Comparaison des Madhabs",
+    "subtitle": "Comparez les calculs de succession entre les écoles islamiques",
+    "compare": "Comparer",
+    "compareSubtitle": "Exécutez les calculs dans les quatre madhabs",
+    "comparing": "Comparaison en cours...",
+    "compareAcross": "Comparer entre les Madhabs",
+    "results": "Résultats de la comparaison",
+    "failed": "La comparaison a échoué. Veuillez réessayer."
   },
   "about": {
     "title": "À propos de Merath",

@@ -23,7 +23,13 @@
     "copy": "نسخ",
     "share": "مشاركة",
     "resetConfirmationTitle": "تأكيد إعادة التعيين",
-    "resetConfirmationMessage": "هل أنت متأكد من رغبتك في إعادة تعيين جميع البيانات؟ لا يمكن التراجع عن هذا الإجراء."
+    "resetConfirmationMessage": "هل أنت متأكد من رغبتك في إعادة تعيين جميع البيانات؟ لا يمكن التراجع عن هذا الإجراء.",
+    "subtitle": "احسب حصص الميراث الإسلامي",
+    "reset": "إعادة تعيين",
+    "resetAllFields": "إعادة تعيين جميع الحقول",
+    "calculationFailed": "فشل الحساب. يرجى المحاولة مرة أخرى.",
+    "calculatingInheritance": "جارٍ حساب الميراث",
+    "calculateInheritance": "حساب الميراث"
   },
 
   "estate": {
@@ -67,6 +73,8 @@
 
   "madhab": {
     "title": "المذهب الفقهي",
+    "selection": "اختيار المذهب",
+    "selectionSubtitle": "اختر مذهبك الفقهي",
     "hanafi": "الحنفي",
     "maliki": "المالكي",
     "shafii": "الشافعي",
@@ -143,6 +151,17 @@
     "about": "حول التطبيق",
     "version": "الإصدار",
     "developer": "المطور"
+  },
+
+  "comparison": {
+    "title": "مقارنة المذاهب",
+    "subtitle": "قارن حسابات الميراث عبر المذاهب الإسلامية",
+    "compare": "مقارنة",
+    "compareSubtitle": "تشغيل الحسابات عبر المذاهب الأربعة",
+    "comparing": "جارٍ المقارنة...",
+    "compareAcross": "مقارنة عبر المذاهب",
+    "results": "نتائج المقارنة",
+    "failed": "فشلت المقارنة. يرجى المحاولة مرة أخرى."
   },
 
   "about": {

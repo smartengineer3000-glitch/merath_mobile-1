@@ -21,6 +21,7 @@ import {
 } from 'react-native';
 import { MaterialCommunityIcons } from '../lib/icons';
 import { useAppTheme } from '../lib/context/ThemeProvider';
+import type { Theme } from '../lib/design/theme';
 import type { HeirsData, HeirType } from '../lib/inheritance/types';
 import { parseSafeInteger } from '../lib/utils/parsers';
 
@@ -532,7 +533,7 @@ export const HeirSelector = React.memo(function HeirSelector({ onHeirsChange }: 
   );
 });
 
-const createStyles = (theme: any) =>
+const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -547,7 +548,7 @@ const createStyles = (theme: any) =>
       gap: 8,
     },
     validationText: {
-      color: '#fff',
+      color: theme.colors.background.light,
       fontSize: 13,
       fontWeight: '500',
       flex: 1,
@@ -556,7 +557,7 @@ const createStyles = (theme: any) =>
     header: {
       paddingHorizontal: 16,
       paddingVertical: 12,
-      backgroundColor: '#fff',
+      backgroundColor: theme.colors.background.light,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.neutral.light200,
     },
@@ -577,7 +578,7 @@ const createStyles = (theme: any) =>
       paddingVertical: 0,
     },
     summaryContainer: {
-      backgroundColor: '#fff',
+      backgroundColor: theme.colors.background.light,
       paddingHorizontal: 16,
       paddingVertical: 12,
       marginBottom: 8,
@@ -651,7 +652,7 @@ const createStyles = (theme: any) =>
       paddingHorizontal: 16,
     },
     categoryCard: {
-      backgroundColor: '#fff',
+      backgroundColor: theme.colors.background.light,
       borderRadius: 16,
       marginBottom: 12,
       overflow: 'hidden',
@@ -662,7 +663,7 @@ const createStyles = (theme: any) =>
       flexDirection: 'row',
       alignItems: 'center',
       padding: 16,
-      backgroundColor: '#fff',
+      backgroundColor: theme.colors.background.light,
     },
     categoryIconContainer: {
       width: 40,
@@ -734,7 +735,7 @@ const createStyles = (theme: any) =>
       width: 32,
       height: 32,
       borderRadius: 16,
-      backgroundColor: '#fff',
+      backgroundColor: theme.colors.background.light,
       justifyContent: 'center',
       alignItems: 'center',
       borderWidth: 1,

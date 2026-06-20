@@ -8,6 +8,7 @@ import {
   Alert,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { useAppTheme } from '../lib/context/ThemeProvider';
 import { useCalculator } from '../lib/hooks/useCalculator';
 import { Card } from '../components/ui/Card';
@@ -22,6 +23,7 @@ interface ComparisonEntry {
 }
 
 export default function MadhhabComparisonScreen() {
+  const { t } = useTranslation();
   const { theme } = useAppTheme();
   const { calculateWithMethod } = useCalculator();
   const [comparisonResults, setComparisonResults] = useState<ComparisonEntry[]>([]);
@@ -39,7 +41,7 @@ export default function MadhhabComparisonScreen() {
       }
       setComparisonResults(comparisons);
     } catch (error) {
-      Alert.alert('Error', 'Comparison failed. Please try again.');
+      Alert.alert(t('common.error'), t('comparison.failed'));
     } finally {
       setIsComparing(false);
     }
@@ -50,13 +52,13 @@ export default function MadhhabComparisonScreen() {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Madhhab Comparison</Text>
-        <Text style={styles.subtitle}>Compare inheritance calculations across Islamic schools</Text>
+        <Text style={styles.title}>{t('comparison.title')}</Text>
+        <Text style={styles.subtitle}>{t('comparison.subtitle')}</Text>
       </View>
 
       <Card style={styles.card}>
-        <Text style={styles.cardTitle}>Compare</Text>
-        <Text style={styles.cardSubtitle}>Run calculations across all four madhabs</Text>
+        <Text style={styles.cardTitle}>{t('comparison.compare')}</Text>
+        <Text style={styles.cardSubtitle}>{t('comparison.compareSubtitle')}</Text>
         <TouchableOpacity
           style={[styles.compareButton, isComparing && styles.compareButtonDisabled]}
           onPress={handleCompare}
@@ -64,14 +66,14 @@ export default function MadhhabComparisonScreen() {
         >
           <MaterialCommunityIcons name="compare" size={24} color={theme.colors.background.light} />
           <Text style={styles.compareButtonText}>
-            {isComparing ? 'Comparing...' : 'Compare Across Madhabs'}
+            {isComparing ? t('comparison.comparing') : t('comparison.compareAcross')}
           </Text>
         </TouchableOpacity>
       </Card>
 
       {comparisonResults.length > 0 && (
         <Card style={styles.resultsCard}>
-          <Text style={styles.resultsTitle}>Comparison Results</Text>
+          <Text style={styles.resultsTitle}>{t('comparison.results')}</Text>
           {comparisonResults.map((comp, index) => (
             <View key={index} style={styles.resultItem}>
               <Text style={styles.madhabName}>{comp.madhab.toUpperCase()}</Text>

@@ -21,7 +21,13 @@
     "copy": "Kopyala",
     "share": "Paylaş",
     "resetConfirmationTitle": "Sıfırlamayı Onayla",
-    "resetConfirmationMessage": "Tüm verileri sıfırlamak istediğinizden emin misiniz? Bu işlem geri alınamaz."
+    "resetConfirmationMessage": "Tüm verileri sıfırlamak istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+    "subtitle": "İslami miras paylarını hesaplayın",
+    "reset": "Sıfırla",
+    "resetAllFields": "Tüm alanları sıfırla",
+    "calculationFailed": "Hesaplama başarısız oldu. Lütfen tekrar deneyin.",
+    "calculatingInheritance": "Miras hesaplanıyor",
+    "calculateInheritance": "Mirası hesapla"
   },
   "estate": {
     "title": "Miras Bilgileri",
@@ -62,6 +68,8 @@
   },
   "madhab": {
     "title": "İslami Mezhep",
+    "selection": "Mezhep Seçimi",
+    "selectionSubtitle": "İslami hukuk mektebinizi seçin",
     "hanafi": "Hanafi",
     "maliki": "Maliki",
     "shafii": "Şafi'i",
@@ -136,6 +144,16 @@
     "about": "Uygulama Hakkında",
     "version": "Sürüm",
     "developer": "Geliştirici"
+  },
+  "comparison": {
+    "title": "Mezhep Karşılaştırması",
+    "subtitle": "İslami mezheplerde miras hesaplamalarını karşılaştırın",
+    "compare": "Karşılaştır",
+    "compareSubtitle": "Dört mezhebin tümünde hesaplama yapın",
+    "comparing": "Karşılaştırılıyor...",
+    "compareAcross": "Mezheplerde Karşılaştır",
+    "results": "Karşılaştırma Sonuçları",
+    "failed": "Karşılaştırma başarısız oldu. Lütfen tekrar deneyin."
   },
   "about": {
     "title": "Merath Hakkında",

@@ -13,7 +13,7 @@ import * as Print from 'expo-print';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { Platform } from 'react-native';
-import { CalculationResult, HeirShare } from '../inheritance/types';
+import { CalculationResult, CalculationStep, HeirShare } from '../inheritance/types';
 
 export interface PDFExportOptions {
   filename?: string;
@@ -659,7 +659,7 @@ export class PDFExporter {
                 ${result.steps
                   .slice(0, 10)
                   .map(
-                    (step: any, index: number) => `
+                    (step: CalculationStep, index: number) => `
                   <div class="step">
                     <div>
                       <span class="step-number">${index + 1}</span>

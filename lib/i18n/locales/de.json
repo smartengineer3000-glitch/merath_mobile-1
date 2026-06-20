@@ -21,7 +21,13 @@
     "copy": "Kopieren",
     "share": "Teilen",
     "resetConfirmationTitle": "Zurücksetzen bestätigen",
-    "resetConfirmationMessage": "Sind Sie sicher, dass Sie alle Daten zurücksetzen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+    "resetConfirmationMessage": "Sind Sie sicher, dass Sie alle Daten zurücksetzen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "subtitle": "Islamische Erbschaftsanteile berechnen",
+    "reset": "Zurücksetzen",
+    "resetAllFields": "Alle Felder zurücksetzen",
+    "calculationFailed": "Berechnung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "calculatingInheritance": "Erbschaft wird berechnet",
+    "calculateInheritance": "Erbschaft berechnen"
   },
   "estate": {
     "title": "Erbschaftsinformationen",
@@ -62,6 +68,8 @@
   },
   "madhab": {
     "title": "Islamische Rechtsschule",
+    "selection": "Madhab-Auswahl",
+    "selectionSubtitle": "Wählen Sie Ihre islamische Rechtsschule",
     "hanafi": "Hanafi",
     "maliki": "Maliki",
     "shafii": "Shafi'i",
@@ -136,6 +144,16 @@
     "about": "Über die App",
     "version": "Version",
     "developer": "Entwickler"
+  },
+  "comparison": {
+    "title": "Madhab-Vergleich",
+    "subtitle": "Vergleichen Sie Erbschaftsberechnungen zwischen islamischen Rechtsschulen",
+    "compare": "Vergleichen",
+    "compareSubtitle": "Berechnungen in allen vier Madhabs durchführen",
+    "comparing": "Wird verglichen...",
+    "compareAcross": "Madhabs vergleichen",
+    "results": "Vergleichsergebnisse",
+    "failed": "Vergleich fehlgeschlagen. Bitte versuchen Sie es erneut."
   },
   "about": {
     "title": "Über Merath",

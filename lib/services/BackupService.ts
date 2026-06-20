@@ -4,6 +4,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import { db } from '../database/db';
+import type { DBAuditLogEntry } from '../database/db';
 import { SettingsState } from '../context/SettingsContext';
 
 export interface BackupData {
@@ -13,7 +14,7 @@ export interface BackupData {
   data: {
     settings: SettingsState | null;
     favorites: unknown[];
-    auditLog: any[];
+    auditLog: DBAuditLogEntry[];
   };
 }
 
@@ -29,7 +30,7 @@ export class BackupService {
       const favoritesJson = await AsyncStorage.getItem('@merath_favorites');
       const favorites = favoritesJson ? JSON.parse(favoritesJson) : [];
 
-      let auditLog: any[] = [];
+      let auditLog: DBAuditLogEntry[] = [];
       if (db && db.auditLogs) {
         auditLog = await db.auditLogs.toArray();
       }

@@ -70,7 +70,7 @@ const NetworkStatusIndicator = () => {
 
   return (
     <View style={[styles.networkIndicator, { backgroundColor: theme.colors.error.main }]}>
-      <Text style={styles.networkIndicatorText}>
+      <Text style={[styles.networkIndicatorText, { color: theme.colors.background.light }]}>
         {t('common.noNetwork')}
       </Text>
     </View>
@@ -130,9 +130,9 @@ const OnboardingModal = ({ visible, onComplete }: { visible: boolean; onComplete
     <View style={[styles.onboardingOverlay, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
       <SafeAreaView style={[styles.onboardingCard, { backgroundColor: theme.colors.background.light }]}>
         <View style={styles.onboardingHeader}>
-          <Text style={styles.onboardingStep}>{step}/{totalSteps}</Text>
+          <Text style={[styles.onboardingStep, { color: theme.colors.neutral.light400 }]}>{step}/{totalSteps}</Text>
           <TouchableOpacity onPress={handleSkip}>
-            <Text style={styles.onboardingSkip}>{t('common.close')}</Text>
+            <Text style={[styles.onboardingSkip, { color: theme.colors.info.main }]}>{t('common.close')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -168,7 +168,7 @@ const OnboardingModal = ({ visible, onComplete }: { visible: boolean; onComplete
           style={[styles.onboardingButton, { backgroundColor: theme.colors.primary.main }]}
           onPress={handleNext}
         >
-          <Text style={styles.onboardingButtonText}>
+          <Text style={[styles.onboardingButtonText, { color: theme.colors.background.light }]}>
             {step === totalSteps ? t('onboarding.startNow') : t('onboarding.next')}
           </Text>
         </TouchableOpacity>
@@ -328,7 +328,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   networkIndicatorText: {
-    color: '#fff',
     fontSize: 12,
     fontWeight: '600',
     textAlign: 'center',
@@ -364,12 +363,10 @@ const styles = StyleSheet.create({
   onboardingStep: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#999',
   },
   onboardingSkip: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#1976d2',
     padding: 8,
   },
   onboardingIconContainer: {
@@ -416,7 +413,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   onboardingButtonText: {
-    color: '#fff',
     fontSize: 16,
     fontWeight: '700',
   },
