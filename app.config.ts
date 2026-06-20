@@ -5,7 +5,7 @@ const appScheme = "merath";
 
 const env = {
   appName: 'حاسبة المواريث الشرعية (تطبيق جوال)',
-  appSlug: 'mertahmobile,
+  appSlug: 'mertahmobile',
   logoUrl: '',
   scheme: appScheme,
   androidPackage: bundleId,
