@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useMadhab } from '../lib/context/MadhabContext';
+import { useAppTheme } from '../lib/context/ThemeProvider';
 import { useCalculator } from '../lib/hooks/useCalculator';
 import { useResults } from '../lib/hooks/useResults';
 import { EstateInput } from '../components/EstateInput';
@@ -19,10 +20,12 @@ import { HeirSelector } from '../components/HeirSelector';
 import { MadhhabSelector } from '../components/MadhhabSelector';
 import { ResultsDisplay } from '../components/ResultsDisplay';
 import { Card } from '../components/ui/Card';
-import type { EstateData, HeirsData, MadhhabType, CalculationResult } from '../lib/inheritance/types';
+import type { Theme } from '../lib/design/theme';
+import type { EstateData, HeirsData } from '../lib/inheritance/types';
 
 export default function CalculatorScreen() {
   const { madhab, setMadhab } = useMadhab();
+  const { theme } = useAppTheme();
   const { calculateWithMethod } = useCalculator();
   const { result, setResult, clearResults } = useResults();
   const [showResults, setShowResults] = useState(false);
@@ -76,6 +79,8 @@ export default function CalculatorScreen() {
     setShowResults(false);
   }, [clearResults]);
 
+  const styles = createStyles(theme);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
@@ -112,7 +117,7 @@ export default function CalculatorScreen() {
               onPress={handleCalculate}
               disabled={isCalculating}
             >
-              <MaterialCommunityIcons name="calculator" size={20} color="#FFFFFF" />
+              <MaterialCommunityIcons name="calculator" size={20} color={theme.colors.background.light} />
               <Text style={styles.calculateButtonText}>
                 {isCalculating ? 'Calculating...' : 'Calculate'}
               </Text>
@@ -121,7 +126,7 @@ export default function CalculatorScreen() {
               style={styles.resetButton}
               onPress={handleReset}
             >
-              <MaterialCommunityIcons name="refresh" size={20} color="#2E7D32" />
+              <MaterialCommunityIcons name="refresh" size={20} color={theme.colors.primary.main} />
               <Text style={styles.resetButtonText}>Reset</Text>
             </TouchableOpacity>
           </View>
@@ -137,92 +142,93 @@ export default function CalculatorScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: 16,
-  },
-  header: {
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#2E7D32',
-    fontFamily: 'Inter-Bold',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666666',
-    marginTop: 8,
-    fontFamily: 'Inter-Regular',
-  },
-  card: {
-    marginBottom: 16,
-  },
-  cardTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 8,
-    fontFamily: 'Inter-Bold',
-  },
-  cardSubtitle: {
-    fontSize: 14,
-    color: '#666666',
-    marginBottom: 16,
-    fontFamily: 'Inter-Regular',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 16,
-  },
-  calculateButton: {
-    flex: 1,
-    backgroundColor: '#2E7D32',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    borderRadius: 8,
-    gap: 8,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  calculateButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  resetButton: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#2E7D32',
-    gap: 8,
-  },
-  resetButtonText: {
-    color: '#2E7D32',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  resultsContainer: {
-    marginBottom: 16,
-  },
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: theme.colors.background.lightVariant,
+    },
+    container: {
+      flex: 1,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    scrollContent: {
+      padding: 16,
+    },
+    header: {
+      marginBottom: 24,
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: 'bold',
+      color: theme.colors.primary.main,
+      fontFamily: 'Inter-Bold',
+    },
+    subtitle: {
+      fontSize: 16,
+      color: theme.colors.neutral.main,
+      marginTop: 8,
+      fontFamily: 'Inter-Regular',
+    },
+    card: {
+      marginBottom: 16,
+    },
+    cardTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: theme.colors.neutral.dark300,
+      marginBottom: 8,
+      fontFamily: 'Inter-Bold',
+    },
+    cardSubtitle: {
+      fontSize: 14,
+      color: theme.colors.neutral.main,
+      marginBottom: 16,
+      fontFamily: 'Inter-Regular',
+    },
+    buttonContainer: {
+      flexDirection: 'row',
+      gap: 12,
+      marginBottom: 16,
+    },
+    calculateButton: {
+      flex: 1,
+      backgroundColor: theme.colors.primary.main,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 16,
+      borderRadius: 8,
+      gap: 8,
+    },
+    buttonDisabled: {
+      opacity: 0.6,
+    },
+    calculateButtonText: {
+      color: theme.colors.background.light,
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+    resetButton: {
+      flex: 1,
+      backgroundColor: theme.colors.background.light,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 16,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: theme.colors.primary.main,
+      gap: 8,
+    },
+    resetButtonText: {
+      color: theme.colors.primary.main,
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+    resultsContainer: {
+      marginBottom: 16,
+    },
+  });

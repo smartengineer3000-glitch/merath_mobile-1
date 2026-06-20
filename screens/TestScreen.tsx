@@ -9,11 +9,14 @@ import {
   Alert,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useAppTheme } from '../lib/context/ThemeProvider';
 import { useCalculator } from '../lib/hooks/useCalculator';
 import { Card } from '../components/ui/Card';
+import type { Theme } from '../lib/design/theme';
 import type { CalculationResult } from '../lib/inheritance/types';
 
 export default function TestScreen() {
+  const { theme } = useAppTheme();
   const { calculateInheritance } = useCalculator();
   const [testResults, setTestResults] = useState<Array<{ name: string; result: CalculationResult | null; passed: boolean }>>([]);
   const [customInput, setCustomInput] = useState('');
@@ -37,6 +40,8 @@ export default function TestScreen() {
     }
   }, [customInput, calculateInheritance]);
 
+  const styles = createStyles(theme);
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -48,7 +53,7 @@ export default function TestScreen() {
         <Text style={styles.cardTitle}>Basic Test</Text>
         <Text style={styles.cardSubtitle}>Run a standard inheritance calculation test</Text>
         <TouchableOpacity style={styles.testButton} onPress={runBasicTest}>
-          <MaterialCommunityIcons name="play" size={24} color="#FFFFFF" />
+          <MaterialCommunityIcons name="play" size={24} color={theme.colors.background.light} />
           <Text style={styles.testButtonText}>Run Basic Test</Text>
         </TouchableOpacity>
       </Card>
@@ -64,7 +69,7 @@ export default function TestScreen() {
           multiline
         />
         <TouchableOpacity style={styles.testButton} onPress={runCustomTest}>
-          <MaterialCommunityIcons name="test-tube" size={24} color="#FFFFFF" />
+          <MaterialCommunityIcons name="test-tube" size={24} color={theme.colors.background.light} />
           <Text style={styles.testButtonText}>Run Custom Test</Text>
         </TouchableOpacity>
       </Card>
@@ -93,99 +98,101 @@ export default function TestScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-    padding: 16,
-  },
-  header: {
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#2E7D32',
-    fontFamily: 'Inter-Bold',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666666',
-    marginTop: 8,
-    fontFamily: 'Inter-Regular',
-  },
-  card: {
-    marginBottom: 16,
-  },
-  cardTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 8,
-  },
-  cardSubtitle: {
-    fontSize: 14,
-    color: '#666666',
-    marginBottom: 16,
-  },
-  testButton: {
-    backgroundColor: '#1976D2',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    borderRadius: 8,
-  },
-  testButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginLeft: 8,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#DDDDDD',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    marginBottom: 16,
-    backgroundColor: '#FFFFFF',
-    fontFamily: 'Inter-Regular',
-  },
-  resultsCard: {
-    marginBottom: 16,
-  },
-  resultsTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 16,
-  },
-  resultItem: {
-    marginBottom: 16,
-    padding: 12,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  resultHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  testName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333333',
-  },
-  resultText: {
-    fontSize: 12,
-    color: '#333333',
-    fontFamily: 'Inter-Regular',
-  },
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background.lightVariant,
+      padding: 16,
+    },
+    header: {
+      marginBottom: 24,
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: 'bold',
+      color: theme.colors.primary.main,
+      fontFamily: 'Inter-Bold',
+    },
+    subtitle: {
+      fontSize: 16,
+      color: theme.colors.neutral.main,
+      marginTop: 8,
+      fontFamily: 'Inter-Regular',
+    },
+    card: {
+      marginBottom: 16,
+    },
+    cardTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: theme.colors.neutral.dark300,
+      marginBottom: 8,
+    },
+    cardSubtitle: {
+      fontSize: 14,
+      color: theme.colors.neutral.main,
+      marginBottom: 16,
+    },
+    testButton: {
+      backgroundColor: theme.colors.info.main,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 16,
+      borderRadius: 8,
+    },
+    testButtonText: {
+      color: theme.colors.background.light,
+      fontSize: 16,
+      fontWeight: 'bold',
+      marginLeft: 8,
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: theme.colors.neutral.light300,
+      borderRadius: 8,
+      padding: 12,
+      fontSize: 16,
+      marginBottom: 16,
+      backgroundColor: theme.colors.background.light,
+      color: theme.colors.neutral.dark300,
+      fontFamily: 'Inter-Regular',
+    },
+    resultsCard: {
+      marginBottom: 16,
+    },
+    resultsTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: theme.colors.neutral.dark300,
+      marginBottom: 16,
+    },
+    resultItem: {
+      marginBottom: 16,
+      padding: 12,
+      backgroundColor: theme.colors.background.light,
+      borderRadius: 8,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    resultHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    testName: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: theme.colors.neutral.dark300,
+    },
+    resultText: {
+      fontSize: 12,
+      color: theme.colors.neutral.dark300,
+      fontFamily: 'Inter-Regular',
+    },
+  });

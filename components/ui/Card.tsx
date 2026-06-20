@@ -66,7 +66,7 @@ export const ModernCard: React.FC<ModernCardProps> = ({
   };
 
   const cardStyle: ViewStyle = {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.background.light,
     borderRadius: theme.borderRadius.lg,
     padding: padding ?? theme.spacing.md,
     ...getElevationStyles(),
