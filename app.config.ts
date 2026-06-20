@@ -84,7 +84,7 @@ const config: ExpoConfig = {
     versionCode: process.env.EAS_BUILD_NUMBER ? parseInt(process.env.EAS_BUILD_NUMBER, 10) : 1,
   },
   web: {
-    output: "static",
+    output: "single",
     favicon: "./assets/favicon.png",
   },
   plugins: [],
