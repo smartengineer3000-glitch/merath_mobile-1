@@ -5,15 +5,18 @@ const appScheme = "merath";
 
 const env = {
   appName: 'حاسبة المواريث الشرعية (تطبيق جوال)',
-  appSlug: 'mertahmobile',
+  appSlug: 'mertah_mobile',           // ✅ Updated to match new slug
   logoUrl: '',
   scheme: appScheme,
   androidPackage: bundleId,
 };
 
 const config: ExpoConfig = {
+  // === NEW: Add owner field ===
+  owner: "mertah_mobile",             // ✅ Added owner from project details
+
   name: env.appName,
-  slug: env.appSlug,
+  slug: env.appSlug,                  // Now uses 'mertah_mobile'
   version: "1.1.3",
   orientation: "portrait",
   icon: "./assets/icon.png",
@@ -64,7 +67,6 @@ const config: ExpoConfig = {
       "READ_EXTERNAL_STORAGE",
       "RECORD_AUDIO"
     ],
-    // Enable Hermes engine for faster JS execution and smaller APK
     jsEngine: "hermes",
     intentFilters: [
       {
@@ -85,9 +87,7 @@ const config: ExpoConfig = {
     output: "static",
     favicon: "./assets/favicon.png",
   },
-  plugins: [
-    // expo-router plugin removed - using traditional navigation instead
-  ],
+  plugins: [],
   experiments: {
     typedRoutes: true,
     reactCompiler: false,
