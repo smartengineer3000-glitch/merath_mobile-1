@@ -15,6 +15,8 @@ import { useCalculator } from '../lib/inheritance/hooks';
 import { MadhhabType, HeirsData, EstateData } from '../lib/inheritance/types';
 import { PDFExporter } from '../lib/export/PDFExporter';
 import { ErrorLogger } from '../lib/errors/ErrorHandler';
+import { useAppTheme } from '../lib/context/ThemeProvider';
+import type { Theme } from '../lib/design/theme';
 
 export interface CalculationButtonProps {
   madhab: MadhhabType;
@@ -38,6 +40,7 @@ export function CalculationButton({
   disabled = false,
   showPDFButton = true
 }: CalculationButtonProps) {
+  const { theme } = useAppTheme();
   const { calculateWithMethod, result, error } = useCalculator();
   const [localError, setLocalError] = useState<string | null>(null);
   
@@ -248,6 +251,7 @@ export function CalculationButton({
   const currentError = localError || error;
   const hasValidHeirs = heirsCountForDisable > 0;
   const hasValidEstate = estate.total > 0;
+  const styles = createStyles(theme);
 
   // ===== FIX H4: Get loading message based on state =====
   const getLoadingMessage = () => {
@@ -300,7 +304,7 @@ export function CalculationButton({
         {loadingState !== 'idle' ? (
           <Animated.View style={[styles.loadingContainer, { opacity: fadeAnim }]}>
             <Text style={styles.loadingIcon}>{getLoadingIcon()}</Text>
-            <ActivityIndicator size="small" color="#fff" style={styles.spinner} />
+            <ActivityIndicator size="small" color={theme.colors.background.light} style={styles.spinner} />
             <Text style={styles.buttonText}>{getLoadingMessage()}</Text>
           </Animated.View>
         ) : (
@@ -349,7 +353,7 @@ export function CalculationButton({
       {/* ===== FIX H4: Sharing indicator ===== */}
       {loadingState === 'pdf_sharing' && (
         <View style={styles.sharingContainer}>
-          <ActivityIndicator size="small" color="#1976d2" />
+          <ActivityIndicator size="small" color={theme.colors.info.main} />
           <Text style={styles.sharingText}>جاري فتح المشاركة...</Text>
         </View>
       )}
@@ -408,265 +412,263 @@ export function CalculationButton({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 16,
-    marginBottom: 16
-  },
-  button: {
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    backgroundColor: '#4F46E5',
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 48,
-    shadowColor: '#4F46E5',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6
-  },
-  buttonDisabled: {
-    backgroundColor: '#cbd5e1',
-    shadowColor: 'transparent',
-    shadowOpacity: 0,
-    elevation: 0,
-    opacity: 1
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center'
-  },
-  buttonTextDisabled: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#64748b'
-  },
-  // ===== FIX H4: PDF button styles =====
-  pdfButton: {
-    marginTop: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    backgroundColor: '#10B981',
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    gap: 8,
-    shadowColor: '#10B981',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3
-  },
-  pdfButtonIcon: {
-    fontSize: 16,
-    color: '#fff'
-  },
-  pdfButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600'
-  },
-  // ===== FIX H4: Progress bar styles =====
-  progressContainer: {
-    marginTop: 12,
-    padding: 12,
-    backgroundColor: '#f0f9ff',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#bae6fd'
-  },
-  progressHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8
-  },
-  progressTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#0369a1'
-  },
-  progressPercentage: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#0284c7'
-  },
-  progressBarBackground: {
-    height: 6,
-    backgroundColor: '#e0f2fe',
-    borderRadius: 3,
-    overflow: 'hidden'
-  },
-  progressBarFill: {
-    height: '100%',
-    backgroundColor: '#0284c7',
-    borderRadius: 3
-  },
-  progressHint: {
-    fontSize: 10,
-    color: '#7c7c7c',
-    textAlign: 'center',
-    marginTop: 6
-  },
-  // ===== FIX H4: Sharing indicator =====
-  sharingContainer: {
-    marginTop: 12,
-    padding: 10,
-    backgroundColor: '#e0f2fe',
-    borderRadius: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    borderWidth: 1,
-    borderColor: '#7dd3fc'
-  },
-  sharingText: {
-    fontSize: 12,
-    color: '#0369a1',
-    fontWeight: '500'
-  },
-  loadingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8
-  },
-  loadingIcon: {
-    fontSize: 16,
-    color: '#fff'
-  },
-  spinner: {
-    marginHorizontal: 4
-  },
-  warningBox: {
-    backgroundColor: '#fff3e0',
-    borderLeftWidth: 4,
-    borderLeftColor: '#f57c00',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 8,
-    marginBottom: 12,
-    borderTopRightRadius: 8,
-    borderBottomRightRadius: 8,
-    shadowColor: '#f57c00',
-    shadowOffset: { width: -2, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 2
-  },
-  warningText: {
-    color: '#e65100',
-    fontSize: 13,
-    fontWeight: '500',
-    textAlign: 'right'
-  },
-  errorContainer: {
-    marginTop: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    backgroundColor: '#ffebee',
-    borderRadius: 8,
-    borderLeftWidth: 4,
-    borderLeftColor: '#d32f2f',
-    shadowColor: '#d32f2f',
-    shadowOffset: { width: -2, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 1,
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  errorIcon: {
-    fontSize: 16,
-    marginRight: 8
-  },
-  errorText: {
-    fontSize: 13,
-    color: '#c62828',
-    fontWeight: '500',
-    textAlign: 'right',
-    flex: 1
-  },
-  errorDismiss: {
-    padding: 4,
-    marginLeft: 8
-  },
-  errorDismissText: {
-    fontSize: 14,
-    color: '#c62828',
-    fontWeight: 'bold'
-  },
-  successContainer: {
-    marginTop: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    backgroundColor: '#e8f5e9',
-    borderRadius: 8,
-    borderLeftWidth: 4,
-    borderLeftColor: '#4caf50',
-    shadowColor: '#4caf50',
-    shadowOffset: { width: -2, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 1,
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  successIcon: {
-    fontSize: 16,
-    color: '#2e7d32',
-    marginRight: 8
-  },
-  successText: {
-    fontSize: 13,
-    color: '#2e7d32',
-    fontWeight: '600',
-    textAlign: 'right'
-  },
-  resultInfo: {
-    marginTop: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#e0e0e0'
-  },
-  resultInfoTitle: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 8,
-    textAlign: 'right'
-  },
-  resultRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 6,
-    paddingVertical: 4
-  },
-  resultLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: '#666'
-  },
-  resultValue: {
-    fontSize: 12,
-    color: '#333',
-    fontWeight: '600'
-  },
-  successValue: {
-    color: '#2e7d32'
-  },
-  errorValue: {
-    color: '#d32f2f'
-  }
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    container: {
+      paddingHorizontal: 16,
+      marginBottom: 16
+    },
+    button: {
+      paddingVertical: 14,
+      paddingHorizontal: 20,
+      backgroundColor: theme.colors.primary.main,
+      borderRadius: 12,
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: 48,
+      shadowColor: theme.colors.primary.main,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+      elevation: 6
+    },
+    buttonDisabled: {
+      backgroundColor: theme.colors.neutral.light300,
+      shadowColor: 'transparent',
+      shadowOpacity: 0,
+      elevation: 0,
+      opacity: 1
+    },
+    buttonText: {
+      color: theme.colors.background.light,
+      fontSize: 16,
+      fontWeight: '600',
+      textAlign: 'center'
+    },
+    buttonTextDisabled: {
+      fontSize: 14,
+      fontWeight: '500',
+      color: theme.colors.neutral.main
+    },
+    pdfButton: {
+      marginTop: 10,
+      paddingVertical: 12,
+      paddingHorizontal: 20,
+      backgroundColor: theme.colors.success.main,
+      borderRadius: 12,
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'row',
+      gap: 8,
+      shadowColor: theme.colors.success.main,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.2,
+      shadowRadius: 4,
+      elevation: 3
+    },
+    pdfButtonIcon: {
+      fontSize: 16,
+      color: theme.colors.background.light
+    },
+    pdfButtonText: {
+      color: theme.colors.background.light,
+      fontSize: 14,
+      fontWeight: '600'
+    },
+    progressContainer: {
+      marginTop: 12,
+      padding: 12,
+      backgroundColor: theme.colors.info.light,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: theme.colors.info.main
+    },
+    progressHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 8
+    },
+    progressTitle: {
+      fontSize: 13,
+      fontWeight: '600',
+      color: theme.colors.info.dark
+    },
+    progressPercentage: {
+      fontSize: 13,
+      fontWeight: '700',
+      color: theme.colors.info.main
+    },
+    progressBarBackground: {
+      height: 6,
+      backgroundColor: theme.colors.info.light,
+      borderRadius: 3,
+      overflow: 'hidden'
+    },
+    progressBarFill: {
+      height: '100%',
+      backgroundColor: theme.colors.info.main,
+      borderRadius: 3
+    },
+    progressHint: {
+      fontSize: 10,
+      color: theme.colors.neutral.main,
+      textAlign: 'center',
+      marginTop: 6
+    },
+    sharingContainer: {
+      marginTop: 12,
+      padding: 10,
+      backgroundColor: theme.colors.info.light,
+      borderRadius: 8,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+      borderWidth: 1,
+      borderColor: theme.colors.info.main
+    },
+    sharingText: {
+      fontSize: 12,
+      color: theme.colors.info.dark,
+      fontWeight: '500'
+    },
+    loadingContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8
+    },
+    loadingIcon: {
+      fontSize: 16,
+      color: theme.colors.background.light
+    },
+    spinner: {
+      marginHorizontal: 4
+    },
+    warningBox: {
+      backgroundColor: theme.colors.warning.light,
+      borderLeftWidth: 4,
+      borderLeftColor: theme.colors.warning.main,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      borderRadius: 8,
+      marginBottom: 12,
+      borderTopRightRadius: 8,
+      borderBottomRightRadius: 8,
+      shadowColor: theme.colors.warning.main,
+      shadowOffset: { width: -2, height: 2 },
+      shadowOpacity: 0.15,
+      shadowRadius: 4,
+      elevation: 2
+    },
+    warningText: {
+      color: theme.colors.warning.dark,
+      fontSize: 13,
+      fontWeight: '500',
+      textAlign: 'right'
+    },
+    errorContainer: {
+      marginTop: 12,
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+      backgroundColor: theme.colors.error.light,
+      borderRadius: 8,
+      borderLeftWidth: 4,
+      borderLeftColor: theme.colors.error.dark,
+      shadowColor: theme.colors.error.dark,
+      shadowOffset: { width: -2, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 1,
+      flexDirection: 'row',
+      alignItems: 'center'
+    },
+    errorIcon: {
+      fontSize: 16,
+      marginRight: 8
+    },
+    errorText: {
+      fontSize: 13,
+      color: theme.colors.error.dark,
+      fontWeight: '500',
+      textAlign: 'right',
+      flex: 1
+    },
+    errorDismiss: {
+      padding: 4,
+      marginLeft: 8
+    },
+    errorDismissText: {
+      fontSize: 14,
+      color: theme.colors.error.dark,
+      fontWeight: 'bold'
+    },
+    successContainer: {
+      marginTop: 12,
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+      backgroundColor: theme.colors.success.light,
+      borderRadius: 8,
+      borderLeftWidth: 4,
+      borderLeftColor: theme.colors.success.main,
+      shadowColor: theme.colors.success.main,
+      shadowOffset: { width: -2, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 1,
+      flexDirection: 'row',
+      alignItems: 'center'
+    },
+    successIcon: {
+      fontSize: 16,
+      color: theme.colors.success.dark,
+      marginRight: 8
+    },
+    successText: {
+      fontSize: 13,
+      color: theme.colors.success.dark,
+      fontWeight: '600',
+      textAlign: 'right'
+    },
+    resultInfo: {
+      marginTop: 12,
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+      backgroundColor: theme.colors.neutral.light100,
+      borderRadius: 6,
+      borderWidth: 1,
+      borderColor: theme.colors.neutral.light200
+    },
+    resultInfoTitle: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: theme.colors.neutral.dark300,
+      marginBottom: 8,
+      textAlign: 'right'
+    },
+    resultRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 6,
+      paddingVertical: 4
+    },
+    resultLabel: {
+      fontSize: 12,
+      fontWeight: '500',
+      color: theme.colors.neutral.main
+    },
+    resultValue: {
+      fontSize: 12,
+      color: theme.colors.neutral.dark300,
+      fontWeight: '600'
+    },
+    successValue: {
+      color: theme.colors.success.dark
+    },
+    errorValue: {
+      color: theme.colors.error.dark
+    }
+  });
 
 export default CalculationButton;

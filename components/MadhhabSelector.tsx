@@ -35,7 +35,7 @@ export function MadhhabSelector({ selectedMadhab = 'hanafi', onSelect }: Madhhab
 
   // Option 1: Compact Grid (2x2)
   return (
-    <View style={styles.container}>
+    <View style={styles.container} accessibilityRole="radiogroup" accessibilityLabel="School of law selection">
       <View style={styles.gridContainer}>
         {MADHAB_DATA.map((madhab) => {
           const isSelected = selectedMadhab === madhab.id;
@@ -50,6 +50,9 @@ export function MadhhabSelector({ selectedMadhab = 'hanafi', onSelect }: Madhhab
               ]}
               onPress={() => onSelect(madhab.id)}
               activeOpacity={0.7}
+              accessibilityRole="radio"
+              accessibilityLabel={`${madhab.nameEn} school of law`}
+              accessibilityState={{ selected: isSelected }}
             >
               <View style={[styles.iconContainer, { backgroundColor: `${madhab.color}15` }]}>
                 <MaterialCommunityIcons name={madhab.icon} size={20} color={madhab.color} />

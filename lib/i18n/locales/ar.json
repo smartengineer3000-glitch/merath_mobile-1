@@ -118,17 +118,31 @@
 
   "settings": {
     "title": "الإعدادات",
+    "subtitle": "خصص تجربة التطبيق",
     "language": "اللغة",
+    "languageSubtitle": "اختر لغتك المفضلة",
     "theme": "المظهر",
     "lightMode": "فاتح",
-    "darkMode": "داكن",
+    "darkMode": "الوضع الداكن",
     "systemMode": "النظام",
+    "appearance": "المظهر",
+    "appearanceSubtitle": "خصص مظهر التطبيق",
     "calculationPreferences": "تفضيلات الحساب",
     "rounding": "التقريب",
+    "roundingDecimals": "أرقام التقريب",
     "precision": "الكسور العشرية",
     "notifications": "الإشعارات",
     "enableNotifications": "تفعيل الإشعارات",
-    "about": "حول التطبيق"
+    "autoSave": "الحفظ التلقائي",
+    "dataManagement": "إدارة البيانات",
+    "exportData": "تصدير البيانات",
+    "dataExported": "تم تصدير البيانات بنجاح",
+    "clearAllData": "مسح جميع البيانات",
+    "clearAllDataConfirm": "سيتم حذف جميع الحسابات والإعدادات. هل أنت متأكد؟",
+    "dataCleared": "تم مسح جميع البيانات",
+    "about": "حول التطبيق",
+    "version": "الإصدار",
+    "developer": "المطور"
   },
 
   "about": {
@@ -168,6 +182,7 @@
   "common": {
     "ok": "حسناً",
     "cancel": "إلغاء",
+    "clear": "مسح",
     "save": "حفظ",
     "delete": "حذف",
     "edit": "تحرير",

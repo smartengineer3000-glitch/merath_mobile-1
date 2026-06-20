@@ -118,17 +118,31 @@
 
   "settings": {
     "title": "Settings",
+    "subtitle": "Customize your app experience",
     "language": "Language",
+    "languageSubtitle": "Choose your preferred language",
     "theme": "Theme",
     "lightMode": "Light",
-    "darkMode": "Dark",
+    "darkMode": "Dark Mode",
     "systemMode": "System",
+    "appearance": "Appearance",
+    "appearanceSubtitle": "Customize the app appearance",
     "calculationPreferences": "Calculation Preferences",
     "rounding": "Rounding",
+    "roundingDecimals": "Rounding Decimals",
     "precision": "Decimal Places",
     "notifications": "Notifications",
     "enableNotifications": "Enable Notifications",
-    "about": "About App"
+    "autoSave": "Auto Save",
+    "dataManagement": "Data Management",
+    "exportData": "Export Data",
+    "dataExported": "Data exported successfully",
+    "clearAllData": "Clear All Data",
+    "clearAllDataConfirm": "This will remove all calculations and settings. Are you sure?",
+    "dataCleared": "All data cleared",
+    "about": "About App",
+    "version": "Version",
+    "developer": "Developer"
   },
 
   "about": {
@@ -168,6 +182,7 @@
   "common": {
     "ok": "OK",
     "cancel": "Cancel",
+    "clear": "Clear",
     "save": "Save",
     "delete": "Delete",
     "edit": "Edit",
