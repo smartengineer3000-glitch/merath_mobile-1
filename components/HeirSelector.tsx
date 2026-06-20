@@ -24,6 +24,8 @@ import { useAppTheme } from '../lib/context/ThemeProvider';
 import type { HeirsData, HeirType } from '../lib/inheritance/types';
 import { parseSafeInteger } from '../lib/utils/parsers';
 
+type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+
 interface HeirSelectorProps {
   onHeirsChange?: (heirs: HeirsData) => void;
 }
@@ -55,7 +57,7 @@ const HEIR_CATEGORIES: {
   id: string;
   name: string;
   nameEn: string;
-  icon: string;
+  icon: IconName;
   color: string;
   heirs: HeirItem[];
 }[] = [
@@ -417,7 +419,7 @@ export const HeirSelector = React.memo(function HeirSelector({ onHeirsChange }: 
                 onPress={() => toggleCategory(category.id)}
               >
                 <View style={[styles.categoryIconContainer, { backgroundColor: `${category.color}20` }]}>
-                  <MaterialCommunityIcons name={category.icon as any} size={20} color={category.color} />
+                  <MaterialCommunityIcons name={category.icon} size={20} color={category.color} />
                 </View>
                 <View style={styles.categoryTitleContainer}>
                   <Text style={styles.categoryName}>{category.name}</Text>

@@ -82,16 +82,18 @@ export const performanceUtils = {
    * Log all metrics to console for debugging
    */
   logMetrics: () => {
-    console.log('=== Performance Metrics ===');
-    metrics.forEach((values, label) => {
-      const stats = getStats(values);
-      console.log(`${label}:`, {
-        count: stats.count,
-        avg: `${stats.average.toFixed(2)}ms`,
-        min: `${stats.min.toFixed(2)}ms`,
-        max: `${stats.max.toFixed(2)}ms`
+    if (__DEV__) {
+      console.log('=== Performance Metrics ===');
+      metrics.forEach((values, label) => {
+        const stats = getStats(values);
+        console.log(`${label}:`, {
+          count: stats.count,
+          avg: `${stats.average.toFixed(2)}ms`,
+          min: `${stats.min.toFixed(2)}ms`,
+          max: `${stats.max.toFixed(2)}ms`
+        });
       });
-    });
+    }
   },
 };
 

@@ -6,7 +6,7 @@
  * Integrates required screens only
  */
 
-import React, { useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -20,12 +20,37 @@ import { languages } from '../lib/i18n';
 import type { RootStackParamList, DrawerParamList } from './types';
 import { linking } from './linking';
 
-// Screens
+// Screens — CalculatorScreen is eagerly loaded (landing screen);
+// heavier screens are lazy-loaded to improve startup time.
 import CalculatorScreen from '../screens/CalculatorScreen';
-import MadhhabComparisonScreen from '../screens/MadhhabComparisonScreen';
-import TestScreen from '../screens/TestScreen';
-import SettingsScreen from '../screens/SettingsScreen';
-import AboutScreen from '../screens/AboutScreen';
+
+const MadhhabComparisonScreen = React.lazy(() => import('../screens/MadhhabComparisonScreen'));
+const TestScreen = React.lazy(() => import('../screens/TestScreen'));
+const SettingsScreen = React.lazy(() => import('../screens/SettingsScreen'));
+const AboutScreen = React.lazy(() => import('../screens/AboutScreen'));
+
+function LazyFallback() {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <ActivityIndicator size="large" color="#2E7D32" />
+    </View>
+  );
+}
+
+function withSuspense<P extends object>(LazyComponent: React.LazyExoticComponent<React.ComponentType<P>>) {
+  return function SuspenseWrapper(props: P) {
+    return (
+      <Suspense fallback={<LazyFallback />}>
+        <LazyComponent {...props} />
+      </Suspense>
+    );
+  };
+}
+
+const LazyMadhhabComparison = withSuspense(MadhhabComparisonScreen);
+const LazyTestScreen = withSuspense(TestScreen);
+const LazySettingsScreen = withSuspense(SettingsScreen);
+const LazyAboutScreen = withSuspense(AboutScreen);
 
 // Allow RTL layouts on supported platforms, and dynamically update direction based on selected language.
 if (Platform.OS !== 'web') {
@@ -79,7 +104,7 @@ export function DrawerNavigator() {
       />
       <Drawer.Screen
         name="MadhhabComparison"
-        component={MadhhabComparisonScreen}
+        component={LazyMadhhabComparison}
         options={{
           title: 'Madhhab Comparison',
           drawerIcon: ({ color, size }) => (
@@ -90,7 +115,7 @@ export function DrawerNavigator() {
       {__DEV__ && (
         <Drawer.Screen
           name="Test"
-          component={TestScreen}
+          component={LazyTestScreen}
           options={{
             drawerIcon: ({ color, size }) => (
               <MaterialCommunityIcons name="test-tube" color={color} size={size} />
@@ -100,7 +125,7 @@ export function DrawerNavigator() {
       )}
       <Drawer.Screen
         name="Settings"
-        component={SettingsScreen}
+        component={LazySettingsScreen}
         options={{
           drawerIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="cog" color={color} size={size} />
@@ -109,7 +134,7 @@ export function DrawerNavigator() {
       />
       <Drawer.Screen
         name="About"
-        component={AboutScreen}
+        component={LazyAboutScreen}
         options={{
           drawerIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="information" color={color} size={size} />

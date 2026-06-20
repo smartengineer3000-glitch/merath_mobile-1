@@ -49,7 +49,7 @@ export class MerathDatabase extends Dexie {
       auditLogs: 'id, timestamp, madhab, operation, success, year, month, day, duration, [year+month], [madhab+success], [operation+success]'
     }).upgrade(tx => {
       // Data migration if needed
-      console.log('Upgrading database to version 2');
+      if (typeof __DEV__ !== 'undefined' && __DEV__) console.log('Upgrading database to version 2');
     });
   }
   
@@ -104,19 +104,19 @@ export class MerathDatabase extends Dexie {
     const totalEntries = await this.auditLogs.count();
     
     // Get counts by madhab
-    const madhabs = ['shafii', 'hanafi', 'maliki', 'hanbali'];
+    const madhabs: MadhhabType[] = ['shafii', 'hanafi', 'maliki', 'hanbali'];
     const byMadhab: Record<string, number> = {};
     
     for (const madhab of madhabs) {
-      byMadhab[madhab] = await this.auditLogs.where('madhab').equals(madhab as any).count();
+      byMadhab[madhab] = await this.auditLogs.where('madhab').equals(madhab).count();
     }
     
     // Get counts by operation
-    const operations = ['calculate', 'delete', 'export', 'import', 'clear'];
+    const operations: DBAuditLogEntry['operation'][] = ['calculate', 'delete', 'export', 'import', 'clear'];
     const byOperation: Record<string, number> = {};
     
     for (const op of operations) {
-      byOperation[op] = await this.auditLogs.where('operation').equals(op as any).count();
+      byOperation[op] = await this.auditLogs.where('operation').equals(op).count();
     }
     
     // Get oldest and newest
@@ -140,7 +140,7 @@ export const db = new MerathDatabase();
 
 // Initialize database
 db.on('ready', () => {
-  console.log('[Database] MerathDatabase ready');
+  if (typeof __DEV__ !== 'undefined' && __DEV__) console.log('[Database] MerathDatabase ready');
 });
 
 export default db;

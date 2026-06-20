@@ -12,18 +12,21 @@ import {
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAppTheme } from '../lib/context/ThemeProvider';
+import type { Theme } from '../lib/design/theme';
 import type { MadhhabType } from '../lib/inheritance/types';
+
+type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
 
 interface MadhhabSelectorProps {
   selectedMadhab?: MadhhabType;
   onSelect: (madhab: MadhhabType) => void;
 }
 
-const MADHAB_DATA = [
-  { id: 'hanafi' as MadhhabType, name: 'الحنفي', nameEn: 'Hanafi', icon: 'school', color: '#10B981' },
-  { id: 'maliki' as MadhhabType, name: 'المالكي', nameEn: 'Maliki', icon: 'book-open-variant', color: '#8B5CF6' },
-  { id: 'shafii' as MadhhabType, name: 'الشافعي', nameEn: 'Shafi\'i', icon: 'lightbulb-on', color: '#F59E0B' },
-  { id: 'hanbali' as MadhhabType, name: 'الحنبلي', nameEn: 'Hanbali', icon: 'book', color: '#EF4444' },
+const MADHAB_DATA: { id: MadhhabType; name: string; nameEn: string; icon: IconName; color: string }[] = [
+  { id: 'hanafi', name: 'الحنفي', nameEn: 'Hanafi', icon: 'school', color: '#10B981' },
+  { id: 'maliki', name: 'المالكي', nameEn: 'Maliki', icon: 'book-open-variant', color: '#8B5CF6' },
+  { id: 'shafii', name: 'الشافعي', nameEn: 'Shafi\'i', icon: 'lightbulb-on', color: '#F59E0B' },
+  { id: 'hanbali', name: 'الحنبلي', nameEn: 'Hanbali', icon: 'book', color: '#EF4444' },
 ];
 
 export function MadhhabSelector({ selectedMadhab = 'hanafi', onSelect }: MadhhabSelectorProps) {
@@ -49,7 +52,7 @@ export function MadhhabSelector({ selectedMadhab = 'hanafi', onSelect }: Madhhab
               activeOpacity={0.7}
             >
               <View style={[styles.iconContainer, { backgroundColor: `${madhab.color}15` }]}>
-                <MaterialCommunityIcons name={madhab.icon as any} size={20} color={madhab.color} />
+                <MaterialCommunityIcons name={madhab.icon} size={20} color={madhab.color} />
               </View>
               <View style={styles.textContainer}>
                 <Text style={styles.madhabName}>{madhab.name}</Text>
@@ -73,7 +76,7 @@ export function MadhhabSelector({ selectedMadhab = 'hanafi', onSelect }: Madhhab
       >
         <View style={styles.dropdownContent}>
           <View style={[styles.dropdownIcon, { backgroundColor: `${selected?.color}15` }]}>
-            <MaterialCommunityIcons name={selected?.icon as any} size={20} color={selected?.color} />
+            <MaterialCommunityIcons name={selected?.icon ?? 'school'} size={20} color={selected?.color} />
           </View>
           <View>
             <Text style={styles.dropdownText}>{selected?.name}</Text>
@@ -109,7 +112,7 @@ export function MadhhabSelector({ selectedMadhab = 'hanafi', onSelect }: Madhhab
                   }}
                 >
                   <View style={[styles.modalItemIcon, { backgroundColor: `${item.color}15` }]}>
-                    <MaterialCommunityIcons name={item.icon as any} size={20} color={item.color} />
+                    <MaterialCommunityIcons name={item.icon} size={20} color={item.color} />
                   </View>
                   <View>
                     <Text style={styles.modalItemText}>{item.name}</Text>
@@ -129,7 +132,7 @@ export function MadhhabSelector({ selectedMadhab = 'hanafi', onSelect }: Madhhab
   );
 }
 
-const createStyles = (theme: any) =>
+const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       marginVertical: 8,

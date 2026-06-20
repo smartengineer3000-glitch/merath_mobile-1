@@ -69,7 +69,7 @@ export class PDFExporter {
             const fileInfo = await FileSystem.getInfoAsync(file.uri);
             if (fileInfo.exists) {
               await FileSystem.deleteAsync(file.uri, { idempotent: true });
-              console.log(`[PDFExporter] Cleaned up temp file: ${file.uri}`);
+              if (__DEV__) console.log(`[PDFExporter] Cleaned up temp file: ${file.uri}`);
             }
           } catch (error) {
             // Ignore cleanup errors
@@ -787,19 +787,10 @@ export class PDFExporter {
       }
       
       // For native platforms, copy to documents directory
-        const documentDir = (FileSystem as any).documentDirectory;
+        const documentDir = (FileSystem as unknown as { documentDirectory: string | null }).documentDirectory;
         if (!documentDir) {
           throw new Error('لا يمكن الوصول إلى نظام الملفات');
         }
-        if (!documentDir) {
-          throw new Error('لا يمكن الوصول إلى نظام الملفات');
-        }
-        if (!documentDir) {
-          throw new Error('لا يمكن الوصول إلى نظام الملفات');
-        }
-      if (!documentDir) {
-        throw new Error('لا يمكن الوصول إلى نظام الملفات');
-      }
       
       const permanentPath = `${documentDir}${finalFilename}`;
       
