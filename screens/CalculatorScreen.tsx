@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -9,20 +9,99 @@ import {
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
-} from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useTranslation } from 'react-i18next';
-import { useMadhab } from '../lib/context/MadhabContext';
-import { useAppTheme } from '../lib/context/ThemeProvider';
-import { useCalculator } from '../lib/hooks/useCalculator';
-import { useResults } from '../lib/hooks/useResults';
-import { EstateInput } from '../components/EstateInput';
-import { HeirSelector } from '../components/HeirSelector';
-import { MadhhabSelector } from '../components/MadhhabSelector';
-import { ResultsDisplay } from '../components/ResultsDisplay';
-import { Card } from '../components/ui/Card';
-import type { Theme } from '../lib/design/theme';
-import type { EstateData, HeirsData } from '../lib/inheritance/types';
+} from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
+import { useMadhab } from "../lib/context/MadhabContext";
+import { useAppTheme } from "../lib/context/ThemeProvider";
+import { useCalculator } from "../lib/hooks/useCalculator";
+import { useResults } from "../lib/hooks/useResults";
+import { EstateInput } from "../components/EstateInput";
+import { HeirSelector } from "../components/HeirSelector";
+import { MadhhabSelector } from "../components/MadhhabSelector";
+import { ResultsDisplay } from "../components/ResultsDisplay";
+import { Card } from "../components/ui/Card";
+import type { Theme } from "../lib/design/theme";
+import type { EstateData, HeirsData } from "../lib/inheritance/types";
+
+type StepStatus = "active" | "complete" | "pending";
+
+type StepCardProps = {
+  index: number;
+  title: string;
+  subtitle: string;
+  icon: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
+  status: StepStatus;
+  children: React.ReactNode;
+};
+
+const formatCurrency = (value: number) =>
+  new Intl.NumberFormat("ar-SA", {
+    maximumFractionDigits: 0,
+  }).format(Math.max(0, value || 0));
+
+function StepCard({
+  index,
+  title,
+  subtitle,
+  icon,
+  status,
+  children,
+}: StepCardProps) {
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
+  const isComplete = status === "complete";
+  const isActive = status === "active";
+
+  return (
+    <Card
+      style={StyleSheet.flatten([
+        styles.stepCard,
+        isActive ? styles.stepCardActive : undefined,
+      ])}
+      elevation={isActive ? "high" : "low"}
+    >
+      <View style={styles.stepHeaderRow}>
+        <View
+          style={[
+            styles.stepBadge,
+            isComplete && styles.stepBadgeComplete,
+            isActive && styles.stepBadgeActive,
+          ]}
+        >
+          {isComplete ? (
+            <MaterialCommunityIcons
+              name="check"
+              size={18}
+              color={theme.colors.background.light}
+            />
+          ) : (
+            <Text
+              style={[
+                styles.stepBadgeText,
+                isActive && styles.stepBadgeTextActive,
+              ]}
+            >
+              {index}
+            </Text>
+          )}
+        </View>
+        <View style={styles.stepTitleBlock}>
+          <Text style={styles.stepTitle}>{title}</Text>
+          <Text style={styles.stepSubtitle}>{subtitle}</Text>
+        </View>
+        <View style={styles.stepIconCircle}>
+          <MaterialCommunityIcons
+            name={icon}
+            size={22}
+            color={theme.colors.primary.main}
+          />
+        </View>
+      </View>
+      <View style={styles.stepContent}>{children}</View>
+    </Card>
+  );
+}
 
 export default function CalculatorScreen() {
   const { t } = useTranslation();
@@ -48,15 +127,35 @@ export default function CalculatorScreen() {
     setCurrentHeirs(heirs);
   }, []);
 
+  const selectedHeirsCount = useMemo(
+    () =>
+      Object.values(currentHeirs).reduce<number>(
+        (sum, value) => sum + (value ?? 0),
+        0,
+      ),
+    [currentHeirs],
+  );
+
+  const deductions =
+    (currentEstate.funeral ?? 0) +
+    (currentEstate.debts ?? 0) +
+    (currentEstate.will ?? 0);
+  const netEstate = Math.max(0, (currentEstate.total ?? 0) - deductions);
+  const progress = [
+    Boolean(madhab),
+    currentEstate.total > 0,
+    selectedHeirsCount > 0,
+  ].filter(Boolean).length;
+
   const handleCalculate = useCallback(async () => {
     if (currentEstate.total <= 0) {
-      Alert.alert(t('common.error'), t('results.invalidEstate'));
+      Alert.alert(t("common.error"), t("results.invalidEstate"));
       return;
     }
 
-    const hasHeirs = Object.values(currentHeirs).some(v => (v ?? 0) > 0);
+    const hasHeirs = Object.values(currentHeirs).some((v) => (v ?? 0) > 0);
     if (!hasHeirs) {
-      Alert.alert(t('common.error'), t('results.noHeirs'));
+      Alert.alert(t("common.error"), t("results.noHeirs"));
       return;
     }
 
@@ -68,7 +167,7 @@ export default function CalculatorScreen() {
         setShowResults(true);
       }
     } catch (error) {
-      Alert.alert(t('common.error'), t('calculator.calculationFailed'));
+      Alert.alert(t("common.error"), t("calculator.calculationFailed"));
     } finally {
       setIsCalculating(false);
     }
@@ -87,60 +186,165 @@ export default function CalculatorScreen() {
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
         style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.header}>
-            <Text style={styles.title}>{t('calculator.title')}</Text>
-            <Text style={styles.subtitle}>{t('calculator.subtitle')}</Text>
+          <View style={styles.heroCard}>
+            <View style={styles.heroTopRow}>
+              <View style={styles.heroIconWrap}>
+                <MaterialCommunityIcons
+                  name="scale-balance"
+                  size={30}
+                  color={theme.colors.primary.main}
+                />
+              </View>
+              <View style={styles.heroCopy}>
+                <Text style={styles.eyebrow}>Merath Calculator</Text>
+                <Text style={styles.title}>{t("calculator.title")}</Text>
+                <Text style={styles.subtitle}>{t("calculator.subtitle")}</Text>
+              </View>
+            </View>
+            <View style={styles.progressTrack}>
+              <View
+                style={[
+                  styles.progressFill,
+                  { width: `${(progress / 3) * 100}%` },
+                ]}
+              />
+            </View>
+            <View style={styles.summaryRow}>
+              <View style={styles.summaryPill}>
+                <Text style={styles.summaryLabel}>صافي التركة</Text>
+                <Text style={styles.summaryValue}>
+                  {formatCurrency(netEstate)}
+                </Text>
+              </View>
+              <View style={styles.summaryPill}>
+                <Text style={styles.summaryLabel}>الورثة</Text>
+                <Text style={styles.summaryValue}>{selectedHeirsCount}</Text>
+              </View>
+              <View style={styles.summaryPill}>
+                <Text style={styles.summaryLabel}>الخطوات</Text>
+                <Text style={styles.summaryValue}>{progress}/3</Text>
+              </View>
+            </View>
           </View>
 
-          <Card style={styles.card}>
-            <Text style={styles.cardTitle}>{t('madhab.selection')}</Text>
-            <Text style={styles.cardSubtitle}>{t('madhab.selectionSubtitle')}</Text>
+          <StepCard
+            index={1}
+            title={t("madhab.selection")}
+            subtitle={t("madhab.selectionSubtitle")}
+            icon="book-open-page-variant"
+            status="complete"
+          >
             <MadhhabSelector selectedMadhab={madhab} onSelect={setMadhab} />
-          </Card>
+          </StepCard>
 
-          <Card style={styles.card}>
+          <StepCard
+            index={2}
+            title="بيانات التركة"
+            subtitle="أدخل الإجمالي والخصومات للحصول على صافي التركة."
+            icon="cash-multiple"
+            status={currentEstate.total > 0 ? "complete" : "active"}
+          >
+            <View style={styles.netEstateBanner}>
+              <MaterialCommunityIcons
+                name="wallet-outline"
+                size={22}
+                color={theme.colors.primary.main}
+              />
+              <View style={styles.netEstateCopy}>
+                <Text style={styles.netEstateLabel}>صافي التركة المتوقع</Text>
+                <Text style={styles.netEstateValue}>
+                  {formatCurrency(netEstate)}
+                </Text>
+              </View>
+            </View>
             <EstateInput onEstateChange={handleEstateChange} />
-          </Card>
+          </StepCard>
 
-          <Card style={styles.card}>
+          <StepCard
+            index={3}
+            title="اختيار الورثة"
+            subtitle="حدد الورثة وسيتم تنبيهك عند وجود تعارضات."
+            icon="account-group"
+            status={
+              selectedHeirsCount > 0
+                ? "complete"
+                : currentEstate.total > 0
+                  ? "active"
+                  : "pending"
+            }
+          >
+            {selectedHeirsCount > 0 && (
+              <View style={styles.selectionSummary}>
+                <MaterialCommunityIcons
+                  name="account-check"
+                  size={20}
+                  color={theme.colors.success.main}
+                />
+                <Text style={styles.selectionSummaryText}>
+                  تم اختيار {selectedHeirsCount} من الورثة
+                </Text>
+              </View>
+            )}
             <HeirSelector onHeirsChange={handleHeirsChange} />
-          </Card>
+          </StepCard>
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={[styles.calculateButton, isCalculating && styles.buttonDisabled]}
+              style={[
+                styles.calculateButton,
+                isCalculating && styles.buttonDisabled,
+              ]}
               onPress={handleCalculate}
               disabled={isCalculating}
               accessibilityRole="button"
-              accessibilityLabel={isCalculating ? t('calculator.calculatingInheritance') : t('calculator.calculateInheritance')}
+              accessibilityLabel={
+                isCalculating
+                  ? t("calculator.calculatingInheritance")
+                  : t("calculator.calculateInheritance")
+              }
               accessibilityState={{ disabled: isCalculating }}
             >
-              <MaterialCommunityIcons name="calculator" size={20} color={theme.colors.background.light} />
+              <MaterialCommunityIcons
+                name="calculator"
+                size={20}
+                color={theme.colors.background.light}
+              />
               <Text style={styles.calculateButtonText}>
-                {isCalculating ? t('calculator.calculating') : t('calculator.calculate')}
+                {isCalculating
+                  ? t("calculator.calculating")
+                  : t("calculator.calculate")}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.resetButton}
               onPress={handleReset}
               accessibilityRole="button"
-              accessibilityLabel={t('calculator.resetAllFields')}
+              accessibilityLabel={t("calculator.resetAllFields")}
             >
-              <MaterialCommunityIcons name="refresh" size={20} color={theme.colors.primary.main} />
-              <Text style={styles.resetButtonText}>{t('calculator.reset')}</Text>
+              <MaterialCommunityIcons
+                name="refresh"
+                size={20}
+                color={theme.colors.primary.main}
+              />
+              <Text style={styles.resetButtonText}>
+                {t("calculator.reset")}
+              </Text>
             </TouchableOpacity>
           </View>
 
           {showResults && result && (
             <View style={styles.resultsContainer}>
-              <ResultsDisplay result={result} onClose={() => setShowResults(false)} />
+              <ResultsDisplay
+                result={result}
+                onClose={() => setShowResults(false)}
+              />
             </View>
           )}
         </ScrollView>
@@ -162,53 +366,207 @@ const createStyles = (theme: Theme) =>
       flex: 1,
     },
     scrollContent: {
-      padding: 16,
+      padding: theme.spacing.lg,
+      paddingBottom: theme.spacing.xxxl,
     },
-    header: {
-      marginBottom: 24,
+    heroCard: {
+      borderRadius: theme.borderRadius.xl,
+      padding: theme.spacing.xl,
+      marginBottom: theme.spacing.lg,
+      backgroundColor:
+        theme.mode === "dark"
+          ? theme.colors.background.light
+          : theme.colors.primary.light,
+      borderWidth: 1,
+      borderColor: theme.colors.primary.lighter,
+      ...theme.shadows.md,
+    },
+    heroTopRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.md,
+    },
+    heroIconWrap: {
+      width: 62,
+      height: 62,
+      borderRadius: theme.borderRadius.xl,
+      backgroundColor: theme.colors.background.light,
+      alignItems: "center",
+      justifyContent: "center",
+      ...theme.shadows.sm,
+    },
+    heroCopy: {
+      flex: 1,
+    },
+    eyebrow: {
+      ...theme.typography.label.medium,
+      color: theme.colors.tertiary.dark200,
+      marginBottom: theme.spacing.xs,
+      fontFamily: "Inter-Bold",
+      textTransform: "uppercase",
     },
     title: {
-      fontSize: 28,
-      fontWeight: 'bold',
-      color: theme.colors.primary.main,
-      fontFamily: 'Inter-Bold',
+      ...theme.typography.display.medium,
+      color: theme.colors.primary.dark200,
+      fontFamily: "Inter-Bold",
     },
     subtitle: {
-      fontSize: 16,
+      ...theme.typography.body.medium,
+      color: theme.colors.neutral.dark200,
+      marginTop: theme.spacing.xs,
+      fontFamily: "Inter-Regular",
+    },
+    progressTrack: {
+      height: 8,
+      borderRadius: theme.borderRadius.full,
+      backgroundColor: theme.colors.background.light,
+      overflow: "hidden",
+      marginTop: theme.spacing.xl,
+    },
+    progressFill: {
+      height: "100%",
+      borderRadius: theme.borderRadius.full,
+      backgroundColor: theme.colors.primary.main,
+    },
+    summaryRow: {
+      flexDirection: "row",
+      gap: theme.spacing.sm,
+      marginTop: theme.spacing.lg,
+    },
+    summaryPill: {
+      flex: 1,
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: theme.colors.background.light,
+      padding: theme.spacing.md,
+      borderWidth: 1,
+      borderColor: theme.colors.neutral.light200,
+    },
+    summaryLabel: {
+      ...theme.typography.label.small,
       color: theme.colors.neutral.main,
-      marginTop: 8,
-      fontFamily: 'Inter-Regular',
+      marginBottom: theme.spacing.xs,
+      fontFamily: "Inter-Regular",
     },
-    card: {
-      marginBottom: 16,
+    summaryValue: {
+      ...theme.typography.title.large,
+      color: theme.colors.primary.main,
+      fontFamily: "Inter-Bold",
     },
-    cardTitle: {
-      fontSize: 20,
-      fontWeight: 'bold',
+    stepCard: {
+      marginBottom: theme.spacing.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.neutral.light200,
+    },
+    stepCardActive: {
+      borderColor: theme.colors.primary.light100,
+    },
+    stepHeaderRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.md,
+    },
+    stepBadge: {
+      width: 34,
+      height: 34,
+      borderRadius: theme.borderRadius.full,
+      backgroundColor: theme.colors.neutral.light100,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    stepBadgeActive: {
+      backgroundColor: theme.colors.primary.light,
+      borderWidth: 1,
+      borderColor: theme.colors.primary.light100,
+    },
+    stepBadgeComplete: {
+      backgroundColor: theme.colors.success.main,
+    },
+    stepBadgeText: {
+      ...theme.typography.label.large,
+      color: theme.colors.neutral.dark200,
+      fontFamily: "Inter-Bold",
+    },
+    stepBadgeTextActive: {
+      color: theme.colors.primary.main,
+    },
+    stepTitleBlock: {
+      flex: 1,
+    },
+    stepTitle: {
+      ...theme.typography.headline.medium,
       color: theme.colors.neutral.dark300,
-      marginBottom: 8,
-      fontFamily: 'Inter-Bold',
+      fontFamily: "Inter-Bold",
     },
-    cardSubtitle: {
-      fontSize: 14,
+    stepSubtitle: {
+      ...theme.typography.body.small,
       color: theme.colors.neutral.main,
-      marginBottom: 16,
-      fontFamily: 'Inter-Regular',
+      marginTop: 2,
+      fontFamily: "Inter-Regular",
+    },
+    stepIconCircle: {
+      width: 42,
+      height: 42,
+      borderRadius: theme.borderRadius.full,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: theme.colors.primary.light,
+    },
+    stepContent: {
+      marginTop: theme.spacing.lg,
+    },
+    netEstateBanner: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.md,
+      padding: theme.spacing.md,
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: theme.colors.primary.light,
+      marginBottom: theme.spacing.md,
+    },
+    netEstateCopy: {
+      flex: 1,
+    },
+    netEstateLabel: {
+      ...theme.typography.label.medium,
+      color: theme.colors.neutral.dark200,
+      fontFamily: "Inter-Regular",
+    },
+    netEstateValue: {
+      ...theme.typography.headline.medium,
+      color: theme.colors.primary.main,
+      fontFamily: "Inter-Bold",
+      marginTop: 2,
+    },
+    selectionSummary: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.sm,
+      backgroundColor: theme.colors.success.light,
+      borderRadius: theme.borderRadius.lg,
+      padding: theme.spacing.md,
+      marginBottom: theme.spacing.md,
+    },
+    selectionSummaryText: {
+      ...theme.typography.body.medium,
+      color: theme.colors.neutral.dark300,
+      fontFamily: "Inter-Bold",
     },
     buttonContainer: {
-      flexDirection: 'row',
-      gap: 12,
-      marginBottom: 16,
+      flexDirection: "row",
+      gap: theme.spacing.md,
+      marginBottom: theme.spacing.lg,
     },
     calculateButton: {
-      flex: 1,
+      flex: 1.35,
       backgroundColor: theme.colors.primary.main,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 16,
-      borderRadius: 8,
-      gap: 8,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.md,
+      borderRadius: theme.borderRadius.lg,
+      gap: theme.spacing.sm,
+      ...theme.shadows.md,
     },
     buttonDisabled: {
       opacity: 0.6,
@@ -216,26 +574,29 @@ const createStyles = (theme: Theme) =>
     calculateButtonText: {
       color: theme.colors.background.light,
       fontSize: 16,
-      fontWeight: 'bold',
+      fontWeight: "bold",
+      fontFamily: "Inter-Bold",
     },
     resetButton: {
       flex: 1,
       backgroundColor: theme.colors.background.light,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 16,
-      borderRadius: 8,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.md,
+      borderRadius: theme.borderRadius.lg,
       borderWidth: 1,
-      borderColor: theme.colors.primary.main,
-      gap: 8,
+      borderColor: theme.colors.primary.light100,
+      gap: theme.spacing.sm,
     },
     resetButtonText: {
       color: theme.colors.primary.main,
       fontSize: 16,
-      fontWeight: 'bold',
+      fontWeight: "bold",
+      fontFamily: "Inter-Bold",
     },
     resultsContainer: {
-      marginBottom: 16,
+      marginBottom: theme.spacing.lg,
     },
   });
