@@ -1,0 +1,6 @@
+CalculatorScreen tab refactor
+- [x] Install top-tab navigation dependencies
+- [x] Update CalculatorScreen to use Estate Details / Heirs / Madhab tabs
+- [x] Keep estate, heirs, and madhab state persistent across tabs
+- [x] Keep Calculate Results button visible on all tabs
+- [x] Validate with npx expo-doctor, npx tsc --noEmit, npm test

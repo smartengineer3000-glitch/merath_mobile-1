@@ -11,6 +11,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useTranslation } from "react-i18next";
 import { useMadhab } from "../lib/context/MadhabContext";
 import { useCalculationScenario } from "../lib/context/CalculationContext";
@@ -35,6 +36,8 @@ type StepCardProps = {
   status: StepStatus;
   children: React.ReactNode;
 };
+
+const Tab = createMaterialTopTabNavigator();
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("ar-SA", {
@@ -196,118 +199,143 @@ export default function CalculatorScreen() {
 
   const styles = createStyles(theme);
 
+  const EstateDetailsTab = () => (
+    <ScrollView
+      style={styles.tabScreen}
+      contentContainerStyle={styles.tabContent}
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={styles.netEstateBanner}>
+        <MaterialCommunityIcons
+          name="wallet-outline"
+          size={22}
+          color={theme.colors.primary.main}
+        />
+        <View style={styles.netEstateCopy}>
+          <Text style={styles.netEstateLabel}>صافي التركة المتوقع</Text>
+          <Text style={styles.netEstateValue}>
+            {formatCurrency(netEstate)}
+          </Text>
+        </View>
+      </View>
+      <EstateInput onEstateChange={handleEstateChange} />
+    </ScrollView>
+  );
+
+  const HeirsTab = () => (
+    <ScrollView
+      style={styles.tabScreen}
+      contentContainerStyle={styles.tabContent}
+      showsVerticalScrollIndicator={false}
+    >
+      {selectedHeirsCount > 0 && (
+        <View style={styles.selectionSummary}>
+          <MaterialCommunityIcons
+            name="account-check"
+            size={20}
+            color={theme.colors.success.main}
+          />
+          <Text style={styles.selectionSummaryText}>
+            تم اختيار {selectedHeirsCount} من الورثة
+          </Text>
+        </View>
+      )}
+      <HeirSelector onHeirsChange={handleHeirsChange} />
+    </ScrollView>
+  );
+
+  const MadhabTab = () => (
+    <ScrollView
+      style={styles.tabScreen}
+      contentContainerStyle={styles.tabContent}
+      showsVerticalScrollIndicator={false}
+    >
+      <MadhhabSelector selectedMadhab={madhab} onSelect={setMadhab} />
+    </ScrollView>
+  );
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={styles.heroCard}>
-            <View style={styles.heroTopRow}>
-              <View style={styles.heroIconWrap}>
-                <MaterialCommunityIcons
-                  name="scale-balance"
-                  size={30}
-                  color={theme.colors.primary.main}
+        <View style={styles.container}>
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.heroCard}>
+              <View style={styles.heroTopRow}>
+                <View style={styles.heroIconWrap}>
+                  <MaterialCommunityIcons
+                    name="scale-balance"
+                    size={30}
+                    color={theme.colors.primary.main}
+                  />
+                </View>
+                <View style={styles.heroCopy}>
+                  <Text style={styles.eyebrow}>Merath Calculator</Text>
+                  <Text style={styles.title}>{t("calculator.title")}</Text>
+                  <Text style={styles.subtitle}>{t("calculator.subtitle")}</Text>
+                </View>
+              </View>
+              <View style={styles.progressTrack}>
+                <View
+                  style={[
+                    styles.progressFill,
+                    { width: `${(progress / 3) * 100}%` },
+                  ]}
                 />
               </View>
-              <View style={styles.heroCopy}>
-                <Text style={styles.eyebrow}>Merath Calculator</Text>
-                <Text style={styles.title}>{t("calculator.title")}</Text>
-                <Text style={styles.subtitle}>{t("calculator.subtitle")}</Text>
+              <View style={styles.summaryRow}>
+                <View style={styles.summaryPill}>
+                  <Text style={styles.summaryLabel}>صافي التركة</Text>
+                  <Text style={styles.summaryValue}>
+                    {formatCurrency(netEstate)}
+                  </Text>
+                </View>
+                <View style={styles.summaryPill}>
+                  <Text style={styles.summaryLabel}>الورثة</Text>
+                  <Text style={styles.summaryValue}>{selectedHeirsCount}</Text>
+                </View>
+                <View style={styles.summaryPill}>
+                  <Text style={styles.summaryLabel}>الخطوات</Text>
+                  <Text style={styles.summaryValue}>{progress}/3</Text>
+                </View>
               </View>
             </View>
-            <View style={styles.progressTrack}>
-              <View
-                style={[
-                  styles.progressFill,
-                  { width: `${(progress / 3) * 100}%` },
-                ]}
+          </ScrollView>
+
+          <View style={styles.tabContainer}>
+            <Tab.Navigator
+              initialRouteName="EstateDetails"
+              screenOptions={{
+                tabBarActiveTintColor: theme.colors.primary.main,
+                tabBarInactiveTintColor: theme.colors.neutral.main,
+                tabBarIndicatorStyle: styles.tabIndicator,
+                tabBarStyle: styles.tabBar,
+                tabBarLabelStyle: styles.tabLabel,
+              }}
+            >
+              <Tab.Screen
+                name="EstateDetails"
+                component={EstateDetailsTab}
+                options={{ title: t("calculator.estateDetails") }}
               />
-            </View>
-            <View style={styles.summaryRow}>
-              <View style={styles.summaryPill}>
-                <Text style={styles.summaryLabel}>صافي التركة</Text>
-                <Text style={styles.summaryValue}>
-                  {formatCurrency(netEstate)}
-                </Text>
-              </View>
-              <View style={styles.summaryPill}>
-                <Text style={styles.summaryLabel}>الورثة</Text>
-                <Text style={styles.summaryValue}>{selectedHeirsCount}</Text>
-              </View>
-              <View style={styles.summaryPill}>
-                <Text style={styles.summaryLabel}>الخطوات</Text>
-                <Text style={styles.summaryValue}>{progress}/3</Text>
-              </View>
-            </View>
+              <Tab.Screen
+                name="Heirs"
+                component={HeirsTab}
+                options={{ title: t("calculator.heirs") }}
+              />
+              <Tab.Screen
+                name="Madhab"
+                component={MadhabTab}
+                options={{ title: t("calculator.madhab") }}
+              />
+            </Tab.Navigator>
           </View>
-
-          <StepCard
-            index={1}
-            title={t("madhab.selection")}
-            subtitle={t("madhab.selectionSubtitle")}
-            icon="book-open-page-variant"
-            status="complete"
-          >
-            <MadhhabSelector selectedMadhab={madhab} onSelect={setMadhab} />
-          </StepCard>
-
-          <StepCard
-            index={2}
-            title="بيانات التركة"
-            subtitle="أدخل الإجمالي والخصومات للحصول على صافي التركة."
-            icon="cash-multiple"
-            status={currentEstate.total > 0 ? "complete" : "active"}
-          >
-            <View style={styles.netEstateBanner}>
-              <MaterialCommunityIcons
-                name="wallet-outline"
-                size={22}
-                color={theme.colors.primary.main}
-              />
-              <View style={styles.netEstateCopy}>
-                <Text style={styles.netEstateLabel}>صافي التركة المتوقع</Text>
-                <Text style={styles.netEstateValue}>
-                  {formatCurrency(netEstate)}
-                </Text>
-              </View>
-            </View>
-            <EstateInput onEstateChange={handleEstateChange} />
-          </StepCard>
-
-          <StepCard
-            index={3}
-            title="اختيار الورثة"
-            subtitle="حدد الورثة وسيتم تنبيهك عند وجود تعارضات."
-            icon="account-group"
-            status={
-              selectedHeirsCount > 0
-                ? "complete"
-                : currentEstate.total > 0
-                  ? "active"
-                  : "pending"
-            }
-          >
-            {selectedHeirsCount > 0 && (
-              <View style={styles.selectionSummary}>
-                <MaterialCommunityIcons
-                  name="account-check"
-                  size={20}
-                  color={theme.colors.success.main}
-                />
-                <Text style={styles.selectionSummaryText}>
-                  تم اختيار {selectedHeirsCount} من الورثة
-                </Text>
-              </View>
-            )}
-            <HeirSelector onHeirsChange={handleHeirsChange} />
-          </StepCard>
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity
@@ -361,7 +389,7 @@ export default function CalculatorScreen() {
               />
             </View>
           )}
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -382,6 +410,33 @@ const createStyles = (theme: Theme) =>
     scrollContent: {
       padding: theme.spacing.lg,
       paddingBottom: theme.spacing.xxxl,
+    },
+    tabContainer: {
+      flex: 1,
+      minHeight: 420,
+      marginBottom: theme.spacing.lg,
+    },
+    tabScreen: {
+      flex: 1,
+      backgroundColor: theme.colors.background.lightVariant,
+    },
+    tabContent: {
+      padding: theme.spacing.lg,
+      paddingBottom: theme.spacing.xxxl,
+    },
+    tabBar: {
+      backgroundColor: theme.colors.background.light,
+      elevation: 0,
+      shadowOpacity: 0,
+    },
+    tabIndicator: {
+      backgroundColor: theme.colors.primary.main,
+      height: 3,
+    },
+    tabLabel: {
+      fontFamily: "Inter-Bold",
+      fontSize: 13,
+      textTransform: "none",
     },
     heroCard: {
       borderRadius: theme.borderRadius.xl,
