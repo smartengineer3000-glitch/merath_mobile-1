@@ -6,15 +6,20 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  Dimensions,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useAppTheme } from '../lib/context/ThemeProvider';
 import { useCalculationScenario } from '../lib/context/CalculationContext';
 import { useCalculator } from '../lib/hooks/useCalculator';
 import { Card } from '../components/ui/Card';
 import type { Theme } from '../lib/design/theme';
 import type { MadhhabType, CalculationResult, HeirShare } from '../lib/inheritance/types';
+import type { TabParamList } from '../navigation/types';
+import { formatCurrency, formatPercentage } from '../lib/utils/formatters';
 
 const ALL_MADHABS: MadhhabType[] = ['hanafi', 'shafii', 'maliki', 'hanbali'];
 
@@ -26,6 +31,9 @@ interface ComparisonEntry {
 export default function MadhhabComparisonScreen() {
   const { t } = useTranslation();
   const { theme } = useAppTheme();
+  const navigation = useNavigation<BottomTabNavigationProp<TabParamList>>();
+  const { width } = Dimensions.get('window');
+  const isNarrowScreen = width < 600;
   const { latestScenario } = useCalculationScenario();
   const { calculateWithEstate } = useCalculator();
   const [comparisonResults, setComparisonResults] = useState<ComparisonEntry[]>([]);
@@ -65,12 +73,17 @@ export default function MadhhabComparisonScreen() {
   const findShare = (result: CalculationResult, key: HeirShare['key']) =>
     result.shares.find((share) => share.key === key);
 
-  const formatShare = (share?: HeirShare) => {
+  const formatShare = (share?: HeirShare, totalEstate?: number) => {
     if (!share) return 'محجوب';
-    return `${share.amount.toLocaleString('ar-SA')} (${share.percentage?.toFixed(2) ?? '0.00'}%)`;
+    const percentage = totalEstate ? (share.amount / totalEstate) * 100 : 0;
+    return `${formatCurrency(share.amount)} (${formatPercentage(percentage)})`;
   };
 
-  const styles = createStyles(theme);
+  const handleNavigateToCalculator = useCallback(() => {
+    navigation.navigate('Calculator');
+  }, [navigation]);
+
+  const styles = createStyles(theme, isNarrowScreen);
 
   return (
     <ScrollView style={styles.container}>
@@ -83,7 +96,7 @@ export default function MadhhabComparisonScreen() {
         <Text style={styles.cardTitle}>{t('comparison.compare')}</Text>
         <Text style={styles.cardSubtitle}>
           {latestScenario
-            ? `سيتم مقارنة آخر مسألة: ${latestScenario.estate.total.toLocaleString('ar-SA')} ر.س و ${Object.values(latestScenario.heirs).reduce<number>((sum, value) => sum + (value ?? 0), 0)} وارث.`
+            ? `سيتم مقارنة آخر مسألة: ${formatCurrency(latestScenario.estate.total)} ر.س و ${Object.values(latestScenario.heirs).reduce<number>((sum, value) => sum + (value ?? 0), 0)} وارث.`
             : 'أجرِ حساباً من تبويب الحاسبة أولاً، ثم ارجع هنا لمقارنة نفس المسألة بين المذاهب.'}
         </Text>
         <TouchableOpacity
@@ -100,54 +113,130 @@ export default function MadhhabComparisonScreen() {
 
       {!latestScenario && (
         <Card style={styles.emptyCard}>
-          <MaterialCommunityIcons name="calculator-variant" size={40} color={theme.colors.primary.main} />
+          <MaterialCommunityIcons name="calculator-variant" size={48} color={theme.colors.primary.main} />
           <Text style={styles.emptyTitle}>لا توجد مسألة للمقارنة</Text>
           <Text style={styles.emptyText}>
-            انتقل إلى تبويب الحاسبة، أدخل التركة والورثة، ثم اضغط حساب لإظهار مقارنة كاملة هنا.
+            ابدأ بإجراء حساب ميراث لمقارنة النتائج بين المذاهب الأربعة.
           </Text>
+          
+          <View style={styles.guideContainer}>
+            <Text style={styles.guideTitle}>خطوة بخطوة:</Text>
+            <View style={styles.stepList}>
+              <View style={styles.step}>
+                <View style={styles.stepNumber}>
+                  <Text style={styles.stepNumberText}>1</Text>
+                </View>
+                <Text style={styles.stepText}>انتقل إلى تبويب "الحاسبة"</Text>
+              </View>
+              <View style={styles.step}>
+                <View style={styles.stepNumber}>
+                  <Text style={styles.stepNumberText}>2</Text>
+                </View>
+                <Text style={styles.stepText}>أدخل بيانات التركة والورثة</Text>
+              </View>
+              <View style={styles.step}>
+                <View style={styles.stepNumber}>
+                  <Text style={styles.stepNumberText}>3</Text>
+                </View>
+                <Text style={styles.stepText}>اختر المذهب واضغط "حساب"</Text>
+              </View>
+              <View style={styles.step}>
+                <View style={styles.stepNumber}>
+                  <Text style={styles.stepNumberText}>4</Text>
+                </View>
+                <Text style={styles.stepText}>ارجع هنا لمقارنة المذاهب</Text>
+              </View>
+            </View>
+          </View>
+
+          <TouchableOpacity
+            style={styles.goToCalculatorButton}
+            onPress={handleNavigateToCalculator}
+          >
+            <MaterialCommunityIcons name="calculator" size={20} color={theme.colors.background.light} />
+            <Text style={styles.goToCalculatorButtonText}>اذهب إلى الحاسبة</Text>
+          </TouchableOpacity>
         </Card>
       )}
 
       {comparisonResults.length > 0 && (
         <Card style={styles.resultsCard}>
           <Text style={styles.resultsTitle}>{t('comparison.results')}</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View style={styles.table}>
-              <View style={styles.tableRow}>
-                <Text style={[styles.tableHeader, styles.heirColumn]}>الوارث</Text>
-                {comparisonResults.map((comp) => (
-                  <Text key={comp.madhab} style={styles.tableHeader}>
-                    {comp.madhab.toUpperCase()}
-                  </Text>
-                ))}
-              </View>
-
-              {heirKeys.map((key) => {
-                const firstShare = comparisonResults
-                  .map((comp) => findShare(comp.result, key))
-                  .find(Boolean);
-
+          
+          {isNarrowScreen ? (
+            // Card layout for narrow screens
+            <View style={styles.madhabCardsContainer}>
+              {comparisonResults.map((comp) => {
+                const totalEstate = comp.result.shares.reduce((sum, s) => sum + s.amount, 0);
                 return (
-                  <View key={key} style={styles.tableRow}>
-                    <Text style={[styles.tableCell, styles.heirColumn]}>
-                      {firstShare?.name || key}
-                    </Text>
-                    {comparisonResults.map((comp) => {
-                      const share = findShare(comp.result, key);
-                      return (
-                        <Text
-                          key={`${comp.madhab}-${key}`}
-                          style={[styles.tableCell, !share && styles.blockedCell]}
-                        >
-                          {formatShare(share)}
-                        </Text>
-                      );
-                    })}
+                  <View key={comp.madhab} style={styles.madhabCard}>
+                    <View style={styles.madhabCardHeader}>
+                      <Text style={styles.madhabCardTitle}>{comp.madhab.toUpperCase()}</Text>
+                      <MaterialCommunityIcons name="scale-balance" size={20} color={theme.colors.primary.main} />
+                    </View>
+                    <View style={styles.madhabCardContent}>
+                      {comp.result.shares.map((share, idx) => (
+                        <View key={idx} style={styles.madhabShareRow}>
+                          <Text style={styles.madhabShareName}>{share.name}</Text>
+                          <Text style={styles.madhabShareAmount}>
+                            {formatShare(share, totalEstate)}
+                          </Text>
+                        </View>
+                      ))}
+                    </View>
                   </View>
                 );
               })}
             </View>
-          </ScrollView>
+          ) : (
+            // Table layout for larger screens with scroll hints
+            <>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <View style={styles.table}>
+                  <View style={styles.tableRow}>
+                    <Text style={[styles.tableHeader, styles.heirColumn]}>الوارث</Text>
+                    {comparisonResults.map((comp) => (
+                      <Text key={comp.madhab} style={styles.tableHeader}>
+                        {comp.madhab.toUpperCase()}
+                      </Text>
+                    ))}
+                  </View>
+
+                  {heirKeys.map((key) => {
+                    const firstShare = comparisonResults
+                      .map((comp) => findShare(comp.result, key))
+                      .find(Boolean);
+                    const totalEstate = firstShare ? comparisonResults[0].result.shares.reduce((sum, s) => sum + s.amount, 0) : 0;
+
+                    return (
+                      <View key={key} style={styles.tableRow}>
+                        <Text style={[styles.tableCell, styles.heirColumn]}>
+                          {firstShare?.name || key}
+                        </Text>
+                        {comparisonResults.map((comp) => {
+                          const share = findShare(comp.result, key);
+                          return (
+                            <Text
+                              key={`${comp.madhab}-${key}`}
+                              style={[styles.tableCell, !share && styles.blockedCell]}
+                            >
+                              {formatShare(share, totalEstate)}
+                            </Text>
+                          );
+                        })}
+                      </View>
+                    );
+                  })}
+                </View>
+              </ScrollView>
+              
+              {/* Scroll hint indicator */}
+              <View style={styles.scrollHint}>
+                <MaterialCommunityIcons name="gesture-swipe-horizontal" size={16} color={theme.colors.neutral.main} />
+                <Text style={styles.scrollHintText}>اسحب لرؤية المزيد</Text>
+              </View>
+            </>
+          )}
 
           <View style={styles.summaryGrid}>
             {comparisonResults.map((comp) => (
@@ -157,7 +246,7 @@ export default function MadhhabComparisonScreen() {
                   {comp.result.shares.length} وارث مستحق
                 </Text>
                 <Text style={styles.shareName}>
-                  الثقة: {comp.result.confidence.toFixed(0)}%
+                  الثقة: {formatPercentage(comp.result.confidence)}
                 </Text>
               </View>
             ))}
@@ -168,7 +257,7 @@ export default function MadhhabComparisonScreen() {
   );
 }
 
-const createStyles = (theme: Theme) =>
+const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -226,6 +315,7 @@ const createStyles = (theme: Theme) =>
       alignItems: 'center',
       marginBottom: 16,
       paddingVertical: 24,
+      paddingHorizontal: theme.spacing.lg,
     },
     emptyTitle: {
       fontSize: 18,
@@ -233,12 +323,70 @@ const createStyles = (theme: Theme) =>
       color: theme.colors.neutral.dark300,
       marginTop: 12,
       marginBottom: 8,
+      textAlign: 'center',
     },
     emptyText: {
       fontSize: 14,
       color: theme.colors.neutral.main,
       lineHeight: 22,
       textAlign: 'center',
+      marginBottom: theme.spacing.lg,
+    },
+    guideContainer: {
+      alignSelf: 'stretch',
+      backgroundColor: theme.colors.primary.light,
+      borderRadius: theme.borderRadius.lg,
+      padding: theme.spacing.md,
+      marginBottom: theme.spacing.lg,
+    },
+    guideTitle: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: theme.colors.primary.dark,
+      marginBottom: theme.spacing.md,
+      textAlign: 'center',
+    },
+    stepList: {
+      gap: theme.spacing.sm,
+    },
+    step: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.md,
+    },
+    stepNumber: {
+      width: 28,
+      height: 28,
+      borderRadius: theme.borderRadius.full,
+      backgroundColor: theme.colors.primary.main,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    stepNumberText: {
+      fontSize: 14,
+      fontWeight: 'bold',
+      color: theme.colors.background.light,
+    },
+    stepText: {
+      fontSize: 14,
+      color: theme.colors.neutral.dark200,
+      flex: 1,
+    },
+    goToCalculatorButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: theme.spacing.sm,
+      backgroundColor: theme.colors.primary.main,
+      borderRadius: theme.borderRadius.lg,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
+      minWidth: 200,
+    },
+    goToCalculatorButtonText: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: theme.colors.background.light,
     },
     resultsCard: {
       marginBottom: 16,
@@ -284,6 +432,68 @@ const createStyles = (theme: Theme) =>
     blockedCell: {
       color: theme.colors.neutral.main,
       backgroundColor: theme.colors.neutral.light100,
+    },
+    scrollHint: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: theme.spacing.xs,
+      paddingVertical: theme.spacing.sm,
+      backgroundColor: theme.colors.neutral.light50,
+      borderRadius: theme.borderRadius.md,
+      marginTop: theme.spacing.sm,
+    },
+    scrollHintText: {
+      fontSize: 12,
+      color: theme.colors.neutral.main,
+    },
+    madhabCardsContainer: {
+      gap: theme.spacing.md,
+      marginBottom: theme.spacing.md,
+    },
+    madhabCard: {
+      backgroundColor: theme.colors.background.light,
+      borderRadius: theme.borderRadius.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.neutral.light200,
+      overflow: 'hidden',
+      ...theme.shadows.sm,
+    },
+    madhabCardHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: theme.spacing.md,
+      backgroundColor: theme.colors.primary.light,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.primary.light100,
+    },
+    madhabCardTitle: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: theme.colors.primary.dark,
+    },
+    madhabCardContent: {
+      padding: theme.spacing.md,
+      gap: theme.spacing.sm,
+    },
+    madhabShareRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: theme.spacing.xs,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.neutral.light100,
+    },
+    madhabShareName: {
+      fontSize: 14,
+      color: theme.colors.neutral.dark200,
+      flex: 1,
+    },
+    madhabShareAmount: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: theme.colors.primary.main,
     },
     summaryGrid: {
       flexDirection: 'row',

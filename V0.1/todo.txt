@@ -1,7 +1,95 @@
-•	[✓ CRITICAL] Accessibility - add accessible tab roles/state and checkbox semantics in DisclaimersModal (V0.1/components/DisclaimersModal.tsx)
-•	[✓ HIGH] Usability - handle RTL language switch restart prompt in RootNavigator (V0.1/navigation/RootNavigator.tsx)
-•	[✓ MEDIUM] UX Patterns - replace raw TouchableOpacity actions with shared Button component in CalculatorScreen (V0.1/screens/CalculatorScreen.tsx)
-•	[✓ MEDIUM] Responsiveness - improve MadhhabSelector and HeirSelector layouts for narrow screens (V0.1/components/MadhhabSelector.tsx, V0.1/components/HeirSelector.tsx)
-•	[✓ MEDIUM] Visual - unify Arabic/English text and theme typography in EstateInput, CalculatorScreen, AboutScreen (V0.1/components/EstateInput.tsx, V0.1/screens/CalculatorScreen.tsx, V0.1/screens/AboutScreen.tsx)
+=== CRITICAL: RESULTS SCREEN NAVIGATION AUDIT ===
+✅ [COMPLETED] Architecture - Results screen NOT in bottom tabs; currently embedded in CalculatorScreen modal
+   Issue: Users cannot access results from other tabs; breaks tab navigation paradigm
+   Files: V0.1/navigation/RootNavigator.tsx, V0.1/navigation/types.ts, V0.1/screens/CalculatorScreen.tsx
+   Action: Create standalone ResultsScreen.tsx as bottom tab; migrate ResultsDisplay content; update TabParamList
 
-[before commit] Validate with npx expo-doctor, npx tsc --noEmit, npm test
+✅ [COMPLETED] Navigation UX - Results modal overlay blocks CalculatorScreen interaction
+   Issue: Modal covers input controls; no way to go back to calculator from results within same tab
+   Files: V0.1/screens/CalculatorScreen.tsx (line 370-375), V0.1/components/ResultsDisplay.tsx
+   Action: Replace modal with tab navigation; allow Calculator→Results flow within dedicated screen
+
+✅ [COMPLETED] State Persistence - Result data lost when switching tabs from Calculator
+   Issue: Result stored in useResults hook but not persisted across tab navigation
+   Files: V0.1/lib/hooks/useResults.ts, V0.1/lib/context/CalculationContext.tsx
+   Action: Enhance CalculationContext to persist results; restore on ResultsScreen mount
+
+=== ESTATENINPUT SCREEN AUDIT ===
+✅ [COMPLETED] Form UX - Validation feedback timing creates blocking alerts
+   Issue: EstateValidator runs on every keystroke; timeout-based errors block input
+   Files: V0.1/components/EstateInput.tsx (lines 80-95), V0.1/lib/validation/InputValidator.ts
+   Action: Debounce validation 500ms; show inline feedback instead of alerts; allow blur-triggered validation
+
+✅ [COMPLETED] Responsiveness - Narrow screens (320px) have tight spacing and cramped input fields
+   Issue: Padding hardcoded (16px); no responsive scaling; label text wraps awkwardly
+   Files: V0.1/components/EstateInput.tsx (lines 350-380), styles.label/input/inputGroup
+   Action: Use theme spacing (md=16, sm=12); add responsive padding; ensure min 48px touch targets
+
+✅ [COMPLETED] Keyboard Management - No scroll-to-focused-input when keyboard appears
+   Issue: User cannot see TextInput when keyboard is open; scrolling required manual gesture
+   Files: V0.1/components/EstateInput.tsx (lines 40-63 keyboard listeners), missing scroll behavior
+   Action: Add scrollViewRef?.current?.scrollToEnd() in keyboardDidShow listener
+
+🟢 [MEDIUM] Visual Design - Input styling inconsistent; placeholder text too light on light background
+   Issue: borderColor=neutral.light200 + placeholderTextColor=neutral.light400 poor contrast
+   Files: V0.1/components/EstateInput.tsx (styles.input, line 356)
+   Action: Increase placeholder contrast; add focused border color (primary.main); add error state styling
+
+🟢 [MEDIUM] Accessibility - Summary section not properly marked; Arabic numerals not announced in order
+   Issue: AnimatedNumber component doesn't update aria-live region; no accessibilityRole for summary
+   Files: V0.1/components/EstateInput.tsx (lines 290-330), V0.1/components/ResultsDisplay.tsx
+   Action: Add accessibilityRole="region" to summary; add accessibilityLabel updates for animated values
+
+=== RESULTS DISPLAY SCREEN AUDIT ===
+✅ [COMPLETED] Responsiveness - Table display breaks on screens <360px; horizontal scroll required
+   Issue: Table columns fixed width; no responsive stacking; "Amount" column too narrow
+   Files: V0.1/components/ResultsDisplay.tsx (table render, lines 777-825), styles.tableCell
+   Action: Convert to card-based layout on narrow screens (<400px); stack rows vertically; show heir name prominently
+
+✅ [COMPLETED] Data Presentation - Share percentage calculated client-side; no rounding consistency
+   Issue: AnimatedNumber shows raw floats; percentage sum doesn't always = 100% due to rounding
+   Files: V0.1/components/ResultsDisplay.tsx (lines 786-790), AnimatedNumber component
+   Action: Round percentages consistently; show "Total: 100%" footer; add precision note in fine print
+
+🟢 [MEDIUM] Accessibility - Animated numbers not properly announced; no fallback for screen readers
+   Issue: AnimatedNumber returns <Text>{formattedValue}</Text> without accessibilityLabel
+   Files: V0.1/components/ResultsDisplay.tsx (lines 43-102), AnimatedNumber component
+   Action: Add accessibilityLabel={actualValue} to each animated display; announce final value when animation completes
+
+🟢 [MEDIUM] UX Pattern - Share modal doesn't show format selection clearly
+   Issue: SharePreviewModal appears but format is already chosen; user confused about format
+   Files: V0.1/components/ResultsDisplay.tsx (lines 593-615), SharePreviewModal
+   Action: Add format selector pill buttons in header; show format icon + name; explain what format will share
+
+🟢 [MEDIUM] Visual Design - Comparison table mixed into results makes screen cluttered
+   Issue: Too many concerns: shares table + financial summary + calculation steps + previous results + comparison
+   Files: V0.1/components/ResultsDisplay.tsx (entire render), lines 825+
+   Action: Create separate "Comparison" tab in ResultsScreen; move madhab comparison logic to dedicated view
+
+=== MADHAB COMPARISON SCREEN AUDIT ===
+✅ [COMPLETED] Usability - Empty state doesn't guide users; requires calculator run first but message unclear
+   Issue: "Do calculation first" message too generic; no direct link to Calculator tab
+   Files: V0.1/screens/MadhhabComparisonScreen.tsx (lines 40-46 empty state, line 96-105)
+   Action: Add button to navigate to Calculator tab; show step-by-step guide (1. Calculate 2. Return here 3. Click Compare)
+
+✅ [COMPLETED] Responsiveness - Table horizontal scroll UX poor; users don't know content scrolls
+   Issue: Table width fixed; no visual indicator (scroll indicator suppressed); column headers cut off on 320px
+   Files: V0.1/screens/MadhhabComparisonScreen.tsx (lines 127-157 table, styles.table)
+   Action: Show comparison as card deck on narrow screens (one madhab per card, swipeable); show desktop table on >600px
+
+✅ [COMPLETED] Data Readability - Heir amounts formatted inconsistently (Arabic/Western numerals mixed)
+   Issue: formatShare() mixes formats; locale inconsistent between screens
+   Files: V0.1/screens/MadhhabComparisonScreen.tsx (line 68), V0.1/components/ResultsDisplay.tsx
+   Action: Centralize number formatting; ensure ar-SA locale used consistently; add currency symbol uniformly
+
+🟢 [MEDIUM] Visual - Table styling uses hardcoded colors; doesn't match theme for dark mode
+   Issue: styles.table* uses literal colors instead of theme.colors references
+   Files: V0.1/screens/MadhhabComparisonScreen.tsx (styles section), tableHeader/Cell/Row colors
+   Action: Replace hardcoded colors with theme.colors; test in dark mode; ensure adequate contrast
+
+🟢 [MEDIUM] UX Pattern - Compare button doesn't show progress or prevent double-clicks
+   Issue: isComparing state shows spinner but button accessible during calculation; race conditions possible
+   Files: V0.1/screens/MadhhabComparisonScreen.tsx (line 44 handleCompare), Button disabled check
+   Action: Use shared Button component with loading state; add haptic feedback; debounce clicks
+
+[VALIDATION] Before commit: npx tsc --noEmit, npx expo-doctor, npm test, manual test on Nexus 5 (320px) emulator

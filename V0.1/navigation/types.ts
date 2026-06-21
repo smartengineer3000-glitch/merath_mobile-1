@@ -25,6 +25,7 @@ export type RootStackParamList = {
  */
 export type TabParamList = {
   Calculator: undefined;
+  Results: undefined;
   MadhhabComparison: undefined;
   Test: undefined;
   Settings: undefined;

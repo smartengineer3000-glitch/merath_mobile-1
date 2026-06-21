@@ -6,6 +6,9 @@
  * FIXES:
  * - M6 (🟡): Share preview before sharing
  * - L2 (🔵): Results counting animation
+ * HIGH PRIORITY FIXES:
+ * - Issue 4: Table responsiveness (card layout <360px)
+ * - Issue 5: Percentage rounding (largest remainder method)
  */
 
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
@@ -23,6 +26,7 @@ import {
   Modal,
   Animated,
   Easing,
+  Dimensions,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '../lib/icons';
@@ -35,6 +39,12 @@ import type { CalculationResult, CalculationStep } from '../lib/inheritance/type
 import type { Theme } from '../lib/design/theme';
 import { PDFExporter } from '../lib/export/PDFExporter';
 import { ErrorLogger } from '../lib/errors/ErrorHandler';
+import { 
+  formatCurrency, 
+  formatPercentage, 
+  calculatePercentagesLargestRemainder,
+  validatePercentageSum 
+} from '../lib/utils/formatters';
 
 export interface ResultsDisplayProps {
   result?: CalculationResult | null;
@@ -118,6 +128,8 @@ const SharePreviewModal = ({
 }) => {
   const { t } = useTranslation();
   const { theme } = useAppTheme();
+  const { width } = Dimensions.get('window');
+  const isNarrowScreen = width < 360;
 
   const getFormatIcon = () => {
     switch (format) {
@@ -139,7 +151,7 @@ const SharePreviewModal = ({
     }
   };
 
-  const styles = createStyles(theme);
+  const styles = createStyles(theme, isNarrowScreen);
 
   return (
     <Modal
@@ -200,7 +212,9 @@ const SharePreviewModal = ({
 export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
   const { t } = useTranslation();
   const { theme } = useAppTheme();
-  const styles = createStyles(theme);
+  const { width } = Dimensions.get('window');
+  const isNarrowScreen = width < 360;
+  const styles = createStyles(theme, isNarrowScreen);
   const viewShotRef = useRef<ViewShot>(null);
   const hooksResults = useResults();
   const calculator = useCalculator();
@@ -260,6 +274,16 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
       const total = currentResult.shares.reduce((sum, s) => sum + s.amount, 0);
       setTotalAmount(total);
     }
+  }, [currentResult]);
+
+  // ===== FIX Issue 5: Calculate percentages using largest remainder method =====
+  const calculatedPercentages = useMemo(() => {
+    if (!currentResult?.success || !currentResult.shares?.length) return [];
+    
+    const amounts = currentResult.shares.map(share => share.amount);
+    const percentages = calculatePercentagesLargestRemainder(amounts);
+    
+    return percentages;
   }, [currentResult]);
 
   const stats_data = useMemo(() => {
@@ -762,40 +786,70 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
           </View>
         )}
 
-        {/* Distribution Table */}
+        {/* Distribution Table - Responsive Layout */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t('results.distributionTable')}</Text>
-          <View style={styles.table}>
-            {/* Table Header */}
-            <View style={styles.tableHeader}>
-              <Text style={styles.tableHeaderCell}>{t('results.amount')}</Text>
-              <Text style={styles.tableHeaderCell}>{t('results.fraction')}</Text>
-              <Text style={styles.tableHeaderCell}>{t('results.heir')}</Text>
+          
+          {isNarrowScreen ? (
+            // Card layout for narrow screens
+            <View style={styles.cardsContainer}>
+              {currentResult.shares && currentResult.shares.map((share: CalculationResult['shares'][number], index: number) => {
+                const percentage = calculatedPercentages[index] || 0;
+                
+                return (
+                  <View key={index} style={styles.shareCard}>
+                    <View style={styles.cardHeader}>
+                      <Text style={styles.cardHeirName}>{share.name}</Text>
+                      <Text style={styles.cardPercentage}>{formatPercentage(percentage)}</Text>
+                    </View>
+                    <View style={styles.cardAmountRow}>
+                      <Text style={styles.cardAmount}>{formatCurrency(share.amount)} ر.س</Text>
+                    </View>
+                  </View>
+                );
+              })}
             </View>
+          ) : (
+            // Table layout for larger screens
+            <View style={styles.table}>
+              {/* Table Header */}
+              <View style={styles.tableHeader}>
+                <Text style={styles.tableHeaderCell}>{t('results.amount')}</Text>
+                <Text style={styles.tableHeaderCell}>{t('results.fraction')}</Text>
+                <Text style={styles.tableHeaderCell}>{t('results.heir')}</Text>
+              </View>
 
-            {/* Table Rows with Animated Numbers */}
-            {currentResult.shares && currentResult.shares.map((share: CalculationResult['shares'][number], index: number) => {
-              const percentage = (share.amount / totalAmount) * 100;
+              {/* Table Rows with Animated Numbers */}
+              {currentResult.shares && currentResult.shares.map((share: CalculationResult['shares'][number], index: number) => {
+                const percentage = calculatedPercentages[index] || 0;
+                
+                return (
+                  <View
+                    key={index}
+                    style={[
+                      styles.tableRow,
+                      index % 2 === 1 && styles.tableRowAlternate
+                    ]}
+                  >
+                    <Text style={styles.tableCell}>
+                      <AnimatedNumber value={share.amount} /> ر.س
+                    </Text>
+                    <Text style={styles.tableCell}>
+                      <AnimatedNumber value={percentage} format={false} />%
+                    </Text>
+                    <Text style={styles.tableCell}>{share.name}</Text>
+                  </View>
+                );
+              })}
               
-              return (
-                <View
-                  key={index}
-                  style={[
-                    styles.tableRow,
-                    index % 2 === 1 && styles.tableRowAlternate
-                  ]}
-                >
-                  <Text style={styles.tableCell}>
-                    <AnimatedNumber value={share.amount} /> ر.س
-                  </Text>
-                  <Text style={styles.tableCell}>
-                    <AnimatedNumber value={percentage} format={false} />%
-                  </Text>
-                  <Text style={styles.tableCell}>{share.name}</Text>
-                </View>
-              );
-            })}
-          </View>
+              {/* Total percentage footer */}
+              <View style={styles.tableFooter}>
+                <Text style={styles.tableFooterText}>
+                  {t('results.total')}: {formatPercentage(calculatedPercentages.reduce((a, b) => a + b, 0))}
+                </Text>
+              </View>
+            </View>
+          )}
         </View>
 
         {/* Financial Summary */}
@@ -1118,7 +1172,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
   );
 }
 
-const createStyles = (theme: Theme) =>
+const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -1302,6 +1356,59 @@ const createStyles = (theme: Theme) =>
       fontSize: 12,
       color: theme.colors.neutral.black,
       textAlign: 'center',
+    },
+    tableFooter: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      borderTopWidth: 2,
+      borderTopColor: theme.colors.primary.main,
+      backgroundColor: theme.colors.primary.light,
+    },
+    tableFooterText: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: theme.colors.primary.dark,
+    },
+    cardsContainer: {
+      gap: theme.spacing.sm,
+    },
+    shareCard: {
+      backgroundColor: theme.colors.background.light,
+      borderRadius: theme.borderRadius.lg,
+      padding: theme.spacing.md,
+      borderWidth: 1,
+      borderColor: theme.colors.neutral.light200,
+      ...theme.shadows.sm,
+    },
+    cardHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: theme.spacing.sm,
+      paddingBottom: theme.spacing.sm,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.neutral.light100,
+    },
+    cardHeirName: {
+      ...theme.typography.headline.small,
+      color: theme.colors.neutral.dark300,
+      flex: 1,
+    },
+    cardPercentage: {
+      ...theme.typography.title.medium,
+      color: theme.colors.primary.main,
+      fontWeight: '700',
+    },
+    cardAmountRow: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+    },
+    cardAmount: {
+      ...theme.typography.title.large,
+      color: theme.colors.neutral.dark300,
+      fontWeight: '600',
     },
     summaryContainer: {
       backgroundColor: theme.colors.success.light,

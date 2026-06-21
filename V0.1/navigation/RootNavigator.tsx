@@ -21,8 +21,10 @@ import type { RootStackParamList, TabParamList } from './types';
 import { linking } from './linking';
 
 // Screens — CalculatorScreen is eagerly loaded (landing screen);
+// ResultsScreen is eagerly loaded (frequently accessed after calculation);
 // heavier screens are lazy-loaded to improve startup time.
 import CalculatorScreen from '../screens/CalculatorScreen';
+import ResultsScreen from '../screens/ResultsScreen';
 
 const MadhhabComparisonScreen = React.lazy(() => import('../screens/MadhhabComparisonScreen'));
 const TestScreen = React.lazy(() => import('../screens/TestScreen'));
@@ -98,6 +100,7 @@ export function TabNavigator() {
         tabBarIcon: ({ color, size }) => {
           const icons: Record<keyof TabParamList, React.ComponentProps<typeof MaterialCommunityIcons>['name']> = {
             Calculator: 'calculator',
+            Results: 'chart-box',
             MadhhabComparison: 'compare',
             Test: 'test-tube',
             Settings: 'cog',
@@ -114,6 +117,14 @@ export function TabNavigator() {
         options={{
           title: 'Calculator',
           tabBarLabel: 'Calculator',
+        }}
+      />
+      <Tab.Screen
+        name="Results"
+        component={ResultsScreen}
+        options={{
+          title: 'Results',
+          tabBarLabel: 'Results',
         }}
       />
       <Tab.Screen

@@ -13,6 +13,8 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useTranslation } from "react-i18next";
+import { useNavigation } from "@react-navigation/native";
+import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { useMadhab } from "../lib/context/MadhabContext";
 import { useCalculationScenario } from "../lib/context/CalculationContext";
 import { useAppTheme } from "../lib/context/ThemeProvider";
@@ -26,6 +28,7 @@ import { Card } from "../components/ui/Card";
 import { PrimaryButton, SecondaryButton } from "../components/ui/Button";
 import type { Theme } from "../lib/design/theme";
 import type { EstateData, HeirsData } from "../lib/inheritance/types";
+import type { TabParamList } from "../navigation/types";
 
 type StepStatus = "active" | "complete" | "pending";
 
@@ -112,6 +115,7 @@ export default function CalculatorScreen() {
   const { t } = useTranslation();
   const { madhab, setMadhab } = useMadhab();
   const { theme } = useAppTheme();
+  const navigation = useNavigation<BottomTabNavigationProp<TabParamList>>();
   const { calculateWithEstate } = useCalculator();
   const { result, setResult, clearResults } = useResults();
   const { saveScenario, clearScenario } = useCalculationScenario();
@@ -369,6 +373,27 @@ export default function CalculatorScreen() {
 
           {showResults && result && (
             <View style={styles.resultsContainer}>
+              <View style={styles.resultsHeader}>
+                <Text style={styles.resultsHeaderTitle}>
+                  {t('results.title')}
+                </Text>
+                <TouchableOpacity
+                  style={styles.viewInTabButton}
+                  onPress={() => {
+                    setShowResults(false);
+                    navigation.navigate('Results');
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name="open-in-new"
+                    size={18}
+                    color={theme.colors.primary.main}
+                  />
+                  <Text style={styles.viewInTabButtonText}>
+                    {t('results.viewInTab')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
               <ResultsDisplay
                 result={result}
                 onClose={() => setShowResults(false)}
@@ -619,5 +644,32 @@ const createStyles = (theme: Theme) =>
     },
     resultsContainer: {
       marginBottom: theme.spacing.lg,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.neutral.light200,
+      paddingTop: theme.spacing.md,
+    },
+    resultsHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: theme.spacing.md,
+      paddingHorizontal: theme.spacing.md,
+    },
+    resultsHeaderTitle: {
+      ...theme.typography.headline.small,
+      color: theme.colors.neutral.dark300,
+    },
+    viewInTabButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.xs,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: 16,
+      backgroundColor: theme.colors.primary.light,
+    },
+    viewInTabButtonText: {
+      ...theme.typography.label.small,
+      color: theme.colors.primary.main,
     },
   });
