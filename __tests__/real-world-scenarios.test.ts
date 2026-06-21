@@ -425,10 +425,10 @@ describe('Real-World Islamic Inheritance Scenarios', () => {
       expect(grandfather2).toBeDefined();
     });
 
-    it.skip('should handle grandfather with siblings differently across madhabs' , () => {
+    it('should handle grandfather with siblings differently across madhabs' , () => {
       const heirs: HeirsData = {
         grandfather: 1,
-        full_brother: 2,
+        full_brother: 1,
         full_sister: 1
       };
 
@@ -470,7 +470,7 @@ describe('Real-World Islamic Inheritance Scenarios', () => {
       will: 0
     };
 
-    it.skip('should prioritize children of daughters over other blood relatives' , () => {
+    it('should prioritize children of daughters over other blood relatives' , () => {
       const heirs: HeirsData = {
         daughter_son: 2,      // Class 1 - should inherit
         daughter_daughter: 1,  // Class 1 - should inherit
@@ -495,7 +495,7 @@ describe('Real-World Islamic Inheritance Scenarios', () => {
       expect(hasPaternalAunt).toBe(false);
     });
 
-    it.skip('should move to next class when no heirs in higher class' , () => {
+    it('should move to next class when no heirs in higher class' , () => {
       const heirs: HeirsData = {
         maternal_uncle: 2,     // Class 3 - should inherit
         maternal_aunt: 1,      // Class 3 - should inherit
@@ -517,7 +517,7 @@ describe('Real-World Islamic Inheritance Scenarios', () => {
       expect(hasPaternalAunt).toBe(false);
     });
 
-    it.skip('should distribute remainder equally within the inheriting class' , () => {
+    it('should distribute remainder equally within the inheriting class' , () => {
       const heirs: HeirsData = {
         maternal_uncle: 2,     // Class 3 - 2 persons
         maternal_aunt: 2       // Class 3 - 2 persons (total 4)

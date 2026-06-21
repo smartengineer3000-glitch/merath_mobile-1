@@ -142,7 +142,8 @@ describe('AuditLog Core Functionality', () => {
     expect(Array.isArray(parsed)).toBe(true);
   });
 
-  it.skip('should import audit log from JSON' , async () => {
+  it('should import audit log from JSON' , async () => {
+    const auditLog = new AuditLog(false);
     const heirs = { husband: 1 };
     const estate = { total: 1000, funeral: 0, debts: 0, will: 0 };
     const engine = new InheritanceCalculationEngine('hanafi', estate, heirs);
@@ -151,8 +152,8 @@ describe('AuditLog Core Functionality', () => {
     await auditLog.logCalculation('hanafi', heirs, estate, result, 100, 'Original');
 
     const exported = await auditLog.exportAsJSON();
-    const newAuditLog = createAuditLog();
-    await await newAuditLog.importFromJSON(exported);
+    const newAuditLog = new AuditLog(false);
+    await newAuditLog.importFromJSON(exported);
 
     const importedEntries = newAuditLog.getAllEntries();
     expect(importedEntries.length).toBe(1);
@@ -338,8 +339,8 @@ describe('Integration Tests', () => {
     expect(entries[0].madhab).toBe('hanafi');
   });
 
-  it.skip('should handle multiple sequential calculations' , async () => {
-    const auditLog = createAuditLog();
+  it('should handle multiple sequential calculations' , async () => {
+    const auditLog = new AuditLog(false);
     const heirs1 = { son: 1 };
     const heirs2 = { daughter: 2 };
     const estate = { total: 10000, funeral: 0, debts: 0, will: 0 };
@@ -356,8 +357,8 @@ describe('Integration Tests', () => {
     expect(entries.length).toBe(2);
   });
 
-  it.skip('should export and re-import calculations' , async () => {
-    const auditLog1 = createAuditLog();
+  it('should export and re-import calculations' , async () => {
+    const auditLog1 = new AuditLog(false);
     const heirs = { son: 1 };
     const estate = { total: 3000, funeral: 0, debts: 0, will: 0 };
 
@@ -367,8 +368,9 @@ describe('Integration Tests', () => {
 
     const json = auditLog1.exportAsJSON();
 
-    const auditLog2 = createAuditLog();
-    const jsonStr = await json; await auditLog2.importFromJSON(jsonStr);
+    const auditLog2 = new AuditLog(false);
+    const jsonStr = await json;
+    await auditLog2.importFromJSON(jsonStr);
 
     const importedEntries = auditLog2.getAllEntries();
     expect(importedEntries.length).toBe(1);
