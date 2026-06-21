@@ -1,0 +1,169 @@
+{
+  "app": {
+    "name": "Merath",
+    "subtitle": "Islamic Inheritance Calculator",
+    "description": "Calculate Islamic inheritance shares according to Shari'ah and different madhabs"
+  },
+
+  "navigation": {
+    "calculator": "Calculator",
+    "history": "History",
+    "settings": "Settings",
+    "about": "About"
+  },
+
+  "calculator": {
+    "title": "Inheritance Calculator",
+    "estate": "Estate",
+    "heirs": "Heirs",
+    "calculate": "Calculate Inheritance",
+    "results": "Results",
+    "calculating": "Calculating...",
+    "clear": "Clear",
+    "copy": "Copy",
+    "share": "Share",
+    "resetConfirmationTitle": "Confirm Reset",
+    "resetConfirmationMessage": "Are you sure you want to reset all data? This action cannot be undone."
+  },
+
+  "estate": {
+    "title": "Estate Information",
+    "total": "Total Estate",
+    "funeral": "Funeral Expenses",
+    "debts": "Debts",
+    "will": "Bequest (Will)",
+    "netEstate": "Net Estate"
+  },
+
+  "heirs": {
+    "title": "Add Heirs",
+    "addHeir": "Add Heir",
+    "group": {
+      "spouses": "Spouses",
+      "ascendants": "Ascendants",
+      "descendants": "Descendants",
+      "siblings": "Siblings",
+      "nephews": "Nephews & Uncles",
+      "bloodRelatives": "Blood Relatives"
+    },
+    "husband": "Husband",
+    "wife": "Wife",
+    "father": "Father",
+    "mother": "Mother",
+    "grandfather": "Grandfather",
+    "grandmother": "Grandmother",
+    "son": "Son",
+    "daughter": "Daughter",
+    "brother": "Full Brother",
+    "sister": "Full Sister",
+    "paternalBrother": "Paternal Brother",
+    "paternalSister": "Paternal Sister",
+    "maternalBrother": "Maternal Brother",
+    "maternalSister": "Maternal Sister",
+    "nephew": "Nephew",
+    "uncle": "Uncle",
+    "cousin": "Cousin"
+  },
+
+  "madhab": {
+    "title": "School of Law (Madhab)",
+    "hanafi": "Hanafi",
+    "maliki": "Maliki",
+    "shafii": "Shafi'i",
+    "hanbali": "Hanbali"
+  },
+
+  "results": {
+    "shares": "Inheritance Shares",
+    "amount": "Amount",
+    "fraction": "Fraction",
+    "total": "Total",
+    "perPerson": "Per Person",
+    "success": "Calculation successful",
+    "error": "Calculation error",
+    "noHeirs": "Please add at least one heir",
+    "invalidEstate": "Please enter a valid estate amount",
+    "invalidData": "Please check your input data",
+    "title": "Distribution Results",
+    "calculationTime": "Calculation Time",
+    "shareFormat": {
+      "pdf": "PDF",
+      "image": "Image",
+      "text": "Text",
+      "clipboard": "Copy to Clipboard"
+    },
+    "previewTitle": "Share Preview - {{format}}",
+    "previewImage": "Image preview will be generated",
+    "noResults": "No results available",
+    "performCalculation": "Please perform a calculation first to see results",
+    "specialCases": "Special Cases",
+    "awl": "Al-Awl (Excess Distribution)",
+    "radd": "Al-Radd (Return)",
+    "applied": "Applied",
+    "blockedHeirs": "Blocked Heirs",
+    "distributionTable": "Distribution Table",
+    "heir": "Heir",
+    "financialSummary": "Financial Summary",
+    "trustLevel": "Confidence Level",
+    "calculationSteps": "Calculation Steps",
+    "previousResults": "Previous Results",
+    "comparison": "Comparison with Other Madhabs",
+    "compareWith": "Compare with {{madhab}} madhab",
+    "hideComparison": "Hide Comparison",
+    "showComparison": "Show Comparison",
+    "statistics": "Statistics",
+    "totalCalculations": "Total Calculations",
+    "currentResult": "Current Result"
+  },
+
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "lightMode": "Light",
+    "darkMode": "Dark",
+    "systemMode": "System",
+    "calculationPreferences": "Calculation Preferences",
+    "rounding": "Rounding",
+    "precision": "Decimal Places",
+    "notifications": "Notifications",
+    "enableNotifications": "Enable Notifications",
+    "about": "About App"
+  },
+
+  "about": {
+    "title": "About Merath",
+    "version": "Version",
+    "description": "Merath is a professional Islamic inheritance calculator that accurately distributes estates according to Shari'ah law and multiple madhabs.",
+    "features": "Features",
+    "feature1": "Support for 4 Islamic schools of law",
+    "feature2": "Accurate inheritance calculations",
+    "feature3": "Multiple language support",
+    "feature4": "Detailed calculation breakdowns",
+    "feature5": "Export and share results",
+    "copyright": "© 2026 Merath. All rights reserved.",
+    "website": "Website",
+    "contact": "Contact",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+
+  "wizard": { "estate_title": "Estate Details", "total_estate": "Total Estate", "debts": "Debts", "funeral": "Funeral Expenses", "will": "Will (Optional)", "next": "Next", "select_madhab": "Select School", "add_heirs": "Add Family Members", "calculate": "Calculate Inheritance" },
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "remove": "Remove",
+    "close": "Close",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Information",
+    "empty": "No data",
+    "noResults": "No results found"
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "app": {
+    "name": "ميراث",
+    "subtitle": "آلة حاسبة الميراث الإسلامية",
+    "description": "احسب حصص الميراث الإسلامية وفقاً للشريعة والمذاهب المختلفة"
+  },
+
+  "navigation": {
+    "calculator": "آلة الحساب",
+    "history": "السجل",
+    "settings": "الإعدادات",
+    "about": "حول"
+  },
+
+  "calculator": {
+    "title": "آلة حاسبة الميراث",
+    "estate": "التركة",
+    "heirs": "الورثة",
+    "calculate": "احسب الميراث",
+    "results": "النتائج",
+    "calculating": "جارٍ الحساب...",
+    "clear": "مسح",
+    "copy": "نسخ",
+    "share": "مشاركة",
+    "resetConfirmationTitle": "تأكيد إعادة التعيين",
+    "resetConfirmationMessage": "هل أنت متأكد من رغبتك في إعادة تعيين جميع البيانات؟ لا يمكن التراجع عن هذا الإجراء."
+  },
+
+  "estate": {
+    "title": "معلومات التركة",
+    "total": "إجمالي التركة",
+    "funeral": "نفقات الجنازة",
+    "debts": "الديون",
+    "will": "الوصية",
+    "netEstate": "التركة الصافية"
+  },
+
+  "heirs": {
+    "title": "إضافة الورثة",
+    "addHeir": "أضف وارثاً",
+    "group": {
+      "spouses": "الزوجان",
+      "ascendants": "الأصول",
+      "descendants": "الفروع",
+      "siblings": "الإخوة والأخوات",
+      "nephews": "أبناء الإخوة والأعمام",
+      "bloodRelatives": "ذوو الأرحام"
+    },
+    "husband": "الزوج",
+    "wife": "الزوجة",
+    "father": "الأب",
+    "mother": "الأم",
+    "grandfather": "الجد",
+    "grandmother": "الجدة",
+    "son": "الابن",
+    "daughter": "البنت",
+    "brother": "الأخ الشقيق",
+    "sister": "الأخت الشقيقة",
+    "paternalBrother": "الأخ لأب",
+    "paternalSister": "الأخت لأب",
+    "maternalBrother": "الأخ لأم",
+    "maternalSister": "الأخت لأم",
+    "nephew": "ابن الأخ",
+    "uncle": "العم",
+    "cousin": "ابن العم"
+  },
+
+  "madhab": {
+    "title": "المذهب الفقهي",
+    "hanafi": "الحنفي",
+    "maliki": "المالكي",
+    "shafii": "الشافعي",
+    "hanbali": "الحنبلي"
+  },
+
+  "results": {
+    "shares": "حصص الميراث",
+    "amount": "المبلغ",
+    "fraction": "الكسر",
+    "total": "الإجمالي",
+    "perPerson": "لكل شخص",
+    "success": "نجح الحساب",
+    "error": "خطأ في الحساب",
+    "noHeirs": "يرجى إضافة وارث واحد على الأقل",
+    "invalidEstate": "يرجى إدخال مبلغ تركة صحيح",
+    "invalidData": "يرجى التحقق من بيانات الإدخال",
+    "title": "نتائج التوزيع",
+    "calculationTime": "وقت الحساب",
+    "shareFormat": {
+      "pdf": "ملف PDF",
+      "image": "صورة",
+      "text": "نص",
+      "clipboard": "نسخ إلى الحافظة"
+    },
+    "previewTitle": "معاينة المشاركة - {{format}}",
+    "previewImage": "سيتم إنشاء معاينة الصورة",
+    "noResults": "لا توجد نتائج متاحة",
+    "performCalculation": "يرجى إجراء حساب أولاً لرؤية النتائج",
+    "specialCases": "حالات خاصة",
+    "awl": "العول - التوزيع الزائد",
+    "radd": "الرد",
+    "applied": "تم التطبيق",
+    "blockedHeirs": "الورثة المحجوبون",
+    "distributionTable": "جدول التوزيع",
+    "heir": "الوارث",
+    "financialSummary": "الملخص المالي",
+    "trustLevel": "مستوى الثقة",
+    "calculationSteps": "خطوات الحساب",
+    "previousResults": "النتائج السابقة",
+    "comparison": "المقارنة مع المذاهب الأخرى",
+    "compareWith": "المقارنة مع مذهب {{madhab}}",
+    "hideComparison": "إخفاء المقارنة",
+    "showComparison": "عرض المقارنة",
+    "statistics": "الإحصائيات",
+    "totalCalculations": "إجمالي الحسابات",
+    "currentResult": "النتيجة الحالية"
+  },
+
+  "settings": {
+    "title": "الإعدادات",
+    "language": "اللغة",
+    "theme": "المظهر",
+    "lightMode": "فاتح",
+    "darkMode": "داكن",
+    "systemMode": "النظام",
+    "calculationPreferences": "تفضيلات الحساب",
+    "rounding": "التقريب",
+    "precision": "الكسور العشرية",
+    "notifications": "الإشعارات",
+    "enableNotifications": "تفعيل الإشعارات",
+    "about": "حول التطبيق"
+  },
+
+  "about": {
+    "title": "حول ميراث",
+    "version": "الإصدار",
+    "description": "ميراث هي آلة حاسبة احترافية للميراث الإسلامي توزع التركات بدقة وفقاً لقانون الشريعة والمذاهب المتعددة.",
+    "features": "المميزات",
+    "feature1": "دعم 4 مذاهب إسلامية فقهية",
+    "feature2": "حسابات ميراث دقيقة",
+    "feature3": "دعم لغات متعددة",
+    "feature4": "تفاصيل تفصيلية للحسابات",
+    "feature5": "تصدير ومشاركة النتائج",
+    "copyright": "© 2026 ميراث. جميع الحقوق محفوظة.",
+    "website": "الموقع الإلكتروني",
+    "contact": "اتصل بنا",
+    "privacy": "سياسة الخصوصية",
+    "terms": "شروط الخدمة"
+  },
+
+  "wizard": { "estate_title": "تفاصيل التركة", "total_estate": "إجمالي التركة", "debts": "الديون", "funeral": "مصروفات الجنازة", "will": "الوصية (اختياري)", "next": "التالي", "select_madhab": "اختر المذهب", "add_heirs": "أضف أفراد الأسرة", "calculate": "احسب الميراث" },
+  "common": {
+    "ok": "حسناً",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تحرير",
+    "add": "إضافة",
+    "remove": "إزالة",
+    "close": "إغلاق",
+    "loading": "جارٍ التحميل...",
+    "error": "خطأ",
+    "success": "نجح",
+    "warning": "تحذير",
+    "info": "معلومات",
+    "empty": "لا توجد بيانات",
+    "noResults": "لم يتم العثور على نتائج"
+  }
+}

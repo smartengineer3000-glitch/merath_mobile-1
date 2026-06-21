@@ -1,0 +1,168 @@
+{
+  "app": {
+    "name": "میراث",
+    "subtitle": "اسلامی وراثت کیلکولیٹر",
+    "description": "شریعت اور مختلف مذاہب کے مطابق اسلامی وراثت کے حصے کا حساب لگائیں"
+  },
+
+  "navigation": {
+    "calculator": "کیلکولیٹر",
+    "history": "ہسٹری",
+    "settings": "ترتیبات",
+    "about": "بارے میں"
+  },
+
+  "calculator": {
+    "title": "وراثت کیلکولیٹر",
+    "estate": "ملکیت",
+    "heirs": "وارثین",
+    "calculate": "وراثت کا حساب لگائیں",
+    "results": "نتائج",
+    "calculating": "حساب لگائی جا رہی ہے...",
+    "clear": "صاف کریں",
+    "copy": "نقل کریں",
+    "share": "شیئر کریں",
+    "resetConfirmationTitle": "دوبارہ سیٹ کرنے کی تصدیق کریں",
+    "resetConfirmationMessage": "کیا آپ تمام ڈیٹا کو دوبارہ سیٹ کرنا چاہتے ہیں؟ یہ عمل واپس نہیں ہو سکتا۔"
+  },
+
+  "estate": {
+    "title": "ملکیت کی معلومات",
+    "total": "کل ملکیت",
+    "funeral": "جنازے کی رقم",
+    "debts": "قرضے",
+    "will": "وصیت",
+    "netEstate": "خالص ملکیت"
+  },
+
+  "heirs": {
+    "title": "وارثین شامل کریں",
+    "addHeir": "وارث شامل کریں",
+    "group": {
+      "spouses": "زوجین",
+      "ascendants": "اوپری نسل",
+      "descendants": "نیچے کی نسل",
+      "siblings": "بہن بھائی",
+      "nephews": "بھتیجے اور چاچااور",
+      "bloodRelatives": "خونی رشتہ دار"
+    },
+    "husband": "خاوند",
+    "wife": "بیوی",
+    "father": "باپ",
+    "mother": "ماں",
+    "grandfather": "دادا",
+    "grandmother": "دادی",
+    "son": "بیٹا",
+    "daughter": "بیٹی",
+    "brother": "بھائی",
+    "sister": "بہن",
+    "paternalBrother": "سوتیلا بھائی",
+    "paternalSister": "سوتیلی بہن",
+    "maternalBrother": "ماں کی طرف سے بھائی",
+    "maternalSister": "ماں کی طرف سے بہن",
+    "nephew": "بھتیجہ",
+    "uncle": "چاچا",
+    "cousin": "کزن"
+  },
+
+  "madhab": {
+    "title": "فقہی مذہب",
+    "hanafi": "حنفی",
+    "maliki": "مالکی",
+    "shafii": "شافعی",
+    "hanbali": "حنبلی"
+  },
+
+  "results": {
+    "shares": "وراثت کے حصے",
+    "amount": "رقم",
+    "fraction": "حصہ",
+    "total": "کل",
+    "perPerson": "ہر شخص",
+    "success": "حساب کامیاب",
+    "error": "حساب میں خرابی",
+    "noHeirs": "براہ کرم کم از کم ایک وارث شامل کریں",
+    "invalidEstate": "براہ کرم درست ملکیت کی رقم داخل کریں",
+    "invalidData": "براہ کرم اپنے ڈیٹا کو چیک کریں",
+    "title": "تقسیم کے نتائج",
+    "calculationTime": "حساب کا وقت",
+    "shareFormat": {
+      "pdf": "PDF فائل",
+      "image": "تصویر",
+      "text": "متن",
+      "clipboard": "کلپ بورڈ میں نقل کریں"
+    },
+    "previewTitle": "شیئر کا معائنہ - {{format}}",
+    "previewImage": "تصویر کا معائنہ بنایا جائے گا",
+    "noResults": "کوئی نتائج دستیاب نہیں",
+    "performCalculation": "نتائج دیکھنے کے لیے براہ کرم پہلے حساب کریں",
+    "specialCases": "خصوصی معاملات",
+    "awl": "العول - اضافی تقسیم",
+    "radd": "الرد - واپسی",
+    "applied": "لاگو کیا گیا",
+    "blockedHeirs": "روکے ہوئے وارثین",
+    "distributionTable": "تقسیم کی ٹیبل",
+    "heir": "وارث",
+    "financialSummary": "مالیاتی خلاصہ",
+    "trustLevel": "اعتماد کی سطح",
+    "calculationSteps": "حساب کے مراحل",
+    "previousResults": "پچھلے نتائج",
+    "comparison": "دوسری مذاہب سے موازنہ",
+    "compareWith": "{{madhab}} مذہب سے موازنہ کریں",
+    "hideComparison": "موازنہ چھپائیں",
+    "showComparison": "موازنہ دکھائیں",
+    "statistics": "شمار و شماری",
+    "totalCalculations": "کل حسابات",
+    "currentResult": "موجودہ نتیجہ"
+  },
+
+  "settings": {
+    "title": "ترتیبات",
+    "language": "زبان",
+    "theme": "تھیم",
+    "lightMode": "روشن",
+    "darkMode": "تاریک",
+    "systemMode": "نظام",
+    "calculationPreferences": "حساب کی ترتیبات",
+    "rounding": "گول کرنا",
+    "precision": "اعشاریہ جگہیں",
+    "notifications": "اطلاعات",
+    "enableNotifications": "اطلاعات فعال کریں",
+    "about": "ایپ کے بارے میں"
+  },
+
+  "about": {
+    "title": "میراث کے بارے میں",
+    "version": "ورژن",
+    "description": "میراث ایک پروفیشنل اسلامی وراثت کیلکولیٹر ہے جو شریعت کے قانون اور متعدد مذاہب کے مطابق ملکیت کو صحیح طریقے سے تقسیم کرتا ہے۔",
+    "features": "خصوصیات",
+    "feature1": "4 اسلامی فقہی مذاہب کے لیے معاونت",
+    "feature2": "درست وراثت کے حسابات",
+    "feature3": "متعدد زبانوں میں معاونت",
+    "feature4": "تفصیلی حساب کی معلومات",
+    "feature5": "نتائج برآمد اور شیئر کریں",
+    "copyright": "© 2026 میراث۔ تمام حقوق محفوظ ہیں۔",
+    "website": "ویب سائٹ",
+    "contact": "رابطہ کریں",
+    "privacy": "رازداری کی پالیسی",
+    "terms": "شرائط و ضوابط"
+  },
+
+  "common": {
+    "ok": "ٹھیک ہے",
+    "cancel": "منسوخ کریں",
+    "save": "محفوظ کریں",
+    "delete": "حذف کریں",
+    "edit": "ترمیم کریں",
+    "add": "شامل کریں",
+    "remove": "ہٹائیں",
+    "close": "بند کریں",
+    "loading": "لوڈ ہو رہا ہے...",
+    "error": "خرابی",
+    "success": "کامیاب",
+    "warning": "انتباہ",
+    "info": "معلومات",
+    "empty": "کوئی ڈیٹا نہیں",
+    "noResults": "کوئی نتیجہ نہیں ملا"
+  }
+}
