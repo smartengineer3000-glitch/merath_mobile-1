@@ -58,7 +58,6 @@ export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps)
   const [will, setWill] = useState((initialEstate?.will ?? initialEstate?.willAmount ?? estateData.will ?? estateData.willAmount ?? 0).toString());
   const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const [debouncingField, setDebouncingField] = useState<string | null>(null);
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   // ===== FIX H6: Keyboard listeners with auto-scroll =====
@@ -101,7 +100,6 @@ export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps)
   const validateAndUpdateImmediate = useCallback((estate: EstateData) => {
     const result = EstateValidator.validate(estate);
     setValidationResult(result);
-    setDebouncingField(null);
 
     if (result.isValid) {
       updateEstateData(estate);
@@ -111,8 +109,6 @@ export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps)
 
   // ===== FIX H1: Debounced validation (for change events) =====
   const validateAndUpdateDebounced = useCallback((estate: EstateData, fieldName: string) => {
-    setDebouncingField(fieldName);
-
     if (validationTimerRef.current) {
       clearTimeout(validationTimerRef.current);
     }
@@ -210,12 +206,6 @@ export function EstateInput({ onEstateChange, initialEstate }: EstateInputProps)
   const getFieldError = useCallback((fieldName: string) => {
     if (!validationResult) return null;
     return validationResult.errors.find(e => e.field === fieldName);
-  }, [validationResult]);
-
-  // ===== Helper to get field-specific warning =====
-  const getFieldWarning = useCallback((fieldName: string) => {
-    if (!validationResult) return null;
-    return validationResult.warnings.find(w => w.field === fieldName);
   }, [validationResult]);
 
   const styles = createStyles(theme, isNarrowScreen);

@@ -42,8 +42,7 @@ import { ErrorLogger } from '../lib/errors/ErrorHandler';
 import { 
   formatCurrency, 
   formatPercentage, 
-  calculatePercentagesLargestRemainder,
-  validatePercentageSum 
+  calculatePercentagesLargestRemainder
 } from '../lib/utils/formatters';
 
 export interface ResultsDisplayProps {

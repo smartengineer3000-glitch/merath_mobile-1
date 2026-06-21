@@ -26,8 +26,8 @@ import { MadhabProvider } from './lib/context/MadhabContext';
 import { CalculationProvider } from './lib/context/CalculationContext';
 import { RootNavigator } from './navigation/RootNavigator';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import DisclaimersModal from './components/DisclaimersModal';
-import LoadingScreen from './components/LoadingScreen';
+import { DisclaimersModal } from './components/DisclaimersModal';
+import { LoadingScreen } from './components/LoadingScreen';
 
 // ===== FIX: Onboarding storage key =====
 const ONBOARDING_COMPLETED_KEY = '@merath_onboarding_completed';
@@ -182,7 +182,6 @@ const OnboardingModal = ({ visible, onComplete }: { visible: boolean; onComplete
 const AppContent = () => {
   const { theme } = useAppTheme();
   const { t } = useTranslation();
-  const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
   const [showDisclaimers, setShowDisclaimers] = useState(true);
   const [appReady, setAppReady] = useState(false);
   
@@ -190,16 +189,11 @@ const AppContent = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingLoading, setOnboardingLoading] = useState(true);
   
-  // ===== FIX: Network state =====
-  const [networkStatus, setNetworkStatus] = useState({ isConnected: true, type: 'unknown' });
-  
   // ===== FIX: Monitor network changes =====
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
-      setNetworkStatus({
-        isConnected: state.isConnected ?? true,
-        type: state.type ?? 'unknown'
-      });
+      // Network status monitoring for future use
+      console.log('Network status:', state.isConnected, state.type);
     });
 
     return () => unsubscribe();
@@ -244,13 +238,12 @@ const AppContent = () => {
   }, []);
 
   const handleAcceptDisclaimers = useCallback(() => {
-    setDisclaimerAccepted(true);
     setShowDisclaimers(false);
   }, []);
 
   const handleDeclineDisclaimers = useCallback(() => {
     alert(t('onboarding.mustAcceptTerms'));
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     const prepare = async () => {

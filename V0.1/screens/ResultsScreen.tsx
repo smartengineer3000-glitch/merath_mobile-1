@@ -15,7 +15,6 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -58,7 +57,7 @@ export default function ResultsScreen() {
           <Text style={styles.emptyIcon}>📊</Text>
           <Text style={styles.emptyTitle}>{t('results.noResults')}</Text>
           <Text style={styles.emptyMessage}>
-            {t('results.performCalculation')} استخدم تبويب "الحاسبة" أعلاه وأدخل بيانات التركة والورثة، ثم اضغط "حساب" لعرض النتائج هنا.
+            {t('results.performCalculation')} استخدم تبويب &quot;الحاسبة&quot; أعلاه وأدخل بيانات التركة والورثة، ثم اضغط &quot;حساب&quot; لعرض النتائج هنا.
           </Text>
           
           <Card style={styles.helpCard}>
@@ -66,7 +65,7 @@ export default function ResultsScreen() {
             <View style={styles.helpSteps}>
               <View style={styles.step}>
                 <Text style={styles.stepNumber}>1</Text>
-                <Text style={styles.stepText}>انتقل إلى تبويب "الحاسبة"</Text>
+                <Text style={styles.stepText}>انتقل إلى تبويب &quot;الحاسبة&quot;</Text>
               </View>
               <View style={styles.step}>
                 <Text style={styles.stepNumber}>2</Text>
@@ -78,7 +77,7 @@ export default function ResultsScreen() {
               </View>
               <View style={styles.step}>
                 <Text style={styles.stepNumber}>4</Text>
-                <Text style={styles.stepText}>اضغط "حساب" لعرض النتائج</Text>
+                <Text style={styles.stepText}>اضغط &quot;حساب&quot; لعرض النتائج</Text>
               </View>
               <View style={styles.step}>
                 <Text style={styles.stepNumber}>5</Text>

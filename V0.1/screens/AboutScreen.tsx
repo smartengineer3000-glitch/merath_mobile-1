@@ -175,7 +175,7 @@ export default function AboutScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>About Islamic Inheritance</Text>
         <Text style={styles.description}>
-          Islamic inheritance law (Fara'id) is based on the Quran and Sunnah.
+          Islamic inheritance law (Fara&apos;id) is based on the Quran and Sunnah.
           It ensures fair distribution of wealth among heirs according to prescribed shares.
         </Text>
         <Text style={styles.description}>

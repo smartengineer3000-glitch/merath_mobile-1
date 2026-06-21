@@ -126,7 +126,7 @@ export default function MadhhabComparisonScreen() {
                 <View style={styles.stepNumber}>
                   <Text style={styles.stepNumberText}>1</Text>
                 </View>
-                <Text style={styles.stepText}>انتقل إلى تبويب "الحاسبة"</Text>
+                <Text style={styles.stepText}>انتقل إلى تبويب &quot;الحاسبة&quot;</Text>
               </View>
               <View style={styles.step}>
                 <View style={styles.stepNumber}>
@@ -138,7 +138,7 @@ export default function MadhhabComparisonScreen() {
                 <View style={styles.stepNumber}>
                   <Text style={styles.stepNumberText}>3</Text>
                 </View>
-                <Text style={styles.stepText}>اختر المذهب واضغط "حساب"</Text>
+                <Text style={styles.stepText}>اختر المذهب واضغط &quot;حساب&quot;</Text>
               </View>
               <View style={styles.step}>
                 <View style={styles.stepNumber}>
