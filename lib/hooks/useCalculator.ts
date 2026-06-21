@@ -4,7 +4,8 @@
  */
 import { useCallback } from 'react';
 import { useCalculator as useCoreCalculator } from '../inheritance/hooks';
-import type { MadhhabType, HeirsData, CalculationResult } from '../inheritance/types';
+import { EnhancedInheritanceCalculationEngine } from '../inheritance/enhanced-engine-complete';
+import type { MadhhabType, HeirsData, EstateData, CalculationResult } from '../inheritance/types';
 
 export function useCalculator() {
   const core = useCoreCalculator();
@@ -33,8 +34,21 @@ export function useCalculator() {
     [core]
   );
 
+  const calculateWithEstate = useCallback(
+    async (
+      madhab: MadhhabType,
+      estate: EstateData,
+      heirs: HeirsData
+    ): Promise<CalculationResult> => {
+      const engine = new EnhancedInheritanceCalculationEngine(madhab, estate, heirs);
+      return engine.calculate();
+    },
+    []
+  );
+
   return {
     ...core,
     calculateInheritance,
+    calculateWithEstate,
   };
 }

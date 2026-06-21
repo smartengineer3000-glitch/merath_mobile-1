@@ -1,14 +1,14 @@
 /**
  * Root Navigator Configuration
- * Complete redesign with drawer navigation
+ * Complete redesign with bottom tab navigation
  *
- * Modern navigation using drawer with dropdown sections
+ * Modern navigation using accessible tabs
  * Integrates required screens only
  */
 
 import React, { Suspense, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, ActivityIndicator, I18nManager, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -17,7 +17,7 @@ import { useAppTheme } from '../lib/context/ThemeProvider';
 import { languages } from '../lib/i18n';
 
 // Types
-import type { RootStackParamList, DrawerParamList } from './types';
+import type { RootStackParamList, TabParamList } from './types';
 import { linking } from './linking';
 
 // Screens — CalculatorScreen is eagerly loaded (landing screen);
@@ -58,18 +58,18 @@ if (Platform.OS !== 'web') {
   I18nManager.allowRTL(true);
 }
 
-const Drawer = createDrawerNavigator<DrawerParamList>();
+const Tab = createBottomTabNavigator<TabParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 /**
- * Drawer Navigator
- * Provides drawer navigation with modern design
+ * Tab Navigator
+ * Provides quick access to primary app workflows
  */
-export function DrawerNavigator() {
+export function TabNavigator() {
   const { theme } = useAppTheme();
 
   return (
-    <Drawer.Navigator
+    <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: true,
         headerStyle: {
@@ -82,67 +82,75 @@ export function DrawerNavigator() {
           fontFamily: 'Inter-Bold',
           fontSize: 18,
         },
-        drawerStyle: {
+        tabBarStyle: {
           backgroundColor: theme.colors.background.light,
-          width: 280,
+          borderTopColor: theme.colors.neutral.light300,
+          minHeight: 64,
+          paddingBottom: 8,
+          paddingTop: 6,
         },
-        drawerLabelStyle: {
+        tabBarLabelStyle: {
           fontFamily: 'Inter-Regular',
-          fontSize: 16,
+          fontSize: 12,
         },
-        drawerActiveTintColor: theme.colors.primary.main,
-        drawerInactiveTintColor: theme.colors.neutral.dark200,
+        tabBarActiveTintColor: theme.colors.primary.main,
+        tabBarInactiveTintColor: theme.colors.neutral.dark200,
+        tabBarIcon: ({ color, size }) => {
+          const icons: Record<keyof TabParamList, React.ComponentProps<typeof MaterialCommunityIcons>['name']> = {
+            Calculator: 'calculator',
+            MadhhabComparison: 'compare',
+            Test: 'test-tube',
+            Settings: 'cog',
+            About: 'information',
+          };
+
+          return <MaterialCommunityIcons name={icons[route.name]} color={color} size={size} />;
+        },
       })}
     >
-      <Drawer.Screen
+      <Tab.Screen
         name="Calculator"
         component={CalculatorScreen}
         options={{
-          drawerIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="calculator" color={color} size={size} />
-          ),
+          title: 'Calculator',
+          tabBarLabel: 'Calculator',
         }}
       />
-      <Drawer.Screen
+      <Tab.Screen
         name="MadhhabComparison"
         component={LazyMadhhabComparison}
         options={{
           title: 'Madhhab Comparison',
-          drawerIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="compare" color={color} size={size} />
-          ),
+          tabBarLabel: 'Compare',
         }}
       />
       {__DEV__ && (
-        <Drawer.Screen
+        <Tab.Screen
           name="Test"
           component={LazyTestScreen}
           options={{
-            drawerIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="test-tube" color={color} size={size} />
-            ),
+            title: 'Test',
+            tabBarLabel: 'Test',
           }}
         />
       )}
-      <Drawer.Screen
+      <Tab.Screen
         name="Settings"
         component={LazySettingsScreen}
         options={{
-          drawerIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="cog" color={color} size={size} />
-          ),
+          title: 'Settings',
+          tabBarLabel: 'Settings',
         }}
       />
-      <Drawer.Screen
+      <Tab.Screen
         name="About"
         component={LazyAboutScreen}
         options={{
-          drawerIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="information" color={color} size={size} />
-          ),
+          title: 'About',
+          tabBarLabel: 'About',
         }}
       />
-    </Drawer.Navigator>
+    </Tab.Navigator>
   );
 }
 
@@ -177,7 +185,7 @@ export function RootNavigator() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen
           name="MainApp"
-          component={DrawerNavigator}
+          component={TabNavigator}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

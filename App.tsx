@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next';
 import { ThemeProvider, useAppTheme } from './lib/context/ThemeProvider';
 import { SettingsProvider } from './lib/context/SettingsContext';
 import { MadhabProvider } from './lib/context/MadhabContext';
+import { CalculationProvider } from './lib/context/CalculationContext';
 import { RootNavigator } from './navigation/RootNavigator';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import DisclaimersModal from './components/DisclaimersModal';
@@ -276,7 +277,9 @@ const AppContent = () => {
       <StatusBar style={theme.mode === 'dark' ? 'light' : 'dark'} />
       <NetworkStatusIndicator />
       <ErrorBoundary theme={theme}>
-        <RootNavigator />
+        <CalculationProvider>
+          <RootNavigator />
+        </CalculationProvider>
       </ErrorBoundary>
       <DisclaimersModal
         visible={showDisclaimers}
