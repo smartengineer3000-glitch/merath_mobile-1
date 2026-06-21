@@ -13,6 +13,7 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useMadhab } from "../lib/context/MadhabContext";
+import { useCalculationScenario } from "../lib/context/CalculationContext";
 import { useAppTheme } from "../lib/context/ThemeProvider";
 import { useCalculator } from "../lib/hooks/useCalculator";
 import { useResults } from "../lib/hooks/useResults";
@@ -107,8 +108,9 @@ export default function CalculatorScreen() {
   const { t } = useTranslation();
   const { madhab, setMadhab } = useMadhab();
   const { theme } = useAppTheme();
-  const { calculateWithMethod } = useCalculator();
+  const { calculateWithEstate } = useCalculator();
   const { result, setResult, clearResults } = useResults();
+  const { saveScenario, clearScenario } = useCalculationScenario();
   const [showResults, setShowResults] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
   const [currentEstate, setCurrentEstate] = useState<EstateData>({
@@ -161,24 +163,36 @@ export default function CalculatorScreen() {
 
     try {
       setIsCalculating(true);
-      const calculationResult = await calculateWithMethod(madhab, currentHeirs);
-      if (calculationResult) {
+      const calculationResult = await calculateWithEstate(madhab, currentEstate, currentHeirs);
+      if (calculationResult.success) {
         setResult(calculationResult);
+        saveScenario({
+          estate: currentEstate,
+          heirs: currentHeirs,
+          madhab,
+          result: calculationResult,
+        });
         setShowResults(true);
+      } else {
+        Alert.alert(
+          t("common.error"),
+          calculationResult.error || t("calculator.calculationFailed"),
+        );
       }
     } catch (error) {
       Alert.alert(t("common.error"), t("calculator.calculationFailed"));
     } finally {
       setIsCalculating(false);
     }
-  }, [madhab, currentEstate, currentHeirs, calculateWithMethod, setResult, t]);
+  }, [madhab, currentEstate, currentHeirs, calculateWithEstate, setResult, saveScenario, t]);
 
   const handleReset = useCallback(() => {
     setCurrentEstate({ total: 0, funeral: 0, debts: 0, will: 0 });
     setCurrentHeirs({});
     clearResults();
+    clearScenario();
     setShowResults(false);
-  }, [clearResults]);
+  }, [clearResults, clearScenario]);
 
   const styles = createStyles(theme);
 

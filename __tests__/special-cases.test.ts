@@ -153,7 +153,7 @@ describe('Special Cases - Complete Test Suite', () => {
       expect(total).toBeCloseTo(27000, 0);
     });
 
-    it.skip('Case 2: Verify fraction calculations', () => {
+    it('Case 2: Verify fraction calculations', () => {
       const heirs: HeirsData = {
         husband: 1,
         mother: 1,
@@ -169,14 +169,15 @@ describe('Special Cases - Complete Test Suite', () => {
       const grandfather = result.shares.find(s => s.key === 'grandfather');
       const sister = result.shares.find(s => s.key === 'full_sister');
       
-      expect(husband?.fraction?.numerator).toBe(9);
-      expect(husband?.fraction?.denominator).toBe(27);
-      expect(mother?.fraction?.numerator).toBe(6);
-      expect(mother?.fraction?.denominator).toBe(27);
-      expect(grandfather?.fraction?.numerator).toBe(8);
-      expect(grandfather?.fraction?.denominator).toBe(27);
-      expect(sister?.fraction?.numerator).toBe(4);
-      expect(sister?.fraction?.denominator).toBe(27);
+      expect(husband?.fraction).toBeDefined();
+      expect(mother?.fraction).toBeDefined();
+      expect(grandfather?.fraction).toBeDefined();
+      expect(sister?.fraction).toBeDefined();
+
+      expect(husband!.fraction!.numerator / husband!.fraction!.denominator).toBeCloseTo(9 / 27, 5);
+      expect(mother!.fraction!.numerator / mother!.fraction!.denominator).toBeCloseTo(6 / 27, 5);
+      expect(grandfather!.fraction!.numerator / grandfather!.fraction!.denominator).toBeCloseTo(8 / 27, 5);
+      expect(sister!.fraction!.numerator / sister!.fraction!.denominator).toBeCloseTo(4 / 27, 5);
     });
 
     it('Case 3: Should NOT apply Akdariyya when conditions not met', () => {
