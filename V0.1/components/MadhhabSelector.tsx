@@ -177,7 +177,7 @@ const createStyles = (theme: Theme) =>
       color: theme.colors.primary.main,
       fontFamily: "Inter-Bold",
     },
-    // Compact Grid Style (2x2)
+    // Compact Grid Style (2x2 on wide, stacks on narrow)
     gridContainer: {
       flexDirection: "row",
       flexWrap: "wrap",
@@ -185,7 +185,9 @@ const createStyles = (theme: Theme) =>
       gap: theme.spacing.sm,
     },
     gridItem: {
-      width: "48%",
+      minWidth: 130,
+      flexBasis: "48%",
+      flexGrow: 1,
       minHeight: 118,
       alignItems: "flex-start",
       backgroundColor: theme.colors.background.light,

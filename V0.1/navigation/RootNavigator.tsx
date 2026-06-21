@@ -10,7 +10,7 @@ import React, { Suspense, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, ActivityIndicator, I18nManager, Platform } from 'react-native';
+import { View, ActivityIndicator, I18nManager, Platform, Alert } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSettings } from '../lib/context/SettingsContext';
 import { useAppTheme } from '../lib/context/ThemeProvider';
@@ -164,11 +164,20 @@ export function RootNavigator() {
   const { theme } = useAppTheme();
 
   useEffect(() => {
-    if (Platform.OS !== 'web') {
-      const desiredRTL = languages[state.language]?.rtl ?? false;
-      if (I18nManager.isRTL !== desiredRTL) {
-        I18nManager.forceRTL(desiredRTL);
-      }
+    if (Platform.OS === 'web') return;
+
+    const desiredRTL = languages[state.language]?.rtl ?? false;
+    if (I18nManager.isRTL !== desiredRTL) {
+      Alert.alert(
+        'Language change',
+        desiredRTL
+          ? 'تم اختيار لغة من اليمين إلى اليسار. لإكمال التغيير، يرجى إعادة تشغيل التطبيق.'
+          : 'تم اختيار لغة من اليسار إلى اليمين. لإكمال التغيير، يرجى إعادة تشغيل التطبيق.',
+        [{ text: 'OK' }]
+      );
+
+      I18nManager.forceRTL(desiredRTL);
+      I18nManager.swapLeftAndRightInRTL(true);
     }
   }, [state.language]);
 

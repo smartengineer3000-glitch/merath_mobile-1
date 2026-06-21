@@ -110,7 +110,7 @@ export function DisclaimersModal({
         </View>
 
         {/* Tab Navigation */}
-        <View style={styles.tabNavigation}>
+        <View style={styles.tabNavigation} accessibilityRole="tablist" accessible={true}>
           {(['disclaimer', 'privacy', 'terms'] as DisclaimerTab[]).map((tab) => (
             <TouchableOpacity
               key={tab}
@@ -119,6 +119,10 @@ export function DisclaimersModal({
                 activeTab === tab && styles.tabActive
               ]}
               onPress={() => setActiveTab(tab)}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: activeTab === tab }}
+              accessibilityLabel={getTabLabel(tab)}
+              accessible={true}
             >
               <Text style={[
                 styles.tabLabel,
@@ -150,6 +154,11 @@ export function DisclaimersModal({
               acceptedAll && styles.checkboxChecked
             ]}
             onPress={() => setAcceptedAll(!acceptedAll)}
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: acceptedAll }}
+            accessibilityLabel="أوافق على جميع الشروط والأحكام وسياسة الخصوصية"
+            accessibilityHint="اضغط لتأكيد قبول الشروط والأحكام وسياسة الخصوصية"
+            accessible={true}
           >
             {acceptedAll && (
               <Text style={styles.checkboxMark}>✓</Text>
@@ -176,6 +185,9 @@ export function DisclaimersModal({
             ]}
             onPress={handleAccept}
             disabled={!acceptedAll}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: !acceptedAll }}
+            accessibilityLabel="قبول واستمرار"
           >
             <Text style={styles.acceptButtonText}>قبول واستمرار</Text>
           </TouchableOpacity>

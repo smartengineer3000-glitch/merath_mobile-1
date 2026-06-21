@@ -1,6 +1,7 @@
-CalculatorScreen tab refactor
-- [x] Install top-tab navigation dependencies
-- [x] Update CalculatorScreen to use Estate Details / Heirs / Madhab tabs
-- [x] Keep estate, heirs, and madhab state persistent across tabs
-- [x] Keep Calculate Results button visible on all tabs
-- [x] Validate with npx expo-doctor, npx tsc --noEmit, npm test
+•	[✓ CRITICAL] Accessibility - add accessible tab roles/state and checkbox semantics in DisclaimersModal (V0.1/components/DisclaimersModal.tsx)
+•	[✓ HIGH] Usability - handle RTL language switch restart prompt in RootNavigator (V0.1/navigation/RootNavigator.tsx)
+•	[✓ MEDIUM] UX Patterns - replace raw TouchableOpacity actions with shared Button component in CalculatorScreen (V0.1/screens/CalculatorScreen.tsx)
+•	[✓ MEDIUM] Responsiveness - improve MadhhabSelector and HeirSelector layouts for narrow screens (V0.1/components/MadhhabSelector.tsx, V0.1/components/HeirSelector.tsx)
+•	[✓ MEDIUM] Visual - unify Arabic/English text and theme typography in EstateInput, CalculatorScreen, AboutScreen (V0.1/components/EstateInput.tsx, V0.1/screens/CalculatorScreen.tsx, V0.1/screens/AboutScreen.tsx)
+
+[before commit] Validate with npx expo-doctor, npx tsc --noEmit, npm test

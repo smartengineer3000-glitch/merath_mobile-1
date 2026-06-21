@@ -23,6 +23,7 @@ import { HeirSelector } from "../components/HeirSelector";
 import { MadhhabSelector } from "../components/MadhhabSelector";
 import { ResultsDisplay } from "../components/ResultsDisplay";
 import { Card } from "../components/ui/Card";
+import { PrimaryButton, SecondaryButton } from "../components/ui/Button";
 import type { Theme } from "../lib/design/theme";
 import type { EstateData, HeirsData } from "../lib/inheritance/types";
 
@@ -338,47 +339,32 @@ export default function CalculatorScreen() {
           </View>
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[
-                styles.calculateButton,
-                isCalculating && styles.buttonDisabled,
-              ]}
+              <PrimaryButton
+              title={
+                isCalculating
+                  ? t("calculator.calculating")
+                  : t("calculator.calculate")
+              }
               onPress={handleCalculate}
               disabled={isCalculating}
-              accessibilityRole="button"
+              loading={isCalculating}
+              icon="calculator"
+              iconPosition="left"
+              style={styles.calculateButton}
               accessibilityLabel={
                 isCalculating
                   ? t("calculator.calculatingInheritance")
                   : t("calculator.calculateInheritance")
               }
-              accessibilityState={{ disabled: isCalculating }}
-            >
-              <MaterialCommunityIcons
-                name="calculator"
-                size={20}
-                color={theme.colors.background.light}
-              />
-              <Text style={styles.calculateButtonText}>
-                {isCalculating
-                  ? t("calculator.calculating")
-                  : t("calculator.calculate")}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.resetButton}
+            />
+            <SecondaryButton
+              title={t("calculator.reset")}
               onPress={handleReset}
-              accessibilityRole="button"
+              icon="refresh"
+              iconPosition="left"
+              style={styles.resetButton}
               accessibilityLabel={t("calculator.resetAllFields")}
-            >
-              <MaterialCommunityIcons
-                name="refresh"
-                size={20}
-                color={theme.colors.primary.main}
-              />
-              <Text style={styles.resetButtonText}>
-                {t("calculator.reset")}
-              </Text>
-            </TouchableOpacity>
+            />
           </View>
 
           {showResults && result && (
@@ -435,7 +421,7 @@ const createStyles = (theme: Theme) =>
     },
     tabLabel: {
       fontFamily: "Inter-Bold",
-      fontSize: 13,
+      ...theme.typography.label.small,
       textTransform: "none",
     },
     heroCard: {
@@ -627,43 +613,9 @@ const createStyles = (theme: Theme) =>
     },
     calculateButton: {
       flex: 1.35,
-      backgroundColor: theme.colors.primary.main,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      paddingVertical: theme.spacing.lg,
-      paddingHorizontal: theme.spacing.md,
-      borderRadius: theme.borderRadius.lg,
-      gap: theme.spacing.sm,
-      ...theme.shadows.md,
-    },
-    buttonDisabled: {
-      opacity: 0.6,
-    },
-    calculateButtonText: {
-      color: theme.colors.background.light,
-      fontSize: 16,
-      fontWeight: "bold",
-      fontFamily: "Inter-Bold",
     },
     resetButton: {
       flex: 1,
-      backgroundColor: theme.colors.background.light,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      paddingVertical: theme.spacing.lg,
-      paddingHorizontal: theme.spacing.md,
-      borderRadius: theme.borderRadius.lg,
-      borderWidth: 1,
-      borderColor: theme.colors.primary.light100,
-      gap: theme.spacing.sm,
-    },
-    resetButtonText: {
-      color: theme.colors.primary.main,
-      fontSize: 16,
-      fontWeight: "bold",
-      fontFamily: "Inter-Bold",
     },
     resultsContainer: {
       marginBottom: theme.spacing.lg,
