@@ -10,9 +10,12 @@
  * @param options - Intl.NumberFormat options
  * @returns Formatted currency string (e.g., "١٠٠٠٠٠ ر.س")
  */
-export function formatCurrency(value: number, options: Intl.NumberFormatOptions = {}): string {
+export function formatCurrency(
+  value: number,
+  options: Intl.NumberFormatOptions = {},
+): string {
   const num = Math.max(0, value || 0);
-  return new Intl.NumberFormat('ar-SA', {
+  return new Intl.NumberFormat("ar-SA", {
     maximumFractionDigits: 0,
     ...options,
   }).format(num);
@@ -26,7 +29,7 @@ export function formatCurrency(value: number, options: Intl.NumberFormatOptions 
  */
 export function formatNumber(value: number, decimals: number = 2): string {
   const num = value || 0;
-  return new Intl.NumberFormat('ar-SA', {
+  return new Intl.NumberFormat("ar-SA", {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   }).format(num);
@@ -48,33 +51,35 @@ export function formatPercentage(value: number, decimals: number = 2): string {
  * @param shares - Array of share amounts
  * @returns Array of percentages that sum to exactly 100%
  */
-export function calculatePercentagesLargestRemainder(shares: number[]): number[] {
+export function calculatePercentagesLargestRemainder(
+  shares: number[],
+): number[] {
   if (shares.length === 0) return [];
-  
+
   const total = shares.reduce((sum, share) => sum + share, 0);
   if (total === 0) return shares.map(() => 0);
-  
+
   // Calculate raw percentages
-  const rawPercentages = shares.map(share => (share / total) * 100);
-  
+  const rawPercentages = shares.map((share) => (share / total) * 100);
+
   // Get integer parts and fractional parts
-  const integerParts = rawPercentages.map(p => Math.floor(p));
+  const integerParts = rawPercentages.map((p) => Math.floor(p));
   const fractionalParts = rawPercentages.map((p, i) => p - integerParts[i]);
-  
+
   // Calculate remaining percentage to distribute
   const currentSum = integerParts.reduce((sum, int) => sum + int, 0);
   const remainder = 100 - currentSum;
-  
+
   // Distribute remainder to shares with largest fractional parts
   const sortedIndices = fractionalParts
     .map((frac, index) => ({ frac, index }))
     .sort((a, b) => b.frac - a.frac);
-  
+
   const result = [...integerParts];
   for (let i = 0; i < remainder && i < sortedIndices.length; i++) {
     result[sortedIndices[i].index] += 1;
   }
-  
+
   return result;
 }
 
@@ -94,7 +99,10 @@ export function validatePercentageSum(percentages: number[]): boolean {
  * @param percentage - The share percentage
  * @returns Formatted string (e.g., "١٠٠٠٠ ر.س (٢٥٫٠٠٪)")
  */
-export function formatShareWithPercentage(amount: number, percentage: number): string {
+export function formatShareWithPercentage(
+  amount: number,
+  percentage: number,
+): string {
   return `${formatCurrency(amount)} (${formatPercentage(percentage)})`;
 }
 
@@ -104,7 +112,7 @@ export function formatShareWithPercentage(amount: number, percentage: number): s
  * @returns Text with Arabic numerals
  */
 export function toArabicNumerals(text: string): string {
-  return text.replace(/\d/g, (d) => '٠١٢٣٤٥٦٧٨٩'[parseInt(d)] || d);
+  return text.replace(/\d/g, (d) => "٠١٢٣٤٥٦٧٨٩"[parseInt(d)] || d);
 }
 
 /**
@@ -115,8 +123,16 @@ export function toArabicNumerals(text: string): string {
 export function fromArabicNumerals(text: string): string {
   return text.replace(/[٠-٩]/g, (d) => {
     const map: Record<string, string> = {
-      '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
-      '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+      "٠": "0",
+      "١": "1",
+      "٢": "2",
+      "٣": "3",
+      "٤": "4",
+      "٥": "5",
+      "٦": "6",
+      "٧": "7",
+      "٨": "8",
+      "٩": "9",
     };
     return map[d] || d;
   });

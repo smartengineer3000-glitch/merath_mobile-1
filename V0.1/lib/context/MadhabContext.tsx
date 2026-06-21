@@ -3,8 +3,8 @@
  * @description Context for managing the currently selected madhab
  */
 
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import type { MadhhabType } from '../inheritance/types';
+import React, { createContext, useContext, useState, useCallback } from "react";
+import type { MadhhabType } from "../inheritance/types";
 
 interface MadhabContextValue {
   madhab: MadhhabType;
@@ -13,8 +13,10 @@ interface MadhabContextValue {
 
 const MadhabContext = createContext<MadhabContextValue | undefined>(undefined);
 
-export const MadhabProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [madhab, setMadhabState] = useState<MadhhabType>('hanafi');
+export const MadhabProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [madhab, setMadhabState] = useState<MadhhabType>("hanafi");
 
   const setMadhab = useCallback((m: MadhhabType) => {
     setMadhabState(m);
@@ -30,7 +32,7 @@ export const MadhabProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 export function useMadhab(): MadhabContextValue {
   const context = useContext(MadhabContext);
   if (!context) {
-    throw new Error('useMadhab must be used within a MadhabProvider');
+    throw new Error("useMadhab must be used within a MadhabProvider");
   }
   return context;
 }

@@ -6,7 +6,12 @@
  * and optimization of expensive calculations
  */
 
-import { CalculationResult, EstateData, HeirsData, MadhhabType } from '../inheritance/types';
+import {
+  CalculationResult,
+  EstateData,
+  HeirsData,
+  MadhhabType,
+} from "../inheritance/types";
 
 export interface PerformanceMetrics {
   calculationTime: number;
@@ -31,17 +36,17 @@ export class CalculationCache {
   private static generateKey(
     madhab: MadhhabType,
     estate: EstateData,
-    heirs: HeirsData
+    heirs: HeirsData,
   ): string {
     const estateString = Object.entries(estate)
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([k, v]) => `${k}:${v}`)
-      .join('|');
+      .join("|");
 
     const heirsString = Object.entries(heirs)
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([k, v]) => `${k}:${v}`)
-      .join('|');
+      .join("|");
 
     return `${madhab}:${estateString}:${heirsString}`;
   }
@@ -52,7 +57,7 @@ export class CalculationCache {
   static getCalculation(
     madhab: MadhhabType,
     estate: EstateData,
-    heirs: HeirsData
+    heirs: HeirsData,
   ): CalculationResult | null {
     const key = this.generateKey(madhab, estate, heirs);
     return this.cache.get(key) || null;
@@ -66,7 +71,7 @@ export class CalculationCache {
     estate: EstateData,
     heirs: HeirsData,
     result: CalculationResult,
-    calculationTime: number
+    calculationTime: number,
   ): void {
     const key = this.generateKey(madhab, estate, heirs);
 
@@ -138,7 +143,8 @@ export class CalculationCache {
     const lastMetric = this.metrics[this.metrics.length - 1];
     const totalCalcs = lastMetric.cacheHits + lastMetric.cacheMisses;
     const avgTime =
-      this.metrics.reduce((sum, m) => sum + m.calculationTime, 0) / this.metrics.length;
+      this.metrics.reduce((sum, m) => sum + m.calculationTime, 0) /
+      this.metrics.length;
 
     return {
       totalCalculations: totalCalcs,
@@ -167,7 +173,7 @@ export class CalculationCache {
         timestamp: new Date().toISOString(),
       },
       null,
-      2
+      2,
     );
   }
 }
@@ -192,7 +198,7 @@ export class PerformanceMonitor {
    */
   static async measure<T>(
     name: string,
-    fn: () => Promise<T>
+    fn: () => Promise<T>,
   ): Promise<{ result: T; duration: number }> {
     if (!this.enabled) {
       return { result: await fn(), duration: 0 };
@@ -211,7 +217,10 @@ export class PerformanceMonitor {
       return { result, duration };
     } catch (error) {
       const duration = performance.now() - startTime;
-      console.error(`[Performance Error] ${name} failed after ${duration.toFixed(2)}ms`, error);
+      console.error(
+        `[Performance Error] ${name} failed after ${duration.toFixed(2)}ms`,
+        error,
+      );
       throw error;
     }
   }
@@ -219,7 +228,10 @@ export class PerformanceMonitor {
   /**
    * Measure synchronous function execution time
    */
-  static measureSync<T>(name: string, fn: () => T): { result: T; duration: number } {
+  static measureSync<T>(
+    name: string,
+    fn: () => T,
+  ): { result: T; duration: number } {
     if (!this.enabled) {
       return { result: fn(), duration: 0 };
     }
@@ -237,7 +249,10 @@ export class PerformanceMonitor {
       return { result, duration };
     } catch (error) {
       const duration = performance.now() - startTime;
-      console.error(`[Performance Error] ${name} failed after ${duration.toFixed(2)}ms`, error);
+      console.error(
+        `[Performance Error] ${name} failed after ${duration.toFixed(2)}ms`,
+        error,
+      );
       throw error;
     }
   }
@@ -248,7 +263,7 @@ export class PerformanceMonitor {
  */
 export function debounce<T extends (...args: any[]) => any>(
   fn: T,
-  delayMs: number
+  delayMs: number,
 ): (...args: Parameters<T>) => void {
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
@@ -269,7 +284,7 @@ export function debounce<T extends (...args: any[]) => any>(
  */
 export function throttle<T extends (...args: any[]) => any>(
   fn: T,
-  limitMs: number
+  limitMs: number,
 ): (...args: Parameters<T>) => void {
   let lastRun = 0;
 
@@ -290,7 +305,7 @@ export function memoize<T extends (...args: any[]) => any>(fn: T): T {
 
   return ((...args: Parameters<T>) => {
     const key = JSON.stringify(args);
-    
+
     if (cache.has(key)) {
       return cache.get(key);
     }

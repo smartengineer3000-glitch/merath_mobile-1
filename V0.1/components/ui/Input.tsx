@@ -3,7 +3,7 @@
  * @description Material Design 3 text input component
  */
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   TextInput,
   View,
@@ -11,15 +11,20 @@ import {
   ViewStyle,
   TextStyle,
   Pressable,
-} from 'react-native';
-import { useAppTheme } from '../../lib/context/ThemeProvider';
+} from "react-native";
+import { useAppTheme } from "../../lib/context/ThemeProvider";
 
 export interface ModernInputProps {
   label?: string;
   placeholder?: string;
   value: string;
   onChangeText: (text: string) => void;
-  keyboardType?: 'default' | 'decimal-pad' | 'numeric' | 'email-address' | 'phone-pad';
+  keyboardType?:
+    | "default"
+    | "decimal-pad"
+    | "numeric"
+    | "email-address"
+    | "phone-pad";
   error?: boolean;
   errorMessage?: string;
   disabled?: boolean;
@@ -38,7 +43,7 @@ export const ModernInput: React.FC<ModernInputProps> = ({
   placeholder,
   value,
   onChangeText,
-  keyboardType = 'default',
+  keyboardType = "default",
   error = false,
   errorMessage,
   disabled = false,
@@ -61,24 +66,24 @@ export const ModernInput: React.FC<ModernInputProps> = ({
   const labelStyle: TextStyle = {
     fontSize: 14,
     lineHeight: 20,
-    fontWeight: '500',
+    fontWeight: "500",
     color: error ? theme.colors.error.main : theme.colors.neutral.light400,
     marginBottom: theme.spacing.xs,
   };
 
   const inputContainerStyle: ViewStyle = {
-    flexDirection: 'row',
-    alignItems: multiline ? 'flex-start' : 'center',
+    flexDirection: "row",
+    alignItems: multiline ? "flex-start" : "center",
     paddingHorizontal: theme.spacing.md,
     paddingVertical: multiline ? theme.spacing.md : 0,
     borderWidth: 1,
     borderRadius: theme.borderRadius.md,
-    backgroundColor: disabled ? '#F5F5F5' : '#FFFFFF',
+    backgroundColor: disabled ? "#F5F5F5" : "#FFFFFF",
     borderColor: error
       ? theme.colors.error.main
       : focused
-      ? theme.colors.primary.main
-      : theme.colors.secondary.main,
+        ? theme.colors.primary.main
+        : theme.colors.secondary.main,
     marginTop: theme.spacing.xs,
   };
 
@@ -103,7 +108,9 @@ export const ModernInput: React.FC<ModernInputProps> = ({
       {label && (
         <Text style={labelStyle}>
           {label}
-          {required && <Text style={{ color: theme.colors.error.main }}>*</Text>}
+          {required && (
+            <Text style={{ color: theme.colors.error.main }}>*</Text>
+          )}
         </Text>
       )}
       <View style={inputContainerStyle}>
@@ -131,5 +138,3 @@ export const ModernInput: React.FC<ModernInputProps> = ({
     </View>
   );
 };
-
-

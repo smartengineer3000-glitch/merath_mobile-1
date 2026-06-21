@@ -1,5 +1,5 @@
-const { getDefaultConfig } = require('expo/metro-config');
-const { mergeConfig } = require('@react-native/metro-config');
+const { getDefaultConfig } = require("expo/metro-config");
+const { mergeConfig } = require("@react-native/metro-config");
 
 /** @type {import('expo/metro-config').MetroConfig} */
 const expoConfig = getDefaultConfig(__dirname);
@@ -10,7 +10,7 @@ expoConfig.maxWorkers = 4;
 // Enable trailing comma stripping and other optimizations
 expoConfig.transformer = {
   ...expoConfig.transformer,
-  minifierPath: 'metro-minify-terser',
+  minifierPath: "metro-minify-terser",
   minifierConfig: {
     keep_classnames: true,
     keep_fnames: true,

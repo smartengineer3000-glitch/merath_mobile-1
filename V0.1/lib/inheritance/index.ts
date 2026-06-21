@@ -1,14 +1,14 @@
 /**
  * Export All Inheritance System Components
  */
-export * from './types';
-export * from './constants';
-export * from './fraction';
-export * from './hijab-system';
-export { EnhancedInheritanceCalculationEngine as InheritanceCalculationEngine } from './enhanced-engine-complete';
-export * from './audit-log';
-export * from './audit-trail-manager';
-export * from './hooks';
+export * from "./types";
+export * from "./constants";
+export * from "./fraction";
+export * from "./hijab-system";
+export { EnhancedInheritanceCalculationEngine as InheritanceCalculationEngine } from "./enhanced-engine-complete";
+export * from "./audit-log";
+export * from "./audit-trail-manager";
+export * from "./hooks";
 
 // Export from utils, excluding the one that conflicts with constants
 export {
@@ -32,5 +32,5 @@ export {
   getHeirName,
   getMadhhabColor,
   getMadhhabIcon,
-  getMadhhabName
-} from './utils';
+  getMadhhabName,
+} from "./utils";

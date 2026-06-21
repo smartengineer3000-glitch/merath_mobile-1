@@ -1,4 +1,5 @@
 # 📱 **Merath - حاسبة المواريث الشرعية**
+
 ### Islamic Inheritance Calculator
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -17,12 +18,14 @@
 ## ✨ **Key Features**
 
 ### 🕌 **Multi-Madhab Support**
+
 - **Hanafi** - Complete implementation with mushārakah rules for grandfather with siblings
 - **Maliki** - Accurate rulings for all cases including special scenarios
 - **Shafi'i** - Precise implementation of Shafi'i school rules
 - **Hanbali** - Full support for Hanbali jurisprudence
 
 ### ⚖️ **Comprehensive Inheritance Rules**
+
 - **Fixed Shares (Furūḍ)** - All Quranic shares: 1/2, 1/3, 2/3, 1/4, 1/6, 1/8, etc.
 - **Residuary (ʿAṣabāt)** - Male agnatic heirs with proper prioritization
 - **Blocking (Ḥujūb)** - Complete hijab rules for all heir combinations
@@ -31,23 +34,27 @@
 - **Blood Relatives (Dhū al-Arḥām)** - Inheritance when no asaba exist
 
 ### 🔢 **Advanced Calculation Engine**
+
 - **Fraction-based arithmetic** - Precise calculations without floating-point errors
 - **Confidence scoring** - Multi-factor confidence indication (50-100%)
 - **Step-by-step breakdown** - Clear explanation of calculation process
 - **Madhab comparison** - Side-by-side comparison across all four schools
 
 ### 📤 **Sharing & Export**
+
 - **PDF reports** - Professionally formatted inheritance reports
 - **Image capture** - Share results as PNG images
 - **Text sharing** - Share via any messaging app
 - **Clipboard copy** - Quick copy of results
 
 ### 🌐 **Internationalization**
+
 - **Arabic** - Full RTL support with complete Arabic interface
 - **English** - Complete English localization
 - **Urdu, Turkish, French, German** - Multi-language support
 
 ### 🎨 **Professional UI/UX**
+
 - **Material Design 3** - Modern, clean interface
 - **Light/Dark theme** - System-aware theming
 - **Keyboard optimization** - Smooth input handling with navigation
@@ -58,15 +65,16 @@
 
 ## 📸 **Screenshots**
 
-| Calculator Screen | Results Display | Settings |
-|:---:|:---:|:---:|
-| [Screenshot] | [Screenshot] | [Screenshot] |
+| Calculator Screen | Results Display |   Settings   |
+| :---------------: | :-------------: | :----------: |
+|   [Screenshot]    |  [Screenshot]   | [Screenshot] |
 
 ---
 
 ## 🚀 **Quick Start**
 
 ### Prerequisites
+
 - Node.js 18+
 - npm or yarn
 - Expo CLI (`npm install -g expo-cli`)
@@ -255,3 +263,4 @@ https://img.shields.io/badge/App%2520Store-Download-blue
 شرح خطوات الحساب بالتفصيل
 
 Made with ❤️ for the Ummah
+```

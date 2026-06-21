@@ -1,18 +1,23 @@
 /**
  * IndexedDB Database Configuration
  * Uses Dexie.js for better IndexedDB handling
- * 
+ *
  * FIX H1: Provides offline-first, scalable storage for audit logs
  */
 
-import Dexie, { Table } from 'dexie';
-import { MadhhabType, HeirsData, EstateData, CalculationResult } from '../inheritance/types';
+import Dexie, { Table } from "dexie";
+import {
+  MadhhabType,
+  HeirsData,
+  EstateData,
+  CalculationResult,
+} from "../inheritance/types";
 
 // Define the database entry type
 export interface DBAuditLogEntry {
-  id: string;                           // Primary key
-  timestamp: string;                    // ISO format
-  operation: 'calculate' | 'delete' | 'export' | 'import' | 'clear';
+  id: string; // Primary key
+  timestamp: string; // ISO format
+  operation: "calculate" | "delete" | "export" | "import" | "clear";
   madhab: MadhhabType;
   heirs: HeirsData;
   estate: EstateData;
@@ -35,41 +40,46 @@ export interface DBAuditLogEntry {
 export class MerathDatabase extends Dexie {
   // Table names
   auditLogs!: Table<DBAuditLogEntry, string>; // string = id type
-  
+
   constructor() {
-    super('MerathDatabase');
-    
+    super("MerathDatabase");
+
     // Define database schema
     this.version(1).stores({
-      auditLogs: 'id, timestamp, madhab, operation, success, year, month, day, duration, [year+month], [madhab+success]'
+      auditLogs:
+        "id, timestamp, madhab, operation, success, year, month, day, duration, [year+month], [madhab+success]",
     });
-    
+
     // Version 2: Add more indexes for complex queries
-    this.version(2).stores({
-      auditLogs: 'id, timestamp, madhab, operation, success, year, month, day, duration, [year+month], [madhab+success], [operation+success]'
-    }).upgrade(tx => {
-      // Data migration if needed
-      if (typeof __DEV__ !== 'undefined' && __DEV__) console.log('Upgrading database to version 2');
-    });
+    this.version(2)
+      .stores({
+        auditLogs:
+          "id, timestamp, madhab, operation, success, year, month, day, duration, [year+month], [madhab+success], [operation+success]",
+      })
+      .upgrade((tx) => {
+        // Data migration if needed
+        if (typeof __DEV__ !== "undefined" && __DEV__)
+          console.log("Upgrading database to version 2");
+      });
   }
-  
+
   /**
    * Clear old entries to manage storage
    */
   async clearOlderThan(days: number): Promise<number> {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - days);
-    
+
     const oldEntries = await this.auditLogs
-      .where('timestamp')
+      .where("timestamp")
       .below(cutoffDate.toISOString())
       .toArray();
-    
-    await this.auditLogs.bulkDelete(oldEntries.map(e => e.id));
-    
+
+    await this.auditLogs.bulkDelete(oldEntries.map((e) => e.id));
+
     return oldEntries.length;
   }
-  
+
   /**
    * Get storage estimate
    */
@@ -78,19 +88,23 @@ export class MerathDatabase extends Dexie {
    */
   async getStorageEstimate(): Promise<{ usage: number; quota: number }> {
     try {
-      if (typeof navigator !== 'undefined' && navigator.storage && navigator.storage.estimate) {
+      if (
+        typeof navigator !== "undefined" &&
+        navigator.storage &&
+        navigator.storage.estimate
+      ) {
         const estimate = await navigator.storage.estimate();
         return {
           usage: estimate.usage ?? 0,
-          quota: estimate.quota ?? 0
+          quota: estimate.quota ?? 0,
         };
       }
     } catch (error) {
-      console.warn('Failed to get storage estimate:', error);
+      console.warn("Failed to get storage estimate:", error);
     }
     return { usage: 0, quota: 0 };
   }
-  
+
   /**
    * Get database statistics
    */
@@ -102,33 +116,45 @@ export class MerathDatabase extends Dexie {
     newestEntry: string | null;
   }> {
     const totalEntries = await this.auditLogs.count();
-    
+
     // Get counts by madhab
-    const madhabs: MadhhabType[] = ['shafii', 'hanafi', 'maliki', 'hanbali'];
+    const madhabs: MadhhabType[] = ["shafii", "hanafi", "maliki", "hanbali"];
     const byMadhab: Record<string, number> = {};
-    
+
     for (const madhab of madhabs) {
-      byMadhab[madhab] = await this.auditLogs.where('madhab').equals(madhab).count();
+      byMadhab[madhab] = await this.auditLogs
+        .where("madhab")
+        .equals(madhab)
+        .count();
     }
-    
+
     // Get counts by operation
-    const operations: DBAuditLogEntry['operation'][] = ['calculate', 'delete', 'export', 'import', 'clear'];
+    const operations: DBAuditLogEntry["operation"][] = [
+      "calculate",
+      "delete",
+      "export",
+      "import",
+      "clear",
+    ];
     const byOperation: Record<string, number> = {};
-    
+
     for (const op of operations) {
-      byOperation[op] = await this.auditLogs.where('operation').equals(op).count();
+      byOperation[op] = await this.auditLogs
+        .where("operation")
+        .equals(op)
+        .count();
     }
-    
+
     // Get oldest and newest
-    const oldest = await this.auditLogs.orderBy('timestamp').first();
-    const newest = await this.auditLogs.orderBy('timestamp').last();
-    
+    const oldest = await this.auditLogs.orderBy("timestamp").first();
+    const newest = await this.auditLogs.orderBy("timestamp").last();
+
     return {
       totalEntries,
       byMadhab,
       byOperation,
       oldestEntry: oldest?.timestamp || null,
-      newestEntry: newest?.timestamp || null
+      newestEntry: newest?.timestamp || null,
     };
   }
 }
@@ -139,8 +165,9 @@ export const db = new MerathDatabase();
 // export type { DBAuditLogEntry }; // Already exported
 
 // Initialize database
-db.on('ready', () => {
-  if (typeof __DEV__ !== 'undefined' && __DEV__) console.log('[Database] MerathDatabase ready');
+db.on("ready", () => {
+  if (typeof __DEV__ !== "undefined" && __DEV__)
+    console.log("[Database] MerathDatabase ready");
 });
 
 export default db;

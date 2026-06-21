@@ -3,7 +3,7 @@
  * @description Professional loading screen with app logo and smooth animations
  */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -11,10 +11,10 @@ import {
   Animated,
   Easing,
   ActivityIndicator,
-} from 'react-native';
-import { MaterialCommunityIcons } from '../lib/icons';
-import { useAppTheme } from '../lib/context/ThemeProvider';
-import type { Theme } from '../lib/design/theme';
+} from "react-native";
+import { MaterialCommunityIcons } from "../lib/icons";
+import { useAppTheme } from "../lib/context/ThemeProvider";
+import type { Theme } from "../lib/design/theme";
 
 export interface LoadingScreenProps {
   message?: string;
@@ -23,11 +23,11 @@ export interface LoadingScreenProps {
   onRetry?: () => void;
 }
 
-export function LoadingScreen({ 
-  message = 'جاري التحميل...', 
+export function LoadingScreen({
+  message = "جاري التحميل...",
   progress,
   error,
-  onRetry 
+  onRetry,
 }: LoadingScreenProps) {
   const { theme } = useAppTheme();
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -67,7 +67,7 @@ export function LoadingScreen({
           useNativeDriver: true,
           easing: Easing.inOut(Easing.sin),
         }),
-      ])
+      ]),
     ).start();
   }, [fadeAnim, pulseAnim, scaleAnim]);
 
@@ -85,7 +85,7 @@ export function LoadingScreen({
 
   const progressWidth = progressAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0%', '100%'],
+    outputRange: ["0%", "100%"],
   });
 
   const styles = createStyles(theme);
@@ -93,15 +93,31 @@ export function LoadingScreen({
   if (error) {
     return (
       <View style={styles.container}>
-        <Animated.View style={[styles.content, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
+        <Animated.View
+          style={[
+            styles.content,
+            { opacity: fadeAnim, transform: [{ scale: scaleAnim }] },
+          ]}
+        >
           <View style={styles.errorIconContainer}>
-            <MaterialCommunityIcons name="alert-circle" size={64} color={theme.colors.error.main} />
+            <MaterialCommunityIcons
+              name="alert-circle"
+              size={64}
+              color={theme.colors.error.main}
+            />
           </View>
           <Text style={styles.errorTitle}>خطأ في التحميل</Text>
           <Text style={styles.errorMessage}>{error}</Text>
           {onRetry && (
-            <Animated.View style={[styles.retryButton, { transform: [{ scale: pulseAnim }] }]}>
-              <Text style={styles.retryButtonText} onPress={onRetry}>إعادة المحاولة</Text>
+            <Animated.View
+              style={[
+                styles.retryButton,
+                { transform: [{ scale: pulseAnim }] },
+              ]}
+            >
+              <Text style={styles.retryButtonText} onPress={onRetry}>
+                إعادة المحاولة
+              </Text>
             </Animated.View>
           )}
         </Animated.View>
@@ -111,11 +127,22 @@ export function LoadingScreen({
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.content, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
+      <Animated.View
+        style={[
+          styles.content,
+          { opacity: fadeAnim, transform: [{ scale: scaleAnim }] },
+        ]}
+      >
         {/* Logo with pulse animation */}
-        <Animated.View style={[styles.logoContainer, { transform: [{ scale: pulseAnim }] }]}>
+        <Animated.View
+          style={[styles.logoContainer, { transform: [{ scale: pulseAnim }] }]}
+        >
           <View style={styles.logo}>
-            <MaterialCommunityIcons name="scale-balance" size={80} color={theme.colors.primary.main} />
+            <MaterialCommunityIcons
+              name="scale-balance"
+              size={80}
+              color={theme.colors.primary.main}
+            />
           </View>
         </Animated.View>
 
@@ -129,12 +156,18 @@ export function LoadingScreen({
         {/* Progress Bar (if progress provided) */}
         {progress !== undefined && (
           <View style={styles.progressContainer}>
-            <Animated.View style={[styles.progressBar, { width: progressWidth }]} />
+            <Animated.View
+              style={[styles.progressBar, { width: progressWidth }]}
+            />
           </View>
         )}
 
         {/* Spinner */}
-        <ActivityIndicator size="large" color={theme.colors.primary.main} style={styles.spinner} />
+        <ActivityIndicator
+          size="large"
+          color={theme.colors.primary.main}
+          style={styles.spinner}
+        />
 
         {/* Version Info */}
         <Text style={styles.version}>الإصدار 1.1.3</Text>
@@ -148,11 +181,11 @@ const createStyles = (theme: Theme) =>
     container: {
       flex: 1,
       backgroundColor: theme.colors.background.light,
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: "center",
+      alignItems: "center",
     },
     content: {
-      alignItems: 'center',
+      alignItems: "center",
       paddingHorizontal: 32,
       maxWidth: 400,
     },
@@ -164,8 +197,8 @@ const createStyles = (theme: Theme) =>
       height: 120,
       borderRadius: 60,
       backgroundColor: theme.colors.primary.light,
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: "center",
+      alignItems: "center",
       shadowColor: theme.colors.primary.main,
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.3,
@@ -174,33 +207,33 @@ const createStyles = (theme: Theme) =>
     },
     appName: {
       fontSize: 28,
-      fontWeight: '700',
+      fontWeight: "700",
       color: theme.colors.primary.main,
       marginBottom: 4,
-      textAlign: 'center',
+      textAlign: "center",
     },
     appNameEn: {
       fontSize: 14,
       color: theme.colors.neutral.dark200,
       marginBottom: 32,
-      textAlign: 'center',
+      textAlign: "center",
     },
     loadingMessage: {
       fontSize: 16,
       color: theme.colors.neutral.dark300,
       marginBottom: 20,
-      textAlign: 'center',
+      textAlign: "center",
     },
     progressContainer: {
-      width: '100%',
+      width: "100%",
       height: 6,
       backgroundColor: theme.colors.neutral.light200,
       borderRadius: 3,
       marginBottom: 24,
-      overflow: 'hidden',
+      overflow: "hidden",
     },
     progressBar: {
-      height: '100%',
+      height: "100%",
       backgroundColor: theme.colors.primary.main,
       borderRadius: 3,
     },
@@ -210,22 +243,22 @@ const createStyles = (theme: Theme) =>
     version: {
       fontSize: 12,
       color: theme.colors.neutral.light400,
-      textAlign: 'center',
+      textAlign: "center",
     },
     errorIconContainer: {
       marginBottom: 24,
     },
     errorTitle: {
       fontSize: 22,
-      fontWeight: '700',
+      fontWeight: "700",
       color: theme.colors.error.main,
       marginBottom: 12,
-      textAlign: 'center',
+      textAlign: "center",
     },
     errorMessage: {
       fontSize: 14,
       color: theme.colors.neutral.dark200,
-      textAlign: 'center',
+      textAlign: "center",
       marginBottom: 24,
       lineHeight: 20,
     },
@@ -242,9 +275,9 @@ const createStyles = (theme: Theme) =>
     },
     retryButtonText: {
       fontSize: 16,
-      fontWeight: '600',
-      color: '#ffffff',
-      textAlign: 'center',
+      fontWeight: "600",
+      color: "#ffffff",
+      textAlign: "center",
     },
   });
 

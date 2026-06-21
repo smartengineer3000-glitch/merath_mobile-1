@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -8,25 +8,25 @@ import {
   Switch,
   Alert,
   Share,
-} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as FileSystem from 'expo-file-system/legacy';
-import * as Sharing from 'expo-sharing';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useTranslation } from 'react-i18next';
-import Constants from 'expo-constants';
-import { useAppTheme } from '../lib/context/ThemeProvider';
-import { useSettings } from '../lib/context/SettingsContext';
-import { Card } from '../components/ui/Card';
-import { db } from '../lib/database/db';
-import type { Theme } from '../lib/design/theme';
-import type { SettingsState } from '../lib/context/SettingsContext';
-import type { Language } from '../lib/i18n';
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as FileSystem from "expo-file-system/legacy";
+import * as Sharing from "expo-sharing";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
+import Constants from "expo-constants";
+import { useAppTheme } from "../lib/context/ThemeProvider";
+import { useSettings } from "../lib/context/SettingsContext";
+import { Card } from "../components/ui/Card";
+import { db } from "../lib/database/db";
+import type { Theme } from "../lib/design/theme";
+import type { SettingsState } from "../lib/context/SettingsContext";
+import type { Language } from "../lib/i18n";
 
 const BACKUP_KEYS = {
-  SETTINGS: '@merath_settings_v2',
-  FAVORITES: '@merath_favorites',
-  ONBOARDING: '@merath_onboarding',
+  SETTINGS: "@merath_settings_v2",
+  FAVORITES: "@merath_favorites",
+  ONBOARDING: "@merath_onboarding",
 };
 
 interface BackupData {
@@ -41,26 +41,38 @@ interface BackupData {
   };
 }
 
-const languages: Record<string, { name: string; nativeName: string; rtl: boolean }> = {
-  en: { name: 'English', nativeName: 'English', rtl: false },
-  ar: { name: 'Arabic', nativeName: 'العربية', rtl: true },
-  ur: { name: 'Urdu', nativeName: 'اردو', rtl: true },
-  tr: { name: 'Turkish', nativeName: 'Türkçe', rtl: false },
-  fr: { name: 'French', nativeName: 'Français', rtl: false },
-  de: { name: 'German', nativeName: 'Deutsch', rtl: false },
+const languages: Record<
+  string,
+  { name: string; nativeName: string; rtl: boolean }
+> = {
+  en: { name: "English", nativeName: "English", rtl: false },
+  ar: { name: "Arabic", nativeName: "العربية", rtl: true },
+  ur: { name: "Urdu", nativeName: "اردو", rtl: true },
+  tr: { name: "Turkish", nativeName: "Türkçe", rtl: false },
+  fr: { name: "French", nativeName: "Français", rtl: false },
+  de: { name: "German", nativeName: "Deutsch", rtl: false },
 };
 
 export default function SettingsScreen() {
   const { t, i18n } = useTranslation();
   const { theme, toggleTheme, isDark } = useAppTheme();
-  const { state, setLanguage, setNotifications, setRoundingDecimals, setAutoSave } = useSettings();
+  const {
+    state,
+    setLanguage,
+    setNotifications,
+    setRoundingDecimals,
+    setAutoSave,
+  } = useSettings();
 
   const [isBackingUp, setIsBackingUp] = useState(false);
 
-  const handleLanguageChange = useCallback((lang: string) => {
-    setLanguage(lang as Language);
-    i18n.changeLanguage(lang);
-  }, [setLanguage, i18n]);
+  const handleLanguageChange = useCallback(
+    (lang: string) => {
+      setLanguage(lang as Language);
+      i18n.changeLanguage(lang);
+    },
+    [setLanguage, i18n],
+  );
 
   const handleThemeToggle = useCallback(() => {
     toggleTheme();
@@ -68,26 +80,30 @@ export default function SettingsScreen() {
 
   const handleClearData = useCallback(() => {
     Alert.alert(
-      t('settings.clearAllData') || 'Clear All Data',
-      t('settings.clearAllDataConfirm') || 'This will remove all calculations and settings. Are you sure?',
+      t("settings.clearAllData") || "Clear All Data",
+      t("settings.clearAllDataConfirm") ||
+        "This will remove all calculations and settings. Are you sure?",
       [
-        { text: t('common.cancel') || 'Cancel', style: 'cancel' },
+        { text: t("common.cancel") || "Cancel", style: "cancel" },
         {
-          text: t('common.clear') || 'Clear',
-          style: 'destructive',
+          text: t("common.clear") || "Clear",
+          style: "destructive",
           onPress: async () => {
             try {
               await AsyncStorage.multiRemove(Object.values(BACKUP_KEYS));
               if (db && db.auditLogs) {
                 await db.auditLogs.clear();
               }
-              Alert.alert(t('common.success') || 'Success', t('settings.dataCleared') || 'All data cleared');
+              Alert.alert(
+                t("common.success") || "Success",
+                t("settings.dataCleared") || "All data cleared",
+              );
             } catch (error) {
-              Alert.alert(t('common.error') || 'Error', 'Failed to clear data');
+              Alert.alert(t("common.error") || "Error", "Failed to clear data");
             }
           },
         },
-      ]
+      ],
     );
   }, [t]);
 
@@ -104,59 +120,76 @@ export default function SettingsScreen() {
       }
 
       const backupData: BackupData = {
-        version: '1.0',
+        version: "1.0",
         timestamp: new Date().toISOString(),
-        appVersion: Constants.expoConfig?.version ?? '1.1.3',
+        appVersion: Constants.expoConfig?.version ?? "1.1.3",
         data: {
           settings: settingsJson ? JSON.parse(settingsJson) : null,
           favorites: favoritesJson ? JSON.parse(favoritesJson) : [],
-          onboardingCompleted: await AsyncStorage.getItem(BACKUP_KEYS.ONBOARDING),
+          onboardingCompleted: await AsyncStorage.getItem(
+            BACKUP_KEYS.ONBOARDING,
+          ),
           auditLogCount,
         },
       };
 
       const backupJson = JSON.stringify(backupData, null, 2);
-      const fileName = `merath-backup-${new Date().toISOString().split('T')[0]}.json`;
+      const fileName = `merath-backup-${new Date().toISOString().split("T")[0]}.json`;
       const fileDir = FileSystem.documentDirectory;
       if (!fileDir) {
-        throw new Error('Cannot access file system');
+        throw new Error("Cannot access file system");
       }
       const fileUri = fileDir + fileName;
 
-      await FileSystem.writeAsStringAsync(fileUri, backupJson, { encoding: 'utf8' });
+      await FileSystem.writeAsStringAsync(fileUri, backupJson, {
+        encoding: "utf8",
+      });
 
       const isAvailable = await Sharing.isAvailableAsync();
       if (isAvailable) {
         await Sharing.shareAsync(fileUri, {
-          mimeType: 'application/json',
-          dialogTitle: 'Export Backup',
+          mimeType: "application/json",
+          dialogTitle: "Export Backup",
         });
       } else {
-        await Share.share({ message: backupJson, title: 'Merath Backup' });
+        await Share.share({ message: backupJson, title: "Merath Backup" });
       }
 
-      Alert.alert(t('common.success') || 'Success', t('settings.dataExported') || 'Data exported successfully');
+      Alert.alert(
+        t("common.success") || "Success",
+        t("settings.dataExported") || "Data exported successfully",
+      );
     } catch (error) {
-      Alert.alert(t('common.error') || 'Error', 'Export failed');
+      Alert.alert(t("common.error") || "Error", "Export failed");
     } finally {
       setIsBackingUp(false);
     }
   }, [t]);
 
-  const appVersion = Constants.expoConfig?.version ?? '1.1.3';
+  const appVersion = Constants.expoConfig?.version ?? "1.1.3";
   const styles = createStyles(theme);
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>{t('settings.title') || 'Settings'}</Text>
-        <Text style={styles.subtitle}>{t('settings.subtitle') || 'Customize your app experience'}</Text>
+        <Text style={styles.title}>{t("settings.title") || "Settings"}</Text>
+        <Text style={styles.subtitle}>
+          {t("settings.subtitle") || "Customize your app experience"}
+        </Text>
       </View>
 
       <Card style={styles.card}>
-        <Text style={styles.cardTitle}>{t('settings.language') || 'Language'}</Text>
-        <Text style={styles.cardSubtitle}>{t('settings.languageSubtitle') || 'Choose your preferred language'}</Text>
-        <View style={styles.languageGrid} accessibilityRole="radiogroup" accessibilityLabel="Language selection">
+        <Text style={styles.cardTitle}>
+          {t("settings.language") || "Language"}
+        </Text>
+        <Text style={styles.cardSubtitle}>
+          {t("settings.languageSubtitle") || "Choose your preferred language"}
+        </Text>
+        <View
+          style={styles.languageGrid}
+          accessibilityRole="radiogroup"
+          accessibilityLabel="Language selection"
+        >
           {Object.entries(languages).map(([code, info]) => (
             <TouchableOpacity
               key={code}
@@ -169,10 +202,12 @@ export default function SettingsScreen() {
               accessibilityLabel={`${info.name} language`}
               accessibilityState={{ selected: state.language === code }}
             >
-              <Text style={[
-                styles.languageText,
-                state.language === code && styles.languageTextActive,
-              ]}>
+              <Text
+                style={[
+                  styles.languageText,
+                  state.language === code && styles.languageTextActive,
+                ]}
+              >
                 {info.nativeName}
               </Text>
               <Text style={styles.languageSubtext}>{info.name}</Text>
@@ -182,87 +217,130 @@ export default function SettingsScreen() {
       </Card>
 
       <Card style={styles.card}>
-        <Text style={styles.cardTitle}>{t('settings.appearance') || 'Appearance'}</Text>
-        <Text style={styles.cardSubtitle}>{t('settings.appearanceSubtitle') || 'Customize the app appearance'}</Text>
+        <Text style={styles.cardTitle}>
+          {t("settings.appearance") || "Appearance"}
+        </Text>
+        <Text style={styles.cardSubtitle}>
+          {t("settings.appearanceSubtitle") || "Customize the app appearance"}
+        </Text>
         <View style={styles.settingRow}>
-          <Text style={styles.settingLabel}>{t('settings.darkMode') || 'Dark Mode'}</Text>
+          <Text style={styles.settingLabel}>
+            {t("settings.darkMode") || "Dark Mode"}
+          </Text>
           <Switch
             value={isDark}
             onValueChange={handleThemeToggle}
-            trackColor={{ false: theme.colors.neutral.light300, true: theme.colors.primary.main }}
+            trackColor={{
+              false: theme.colors.neutral.light300,
+              true: theme.colors.primary.main,
+            }}
             thumbColor={theme.colors.background.light}
           />
         </View>
       </Card>
 
       <Card style={styles.card}>
-        <Text style={styles.cardTitle}>{t('settings.calculationPreferences') || 'Calculation Preferences'}</Text>
+        <Text style={styles.cardTitle}>
+          {t("settings.calculationPreferences") || "Calculation Preferences"}
+        </Text>
         <View style={styles.settingRow}>
-          <Text style={styles.settingLabel}>{t('settings.roundingDecimals') || 'Rounding Decimals'}</Text>
+          <Text style={styles.settingLabel}>
+            {t("settings.roundingDecimals") || "Rounding Decimals"}
+          </Text>
           <View style={styles.decimalControl}>
             <TouchableOpacity
               style={styles.decimalButton}
-              onPress={() => setRoundingDecimals(Math.max(0, state.roundingDecimals - 1))}
+              onPress={() =>
+                setRoundingDecimals(Math.max(0, state.roundingDecimals - 1))
+              }
             >
               <Text style={styles.decimalButtonText}>-</Text>
             </TouchableOpacity>
             <Text style={styles.decimalValue}>{state.roundingDecimals}</Text>
             <TouchableOpacity
               style={styles.decimalButton}
-              onPress={() => setRoundingDecimals(Math.min(6, state.roundingDecimals + 1))}
+              onPress={() =>
+                setRoundingDecimals(Math.min(6, state.roundingDecimals + 1))
+              }
             >
               <Text style={styles.decimalButtonText}>+</Text>
             </TouchableOpacity>
           </View>
         </View>
         <View style={styles.settingRow}>
-          <Text style={styles.settingLabel}>{t('settings.notifications') || 'Notifications'}</Text>
+          <Text style={styles.settingLabel}>
+            {t("settings.notifications") || "Notifications"}
+          </Text>
           <Switch
             value={state.notifications}
             onValueChange={setNotifications}
-            trackColor={{ false: theme.colors.neutral.light300, true: theme.colors.primary.main }}
+            trackColor={{
+              false: theme.colors.neutral.light300,
+              true: theme.colors.primary.main,
+            }}
             thumbColor={theme.colors.background.light}
           />
         </View>
         <View style={styles.settingRow}>
-          <Text style={styles.settingLabel}>{t('settings.autoSave') || 'Auto Save'}</Text>
+          <Text style={styles.settingLabel}>
+            {t("settings.autoSave") || "Auto Save"}
+          </Text>
           <Switch
             value={state.autoSave}
             onValueChange={setAutoSave}
-            trackColor={{ false: theme.colors.neutral.light300, true: theme.colors.primary.main }}
+            trackColor={{
+              false: theme.colors.neutral.light300,
+              true: theme.colors.primary.main,
+            }}
             thumbColor={theme.colors.background.light}
           />
         </View>
       </Card>
 
       <Card style={styles.card}>
-        <Text style={styles.cardTitle}>{t('settings.dataManagement') || 'Data Management'}</Text>
+        <Text style={styles.cardTitle}>
+          {t("settings.dataManagement") || "Data Management"}
+        </Text>
         <TouchableOpacity
           style={styles.actionButton}
           onPress={handleExportData}
           disabled={isBackingUp}
         >
-          <MaterialCommunityIcons name="download" size={24} color={theme.colors.primary.main} />
+          <MaterialCommunityIcons
+            name="download"
+            size={24}
+            color={theme.colors.primary.main}
+          />
           <Text style={styles.actionButtonText}>
-            {isBackingUp ? (t('common.loading') || 'Exporting...') : (t('settings.exportData') || 'Export Data')}
+            {isBackingUp
+              ? t("common.loading") || "Exporting..."
+              : t("settings.exportData") || "Export Data"}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionButton} onPress={handleClearData}>
-          <MaterialCommunityIcons name="delete" size={24} color={theme.colors.error.main} />
+          <MaterialCommunityIcons
+            name="delete"
+            size={24}
+            color={theme.colors.error.main}
+          />
           <Text style={[styles.actionButtonText, styles.dangerText]}>
-            {t('settings.clearAllData') || 'Clear All Data'}
+            {t("settings.clearAllData") || "Clear All Data"}
           </Text>
         </TouchableOpacity>
       </Card>
 
       <Card style={styles.card}>
-        <Text style={styles.cardTitle}>{t('settings.about') || 'About'}</Text>
+        <Text style={styles.cardTitle}>{t("settings.about") || "About"}</Text>
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>{t('settings.version') || 'Version'}</Text>
+          <Text style={styles.infoLabel}>
+            {t("settings.version") || "Version"}
+          </Text>
           <Text style={styles.infoValue}>{appVersion}</Text>
         </View>
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>{t('settings.developer') || 'Developer'}</Text>
+          <Text style={styles.infoLabel}>
+            {t("settings.developer") || "Developer"}
+          </Text>
           <Text style={styles.infoValue}>Merath Team</Text>
         </View>
       </Card>
@@ -282,22 +360,22 @@ const createStyles = (theme: Theme) =>
     },
     title: {
       fontSize: 28,
-      fontWeight: 'bold',
+      fontWeight: "bold",
       color: theme.colors.primary.main,
-      fontFamily: 'Inter-Bold',
+      fontFamily: "Inter-Bold",
     },
     subtitle: {
       fontSize: 16,
       color: theme.colors.neutral.main,
       marginTop: 8,
-      fontFamily: 'Inter-Regular',
+      fontFamily: "Inter-Regular",
     },
     card: {
       marginBottom: 16,
     },
     cardTitle: {
       fontSize: 20,
-      fontWeight: 'bold',
+      fontWeight: "bold",
       color: theme.colors.neutral.dark300,
       marginBottom: 8,
     },
@@ -307,8 +385,8 @@ const createStyles = (theme: Theme) =>
       marginBottom: 16,
     },
     languageGrid: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
+      flexDirection: "row",
+      flexWrap: "wrap",
       gap: 8,
     },
     languageCard: {
@@ -319,7 +397,7 @@ const createStyles = (theme: Theme) =>
       borderColor: theme.colors.neutral.light300,
       backgroundColor: theme.colors.background.light,
       minWidth: 100,
-      alignItems: 'center',
+      alignItems: "center",
     },
     languageCardActive: {
       borderColor: theme.colors.primary.main,
@@ -327,7 +405,7 @@ const createStyles = (theme: Theme) =>
     },
     languageText: {
       fontSize: 16,
-      fontWeight: '600',
+      fontWeight: "600",
       color: theme.colors.neutral.dark300,
     },
     languageTextActive: {
@@ -339,19 +417,19 @@ const createStyles = (theme: Theme) =>
       marginTop: 2,
     },
     settingRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
       paddingVertical: 8,
     },
     settingLabel: {
       fontSize: 16,
       color: theme.colors.neutral.dark300,
-      fontFamily: 'Inter-Regular',
+      fontFamily: "Inter-Regular",
     },
     decimalControl: {
-      flexDirection: 'row',
-      alignItems: 'center',
+      flexDirection: "row",
+      alignItems: "center",
       gap: 12,
     },
     decimalButton: {
@@ -359,24 +437,24 @@ const createStyles = (theme: Theme) =>
       height: 32,
       borderRadius: 16,
       backgroundColor: theme.colors.primary.light,
-      alignItems: 'center',
-      justifyContent: 'center',
+      alignItems: "center",
+      justifyContent: "center",
     },
     decimalButtonText: {
       fontSize: 18,
-      fontWeight: 'bold',
+      fontWeight: "bold",
       color: theme.colors.primary.main,
     },
     decimalValue: {
       fontSize: 16,
-      fontWeight: '600',
+      fontWeight: "600",
       color: theme.colors.neutral.dark300,
       minWidth: 20,
-      textAlign: 'center',
+      textAlign: "center",
     },
     actionButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
+      flexDirection: "row",
+      alignItems: "center",
       padding: 12,
       marginBottom: 8,
       backgroundColor: theme.colors.background.light,
@@ -388,24 +466,24 @@ const createStyles = (theme: Theme) =>
       fontSize: 16,
       color: theme.colors.neutral.dark300,
       marginLeft: 12,
-      fontFamily: 'Inter-Regular',
+      fontFamily: "Inter-Regular",
     },
     dangerText: {
       color: theme.colors.error.main,
     },
     infoRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
+      flexDirection: "row",
+      justifyContent: "space-between",
       paddingVertical: 8,
     },
     infoLabel: {
       fontSize: 16,
       color: theme.colors.neutral.main,
-      fontFamily: 'Inter-Regular',
+      fontFamily: "Inter-Regular",
     },
     infoValue: {
       fontSize: 16,
       color: theme.colors.neutral.dark300,
-      fontFamily: 'Inter-Bold',
+      fontFamily: "Inter-Bold",
     },
   });

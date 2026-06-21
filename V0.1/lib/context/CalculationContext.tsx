@@ -1,5 +1,10 @@
-import React, { createContext, useCallback, useContext, useState } from 'react';
-import type { CalculationResult, EstateData, HeirsData, MadhhabType } from '../inheritance/types';
+import React, { createContext, useCallback, useContext, useState } from "react";
+import type {
+  CalculationResult,
+  EstateData,
+  HeirsData,
+  MadhhabType,
+} from "../inheritance/types";
 
 export interface CalculationScenario {
   estate: EstateData;
@@ -14,10 +19,17 @@ interface CalculationContextValue {
   clearScenario: () => void;
 }
 
-const CalculationContext = createContext<CalculationContextValue | undefined>(undefined);
+const CalculationContext = createContext<CalculationContextValue | undefined>(
+  undefined,
+);
 
-export function CalculationProvider({ children }: { children: React.ReactNode }) {
-  const [latestScenario, setLatestScenario] = useState<CalculationScenario | null>(null);
+export function CalculationProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [latestScenario, setLatestScenario] =
+    useState<CalculationScenario | null>(null);
 
   const saveScenario = useCallback((scenario: CalculationScenario) => {
     setLatestScenario(scenario);
@@ -28,7 +40,9 @@ export function CalculationProvider({ children }: { children: React.ReactNode })
   }, []);
 
   return (
-    <CalculationContext.Provider value={{ latestScenario, saveScenario, clearScenario }}>
+    <CalculationContext.Provider
+      value={{ latestScenario, saveScenario, clearScenario }}
+    >
       {children}
     </CalculationContext.Provider>
   );
@@ -37,7 +51,9 @@ export function CalculationProvider({ children }: { children: React.ReactNode })
 export function useCalculationScenario() {
   const context = useContext(CalculationContext);
   if (!context) {
-    throw new Error('useCalculationScenario must be used within a CalculationProvider');
+    throw new Error(
+      "useCalculationScenario must be used within a CalculationProvider",
+    );
   }
 
   return context;

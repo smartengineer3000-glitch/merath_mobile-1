@@ -2,12 +2,12 @@
  * @file components/ui/Button.tsx
  * @description Enhanced Material Design 3 button component
  * Professional button system with multiple variants, sizes, and icon support
- * 
+ *
  * FIXES:
  * - L1 (🔵): Haptic feedback on button press
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback } from "react";
 import {
   TouchableOpacity,
   Text,
@@ -16,25 +16,31 @@ import {
   TextStyle,
   ActivityIndicator,
   Platform,
-} from 'react-native';
-import * as Haptics from 'expo-haptics';
-import { MaterialCommunityIcons } from '../../lib/icons';
-import { useAppTheme } from '../../lib/context/ThemeProvider';
+} from "react-native";
+import * as Haptics from "expo-haptics";
+import { MaterialCommunityIcons } from "../../lib/icons";
+import { useAppTheme } from "../../lib/context/ThemeProvider";
 
-type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+type IconName = React.ComponentProps<typeof MaterialCommunityIcons>["name"];
 
-export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'outline' | 'ghost' | 'danger';
-export type ButtonSize = 'small' | 'medium' | 'large';
+export type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "tertiary"
+  | "outline"
+  | "ghost"
+  | "danger";
+export type ButtonSize = "small" | "medium" | "large";
 
 // ===== FIX L1: Haptic feedback types =====
-export type HapticFeedbackType = 
-  | 'light' 
-  | 'medium' 
-  | 'heavy' 
-  | 'success' 
-  | 'warning' 
-  | 'error' 
-  | 'none';
+export type HapticFeedbackType =
+  | "light"
+  | "medium"
+  | "heavy"
+  | "success"
+  | "warning"
+  | "error"
+  | "none";
 
 export interface ModernButtonProps {
   /** Button text */
@@ -52,7 +58,7 @@ export interface ModernButtonProps {
   /** Icon name from MaterialCommunityIcons */
   icon?: IconName;
   /** Icon position (left/right) */
-  iconPosition?: 'left' | 'right';
+  iconPosition?: "left" | "right";
   /** Take full width of container */
   fullWidth?: boolean;
   /** Custom container style */
@@ -70,76 +76,82 @@ export interface ModernButtonProps {
 export const ModernButton: React.FC<ModernButtonProps> = ({
   title,
   onPress,
-  variant = 'primary',
-  size = 'medium',
+  variant = "primary",
+  size = "medium",
   disabled = false,
   loading = false,
   icon,
-  iconPosition = 'right',
+  iconPosition = "right",
   fullWidth = false,
   style,
   textStyle,
   accessibilityLabel,
   // ===== FIX L1: Haptic props with defaults =====
-  hapticFeedback = 'light',
+  hapticFeedback = "light",
   hapticOnLongPress = false,
 }) => {
   const { theme } = useAppTheme();
 
-  const getVariantStyles = (): { backgroundColor: string; borderColor?: string; textColor: string } => {
+  const getVariantStyles = (): {
+    backgroundColor: string;
+    borderColor?: string;
+    textColor: string;
+  } => {
     const baseColor = theme.colors.primary.main;
-    const secondaryColor = theme.colors.secondary?.main || '#6B7280';
-    const errorColor = theme.colors.error?.main || '#EF4444';
+    const secondaryColor = theme.colors.secondary?.main || "#6B7280";
+    const errorColor = theme.colors.error?.main || "#EF4444";
 
     switch (variant) {
-      case 'primary':
+      case "primary":
         return {
-          backgroundColor: disabled ? '#BDBDBD' : baseColor,
-          textColor: '#FFFFFF',
+          backgroundColor: disabled ? "#BDBDBD" : baseColor,
+          textColor: "#FFFFFF",
         };
-      case 'secondary':
+      case "secondary":
         return {
-          backgroundColor: disabled ? '#E0E0E0' : secondaryColor,
-          textColor: '#FFFFFF',
+          backgroundColor: disabled ? "#E0E0E0" : secondaryColor,
+          textColor: "#FFFFFF",
         };
-      case 'tertiary':
+      case "tertiary":
         return {
-          backgroundColor: 'transparent',
+          backgroundColor: "transparent",
           textColor: baseColor,
         };
-      case 'outline':
+      case "outline":
         return {
-          backgroundColor: 'transparent',
-          borderColor: disabled ? '#BDBDBD' : baseColor,
-          textColor: disabled ? '#BDBDBD' : baseColor,
+          backgroundColor: "transparent",
+          borderColor: disabled ? "#BDBDBD" : baseColor,
+          textColor: disabled ? "#BDBDBD" : baseColor,
         };
-      case 'ghost':
+      case "ghost":
         return {
-          backgroundColor: 'transparent',
-          textColor: disabled ? '#BDBDBD' : theme.colors.neutral?.dark300 || '#1F2937',
+          backgroundColor: "transparent",
+          textColor: disabled
+            ? "#BDBDBD"
+            : theme.colors.neutral?.dark300 || "#1F2937",
         };
-      case 'danger':
+      case "danger":
         return {
-          backgroundColor: disabled ? '#FFCCCC' : errorColor,
-          textColor: '#FFFFFF',
+          backgroundColor: disabled ? "#FFCCCC" : errorColor,
+          textColor: "#FFFFFF",
         };
       default:
         return {
           backgroundColor: baseColor,
-          textColor: '#FFFFFF',
+          textColor: "#FFFFFF",
         };
     }
   };
 
-  const getSizeStyles = (): { 
-    paddingVertical: number; 
-    paddingHorizontal: number; 
+  const getSizeStyles = (): {
+    paddingVertical: number;
+    paddingHorizontal: number;
     fontSize: number;
     iconSize: number;
     borderRadius: number;
   } => {
     switch (size) {
-      case 'small':
+      case "small":
         return {
           paddingVertical: theme.spacing?.sm || 8,
           paddingHorizontal: theme.spacing?.md || 12,
@@ -147,7 +159,7 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
           iconSize: 16,
           borderRadius: theme.borderRadius?.sm || 8,
         };
-      case 'large':
+      case "large":
         return {
           paddingVertical: theme.spacing?.lg || 16,
           paddingHorizontal: theme.spacing?.xl || 24,
@@ -155,7 +167,7 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
           iconSize: 24,
           borderRadius: theme.borderRadius?.lg || 16,
         };
-      case 'medium':
+      case "medium":
       default:
         return {
           paddingVertical: theme.spacing?.md || 12,
@@ -168,40 +180,43 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
   };
 
   // ===== FIX L1: Haptic feedback handler =====
-  const triggerHaptic = useCallback((type: HapticFeedbackType) => {
-    if (disabled || loading || type === 'none') return;
-    
-    // Check if haptics are available on this device
-    if (Platform.OS === 'web') return; // Haptics not available on web
-    
-    try {
-      switch (type) {
-        case 'light':
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          break;
-        case 'medium':
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          break;
-        case 'heavy':
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-          break;
-        case 'success':
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-          break;
-        case 'warning':
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-          break;
-        case 'error':
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-          break;
+  const triggerHaptic = useCallback(
+    (type: HapticFeedbackType) => {
+      if (disabled || loading || type === "none") return;
+
+      // Check if haptics are available on this device
+      if (Platform.OS === "web") return; // Haptics not available on web
+
+      try {
+        switch (type) {
+          case "light":
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            break;
+          case "medium":
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            break;
+          case "heavy":
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+            break;
+          case "success":
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            break;
+          case "warning":
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+            break;
+          case "error":
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            break;
+        }
+      } catch (error) {
+        // Silently fail if haptics not available
+        if (__DEV__) {
+          console.log("Haptics not available:", error);
+        }
       }
-    } catch (error) {
-      // Silently fail if haptics not available
-      if (__DEV__) {
-        console.log('Haptics not available:', error);
-      }
-    }
-  }, [disabled, loading]);
+    },
+    [disabled, loading],
+  );
 
   // ===== FIX L1: Press handler with haptic =====
   const handlePress = useCallback(() => {
@@ -212,7 +227,7 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
   // ===== FIX L1: Long press handler with haptic =====
   const handleLongPress = useCallback(() => {
     if (hapticOnLongPress) {
-      triggerHaptic(hapticFeedback === 'none' ? 'medium' : hapticFeedback);
+      triggerHaptic(hapticFeedback === "none" ? "medium" : hapticFeedback);
     }
   }, [hapticOnLongPress, hapticFeedback, triggerHaptic]);
 
@@ -224,23 +239,23 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
     paddingHorizontal: sizeStyles.paddingHorizontal,
     borderRadius: sizeStyles.borderRadius,
     backgroundColor: variantStyles.backgroundColor,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     opacity: disabled ? 0.6 : 1,
-    ...(variant === 'outline' && {
+    ...(variant === "outline" && {
       borderWidth: 1.5,
       borderColor: variantStyles.borderColor,
     }),
-    ...(fullWidth && { width: '100%' }),
+    ...(fullWidth && { width: "100%" }),
     ...style,
   };
 
   const textStyles: TextStyle = {
     fontSize: sizeStyles.fontSize,
-    fontWeight: '600',
+    fontWeight: "600",
     color: variantStyles.textColor,
-    textAlign: 'center',
+    textAlign: "center",
     ...textStyle,
   };
 
@@ -259,7 +274,7 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
       />
     ) : null;
 
-    if (icon && iconPosition === 'left') {
+    if (icon && iconPosition === "left") {
       return (
         <>
           {iconElement}
@@ -268,7 +283,7 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
       );
     }
 
-    if (icon && iconPosition === 'right') {
+    if (icon && iconPosition === "right") {
       return (
         <>
           <Text style={[textStyles, { marginRight: 8 }]}>{title}</Text>
@@ -297,32 +312,36 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
 };
 
 // ===== FIX L1: Pre-configured button variants with haptics =====
-export const PrimaryButton: React.FC<Omit<ModernButtonProps, 'variant'>> = (props) => (
-  <ModernButton variant="primary" hapticFeedback="medium" {...props} />
+export const PrimaryButton: React.FC<Omit<ModernButtonProps, "variant">> = (
+  props,
+) => <ModernButton variant="primary" hapticFeedback="medium" {...props} />;
+
+export const SecondaryButton: React.FC<Omit<ModernButtonProps, "variant">> = (
+  props,
+) => <ModernButton variant="secondary" hapticFeedback="light" {...props} />;
+
+export const DangerButton: React.FC<Omit<ModernButtonProps, "variant">> = (
+  props,
+) => <ModernButton variant="danger" hapticFeedback="heavy" {...props} />;
+
+export const SuccessButton: React.FC<Omit<ModernButtonProps, "variant">> = (
+  props,
+) => (
+  <ModernButton
+    variant="primary"
+    hapticFeedback="success"
+    icon="check-circle"
+    {...props}
+  />
 );
 
-export const SecondaryButton: React.FC<Omit<ModernButtonProps, 'variant'>> = (props) => (
-  <ModernButton variant="secondary" hapticFeedback="light" {...props} />
-);
+export const OutlineButton: React.FC<Omit<ModernButtonProps, "variant">> = (
+  props,
+) => <ModernButton variant="outline" hapticFeedback="light" {...props} />;
 
-export const DangerButton: React.FC<Omit<ModernButtonProps, 'variant'>> = (props) => (
-  <ModernButton variant="danger" hapticFeedback="heavy" {...props} />
-);
-
-export const SuccessButton: React.FC<Omit<ModernButtonProps, 'variant'>> = (props) => (
-  <ModernButton variant="primary" hapticFeedback="success" icon="check-circle" {...props} />
-);
-
-export const OutlineButton: React.FC<Omit<ModernButtonProps, 'variant'>> = (props) => (
-  <ModernButton variant="outline" hapticFeedback="light" {...props} />
-);
-
-export const IconButton: React.FC<Omit<ModernButtonProps, 'variant'> & { icon: string }> = ({
-  title,
-  icon,
-  size = 'medium',
-  ...props
-}) => (
+export const IconButton: React.FC<
+  Omit<ModernButtonProps, "variant"> & { icon: string }
+> = ({ title, icon, size = "medium", ...props }) => (
   <ModernButton
     variant="ghost"
     icon={icon}

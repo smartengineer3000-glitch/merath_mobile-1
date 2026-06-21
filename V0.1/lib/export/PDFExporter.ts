@@ -1,25 +1,29 @@
 /**
  * PDF Export Service
  * Phase 1: Complete PDF Export Functionality
- * 
+ *
  * Generates professional PDF reports of inheritance calculations
- * 
+ *
  * FIXES:
  * - C5 (🔴): Memory leak - temp files now properly cleaned up
  * - M3 (🟡): Added visual charts to PDF reports
  */
 
-import * as Print from 'expo-print';
-import * as FileSystem from 'expo-file-system';
-import * as Sharing from 'expo-sharing';
-import { Platform } from 'react-native';
-import { CalculationResult, CalculationStep, HeirShare } from '../inheritance/types';
+import * as Print from "expo-print";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
+import { Platform } from "react-native";
+import {
+  CalculationResult,
+  CalculationStep,
+  HeirShare,
+} from "../inheritance/types";
 
 export interface PDFExportOptions {
   filename?: string;
   includeCalculationSteps?: boolean;
   includeAuditLog?: boolean;
-  theme?: 'light' | 'dark';
+  theme?: "light" | "dark";
 }
 
 // ===== FIX C5: Track temporary files for cleanup =====
@@ -33,34 +37,34 @@ export class PDFExporter {
   private static tempFiles: TempFile[] = [];
   private static readonly MAX_TEMP_AGE_MS = 30 * 60 * 1000; // 30 minutes
   private static readonly MAX_TEMP_FILES = 20; // Maximum number of temp files to keep
-  
+
   /**
    * ===== FIX C5: Register temp file for cleanup =====
    */
   private static registerTempFile(uri: string): void {
     this.tempFiles.push({
       uri,
-      createdAt: Date.now()
+      createdAt: Date.now(),
     });
-    
+
     // Clean up old files
     this.cleanupOldTempFiles();
   }
-  
+
   /**
    * ===== FIX C5: Clean up old temporary files =====
    */
   private static async cleanupOldTempFiles(): Promise<void> {
     const now = Date.now();
     const cutoff = now - this.MAX_TEMP_AGE_MS;
-    
+
     // Separate old and new files
-    const oldFiles = this.tempFiles.filter(f => f.createdAt < cutoff);
-    const newFiles = this.tempFiles.filter(f => f.createdAt >= cutoff);
-    
+    const oldFiles = this.tempFiles.filter((f) => f.createdAt < cutoff);
+    const newFiles = this.tempFiles.filter((f) => f.createdAt >= cutoff);
+
     // Update tempFiles list
     this.tempFiles = newFiles.slice(-this.MAX_TEMP_FILES);
-    
+
     // Delete old files in background
     if (oldFiles.length > 0) {
       setTimeout(async () => {
@@ -69,7 +73,8 @@ export class PDFExporter {
             const fileInfo = await FileSystem.getInfoAsync(file.uri);
             if (fileInfo.exists) {
               await FileSystem.deleteAsync(file.uri, { idempotent: true });
-              if (__DEV__) console.log(`[PDFExporter] Cleaned up temp file: ${file.uri}`);
+              if (__DEV__)
+                console.log(`[PDFExporter] Cleaned up temp file: ${file.uri}`);
             }
           } catch (error) {
             // Ignore cleanup errors
@@ -78,7 +83,7 @@ export class PDFExporter {
       }, 1000);
     }
   }
-  
+
   /**
    * ===== FIX C5: Clean up specific file immediately =====
    */
@@ -87,54 +92,65 @@ export class PDFExporter {
       const fileInfo = await FileSystem.getInfoAsync(uri);
       if (fileInfo.exists) {
         await FileSystem.deleteAsync(uri, { idempotent: true });
-        
+
         // Remove from temp files list
-        this.tempFiles = this.tempFiles.filter(f => f.uri !== uri);
+        this.tempFiles = this.tempFiles.filter((f) => f.uri !== uri);
       }
     } catch (error) {
-      console.warn('[PDFExporter] Failed to cleanup file:', error);
+      console.warn("[PDFExporter] Failed to cleanup file:", error);
     }
   }
 
   /**
    * ===== FIX M3: Generate SVG pie chart =====
    */
-  private static generatePieChartSVG(shares: HeirShare[], total: number): string {
-    if (shares.length === 0) return '';
-    
+  private static generatePieChartSVG(
+    shares: HeirShare[],
+    total: number,
+  ): string {
+    if (shares.length === 0) return "";
+
     const colors = [
-      '#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6',
-      '#EC4899', '#06B6D4', '#84CC16', '#6366F1', '#D946EF'
+      "#4F46E5",
+      "#10B981",
+      "#F59E0B",
+      "#EF4444",
+      "#8B5CF6",
+      "#EC4899",
+      "#06B6D4",
+      "#84CC16",
+      "#6366F1",
+      "#D946EF",
     ];
-    
+
     let cumulativeAngle = 0;
     const centerX = 100;
     const centerY = 100;
     const radius = 80;
-    
-    let paths = '';
-    let legendItems = '';
-    
+
+    let paths = "";
+    let legendItems = "";
+
     shares.forEach((share, index) => {
       const percentage = (share.amount / total) * 100;
       const angle = (percentage / 100) * 360;
-      
+
       if (angle > 0) {
         const startAngle = cumulativeAngle;
         const endAngle = cumulativeAngle + angle;
-        
-        const startRad = (startAngle - 90) * Math.PI / 180;
-        const endRad = (endAngle - 90) * Math.PI / 180;
-        
+
+        const startRad = ((startAngle - 90) * Math.PI) / 180;
+        const endRad = ((endAngle - 90) * Math.PI) / 180;
+
         const x1 = centerX + radius * Math.cos(startRad);
         const y1 = centerY + radius * Math.sin(startRad);
         const x2 = centerX + radius * Math.cos(endRad);
         const y2 = centerY + radius * Math.sin(endRad);
-        
+
         const largeArcFlag = angle > 180 ? 1 : 0;
-        
+
         const color = colors[index % colors.length];
-        
+
         paths += `
           <path d="M ${centerX} ${centerY} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z" 
                 fill="${color}" 
@@ -144,7 +160,7 @@ export class PDFExporter {
             <title>${share.name}: ${percentage.toFixed(1)}% (${share.amount.toFixed(2)} ر.س)</title>
           </path>
         `;
-        
+
         // Add legend item
         legendItems += `
           <div style="display: flex; align-items: center; margin-bottom: 4px;">
@@ -152,11 +168,11 @@ export class PDFExporter {
             <span style="font-size: 10px; color: #374151;">${share.name}: ${percentage.toFixed(1)}%</span>
           </div>
         `;
-        
+
         cumulativeAngle += angle;
       }
     });
-    
+
     return `
       <div style="display: flex; flex-direction: row; align-items: center; margin: 20px 0; padding: 16px; background-color: #f9fafb; border-radius: 12px;">
         <div style="flex: 1; min-width: 200px;">
@@ -177,43 +193,54 @@ export class PDFExporter {
   /**
    * ===== FIX M3: Generate bar chart SVG =====
    */
-  private static generateBarChartSVG(shares: HeirShare[], total: number): string {
-    if (shares.length === 0) return '';
-    
+  private static generateBarChartSVG(
+    shares: HeirShare[],
+    total: number,
+  ): string {
+    if (shares.length === 0) return "";
+
     const colors = [
-      '#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6',
-      '#EC4899', '#06B6D4', '#84CC16', '#6366F1', '#D946EF'
+      "#4F46E5",
+      "#10B981",
+      "#F59E0B",
+      "#EF4444",
+      "#8B5CF6",
+      "#EC4899",
+      "#06B6D4",
+      "#84CC16",
+      "#6366F1",
+      "#D946EF",
     ];
-    
+
     const barHeight = 30;
     const spacing = 10;
     const chartHeight = shares.length * (barHeight + spacing);
     const maxBarWidth = 300;
-    
-    let bars = '';
-    let labels = '';
-    
+
+    let bars = "";
+    let labels = "";
+
     shares.forEach((share, index) => {
       const percentage = (share.amount / total) * 100;
       const barWidth = (percentage / 100) * maxBarWidth;
       const y = index * (barHeight + spacing);
       const color = colors[index % colors.length];
-      
+
       bars += `
         <rect x="0" y="${y}" width="${barWidth}" height="${barHeight}" 
               fill="${color}" rx="4" ry="4" opacity="0.9">
           <title>${share.name}: ${percentage.toFixed(1)}% (${share.amount.toFixed(2)} ر.س)</title>
         </rect>
       `;
-      
+
       labels += `
-        <text x="${barWidth + 8}" y="${y + barHeight/2 + 4}" 
+        <text x="${barWidth + 8}" y="${y + barHeight / 2 + 4}" 
               font-size="11" fill="#374151" text-anchor="start">
           ${share.name} (${percentage.toFixed(1)}%)
         </text>
       `;
     });
-    
+
     return `
       <div style="margin: 20px 0; padding: 16px; background-color: #f9fafb; border-radius: 12px;">
         <svg width="100%" height="${chartHeight + 20}" viewBox="0 0 ${maxBarWidth + 150} ${chartHeight + 20}" 
@@ -231,21 +258,24 @@ export class PDFExporter {
    */
   private static generateHTML(
     result: CalculationResult,
-    options: PDFExportOptions = {}
+    options: PDFExportOptions = {},
   ): string {
     const {
       includeCalculationSteps = true,
-      theme = 'light',
-      filename = 'inheritance-report',
+      theme = "light",
+      filename = "inheritance-report",
     } = options;
 
-    const backgroundColor = theme === 'light' ? '#ffffff' : '#f5f5f5';
-    const textColor = theme === 'light' ? '#000000' : '#333333';
-    const borderColor = theme === 'light' ? '#e0e0e0' : '#d0d0d0';
+    const backgroundColor = theme === "light" ? "#ffffff" : "#f5f5f5";
+    const textColor = theme === "light" ? "#000000" : "#333333";
+    const borderColor = theme === "light" ? "#e0e0e0" : "#d0d0d0";
 
-    const calculationTime = new Date().toLocaleString('ar-SA');
-    const total = result.shares.reduce((sum: number, s: HeirShare) => sum + s.amount, 0);
-    
+    const calculationTime = new Date().toLocaleString("ar-SA");
+    const total = result.shares.reduce(
+      (sum: number, s: HeirShare) => sum + s.amount,
+      0,
+    );
+
     // ===== FIX M3: Generate charts =====
     const pieChart = this.generatePieChartSVG(result.shares, total);
     const barChart = this.generateBarChartSVG(result.shares, total);
@@ -540,11 +570,11 @@ export class PDFExporter {
             </div>
             <div class="metadata-row">
               <span class="metadata-label">وقت الحساب:</span>
-              <span class="metadata-value">${result.calculationTime?.toFixed(2) || '0'} ms</span>
+              <span class="metadata-value">${result.calculationTime?.toFixed(2) || "0"} ms</span>
             </div>
             <div class="metadata-row">
               <span class="metadata-label">حالة الحساب:</span>
-              <span class="metadata-value">${result.success ? '✓ نجح' : '✗ فشل'}</span>
+              <span class="metadata-value">${result.success ? "✓ نجح" : "✗ فشل"}</span>
             </div>
           </div>
 
@@ -557,32 +587,31 @@ export class PDFExporter {
 
           <!-- Special Cases -->
           ${
-            result.specialCases && (
-              result.specialCases.awl ||
+            result.specialCases &&
+            (result.specialCases.awl ||
               result.specialCases.radd ||
-              result.specialCases.hijabTypes.length > 0
-            )
+              result.specialCases.hijabTypes.length > 0)
               ? `
             <div class="special-cases">
               <h3>⚠️ الحالات الشرعية الخاصة</h3>
               ${
                 result.specialCases.awl
                   ? `<div class="case-item"><strong>العول:</strong> تطبيق العول على التركة</div>`
-                  : ''
+                  : ""
               }
               ${
                 result.specialCases.radd
                   ? `<div class="case-item"><strong>الرد:</strong> رد الفاضل على الورثة</div>`
-                  : ''
+                  : ""
               }
               ${
                 result.specialCases.hijabTypes.length > 0
-                  ? `<div class="case-item"><strong>الحجب:</strong> ${result.specialCases.hijabTypes.join(', ')}</div>`
-                  : ''
+                  ? `<div class="case-item"><strong>الحجب:</strong> ${result.specialCases.hijabTypes.join(", ")}</div>`
+                  : ""
               }
             </div>
             `
-              : ''
+              : ""
           }
 
           <!-- Distribution Table -->
@@ -607,15 +636,15 @@ export class PDFExporter {
                       ${
                         share.fraction
                           ? `${share.fraction.numerator}/${share.fraction.denominator}`
-                          : '-'
+                          : "-"
                       }
                     </td>
                     <td class="percentage">${((share.amount / total) * 100).toFixed(2)}%</td>
                     <td class="amount">${share.amount.toFixed(2)}</td>
                   </tr>
-                `
+                `,
                   )
-                  .join('')}
+                  .join("")}
               </tbody>
             </table>
           </div>
@@ -638,10 +667,10 @@ export class PDFExporter {
                 <span class="summary-label">درجة الثقة:</span>
                 <span class="summary-value ${
                   result.confidence > 95
-                    ? 'confidence-high'
+                    ? "confidence-high"
                     : result.confidence > 80
-                      ? 'confidence-medium'
-                      : 'confidence-low'
+                      ? "confidence-medium"
+                      : "confidence-low"
                 }">
                   ${result.confidence.toFixed(1)}%
                 </span>
@@ -663,19 +692,19 @@ export class PDFExporter {
                   <div class="step">
                     <div>
                       <span class="step-number">${index + 1}</span>
-                      <span class="step-title">${step.title || 'خطوة'}</span>
+                      <span class="step-title">${step.title || "خطوة"}</span>
                     </div>
                     <div class="step-content">
-                      ${step.description || ''}
+                      ${step.description || ""}
                     </div>
                   </div>
-                `
+                `,
                   )
-                  .join('')}
+                  .join("")}
               </div>
             </div>
             `
-              : ''
+              : ""
           }
 
           <!-- Disclaimer -->
@@ -704,10 +733,10 @@ export class PDFExporter {
    */
   static async exportToPDF(
     result: CalculationResult,
-    options: PDFExportOptions = {}
+    options: PDFExportOptions = {},
   ): Promise<string> {
     try {
-      const { filename = 'inheritance-report' } = options;
+      const { filename = "inheritance-report" } = options;
 
       // Generate HTML
       const html = this.generateHTML(result, options);
@@ -723,8 +752,8 @@ export class PDFExporter {
 
       return pdf.uri;
     } catch (error) {
-      console.error('PDF Export Error:', error);
-      throw new Error('Failed to generate PDF: ' + (error as Error).message);
+      console.error("PDF Export Error:", error);
+      throw new Error("Failed to generate PDF: " + (error as Error).message);
     }
   }
 
@@ -732,28 +761,30 @@ export class PDFExporter {
    * Share PDF with other apps
    * ===== FIX C5: Auto-cleanup after sharing =====
    */
-  static async sharePDF(pdfUri: string, filename: string = 'inheritance-report'): Promise<void> {
+  static async sharePDF(
+    pdfUri: string,
+    filename: string = "inheritance-report",
+  ): Promise<void> {
     try {
       // Check if sharing is available
       const isAvailable = await Sharing.isAvailableAsync();
       if (!isAvailable) {
-        throw new Error('المشاركة غير متوفرة على هذا الجهاز');
+        throw new Error("المشاركة غير متوفرة على هذا الجهاز");
       }
 
       await Sharing.shareAsync(pdfUri, {
-        mimeType: 'application/pdf',
-        dialogTitle: 'مشاركة تقرير التركة',
-        UTI: 'com.adobe.pdf'
+        mimeType: "application/pdf",
+        dialogTitle: "مشاركة تقرير التركة",
+        UTI: "com.adobe.pdf",
       });
 
       // ===== FIX C5: Clean up after sharing (with delay to ensure file is released) =====
       setTimeout(() => {
         this.cleanupFile(pdfUri);
       }, 5000);
-      
     } catch (error) {
-      console.error('PDF Share Error:', error);
-      throw new Error('فشل في مشاركة PDF: ' + (error as Error).message);
+      console.error("PDF Share Error:", error);
+      throw new Error("فشل في مشاركة PDF: " + (error as Error).message);
     }
   }
 
@@ -763,50 +794,54 @@ export class PDFExporter {
   static async savePDF(pdfUri: string, filename: string): Promise<string> {
     try {
       // Create a safe filename
-      const safeFilename = filename.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-      const finalFilename = safeFilename.endsWith('.pdf') ? safeFilename : `${safeFilename}.pdf`;
-      
+      const safeFilename = filename.replace(/[^a-z0-9]/gi, "_").toLowerCase();
+      const finalFilename = safeFilename.endsWith(".pdf")
+        ? safeFilename
+        : `${safeFilename}.pdf`;
+
       // For web platform
-      if (Platform.OS === 'web') {
+      if (Platform.OS === "web") {
         // Download via blob
         const response = await fetch(pdfUri);
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
         a.download = finalFilename;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
-        
+
         // ===== FIX C5: Clean up temp file =====
         this.cleanupFile(pdfUri);
-        
+
         return pdfUri;
       }
-      
+
       // For native platforms, copy to documents directory
-        const documentDir = (FileSystem as unknown as { documentDirectory: string | null }).documentDirectory;
-        if (!documentDir) {
-          throw new Error('لا يمكن الوصول إلى نظام الملفات');
-        }
-      
+      const documentDir = (
+        FileSystem as unknown as { documentDirectory: string | null }
+      ).documentDirectory;
+      if (!documentDir) {
+        throw new Error("لا يمكن الوصول إلى نظام الملفات");
+      }
+
       const permanentPath = `${documentDir}${finalFilename}`;
-      
+
       // Copy file to permanent location
       await FileSystem.copyAsync({
         from: pdfUri,
-        to: permanentPath
+        to: permanentPath,
       });
-      
+
       // ===== FIX C5: Clean up temp file after copy =====
       this.cleanupFile(pdfUri);
-      
+
       return permanentPath;
     } catch (error) {
-      console.error('PDF Save Error:', error);
-      throw new Error('Failed to save PDF: ' + (error as Error).message);
+      console.error("PDF Save Error:", error);
+      throw new Error("Failed to save PDF: " + (error as Error).message);
     }
   }
 
@@ -816,10 +851,10 @@ export class PDFExporter {
    */
   static async generateAndShare(
     result: CalculationResult,
-    options: PDFExportOptions = {}
+    options: PDFExportOptions = {},
   ): Promise<void> {
     let pdfUri: string | null = null;
-    
+
     try {
       const filename = options.filename || `merath-${Date.now()}`;
 
@@ -828,15 +863,14 @@ export class PDFExporter {
 
       // Share PDF
       await this.sharePDF(pdfUri, filename);
-      
     } catch (error) {
-      console.error('Generate and Share Error:', error);
-      
+      console.error("Generate and Share Error:", error);
+
       // ===== FIX C5: Clean up on error =====
       if (pdfUri) {
         await this.cleanupFile(pdfUri);
       }
-      
+
       throw error;
     }
   }
@@ -846,10 +880,10 @@ export class PDFExporter {
    */
   static async generateAndSave(
     result: CalculationResult,
-    options: PDFExportOptions = {}
+    options: PDFExportOptions = {},
   ): Promise<string> {
     let pdfUri: string | null = null;
-    
+
     try {
       const filename = options.filename || `merath-${Date.now()}`;
 
@@ -858,17 +892,16 @@ export class PDFExporter {
 
       // Save PDF permanently
       const savedPath = await this.savePDF(pdfUri, filename);
-      
+
       return savedPath;
-      
     } catch (error) {
-      console.error('Generate and Save Error:', error);
-      
+      console.error("Generate and Save Error:", error);
+
       // ===== FIX C5: Clean up on error =====
       if (pdfUri) {
         await this.cleanupFile(pdfUri);
       }
-      
+
       throw error;
     }
   }
@@ -879,7 +912,7 @@ export class PDFExporter {
   static async cleanupAllTempFiles(): Promise<void> {
     const files = [...this.tempFiles];
     this.tempFiles = [];
-    
+
     for (const file of files) {
       try {
         await FileSystem.deleteAsync(file.uri, { idempotent: true });

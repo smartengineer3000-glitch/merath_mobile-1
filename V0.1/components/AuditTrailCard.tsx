@@ -6,17 +6,11 @@
  * Displays a single calculation entry with key metrics
  */
 
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-} from 'react-native';
-import { AuditLogEntry } from '../lib/inheritance/audit-log';
-import { AuditTrailManager } from '../lib/inheritance/audit-trail-manager';
-import { PDFExporter } from '../lib/export/PDFExporter';
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { AuditLogEntry } from "../lib/inheritance/audit-log";
+import { AuditTrailManager } from "../lib/inheritance/audit-trail-manager";
+import { PDFExporter } from "../lib/export/PDFExporter";
 
 export interface AuditTrailCardProps {
   entry: AuditLogEntry;
@@ -47,13 +41,13 @@ export function AuditTrailCard({
   const handleExport = async () => {
     setIsExporting(true);
     try {
-      const timestamp = new Date().toLocaleDateString('ar-SA');
+      const timestamp = new Date().toLocaleDateString("ar-SA");
       const filename = `تقرير-${entry.madhab}-${timestamp}`;
 
       // Create a minimal calculation result from audit entry
       const calculationResult = {
-        madhab: entry.madhab || 'hanafi',
-        madhhabName: entry.madhab || 'الحنفي',
+        madhab: entry.madhab || "hanafi",
+        madhhabName: entry.madhab || "الحنفي",
         success: true,
         shares: entry.result?.shares || [],
         confidence: entry.result?.confidence || 100,
@@ -61,11 +55,11 @@ export function AuditTrailCard({
         awlApplied: entry.result?.awlApplied || false,
         raddApplied: entry.result?.raddApplied || false,
         blockedHeirs: entry.result?.blockedHeirs || [],
-        specialCases: entry.result?.specialCases || { 
-          awl: false, 
-          auled: 0, 
-          radd: false, 
-          hijabTypes: [] 
+        specialCases: entry.result?.specialCases || {
+          awl: false,
+          auled: 0,
+          radd: false,
+          hijabTypes: [],
         },
         steps: entry.result?.steps || [],
       };
@@ -73,15 +67,15 @@ export function AuditTrailCard({
       await PDFExporter.generateAndShare(calculationResult, {
         filename,
         includeCalculationSteps: true,
-        theme: 'light',
+        theme: "light",
       });
 
       onExport?.(entry);
-      Alert.alert('تم بنجاح', 'تم تصدير التقرير بنجاح');
+      Alert.alert("تم بنجاح", "تم تصدير التقرير بنجاح");
     } catch (error) {
       Alert.alert(
-        'خطأ',
-        error instanceof Error ? error.message : 'فشل في تصدير التقرير'
+        "خطأ",
+        error instanceof Error ? error.message : "فشل في تصدير التقرير",
       );
     } finally {
       setIsExporting(false);
@@ -90,21 +84,21 @@ export function AuditTrailCard({
 
   const handleDelete = () => {
     Alert.alert(
-      'تأكيد الحذف',
-      'هل تريد حذف هذا السجل؟ لا يمكن التراجع عن هذا الإجراء.',
+      "تأكيد الحذف",
+      "هل تريد حذف هذا السجل؟ لا يمكن التراجع عن هذا الإجراء.",
       [
-        { text: 'إلغاء', onPress: () => {} },
+        { text: "إلغاء", onPress: () => {} },
         {
-          text: 'حذف',
-          onPress: () => onDelete?.(entry.id || ''),
-          style: 'destructive',
+          text: "حذف",
+          onPress: () => onDelete?.(entry.id || ""),
+          style: "destructive",
         },
-      ]
+      ],
     );
   };
 
   const handleToggleFavorite = () => {
-    onToggleFavorite?.(entry.id || '');
+    onToggleFavorite?.(entry.id || "");
   };
 
   return (
@@ -125,9 +119,7 @@ export function AuditTrailCard({
             style={styles.favoriteButton}
             onPress={handleToggleFavorite}
           >
-            <Text style={styles.favoriteIcon}>
-              {isFavorite ? '⭐' : '☆'}
-            </Text>
+            <Text style={styles.favoriteIcon}>{isFavorite ? "⭐" : "☆"}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -146,17 +138,19 @@ export function AuditTrailCard({
 
         <View style={styles.infoItem}>
           <Text style={styles.infoLabel}>الثقة</Text>
-          <Text style={[
-            styles.infoValue,
-            {
-              color:
-                (entry.result?.confidence || 0) > 90
-                  ? '#4caf50'
-                  : (entry.result?.confidence || 0) > 75
-                    ? '#ff9800'
-                    : '#f44336',
-            },
-          ]}>
+          <Text
+            style={[
+              styles.infoValue,
+              {
+                color:
+                  (entry.result?.confidence || 0) > 90
+                    ? "#4caf50"
+                    : (entry.result?.confidence || 0) > 75
+                      ? "#ff9800"
+                      : "#f44336",
+              },
+            ]}
+          >
             {formatted.confidence}
           </Text>
         </View>
@@ -195,7 +189,7 @@ export function AuditTrailCard({
           onPress={() => setIsExpanded(!isExpanded)}
         >
           <Text style={styles.actionButtonText}>
-            {isExpanded ? '▼ أقل' : '▶ المزيد'}
+            {isExpanded ? "▼ أقل" : "▶ المزيد"}
           </Text>
         </TouchableOpacity>
 
@@ -205,7 +199,7 @@ export function AuditTrailCard({
           disabled={isExporting}
         >
           <Text style={styles.actionButtonText}>
-            {isExporting ? '⏳ جاري...' : '📄 تصدير'}
+            {isExporting ? "⏳ جاري..." : "📄 تصدير"}
           </Text>
         </TouchableOpacity>
 
@@ -222,43 +216,43 @@ export function AuditTrailCard({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 12,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
-    overflow: 'hidden',
-    shadowColor: '#000',
+    borderColor: "#e5e7eb",
+    overflow: "hidden",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 4,
-    elevation: 2
+    elevation: 2,
   },
   cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 12,
     paddingTop: 12,
     paddingBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: "#f0f0f0",
   },
   headerLeft: {
     flex: 1,
   },
   headerRight: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   madhab: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#1976d2',
+    fontWeight: "600",
+    color: "#1976d2",
     marginBottom: 2,
   },
   date: {
     fontSize: 11,
-    color: '#666',
+    color: "#666",
   },
   favoriteButton: {
     padding: 8,
@@ -270,56 +264,56 @@ const styles = StyleSheet.create({
   cardBody: {
     paddingHorizontal: 12,
     paddingVertical: 10,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: "#f9f9f9",
   },
   infoItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 8,
   },
   infoLabel: {
     fontSize: 12,
-    color: '#666',
-    fontWeight: '500',
+    color: "#666",
+    fontWeight: "500",
   },
   infoValue: {
     fontSize: 12,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: "600",
+    color: "#333",
   },
   time: {
     fontSize: 10,
-    color: '#999',
-    textAlign: 'right',
+    color: "#999",
+    textAlign: "right",
     marginTop: 4,
   },
   expandedDetails: {
     paddingHorizontal: 12,
     paddingVertical: 10,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+    borderTopColor: "#e0e0e0",
   },
   detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 8,
   },
   detailLabel: {
     fontSize: 11,
-    color: '#666',
-    fontWeight: '500',
+    color: "#666",
+    fontWeight: "500",
   },
   detailValue: {
     fontSize: 11,
-    color: '#333',
+    color: "#333",
     flex: 1,
-    textAlign: 'right',
+    textAlign: "right",
     marginLeft: 8,
   },
   cardActions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingHorizontal: 12,
     paddingBottom: 12,
     gap: 8,
@@ -329,37 +323,37 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 8,
     borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 2,
-    elevation: 2
+    elevation: 2,
   },
   expandButton: {
-    backgroundColor: '#3B82F6',
-    shadowColor: '#3B82F6',
+    backgroundColor: "#3B82F6",
+    shadowColor: "#3B82F6",
     shadowOpacity: 0.2,
-    elevation: 2
+    elevation: 2,
   },
   exportButton: {
-    backgroundColor: '#10B981',
-    shadowColor: '#10B981',
+    backgroundColor: "#10B981",
+    shadowColor: "#10B981",
     shadowOpacity: 0.2,
-    elevation: 2
+    elevation: 2,
   },
   deleteButton: {
-    backgroundColor: '#EF4444',
-    shadowColor: '#EF4444',
+    backgroundColor: "#EF4444",
+    shadowColor: "#EF4444",
     shadowOpacity: 0.2,
-    elevation: 2
+    elevation: 2,
   },
   actionButtonText: {
     fontSize: 12,
-    fontWeight: '600',
-    color: '#fff',
-    textAlign: 'center'
+    fontWeight: "600",
+    color: "#fff",
+    textAlign: "center",
   },
 });
 

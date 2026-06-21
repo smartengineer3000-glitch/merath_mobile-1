@@ -248,7 +248,9 @@ User does not consent to:
 /**
  * Get disclaimer for specific type
  */
-export function getDisclaimer(type: 'main' | 'privacy' | 'terms' | 'dataConsent'): string {
+export function getDisclaimer(
+  type: "main" | "privacy" | "terms" | "dataConsent",
+): string {
   return LEGAL_DISCLAIMERS[type];
 }
 

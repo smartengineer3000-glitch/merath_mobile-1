@@ -3,24 +3,27 @@
  * يحتوي على 5 hooks رئيسية لإدارة حالة الحسابات والنتائج والتسجيل
  * @author Merath App
  * @version 1.0.0
- * 
+ *
  * FIXES:
  * - C2 (🔴): Async state inconsistency - consistent Promise returns, race condition protection
  * - H7 (🟠): Calculation timeout - prevents UI hanging on complex calculations
  */
 
-import { useState, useCallback, useEffect, useRef } from 'react';
-import { EnhancedInheritanceCalculationEngine as InheritanceCalculationEngine } from './enhanced-engine-complete';
-import { AuditLog, createAuditLog, type AuditLogEntry } from './audit-log';
-import { CalculationCache, PerformanceMonitor } from '../performance/optimization';
-import type { 
+import { useState, useCallback, useEffect, useRef } from "react";
+import { EnhancedInheritanceCalculationEngine as InheritanceCalculationEngine } from "./enhanced-engine-complete";
+import { AuditLog, createAuditLog, type AuditLogEntry } from "./audit-log";
+import {
+  CalculationCache,
+  PerformanceMonitor,
+} from "../performance/optimization";
+import type {
   EstateData,
   CalculationResult,
   MadhhabType,
   HeirType,
   HeirsData,
-  HeirShare
-} from './types';
+  HeirShare,
+} from "./types";
 
 // ============================================================================
 // Comparison Types (defined early for use in hooks)
@@ -67,11 +70,13 @@ export function useCalculator() {
   const [isCalculating, setIsCalculating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastHeirsData, setLastHeirsData] = useState<HeirsData | null>(null);
-  
+
   // ===== FIX C2: Use refs to track mounted state and abort controller =====
   const isMounted = useRef(true);
   const abortControllerRef = useRef<AbortController | null>(null);
-  const calculationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const calculationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
 
   // ===== FIX H7: Track calculation start time for performance =====
   const calculationStartTimeRef = useRef<number>(0);
@@ -108,7 +113,7 @@ export function useCalculator() {
     setResult(null);
     setError(null);
     setIsCalculating(false);
-    
+
     // ===== FIX C2: Cancel any pending calculations =====
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -120,30 +125,44 @@ export function useCalculator() {
 
   // ===== FIX H7: Debounced calculation to prevent rapid successive calls =====
   const debouncedCalculate = useCallback(
-    debounce(async (madhab: MadhhabType, heirs: HeirsData, resolve: (value: any) => void) => {
-      try {
-        const engine = new InheritanceCalculationEngine(madhab, estateData, heirs);
-        const calcResult = engine.calculate();
-        resolve(calcResult);
-      } catch (err) {
-        resolve({ 
-          success: false, 
-          error: err instanceof Error ? err.message : 'Calculation failed',
-          madhab,
-          madhhabName: madhab,
-          shares: [],
-          confidence: 0,
-          steps: [],
-          calculationTime: 0
-        });
-      }
-    }, DEBOUNCE_DELAY_MS),
-    [estateData]
+    debounce(
+      async (
+        madhab: MadhhabType,
+        heirs: HeirsData,
+        resolve: (value: any) => void,
+      ) => {
+        try {
+          const engine = new InheritanceCalculationEngine(
+            madhab,
+            estateData,
+            heirs,
+          );
+          const calcResult = engine.calculate();
+          resolve(calcResult);
+        } catch (err) {
+          resolve({
+            success: false,
+            error: err instanceof Error ? err.message : "Calculation failed",
+            madhab,
+            madhhabName: madhab,
+            shares: [],
+            confidence: 0,
+            steps: [],
+            calculationTime: 0,
+          });
+        }
+      },
+      DEBOUNCE_DELAY_MS,
+    ),
+    [estateData],
   );
 
   // ===== FIX C2 & H7: Complete rewrite of calculateWithMethod =====
   const calculateWithMethod = useCallback(
-    async (madhab: MadhhabType, heirs: HeirsData): Promise<CalculationResult | null> => {
+    async (
+      madhab: MadhhabType,
+      heirs: HeirsData,
+    ): Promise<CalculationResult | null> => {
       // ===== FIX C2: Prevent multiple simultaneous calculations =====
       if (isCalculating) {
         return null;
@@ -168,22 +187,26 @@ export function useCalculator() {
       try {
         // Validate estate data
         if (estateData.total <= 0) {
-          throw new Error('التركة يجب أن تكون أكبر من صفر');
+          throw new Error("التركة يجب أن تكون أكبر من صفر");
         }
 
         // Validate heirs
         const heirCount = Object.values(heirs).reduce(
           (sum, val) => (sum || 0) + (val || 0),
-          0
+          0,
         );
         if (heirCount === 0) {
-          throw new Error('يجب تحديد ورثة واحد على الأقل');
+          throw new Error("يجب تحديد ورثة واحد على الأقل");
         }
 
         setLastHeirsData(heirs);
 
         // ===== FIX C2: Check cache first (synchronous) =====
-        const cachedResult = CalculationCache.getCalculation(madhab, estateData, heirs);
+        const cachedResult = CalculationCache.getCalculation(
+          madhab,
+          estateData,
+          heirs,
+        );
         if (cachedResult && !signal.aborted) {
           CalculationCache.recordHit(cachedResult.calculationTime || 0);
 
@@ -197,7 +220,7 @@ export function useCalculator() {
         // ===== FIX H7: Set up timeout promise =====
         const timeoutPromise = new Promise<never>((_, reject) => {
           calculationTimeoutRef.current = setTimeout(() => {
-            reject(new Error('انتهت مهلة الحساب. يرجى المحاولة مرة أخرى.'));
+            reject(new Error("انتهت مهلة الحساب. يرجى المحاولة مرة أخرى."));
           }, CALCULATION_TIMEOUT_MS);
         });
         // ===== FIX C2: Create calculation promise with debouncing =====
@@ -206,10 +229,10 @@ export function useCalculator() {
         });
 
         // ===== FIX H7: Race between calculation and timeout =====
-        const calculationResult = await Promise.race([
+        const calculationResult = (await Promise.race([
           calculationPromise,
-          timeoutPromise
-        ]) as CalculationResult;
+          timeoutPromise,
+        ])) as CalculationResult;
 
         // Clear timeout since calculation completed
         if (calculationTimeoutRef.current) {
@@ -225,20 +248,27 @@ export function useCalculator() {
         const duration = performance.now() - calculationStartTimeRef.current;
 
         // Cache the result for future use
-        CalculationCache.cacheCalculation(madhab, estateData, heirs, calculationResult, duration);
+        CalculationCache.cacheCalculation(
+          madhab,
+          estateData,
+          heirs,
+          calculationResult,
+          duration,
+        );
         CalculationCache.recordMiss(duration);
 
         // ===== FIX C2: Log slow calculations for monitoring =====
         if (duration > 1000) {
-          console.warn(`[Performance] Slow calculation (${duration.toFixed(0)}ms) for ${madhab} with ${heirCount} heirs`);
+          console.warn(
+            `[Performance] Slow calculation (${duration.toFixed(0)}ms) for ${madhab} with ${heirCount} heirs`,
+          );
         }
 
         if (isMounted.current && !signal.aborted) {
           setResult(calculationResult);
         }
-        
-        return calculationResult;
 
+        return calculationResult;
       } catch (err) {
         // Clear timeout on error
         if (calculationTimeoutRef.current) {
@@ -251,13 +281,14 @@ export function useCalculator() {
           return null;
         }
 
-        const errorMessage = err instanceof Error ? err.message : 'حدث خطأ غير معروف في الحساب';
-        
+        const errorMessage =
+          err instanceof Error ? err.message : "حدث خطأ غير معروف في الحساب";
+
         if (isMounted.current && !signal.aborted) {
           setError(errorMessage);
           setResult(null);
         }
-        
+
         return {
           success: false,
           madhab,
@@ -267,7 +298,7 @@ export function useCalculator() {
           steps: [],
           calculationTime: performance.now() - calculationStartTimeRef.current,
           error: errorMessage,
-          specialCases: { awl: false, auled: 0, radd: false, hijabTypes: [] }
+          specialCases: { awl: false, auled: 0, radd: false, hijabTypes: [] },
         };
       } finally {
         if (isMounted.current) {
@@ -276,7 +307,7 @@ export function useCalculator() {
         abortControllerRef.current = null;
       }
     },
-    [estateData, isCalculating, debouncedCalculate]
+    [estateData, isCalculating, debouncedCalculate],
   );
 
   const getState = useCallback(
@@ -286,23 +317,33 @@ export function useCalculator() {
       isCalculating,
       error,
     }),
-    [estateData, result, isCalculating, error]
+    [estateData, result, isCalculating, error],
   );
 
   const compareCalculationResults = useCallback(
-    (baseline: CalculationResult, other: CalculationResult): ComparisonResult => {
-      const differences: { heirName: string; amountDiff: number; percentageDiff: number; explanation: string }[] = [];
-      const allHeirs = new Set<string>([
-        ...baseline.shares.map(s => s.key ?? ''),
-        ...other.shares.map(s => s.key ?? '')
-      ].filter(Boolean) as string[]);
+    (
+      baseline: CalculationResult,
+      other: CalculationResult,
+    ): ComparisonResult => {
+      const differences: {
+        heirName: string;
+        amountDiff: number;
+        percentageDiff: number;
+        explanation: string;
+      }[] = [];
+      const allHeirs = new Set<string>(
+        [
+          ...baseline.shares.map((s) => s.key ?? ""),
+          ...other.shares.map((s) => s.key ?? ""),
+        ].filter(Boolean) as string[],
+      );
 
       let totalBaseline = 0;
       let totalOther = 0;
 
       allHeirs.forEach((heirKey) => {
-        const baselineShare = baseline.shares.find(s => s.key === heirKey);
-        const otherShare = other.shares.find(s => s.key === heirKey);
+        const baselineShare = baseline.shares.find((s) => s.key === heirKey);
+        const otherShare = other.shares.find((s) => s.key === heirKey);
 
         const baselineAmount = baselineShare?.amount || 0;
         const otherAmount = otherShare?.amount || 0;
@@ -310,21 +351,25 @@ export function useCalculator() {
         totalOther += otherAmount;
 
         const amountDiff = otherAmount - baselineAmount;
-        const percentageDiff = baselineAmount > 0
-          ? (amountDiff / baselineAmount) * 100
-          : otherAmount > 0 ? 100 : 0;
+        const percentageDiff =
+          baselineAmount > 0
+            ? (amountDiff / baselineAmount) * 100
+            : otherAmount > 0
+              ? 100
+              : 0;
 
         if (Math.abs(amountDiff) > 0.01) {
-          const explanation = baselineShare && !otherShare
-            ? `محجوب في المذهب ${other.madhhabName}`
-            : !baselineShare && otherShare
-            ? `يرث في المذهب ${other.madhhabName} فقط`
-            : generateDifferenceExplanation(
-                heirKey,
-                baseline.madhab,
-                other.madhab,
-                amountDiff
-              );
+          const explanation =
+            baselineShare && !otherShare
+              ? `محجوب في المذهب ${other.madhhabName}`
+              : !baselineShare && otherShare
+                ? `يرث في المذهب ${other.madhhabName} فقط`
+                : generateDifferenceExplanation(
+                    heirKey,
+                    baseline.madhab,
+                    other.madhab,
+                    amountDiff,
+                  );
 
           differences.push({
             heirName: baselineShare?.name || otherShare?.name || heirKey,
@@ -335,21 +380,21 @@ export function useCalculator() {
         }
       });
 
-      const isIdentical = differences.length === 0 &&
-        Math.abs(totalBaseline - totalOther) < 0.01;
+      const isIdentical =
+        differences.length === 0 && Math.abs(totalBaseline - totalOther) < 0.01;
 
-      const majorDifferences = differences.filter(d =>
-        Math.abs(d.percentageDiff) > 10 || Math.abs(d.amountDiff) > 1000
+      const majorDifferences = differences.filter(
+        (d) => Math.abs(d.percentageDiff) > 10 || Math.abs(d.amountDiff) > 1000,
       ).length;
 
       const minorDifferences = differences.length - majorDifferences;
-      let recommendation = '';
+      let recommendation = "";
       if (isIdentical) {
-        recommendation = 'النتائج متطابقة في كلا المذهبين';
+        recommendation = "النتائج متطابقة في كلا المذهبين";
       } else if (majorDifferences > 0) {
         recommendation = `يوجد اختلافات جوهرية في ${majorDifferences} من الورثة. يوصى باستشارة متخصص.`;
       } else if (minorDifferences > 0) {
-        recommendation = 'اختلافات طفيفة بين المذهبين - يمكن اختيار أي منهما';
+        recommendation = "اختلافات طفيفة بين المذهبين - يمكن اختيار أي منهما";
       }
 
       return {
@@ -363,23 +408,29 @@ export function useCalculator() {
           majorDifferences,
           minorDifferences,
           recommendation,
-        }
+        },
       };
     },
-    []
+    [],
   );
 
   // ===== NEW: Compare current scenario across all madhabs =====
-  const compareAcrossMadhabs = useCallback(async (): Promise<ComparisonResult[]> => {
+  const compareAcrossMadhabs = useCallback(async (): Promise<
+    ComparisonResult[]
+  > => {
     if (!result || !estateData || !lastHeirsData) return [];
 
-    const madhabs: MadhhabType[] = ['shafii', 'hanafi', 'maliki', 'hanbali'];
+    const madhabs: MadhhabType[] = ["shafii", "hanafi", "maliki", "hanbali"];
     const results: CalculationResult[] = [];
     const primaryMadhab = result.madhab;
 
     for (const madhab of madhabs) {
       try {
-        const engine = new InheritanceCalculationEngine(madhab, estateData, lastHeirsData);
+        const engine = new InheritanceCalculationEngine(
+          madhab,
+          estateData,
+          lastHeirsData,
+        );
         const calcResult = await engine.calculate();
         if (calcResult.success) {
           results.push(calcResult);
@@ -390,7 +441,7 @@ export function useCalculator() {
     }
 
     const comparisons: ComparisonResult[] = [];
-    const primaryResult = results.find(r => r.madhab === primaryMadhab);
+    const primaryResult = results.find((r) => r.madhab === primaryMadhab);
     if (!primaryResult) return [];
 
     for (const calcResult of results) {
@@ -428,13 +479,13 @@ export function useAuditLog() {
   useEffect(() => {
     const loadEntries = async () => {
       if (loadInProgress.current) return;
-      
+
       loadInProgress.current = true;
       try {
         const loadedEntries = await Promise.resolve(auditLog.getAllEntries());
         setEntries(loadedEntries);
       } catch (err) {
-        console.error('خطأ في تحميل سجل التسجيل:', err);
+        console.error("خطأ في تحميل سجل التسجيل:", err);
       } finally {
         setIsLoading(false);
         loadInProgress.current = false;
@@ -450,7 +501,7 @@ export function useAuditLog() {
       estate: EstateData,
       heirs: HeirsData,
       result: CalculationResult,
-      duration?: number
+      duration?: number,
     ) => {
       try {
         const entry = auditLog.logCalculation(
@@ -459,19 +510,20 @@ export function useAuditLog() {
           estate,
           result,
           duration || 0,
-          'حساب عادي'
+          "حساب عادي",
         );
         setEntries((prev) => [entry, ...prev] as AuditLogEntry[]); // Add to front for reverse chronological
         return entry;
       } catch (err) {
-        console.error('خطأ في تسجيل العملية:', err);
+        console.error("خطأ في تسجيل العملية:", err);
         return null;
       }
     },
-    [auditLog]
+    [auditLog],
   );
 
-  const deleteEntry = useCallback(async (id: string) => {
+  const deleteEntry = useCallback(
+    async (id: string) => {
       try {
         const success = auditLog.deleteEntry(id);
         if (await success) {
@@ -479,11 +531,11 @@ export function useAuditLog() {
         }
         return success;
       } catch (err) {
-        console.error('خطأ في حذف الإدخال:', err);
+        console.error("خطأ في حذف الإدخال:", err);
         return false;
       }
     },
-    [auditLog]
+    [auditLog],
   );
 
   const searchEntries = useCallback(
@@ -491,23 +543,23 @@ export function useAuditLog() {
       try {
         const results = auditLog.filter({
           madhab,
-          operation: operation as AuditLogEntry['operation'],
+          operation: operation as AuditLogEntry["operation"],
           limit,
         });
         return results;
       } catch (err) {
-        console.error('خطأ في البحث:', err);
+        console.error("خطأ في البحث:", err);
         return [];
       }
     },
-    [auditLog]
+    [auditLog],
   );
 
   const getStats = useCallback(() => {
     try {
       return auditLog.getStats();
     } catch (err) {
-      console.error('خطأ في الحصول على الإحصائيات:', err);
+      console.error("خطأ في الحصول على الإحصائيات:", err);
       return null;
     }
   }, [auditLog]);
@@ -518,7 +570,7 @@ export function useAuditLog() {
       setEntries([]);
       return true;
     } catch (err) {
-      console.error('خطأ في مسح السجل:', err);
+      console.error("خطأ في مسح السجل:", err);
       return false;
     }
   }, [auditLog]);
@@ -527,7 +579,7 @@ export function useAuditLog() {
     try {
       return auditLog.exportAsJSON();
     } catch (err) {
-      console.error('خطأ في التصدير:', err);
+      console.error("خطأ في التصدير:", err);
       return null;
     }
   }, [auditLog]);
@@ -539,11 +591,11 @@ export function useAuditLog() {
         setEntries(auditLog.getAllEntries());
         return imported;
       } catch (err) {
-        console.error('خطأ في الاستيراد:', err);
+        console.error("خطأ في الاستيراد:", err);
         return null;
       }
     },
-    [auditLog]
+    [auditLog],
   );
 
   return {
@@ -565,10 +617,16 @@ export function useAuditLog() {
 // ============================================================================
 
 export function useResults() {
-  const [currentResult, setCurrentResult] = useState<CalculationResult | null>(null);
-  const [previousResults, setPreviousResults] = useState<CalculationResult[]>([]);
+  const [currentResult, setCurrentResult] = useState<CalculationResult | null>(
+    null,
+  );
+  const [previousResults, setPreviousResults] = useState<CalculationResult[]>(
+    [],
+  );
   const [comparisonMode, setComparisonMode] = useState(false);
-  const [comparisonResults, setComparisonResults] = useState<ComparisonResult[]>([]);
+  const [comparisonResults, setComparisonResults] = useState<
+    ComparisonResult[]
+  >([]);
 
   const saveResult = useCallback((result: CalculationResult) => {
     setCurrentResult(result);
@@ -588,149 +646,157 @@ export function useResults() {
   /**
    * Advanced comparison between multiple madhhab results
    */
-  const compareMadhhabs = useCallback((
-    results: CalculationResult[]
-  ): ComparisonResult[] => {
-    if (results.length < 2) return [];
+  const compareMadhhabs = useCallback(
+    (results: CalculationResult[]): ComparisonResult[] => {
+      if (results.length < 2) return [];
 
-    const comparisons: ComparisonResult[] = [];
+      const comparisons: ComparisonResult[] = [];
 
-    // Use the first result as baseline, or find a common baseline
-    const baseline = results[0];
-    
-    for (let i = 1; i < results.length; i++) {
-      const other = results[i];
-      
-      // Calculate differences for each heir
-      const differences = [];
-      
-      // Get all unique heir keys from both results
-      const allHeirs = new Set([
-        ...baseline.shares.map(s => s.key).filter(Boolean),
-        ...other.shares.map(s => s.key).filter(Boolean)
-      ]);
+      // Use the first result as baseline, or find a common baseline
+      const baseline = results[0];
 
-      let totalBaseline = 0;
-      let totalOther = 0;
+      for (let i = 1; i < results.length; i++) {
+        const other = results[i];
 
-      for (const heirKey of allHeirs) {
-        const baselineShare = baseline.shares.find(s => s.key === heirKey);
-        const otherShare = other.shares.find(s => s.key === heirKey);
-        
-        const baselineAmount = baselineShare?.amount || 0;
-        const otherAmount = otherShare?.amount || 0;
-        
-        totalBaseline += baselineAmount;
-        totalOther += otherAmount;
-        
-        const amountDiff = otherAmount - baselineAmount;
-        const percentageDiff = baselineAmount > 0 
-          ? (amountDiff / baselineAmount) * 100 
-          : otherAmount > 0 ? 100 : 0;
-        
-        // Only include if there's a significant difference (> 0.01)
-        if (Math.abs(amountDiff) > 0.01) {
-          let explanation = '';
-          
-          // Generate explanation based on madhab differences
-          if (baselineShare && !otherShare) {
-            explanation = `محجوب في المذهب ${other.madhhabName}`;
-          } else if (!baselineShare && otherShare) {
-            explanation = `يرث في المذهب ${other.madhhabName} فقط`;
-          } else {
-            explanation = generateDifferenceExplanation(
-              heirKey as string,
-              baseline.madhab,
-              other.madhab,
-              amountDiff
-            );
+        // Calculate differences for each heir
+        const differences = [];
+
+        // Get all unique heir keys from both results
+        const allHeirs = new Set([
+          ...baseline.shares.map((s) => s.key).filter(Boolean),
+          ...other.shares.map((s) => s.key).filter(Boolean),
+        ]);
+
+        let totalBaseline = 0;
+        let totalOther = 0;
+
+        for (const heirKey of allHeirs) {
+          const baselineShare = baseline.shares.find((s) => s.key === heirKey);
+          const otherShare = other.shares.find((s) => s.key === heirKey);
+
+          const baselineAmount = baselineShare?.amount || 0;
+          const otherAmount = otherShare?.amount || 0;
+
+          totalBaseline += baselineAmount;
+          totalOther += otherAmount;
+
+          const amountDiff = otherAmount - baselineAmount;
+          const percentageDiff =
+            baselineAmount > 0
+              ? (amountDiff / baselineAmount) * 100
+              : otherAmount > 0
+                ? 100
+                : 0;
+
+          // Only include if there's a significant difference (> 0.01)
+          if (Math.abs(amountDiff) > 0.01) {
+            let explanation = "";
+
+            // Generate explanation based on madhab differences
+            if (baselineShare && !otherShare) {
+              explanation = `محجوب في المذهب ${other.madhhabName}`;
+            } else if (!baselineShare && otherShare) {
+              explanation = `يرث في المذهب ${other.madhhabName} فقط`;
+            } else {
+              explanation = generateDifferenceExplanation(
+                heirKey as string,
+                baseline.madhab,
+                other.madhab,
+                amountDiff,
+              );
+            }
+
+            differences.push({
+              heirName:
+                baselineShare?.name || otherShare?.name || (heirKey as string),
+              amountDiff,
+              percentageDiff,
+              explanation,
+            });
           }
-          
-          differences.push({
-            heirName: baselineShare?.name || otherShare?.name || heirKey as string,
-            amountDiff,
-            percentageDiff,
-            explanation
-          });
         }
+
+        // Determine if results are identical (within tolerance)
+        const isIdentical =
+          differences.length === 0 &&
+          Math.abs(totalBaseline - totalOther) < 0.01;
+
+        // Categorize differences
+        const majorDifferences = differences.filter(
+          (d) =>
+            Math.abs(d.percentageDiff) > 10 || Math.abs(d.amountDiff) > 1000,
+        ).length;
+
+        const minorDifferences = differences.length - majorDifferences;
+
+        // Generate recommendation
+        let recommendation = "";
+        if (isIdentical) {
+          recommendation = "النتائج متطابقة في كلا المذهبين";
+        } else if (majorDifferences > 0) {
+          recommendation = `يوجد اختلافات جوهرية في ${majorDifferences} من الورثة. يوصى باستشارة متخصص.`;
+        } else if (minorDifferences > 0) {
+          recommendation = "اختلافات طفيفة بين المذهبين - يمكن اختيار أي منهما";
+        }
+
+        // Push the comparison result
+        comparisons.push({
+          madhab: other.madhab,
+          madhhabName: other.madhhabName,
+          totalAmount: totalOther,
+          shares: other.shares,
+          differences,
+          summary: {
+            isIdentical,
+            majorDifferences,
+            minorDifferences,
+            recommendation,
+          },
+        });
       }
 
-      // Determine if results are identical (within tolerance)
-      const isIdentical = differences.length === 0 && 
-        Math.abs(totalBaseline - totalOther) < 0.01;
-
-      // Categorize differences
-      const majorDifferences = differences.filter(d => 
-        Math.abs(d.percentageDiff) > 10 || Math.abs(d.amountDiff) > 1000
-      ).length;
-      
-      const minorDifferences = differences.length - majorDifferences;
-
-      // Generate recommendation
-      let recommendation = '';
-      if (isIdentical) {
-        recommendation = 'النتائج متطابقة في كلا المذهبين';
-      } else if (majorDifferences > 0) {
-        recommendation = `يوجد اختلافات جوهرية في ${majorDifferences} من الورثة. يوصى باستشارة متخصص.`;
-      } else if (minorDifferences > 0) {
-        recommendation = 'اختلافات طفيفة بين المذهبين - يمكن اختيار أي منهما';
-      }
-
-      // Push the comparison result
-      comparisons.push({
-        madhab: other.madhab,
-        madhhabName: other.madhhabName,
-        totalAmount: totalOther,
-        shares: other.shares,
-        differences,
-        summary: {
-          isIdentical,
-          majorDifferences,
-          minorDifferences,
-          recommendation
-        }
-      });
-    }
-
-    setComparisonResults(comparisons);
-    return comparisons;
-  }, []);
+      setComparisonResults(comparisons);
+      return comparisons;
+    },
+    [],
+  );
 
   /**
    * Compare current result with previous results
    */
-  const compareWithPrevious = useCallback((
-    result: CalculationResult
-  ): ComparisonResult[] => {
-    const allResults = [result, ...previousResults.slice(0, 3)]; // Compare with up to 3 previous
-    return compareMadhhabs(allResults);
-  }, [previousResults, compareMadhhabs]);
+  const compareWithPrevious = useCallback(
+    (result: CalculationResult): ComparisonResult[] => {
+      const allResults = [result, ...previousResults.slice(0, 3)]; // Compare with up to 3 previous
+      return compareMadhhabs(allResults);
+    },
+    [previousResults, compareMadhhabs],
+  );
 
   /**
    * Compare specific results by index in previousResults
    */
-  const compareSpecific = useCallback((
-    indices: number[]
-  ): ComparisonResult[] => {
-    const results = indices
-      .map(index => previousResults[index])
-      .filter(r => r !== undefined) as CalculationResult[];
-    
-    return compareMadhhabs(results);
-  }, [previousResults, compareMadhhabs]);
+  const compareSpecific = useCallback(
+    (indices: number[]): ComparisonResult[] => {
+      const results = indices
+        .map((index) => previousResults[index])
+        .filter((r) => r !== undefined) as CalculationResult[];
+
+      return compareMadhhabs(results);
+    },
+    [previousResults, compareMadhhabs],
+  );
 
   /**
    * Generate HTML report for comparison
    */
-  const generateComparisonReport = useCallback((
-    comparisons: ComparisonResult[]
-  ): string => {
-    if (comparisons.length === 0) return '';
+  const generateComparisonReport = useCallback(
+    (comparisons: ComparisonResult[]): string => {
+      if (comparisons.length === 0) return "";
 
-    const baseline = currentResult;
-    if (!baseline) return '';
+      const baseline = currentResult;
+      if (!baseline) return "";
 
-    let html = `
+      let html = `
       <!DOCTYPE html>
       <html dir="rtl" lang="ar">
       <head>
@@ -749,28 +815,28 @@ export function useResults() {
       </head>
       <body>
         <h1>مقارنة نتائج المذاهب الفقهية</h1>
-        <p>تاريخ التقرير: ${new Date().toLocaleDateString('ar-SA')}</p>
+        <p>تاريخ التقرير: ${new Date().toLocaleDateString("ar-SA")}</p>
         
         <h2>المذهب الأساسي: ${baseline.madhhabName}</h2>
         <p>إجمالي التركة: ${baseline.shares.reduce((s, sh) => s + sh.amount, 0).toFixed(2)} ر.س</p>
     `;
 
-    comparisons.forEach(comp => {
-      html += `
+      comparisons.forEach((comp) => {
+        html += `
         <h3>المقارنة مع: ${comp.madhhabName}</h3>
         <div class="summary">
           <p>إجمالي التركة: ${comp.totalAmount.toFixed(2)} ر.س</p>
           <p>حالة المقارنة: ${
-            comp.summary.isIdentical 
-              ? '<span class="identical">✓ متطابقة</span>' 
+            comp.summary.isIdentical
+              ? '<span class="identical">✓ متطابقة</span>'
               : '<span class="different">⚠️ مختلفة</span>'
           }</p>
-          ${comp.summary.recommendation ? `<p>توصية: ${comp.summary.recommendation}</p>` : ''}
+          ${comp.summary.recommendation ? `<p>توصية: ${comp.summary.recommendation}</p>` : ""}
         </div>
       `;
 
-      if (comp.differences.length > 0) {
-        html += `
+        if (comp.differences.length > 0) {
+          html += `
           <h4>الاختلافات:</h4>
           <table>
             <tr>
@@ -781,38 +847,41 @@ export function useResults() {
             </tr>
         `;
 
-        comp.differences.forEach(diff => {
-          const diffClass = Math.abs(diff.percentageDiff) > 10 ? 'major-diff' : 'different';
-          html += `
+          comp.differences.forEach((diff) => {
+            const diffClass =
+              Math.abs(diff.percentageDiff) > 10 ? "major-diff" : "different";
+            html += `
             <tr>
               <td>${diff.heirName}</td>
-              <td class="${diffClass}">${diff.amountDiff > 0 ? '+' : ''}${diff.amountDiff.toFixed(2)}</td>
-              <td class="${diffClass}">${diff.percentageDiff > 0 ? '+' : ''}${diff.percentageDiff.toFixed(1)}%</td>
+              <td class="${diffClass}">${diff.amountDiff > 0 ? "+" : ""}${diff.amountDiff.toFixed(2)}</td>
+              <td class="${diffClass}">${diff.percentageDiff > 0 ? "+" : ""}${diff.percentageDiff.toFixed(1)}%</td>
               <td>${diff.explanation}</td>
             </tr>
           `;
-        });
+          });
 
-        html += `</table>`;
-      } else {
-        html += `<p class="identical">✓ لا توجد اختلافات في توزيع الورثة</p>`;
-      }
-    });
+          html += `</table>`;
+        } else {
+          html += `<p class="identical">✓ لا توجد اختلافات في توزيع الورثة</p>`;
+        }
+      });
 
-    html += `
+      html += `
         <div class="summary">
           <p><strong>ملخص عام:</strong></p>
           <p>تمت مقارنة ${comparisons.length + 1} مذاهب</p>
-          <p>${comparisons.filter(c => c.summary.isIdentical).length} مذاهب متطابقة مع الأساسي</p>
-          <p>${comparisons.filter(c => !c.summary.isIdentical && c.summary.majorDifferences === 0).length} مذاهب باختلافات طفيفة</p>
-          <p>${comparisons.filter(c => c.summary.majorDifferences > 0).length} مذاهب باختلافات جوهرية</p>
+          <p>${comparisons.filter((c) => c.summary.isIdentical).length} مذاهب متطابقة مع الأساسي</p>
+          <p>${comparisons.filter((c) => !c.summary.isIdentical && c.summary.majorDifferences === 0).length} مذاهب باختلافات طفيفة</p>
+          <p>${comparisons.filter((c) => c.summary.majorDifferences > 0).length} مذاهب باختلافات جوهرية</p>
         </div>
       </body>
       </html>
     `;
 
-    return html;
-  }, [currentResult]);
+      return html;
+    },
+    [currentResult],
+  );
 
   /**
    * Get comparison statistics
@@ -827,8 +896,8 @@ export function useResults() {
           shafii: 0,
           hanafi: 0,
           maliki: 0,
-          hanbali: 0
-        }
+          hanbali: 0,
+        },
       };
     }
 
@@ -836,37 +905,41 @@ export function useResults() {
       shafii: 0,
       hanafi: 0,
       maliki: 0,
-      hanbali: 0
+      hanbali: 0,
     };
 
-    previousResults.forEach(r => {
+    previousResults.forEach((r) => {
       madhabCount[r.madhab] = (madhabCount[r.madhab] || 0) + 1;
     });
 
-    const mostCommonMadhab = Object.entries(madhabCount)
-      .sort(([,a], [,b]) => b - a)[0]?.[0] as MadhhabType || null;
+    const mostCommonMadhab =
+      (Object.entries(madhabCount).sort(
+        ([, a], [, b]) => b - a,
+      )[0]?.[0] as MadhhabType) || null;
 
     // Calculate average differences between consecutive results
     let totalDifferences = 0;
     let comparisonCount = 0;
 
     for (let i = 0; i < previousResults.length - 1; i++) {
-      const comparisons = compareMadhhabs([previousResults[i], previousResults[i + 1]]);
+      const comparisons = compareMadhhabs([
+        previousResults[i],
+        previousResults[i + 1],
+      ]);
       if (comparisons.length > 0) {
         totalDifferences += comparisons[0].differences.length;
         comparisonCount++;
       }
     }
 
-    const averageDifferences = comparisonCount > 0 
-      ? totalDifferences / comparisonCount 
-      : 0;
+    const averageDifferences =
+      comparisonCount > 0 ? totalDifferences / comparisonCount : 0;
 
     return {
       totalComparisons: previousResults.length,
       mostCommonMadhab,
       averageDifferences,
-      madhabAgreement: madhabCount
+      madhabAgreement: madhabCount,
     };
   }, [previousResults, compareMadhhabs]);
 
@@ -877,19 +950,27 @@ export function useResults() {
       previousResults,
       comparisonMode,
       comparisonResults,
-      comparisons: currentResult && previousResults.length > 1
-        ? compareWithPrevious(currentResult)
-        : [],
+      comparisons:
+        currentResult && previousResults.length > 1
+          ? compareWithPrevious(currentResult)
+          : [],
       stats: getComparisonStats(),
     };
-  }, [currentResult, previousResults, comparisonMode, comparisonResults, compareWithPrevious, getComparisonStats]);
+  }, [
+    currentResult,
+    previousResults,
+    comparisonMode,
+    comparisonResults,
+    compareWithPrevious,
+    getComparisonStats,
+  ]);
 
   const getAverageResult = useCallback(() => {
     if (previousResults.length === 0) return null;
 
     const totalAmount = previousResults.reduce(
       (sum, r) => sum + r.shares.reduce((s, share) => s + share.amount, 0),
-      0
+      0,
     );
     const avgAmount = totalAmount / previousResults.length;
 
@@ -935,60 +1016,60 @@ function generateDifferenceExplanation(
   heirKey: string,
   madhab1: MadhhabType,
   madhab2: MadhhabType,
-  amountDiff: number
+  amountDiff: number,
 ): string {
   const explanations: Record<string, string> = {
-    'grandfather': 'الجد مع الإخوة - يختلف بين المذاهب',
-    'mother': 'الأم مع الأب والزوج - العمرية',
-    'granddaughter': 'بنت الابن مع البنات',
-    'full_sister': 'الأخت الشقيقة مع الإخوة',
-    'paternal_sister': 'الأخت لأب مع الأخوات',
+    grandfather: "الجد مع الإخوة - يختلف بين المذاهب",
+    mother: "الأم مع الأب والزوج - العمرية",
+    granddaughter: "بنت الابن مع البنات",
+    full_sister: "الأخت الشقيقة مع الإخوة",
+    paternal_sister: "الأخت لأب مع الأخوات",
   };
 
-  return explanations[heirKey] || 'اختلاف في قواعد المذهب';
+  return explanations[heirKey] || "اختلاف في قواعد المذهب";
 }
 
 // ============================================================================
 // 4. useMadhab Hook - إدارة اختيار المذهب
 // ============================================================================
 
-export function useMadhab(defaultMadhab: MadhhabType = 'shafii') {
+export function useMadhab(defaultMadhab: MadhhabType = "shafii") {
   const [madhab, setMadhab] = useState<MadhhabType>(defaultMadhab);
   const [madhabs] = useState<MadhhabType[]>([
-    'shafii',
-    'hanafi',
-    'maliki',
-    'hanbali',
+    "shafii",
+    "hanafi",
+    "maliki",
+    "hanbali",
   ]);
 
   const changeMadhab = useCallback(
     (newMadhab: MadhhabType) => {
       if (madhabs.includes(newMadhab)) {
         setMadhab(newMadhab);
-        if (typeof window !== 'undefined') {
+        if (typeof window !== "undefined") {
           try {
-            localStorage.setItem('selectedMadhab', newMadhab);
+            localStorage.setItem("selectedMadhab", newMadhab);
           } catch (err) {
-            console.warn('لا يمكن حفظ المذهب في التخزين المحلي:', err);
+            console.warn("لا يمكن حفظ المذهب في التخزين المحلي:", err);
           }
         }
         return true;
       }
       return false;
     },
-    [madhabs]
+    [madhabs],
   );
 
   const loadSavedMadhab = useCallback(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       try {
-        const saved = localStorage.getItem('selectedMadhab') as MadhhabType;
+        const saved = localStorage.getItem("selectedMadhab") as MadhhabType;
         if (saved && madhabs.includes(saved)) {
           setMadhab(saved);
           return saved;
         }
       } catch (err) {
-        console.warn('لا يمكن تحميل المذهب المحفوظ:', err);
+        console.warn("لا يمكن تحميل المذهب المحفوظ:", err);
       }
     }
     return madhab;
@@ -996,20 +1077,20 @@ export function useMadhab(defaultMadhab: MadhhabType = 'shafii') {
 
   const getMadhhabInfo = useCallback(() => {
     const info: Record<MadhhabType, string> = {
-      shafii: 'الشافعي',
-      hanafi: 'الحنفي',
-      maliki: 'المالكي',
-      hanbali: 'الحنبلي',
+      shafii: "الشافعي",
+      hanafi: "الحنفي",
+      maliki: "المالكي",
+      hanbali: "الحنبلي",
     };
     return info[madhab];
   }, [madhab]);
 
   const getMadhhabsList = useCallback(() => {
     const list: Record<MadhhabType, string> = {
-      shafii: 'المذهب الشافعي',
-      hanafi: 'المذهب الحنفي',
-      maliki: 'المذهب المالكي',
-      hanbali: 'المذهب الحنبلي',
+      shafii: "المذهب الشافعي",
+      hanafi: "المذهب الحنفي",
+      maliki: "المذهب المالكي",
+      hanbali: "المذهب الحنبلي",
     };
     return Object.entries(list).map(([value, label]) => ({
       value: value as MadhhabType,
@@ -1039,25 +1120,30 @@ export function useHeirs(initialHeirs: HeirsData = {}) {
       id: `heir-${key}`,
       key: key as HeirType,
       count: count || 0,
-    }))
+    })),
   );
   const [error, setError] = useState<string | null>(null);
 
   const addHeir = useCallback(
-    (heir: { type: string; gender: 'male' | 'female'; count: number; relation?: string }) => {
+    (heir: {
+      type: string;
+      gender: "male" | "female";
+      count: number;
+      relation?: string;
+    }) => {
       try {
-        if (!heir.type || heir.type.trim() === '') {
-          throw new Error('نوع الوارث مطلوب');
+        if (!heir.type || heir.type.trim() === "") {
+          throw new Error("نوع الوارث مطلوب");
         }
 
         if (heir.count < 1) {
-          throw new Error('عدد الورثة يجب أن يكون 1 على الأقل');
+          throw new Error("عدد الورثة يجب أن يكون 1 على الأقل");
         }
 
         // FIX: Check for duplicate heir type
         const isDuplicate = heirs.some((h) => h.key === heir.type);
         if (isDuplicate) {
-          throw new Error('هذا الوارث موجود بالفعل');
+          throw new Error("هذا الوارث موجود بالفعل");
         }
 
         setHeirs((prev) => [
@@ -1071,23 +1157,23 @@ export function useHeirs(initialHeirs: HeirsData = {}) {
         setError(null);
         return true;
       } catch (err) {
-        const msg = err instanceof Error ? err.message : 'خطأ غير معروف';
+        const msg = err instanceof Error ? err.message : "خطأ غير معروف";
         setError(msg);
         return false;
       }
     },
-    [heirs]
+    [heirs],
   );
 
   const updateHeir = useCallback((id: string, updates: { count?: number }) => {
     try {
       setHeirs((prev) =>
-        prev.map((h) => (h.id === id ? { ...h, ...updates } : h))
+        prev.map((h) => (h.id === id ? { ...h, ...updates } : h)),
       );
       setError(null);
       return true;
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'خطأ غير معروف';
+      const msg = err instanceof Error ? err.message : "خطأ غير معروف";
       setError(msg);
       return false;
     }
@@ -1098,18 +1184,18 @@ export function useHeirs(initialHeirs: HeirsData = {}) {
       try {
         const newHeirs = heirs.filter((h) => h.id !== id);
         if (newHeirs.length === 0) {
-          throw new Error('يجب الاحتفاظ بوارث واحد على الأقل');
+          throw new Error("يجب الاحتفاظ بوارث واحد على الأقل");
         }
         setHeirs(newHeirs);
         setError(null);
         return true;
       } catch (err) {
-        const msg = err instanceof Error ? err.message : 'خطأ غير معروف';
+        const msg = err instanceof Error ? err.message : "خطأ غير معروف";
         setError(msg);
         return false;
       }
     },
-    [heirs]
+    [heirs],
   );
 
   const clearHeirs = useCallback(() => {
@@ -1119,13 +1205,13 @@ export function useHeirs(initialHeirs: HeirsData = {}) {
 
   const validateHeirs = useCallback(() => {
     if (heirs.length === 0) {
-      setError('يجب تحديد ورثة واحد على الأقل');
+      setError("يجب تحديد ورثة واحد على الأقل");
       return false;
     }
 
     const totalCount = heirs.reduce((sum, h) => sum + h.count, 0);
     if (totalCount === 0) {
-      setError('يجب أن يكون هناك ورثة واحد على الأقل');
+      setError("يجب أن يكون هناك ورثة واحد على الأقل");
       return false;
     }
 
@@ -1168,10 +1254,10 @@ export function useHeirs(initialHeirs: HeirsData = {}) {
 // ============================================================================
 function debounce<T extends (...args: any[]) => any>(
   func: T,
-  wait: number
+  wait: number,
 ): (...args: Parameters<T>) => void {
   let timeout: ReturnType<typeof setTimeout> | null = null;
-  
+
   return (...args: Parameters<T>) => {
     if (timeout) {
       clearTimeout(timeout);

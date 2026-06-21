@@ -1,22 +1,22 @@
-import { describe, it } from 'vitest';
-import { InheritanceCalculationEngine } from '../lib/inheritance';
-import type { EstateData, HeirsData } from '../lib/inheritance/types';
+import { describe, it } from "vitest";
+import { InheritanceCalculationEngine } from "../lib/inheritance";
+import type { EstateData, HeirsData } from "../lib/inheritance/types";
 
-describe('Debug Edge Cases', () => {
-  it('should handle only one son', () => {
+describe("Debug Edge Cases", () => {
+  it("should handle only one son", () => {
     const estate: EstateData = {
       total: 99000,
       funeral: 9000,
       debts: 0,
-      will: 0
+      will: 0,
     };
 
     const heirs: HeirsData = {
-      son: 1
+      son: 1,
     };
 
     try {
-      const engine = new InheritanceCalculationEngine('shafii', estate, heirs);
+      const engine = new InheritanceCalculationEngine("shafii", estate, heirs);
       const result = engine.calculate();
 
       // console.log('\n=== ONLY SON ===');
@@ -26,7 +26,9 @@ describe('Debug Edge Cases', () => {
       } else {
         // console.log('Net estate:', estate.total - estate.funeral);
         result.shares.forEach((share, i) => {
-          const fracStr = share.fraction ? `${share.fraction.numerator}/${share.fraction.denominator}` : 'N/A';
+          const fracStr = share.fraction
+            ? `${share.fraction.numerator}/${share.fraction.denominator}`
+            : "N/A";
           // console.log(`[${i}] ${share.name}: fraction=${fracStr}, amount=${share.amount}`);
         });
         const total = result.shares.reduce((sum, s) => sum + s.amount, 0);
@@ -41,19 +43,19 @@ describe('Debug Edge Cases', () => {
     }
   });
 
-  it('should handle only one daughter', () => {
+  it("should handle only one daughter", () => {
     const estate: EstateData = {
       total: 99000,
       funeral: 9000,
       debts: 0,
-      will: 0
+      will: 0,
     };
 
     const heirs: HeirsData = {
-      daughter: 1
+      daughter: 1,
     };
 
-    const engine = new InheritanceCalculationEngine('shafii', estate, heirs);
+    const engine = new InheritanceCalculationEngine("shafii", estate, heirs);
     const result = engine.calculate();
 
     // console.log('\n=== ONLY DAUGHTER ===');
@@ -63,7 +65,9 @@ describe('Debug Edge Cases', () => {
     } else {
       // console.log('Net estate:', estate.total - estate.funeral);
       result.shares.forEach((share, i) => {
-        const fracStr = share.fraction ? `${share.fraction.numerator}/${share.fraction.denominator}` : 'N/A';
+        const fracStr = share.fraction
+          ? `${share.fraction.numerator}/${share.fraction.denominator}`
+          : "N/A";
         // console.log(`[${i}] ${share.name}: fraction=${fracStr}, amount=${share.amount}`);
       });
       const total = result.shares.reduce((sum, s) => sum + s.amount, 0);
@@ -73,19 +77,19 @@ describe('Debug Edge Cases', () => {
     }
   });
 
-  it('should handle five full brothers', () => {
+  it("should handle five full brothers", () => {
     const estate: EstateData = {
       total: 600000,
       funeral: 6000,
       debts: 0,
-      will: 0
+      will: 0,
     };
 
     const heirs: HeirsData = {
-      full_brother: 5
+      full_brother: 5,
     };
 
-    const engine = new InheritanceCalculationEngine('shafii', estate, heirs);
+    const engine = new InheritanceCalculationEngine("shafii", estate, heirs);
     const result = engine.calculate();
 
     // console.log('\n=== FIVE FULL BROTHERS ===');
@@ -96,7 +100,9 @@ describe('Debug Edge Cases', () => {
     } else {
       // console.log('Net estate:', estate.total - estate.funeral);
       result.shares.forEach((share, i) => {
-        const fracStr = share.fraction ? `${share.fraction.numerator}/${share.fraction.denominator}` : 'N/A';
+        const fracStr = share.fraction
+          ? `${share.fraction.numerator}/${share.fraction.denominator}`
+          : "N/A";
         // console.log(`[${i}] ${share.name}: fraction=${fracStr}, amount=${share.amount}`);
       });
       const total = result.shares.reduce((sum, s) => sum + s.amount, 0);

@@ -1,12 +1,12 @@
 /**
  * نظام الحجب الفقهي الشامل
  * Comprehensive Islamic Hijab (Inheritance Obstruction) System
- * 
+ *
  * يطبق جميع قواعس الحجب حسب كل مذهب إسلامي
  */
 
-import { MadhhabType, HeirsData } from './types';
-import { getHijabRules } from './constants';
+import { MadhhabType, HeirsData } from "./types";
+import { getHijabRules } from "./constants";
 
 export class HijabSystem {
   private madhab: MadhhabType;
@@ -32,7 +32,7 @@ export class HijabSystem {
 
     return {
       heirs: result,
-      log: this.hijabLog
+      log: this.hijabLog,
     };
   }
 
@@ -44,7 +44,7 @@ export class HijabSystem {
     const rules = getHijabRules(this.madhab);
 
     // قائمة الحجب الكامل
-    const completeHijabRules = rules.filter(r => r.type === 'complete');
+    const completeHijabRules = rules.filter((r) => r.type === "complete");
 
     for (const rule of completeHijabRules) {
       const hijabber = heirs[rule.hijabber];
@@ -54,7 +54,7 @@ export class HijabSystem {
           if (heirs[hijabbed] && heirs[hijabbed]! > 0) {
             this.hijabLog.push(
               `${rule.hijabber} يحجب ${hijabbed}`,
-              `${rule.hijabber} blocks ${hijabbed}`
+              `${rule.hijabber} blocks ${hijabbed}`,
             );
             heirs[hijabbed] = 0;
           }
@@ -62,55 +62,56 @@ export class HijabSystem {
       }
     }
 
-// ===== MADHAB-SPECIFIC RULE: Grandfather with siblings =====
-const hasGrandfather = (heirs.grandfather || 0) > 0;
-const hasSiblings = (heirs.full_brother || 0) > 0 || 
-                    (heirs.full_sister || 0) > 0 ||
-                    (heirs.half_brother_paternal || 0) > 0 ||
-                    (heirs.half_sister_paternal || 0) > 0;
+    // ===== MADHAB-SPECIFIC RULE: Grandfather with siblings =====
+    const hasGrandfather = (heirs.grandfather || 0) > 0;
+    const hasSiblings =
+      (heirs.full_brother || 0) > 0 ||
+      (heirs.full_sister || 0) > 0 ||
+      (heirs.half_brother_paternal || 0) > 0 ||
+      (heirs.half_sister_paternal || 0) > 0;
 
-if (hasGrandfather && hasSiblings) {
-  // Shafii & Hanafi: Grandfather BLOCKS siblings
-  if (this.madhab === 'shafii' || this.madhab === 'hanafi') {
-    this.hijabLog.push(
-      `في المذهب ${this.madhab === 'shafii' ? 'الشافعي' : 'الحنفي'}: الجد يحجب الإخوة`,
-      `In ${this.madhab} madhab: Grandfather blocks siblings`
-    );
-    
-    // Block all siblings
-    heirs.full_brother = 0;
-    heirs.full_sister = 0;
-    heirs.half_brother_paternal = 0;
-    heirs.half_sister_paternal = 0;
-  }
-  
-  // Maliki & Hanbali: Grandfather SHARES with siblings (handled in computeAsaba, not hijab)
-  else if (this.madhab === 'maliki' || this.madhab === 'hanbali') {
-    this.hijabLog.push(
-      `في المذهب ${this.madhab === 'maliki' ? 'المالكي' : 'الحنبلي'}: الجد يقاسم الإخوة (يعالج في العصبات)`,
-      `In ${this.madhab} madhab: Grandfather shares with siblings (handled in asaba)`
-    );
-    // No blocking - shares will be calculated in computeAsaba
-  }
-}
+    if (hasGrandfather && hasSiblings) {
+      // Shafii & Hanafi: Grandfather BLOCKS siblings
+      if (this.madhab === "shafii" || this.madhab === "hanafi") {
+        this.hijabLog.push(
+          `في المذهب ${this.madhab === "shafii" ? "الشافعي" : "الحنفي"}: الجد يحجب الإخوة`,
+          `In ${this.madhab} madhab: Grandfather blocks siblings`,
+        );
+
+        // Block all siblings
+        heirs.full_brother = 0;
+        heirs.full_sister = 0;
+        heirs.half_brother_paternal = 0;
+        heirs.half_sister_paternal = 0;
+      }
+
+      // Maliki & Hanbali: Grandfather SHARES with siblings (handled in computeAsaba, not hijab)
+      else if (this.madhab === "maliki" || this.madhab === "hanbali") {
+        this.hijabLog.push(
+          `في المذهب ${this.madhab === "maliki" ? "المالكي" : "الحنبلي"}: الجد يقاسم الإخوة (يعالج في العصبات)`,
+          `In ${this.madhab} madhab: Grandfather shares with siblings (handled in asaba)`,
+        );
+        // No blocking - shares will be calculated in computeAsaba
+      }
+    }
     // ===== Granddaughter blocking by daughters =====
     // Rule: 2+ daughters block granddaughters (unless grandson exists)
     if ((heirs.daughter || 0) >= 2 && (heirs.granddaughter || 0) > 0) {
       // Check if there's a grandson to act as co-heir
       const hasGrandson = (heirs.grandson || 0) > 0;
-      
+
       if (!hasGrandson) {
         // No grandson, so granddaughters are blocked
         this.hijabLog.push(
           `بنتان فأكثر تحجبان بنت الابن`,
-          `Two or more daughters block granddaughters`
+          `Two or more daughters block granddaughters`,
         );
         heirs.granddaughter = 0;
       } else {
         // With grandson, granddaughters are not blocked, but will inherit as asaba
         this.hijabLog.push(
           `بنتان مع ابن الابن - بنات الابن يرثن كعصبة`,
-          `Daughters with grandson - granddaughters inherit as asaba`
+          `Daughters with grandson - granddaughters inherit as asaba`,
         );
         // No change - granddaughters will inherit with grandson in asaba
       }
@@ -127,16 +128,21 @@ if (hasGrandfather && hasSiblings) {
    */
   private applyPartialHijab(heirs: HeirsData): void {
     const rules = getHijabRules(this.madhab);
-    const partialHijabRules = rules.filter(r => r.type === 'partial');
+    const partialHijabRules = rules.filter((r) => r.type === "partial");
 
     for (const rule of partialHijabRules) {
       // معالجة القواعس الخاصة
-      if (rule.reason === 'from_third_to_sixth') {
+      if (rule.reason === "from_third_to_sixth") {
         // الأب يخفض الأم من الثلث إلى السدس
-        if (heirs['father'] && heirs['father']! > 0 && heirs['mother'] && heirs['mother']! > 0) {
+        if (
+          heirs["father"] &&
+          heirs["father"]! > 0 &&
+          heirs["mother"] &&
+          heirs["mother"]! > 0
+        ) {
           this.hijabLog.push(
             `الأب يخفض نصيب الأم من الثلث إلى السدس`,
-            `Father reduces mother's share from 1/3 to 1/6`
+            `Father reduces mother's share from 1/3 to 1/6`,
           );
         }
       }
@@ -153,26 +159,26 @@ if (hasGrandfather && hasSiblings) {
   checkInheritanceRights(heir: string): boolean {
     // القائمة الكاملة للورثة المعترف بهم فقهياً
     const recognizedHeirs = [
-      'husband',
-      'wife',
-      'son',
-      'daughter',
-      'father',
-      'mother',
-      'grandfather',
-      'grandmother',
-      'full_brother',
-      'full_sister',
-      'half_brother_paternal',
-      'half_sister_paternal',
-      'half_brother_maternal',
-      'half_sister_maternal',
-      'nephew_from_brother',
-      'niece_from_brother',
-      'uncle_paternal',
-      'uncle_maternal',
-      'aunt_paternal',
-      'aunt_maternal'
+      "husband",
+      "wife",
+      "son",
+      "daughter",
+      "father",
+      "mother",
+      "grandfather",
+      "grandmother",
+      "full_brother",
+      "full_sister",
+      "half_brother_paternal",
+      "half_sister_paternal",
+      "half_brother_maternal",
+      "half_sister_maternal",
+      "nephew_from_brother",
+      "niece_from_brother",
+      "uncle_paternal",
+      "uncle_maternal",
+      "aunt_paternal",
+      "aunt_maternal",
     ];
 
     return recognizedHeirs.includes(heir);
@@ -191,7 +197,7 @@ if (hasGrandfather && hasSiblings) {
    * Check if there are descendants
    */
   hasDescendants(heirs: HeirsData): boolean {
-    return (heirs['son'] || 0) > 0 || (heirs['daughter'] || 0) > 0;
+    return (heirs["son"] || 0) > 0 || (heirs["daughter"] || 0) > 0;
   }
 
   /**
@@ -199,7 +205,7 @@ if (hasGrandfather && hasSiblings) {
    * Check if father exists
    */
   hasFather(heirs: HeirsData): boolean {
-    return (heirs['father'] || 0) > 0;
+    return (heirs["father"] || 0) > 0;
   }
 
   /**
@@ -207,7 +213,7 @@ if (hasGrandfather && hasSiblings) {
    * Check if mother exists
    */
   hasMother(heirs: HeirsData): boolean {
-    return (heirs['mother'] || 0) > 0;
+    return (heirs["mother"] || 0) > 0;
   }
 
   /**
@@ -215,7 +221,7 @@ if (hasGrandfather && hasSiblings) {
    * Check if husband exists
    */
   hasHusband(heirs: HeirsData): boolean {
-    return (heirs['husband'] || 0) > 0;
+    return (heirs["husband"] || 0) > 0;
   }
 
   /**
@@ -223,7 +229,7 @@ if (hasGrandfather && hasSiblings) {
    * Check if wife exists
    */
   hasWife(heirs: HeirsData): boolean {
-    return (heirs['wife'] || 0) > 0;
+    return (heirs["wife"] || 0) > 0;
   }
 
   /**
@@ -232,10 +238,10 @@ if (hasGrandfather && hasSiblings) {
    */
   hasSiblings(heirs: HeirsData): boolean {
     const siblings =
-      (heirs['full_brother'] || 0) +
-      (heirs['full_sister'] || 0) +
-      (heirs['half_brother_paternal'] || 0) +
-      (heirs['half_sister_paternal'] || 0);
+      (heirs["full_brother"] || 0) +
+      (heirs["full_sister"] || 0) +
+      (heirs["half_brother_paternal"] || 0) +
+      (heirs["half_sister_paternal"] || 0);
 
     return siblings > 0;
   }
@@ -246,14 +252,14 @@ if (hasGrandfather && hasSiblings) {
    */
   countMales(heirs: HeirsData): number {
     return (
-      (heirs['son'] || 0) +
-      (heirs['father'] || 0) +
-      (heirs['grandfather'] || 0) +
-      (heirs['full_brother'] || 0) +
-      (heirs['half_brother_paternal'] || 0) +
-      (heirs['half_brother_maternal'] || 0) +
-      (heirs['uncle_paternal'] || 0) +
-      (heirs['uncle_maternal'] || 0)
+      (heirs["son"] || 0) +
+      (heirs["father"] || 0) +
+      (heirs["grandfather"] || 0) +
+      (heirs["full_brother"] || 0) +
+      (heirs["half_brother_paternal"] || 0) +
+      (heirs["half_brother_maternal"] || 0) +
+      (heirs["uncle_paternal"] || 0) +
+      (heirs["uncle_maternal"] || 0)
     );
   }
 
@@ -263,14 +269,14 @@ if (hasGrandfather && hasSiblings) {
    */
   countFemales(heirs: HeirsData): number {
     return (
-      (heirs['daughter'] || 0) +
-      (heirs['mother'] || 0) +
-      (heirs['grandmother'] || 0) +
-      (heirs['full_sister'] || 0) +
-      (heirs['half_sister_paternal'] || 0) +
-      (heirs['half_sister_maternal'] || 0) +
-      (heirs['aunt_paternal'] || 0) +
-      (heirs['aunt_maternal'] || 0)
+      (heirs["daughter"] || 0) +
+      (heirs["mother"] || 0) +
+      (heirs["grandmother"] || 0) +
+      (heirs["full_sister"] || 0) +
+      (heirs["half_sister_paternal"] || 0) +
+      (heirs["half_sister_maternal"] || 0) +
+      (heirs["aunt_paternal"] || 0) +
+      (heirs["aunt_maternal"] || 0)
     );
   }
 

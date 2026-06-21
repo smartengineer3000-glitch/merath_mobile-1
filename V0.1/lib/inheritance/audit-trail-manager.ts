@@ -6,7 +6,7 @@
  * calculation history
  */
 
-import { AuditLogEntry } from './audit-log';
+import { AuditLogEntry } from "./audit-log";
 
 export interface FilteredAuditResult {
   entries: AuditLogEntry[];
@@ -24,8 +24,8 @@ export interface AuditTrailFilters {
 }
 
 export interface SortOption {
-  field: 'timestamp' | 'madhab' | 'total' | 'confidence';
-  order: 'asc' | 'desc';
+  field: "timestamp" | "madhab" | "total" | "confidence";
+  order: "asc" | "desc";
 }
 
 /**
@@ -37,21 +37,22 @@ export class AuditTrailManager {
    */
   static filterEntries(
     entries: AuditLogEntry[],
-    filters: AuditTrailFilters
+    filters: AuditTrailFilters,
   ): FilteredAuditResult {
     let filtered = [...entries];
 
     // Filter by madhab
     if (filters.madhab) {
       filtered = filtered.filter(
-        (entry) => entry.madhab?.toLowerCase() === filters.madhab?.toLowerCase()
+        (entry) =>
+          entry.madhab?.toLowerCase() === filters.madhab?.toLowerCase(),
       );
     }
 
     // Filter by date range
     if (filters.dateFrom) {
       filtered = filtered.filter(
-        (entry) => new Date(entry.timestamp) >= filters.dateFrom!
+        (entry) => new Date(entry.timestamp) >= filters.dateFrom!,
       );
     }
 
@@ -59,20 +60,20 @@ export class AuditTrailManager {
       const endOfDay = new Date(filters.dateTo);
       endOfDay.setHours(23, 59, 59, 999);
       filtered = filtered.filter(
-        (entry) => new Date(entry.timestamp) <= endOfDay
+        (entry) => new Date(entry.timestamp) <= endOfDay,
       );
     }
 
     // Filter by estate amount range
     if (filters.minEstate !== undefined) {
       filtered = filtered.filter(
-        (entry) => (entry.estate?.total || 0) >= filters.minEstate!
+        (entry) => (entry.estate?.total || 0) >= filters.minEstate!,
       );
     }
 
     if (filters.maxEstate !== undefined) {
       filtered = filtered.filter(
-        (entry) => (entry.estate?.total || 0) <= filters.maxEstate!
+        (entry) => (entry.estate?.total || 0) <= filters.maxEstate!,
       );
     }
 
@@ -80,8 +81,8 @@ export class AuditTrailManager {
     if (filters.searchTerm) {
       const term = filters.searchTerm.toLowerCase();
       filtered = filtered.filter((entry) => {
-        const madhab = entry.madhab?.toLowerCase() || '';
-        const notes = entry.metadata?.notes?.toLowerCase() || '';
+        const madhab = entry.madhab?.toLowerCase() || "";
+        const notes = entry.metadata?.notes?.toLowerCase() || "";
         return madhab.includes(term) || notes.includes(term);
       });
     }
@@ -98,7 +99,7 @@ export class AuditTrailManager {
    */
   static sortEntries(
     entries: AuditLogEntry[],
-    sortOption: SortOption
+    sortOption: SortOption,
   ): AuditLogEntry[] {
     const sorted = [...entries];
 
@@ -106,29 +107,29 @@ export class AuditTrailManager {
       let compareValue = 0;
 
       switch (sortOption.field) {
-        case 'timestamp':
+        case "timestamp":
           compareValue =
-            new Date(a.timestamp).getTime() -
-            new Date(b.timestamp).getTime();
+            new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
           break;
 
-        case 'madhab':
-          compareValue = (a.madhab || '').localeCompare(b.madhab || '', 'ar');
+        case "madhab":
+          compareValue = (a.madhab || "").localeCompare(b.madhab || "", "ar");
           break;
 
-        case 'total':
+        case "total":
           compareValue = (a.estate?.total || 0) - (b.estate?.total || 0);
           break;
 
-        case 'confidence':
-          compareValue = (a.result?.confidence || 0) - (b.result?.confidence || 0);
+        case "confidence":
+          compareValue =
+            (a.result?.confidence || 0) - (b.result?.confidence || 0);
           break;
 
         default:
           compareValue = 0;
       }
 
-      return sortOption.order === 'asc' ? compareValue : -compareValue;
+      return sortOption.order === "asc" ? compareValue : -compareValue;
     });
 
     return sorted;
@@ -192,8 +193,7 @@ export class AuditTrailManager {
       totalCalculations: entries.length,
       averageEstate: totalEstate / entries.length,
       averageConfidence: totalConfidence / entries.length,
-      dateRange:
-        minDate && maxDate ? { from: minDate, to: maxDate } : null,
+      dateRange: minDate && maxDate ? { from: minDate, to: maxDate } : null,
       madhabs,
     };
   }
@@ -209,7 +209,7 @@ export class AuditTrailManager {
         entries,
       },
       null,
-      2
+      2,
     );
   }
 
@@ -225,24 +225,24 @@ export class AuditTrailManager {
     confidence: string;
   } {
     const date = new Date(entry.timestamp);
-    const dateStr = date.toLocaleDateString('ar-SA', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+    const dateStr = date.toLocaleDateString("ar-SA", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
-    const timeStr = date.toLocaleTimeString('ar-SA', {
-      hour: '2-digit',
-      minute: '2-digit',
+    const timeStr = date.toLocaleTimeString("ar-SA", {
+      hour: "2-digit",
+      minute: "2-digit",
     });
 
     return {
       date: dateStr,
       time: timeStr,
-      madhab: entry.madhab || 'غير محدد',
+      madhab: entry.madhab || "غير محدد",
       estate: `${(entry.estate?.total || 0).toFixed(0)} ر.س`,
       heirsCount: Object.values(entry.heirs || {}).reduce(
         (sum: number, count: number | undefined) => sum + (count || 0),
-        0
+        0,
       ),
       confidence: `${(entry.result?.confidence || 0).toFixed(0)}%`,
     };

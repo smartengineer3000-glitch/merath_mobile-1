@@ -10,10 +10,7 @@ export const performanceUtils = {
   /**
    * Measure the duration of an async function
    */
-  measureAsync: async <T>(
-    label: string,
-    fn: () => Promise<T>
-  ): Promise<T> => {
+  measureAsync: async <T>(label: string, fn: () => Promise<T>): Promise<T> => {
     const start = performance.now();
     try {
       const result = await fn();
@@ -32,10 +29,7 @@ export const performanceUtils = {
   /**
    * Measure the duration of a sync function
    */
-  measureSync: <T>(
-    label: string,
-    fn: () => T
-  ): T => {
+  measureSync: <T>(label: string, fn: () => T): T => {
     const start = performance.now();
     try {
       const result = fn();
@@ -83,14 +77,14 @@ export const performanceUtils = {
    */
   logMetrics: () => {
     if (__DEV__) {
-      console.log('=== Performance Metrics ===');
+      console.log("=== Performance Metrics ===");
       metrics.forEach((values, label) => {
         const stats = getStats(values);
         console.log(`${label}:`, {
           count: stats.count,
           avg: `${stats.average.toFixed(2)}ms`,
           min: `${stats.min.toFixed(2)}ms`,
-          max: `${stats.max.toFixed(2)}ms`
+          max: `${stats.max.toFixed(2)}ms`,
         });
       });
     }
@@ -107,7 +101,7 @@ function recordMetric(label: string, duration: number) {
 function logIfSlow(label: string, duration: number, threshold = 100) {
   if (duration > threshold) {
     console.warn(
-      `⚠️ Performance Warning: ${label} took ${duration.toFixed(2)}ms (threshold: ${threshold}ms)`
+      `⚠️ Performance Warning: ${label} took ${duration.toFixed(2)}ms (threshold: ${threshold}ms)`,
     );
   }
 }

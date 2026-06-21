@@ -2,10 +2,15 @@
  * Adapter hook that wraps the core useCalculator from inheritance/hooks
  * to provide the API that screen components expect.
  */
-import { useCallback } from 'react';
-import { useCalculator as useCoreCalculator } from '../inheritance/hooks';
-import { EnhancedInheritanceCalculationEngine } from '../inheritance/enhanced-engine-complete';
-import type { MadhhabType, HeirsData, EstateData, CalculationResult } from '../inheritance/types';
+import { useCallback } from "react";
+import { useCalculator as useCoreCalculator } from "../inheritance/hooks";
+import { EnhancedInheritanceCalculationEngine } from "../inheritance/enhanced-engine-complete";
+import type {
+  MadhhabType,
+  HeirsData,
+  EstateData,
+  CalculationResult,
+} from "../inheritance/types";
 
 export function useCalculator() {
   const core = useCoreCalculator();
@@ -14,9 +19,9 @@ export function useCalculator() {
     async (
       estateTotal?: number,
       selectedHeirs?: string[],
-      madhab?: MadhhabType
+      madhab?: MadhhabType,
     ): Promise<CalculationResult | null> => {
-      const m = madhab ?? 'hanafi';
+      const m = madhab ?? "hanafi";
 
       if (estateTotal !== undefined) {
         core.updateEstateData({ total: estateTotal });
@@ -31,19 +36,23 @@ export function useCalculator() {
 
       return core.calculateWithMethod(m, heirs);
     },
-    [core]
+    [core],
   );
 
   const calculateWithEstate = useCallback(
     async (
       madhab: MadhhabType,
       estate: EstateData,
-      heirs: HeirsData
+      heirs: HeirsData,
     ): Promise<CalculationResult> => {
-      const engine = new EnhancedInheritanceCalculationEngine(madhab, estate, heirs);
+      const engine = new EnhancedInheritanceCalculationEngine(
+        madhab,
+        estate,
+        heirs,
+      );
       return engine.calculate();
     },
-    []
+    [],
   );
 
   return {

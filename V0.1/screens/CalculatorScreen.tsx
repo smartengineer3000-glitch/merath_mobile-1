@@ -171,7 +171,11 @@ export default function CalculatorScreen() {
 
     try {
       setIsCalculating(true);
-      const calculationResult = await calculateWithEstate(madhab, currentEstate, currentHeirs);
+      const calculationResult = await calculateWithEstate(
+        madhab,
+        currentEstate,
+        currentHeirs,
+      );
       if (calculationResult.success) {
         setResult(calculationResult);
         saveScenario({
@@ -192,7 +196,15 @@ export default function CalculatorScreen() {
     } finally {
       setIsCalculating(false);
     }
-  }, [madhab, currentEstate, currentHeirs, calculateWithEstate, setResult, saveScenario, t]);
+  }, [
+    madhab,
+    currentEstate,
+    currentHeirs,
+    calculateWithEstate,
+    setResult,
+    saveScenario,
+    t,
+  ]);
 
   const handleReset = useCallback(() => {
     setCurrentEstate({ total: 0, funeral: 0, debts: 0, will: 0 });
@@ -218,9 +230,7 @@ export default function CalculatorScreen() {
         />
         <View style={styles.netEstateCopy}>
           <Text style={styles.netEstateLabel}>صافي التركة المتوقع</Text>
-          <Text style={styles.netEstateValue}>
-            {formatCurrency(netEstate)}
-          </Text>
+          <Text style={styles.netEstateValue}>{formatCurrency(netEstate)}</Text>
         </View>
       </View>
       <EstateInput onEstateChange={handleEstateChange} />
@@ -283,7 +293,9 @@ export default function CalculatorScreen() {
                 <View style={styles.heroCopy}>
                   <Text style={styles.eyebrow}>Merath Calculator</Text>
                   <Text style={styles.title}>{t("calculator.title")}</Text>
-                  <Text style={styles.subtitle}>{t("calculator.subtitle")}</Text>
+                  <Text style={styles.subtitle}>
+                    {t("calculator.subtitle")}
+                  </Text>
                 </View>
               </View>
               <View style={styles.progressTrack}>
@@ -343,7 +355,7 @@ export default function CalculatorScreen() {
           </View>
 
           <View style={styles.buttonContainer}>
-              <PrimaryButton
+            <PrimaryButton
               title={
                 isCalculating
                   ? t("calculator.calculating")
@@ -375,13 +387,13 @@ export default function CalculatorScreen() {
             <View style={styles.resultsContainer}>
               <View style={styles.resultsHeader}>
                 <Text style={styles.resultsHeaderTitle}>
-                  {t('results.title')}
+                  {t("results.title")}
                 </Text>
                 <TouchableOpacity
                   style={styles.viewInTabButton}
                   onPress={() => {
                     setShowResults(false);
-                    navigation.navigate('Results');
+                    navigation.navigate("Results");
                   }}
                 >
                   <MaterialCommunityIcons
@@ -390,7 +402,7 @@ export default function CalculatorScreen() {
                     color={theme.colors.primary.main}
                   />
                   <Text style={styles.viewInTabButtonText}>
-                    {t('results.viewInTab')}
+                    {t("results.viewInTab")}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -649,9 +661,9 @@ const createStyles = (theme: Theme) =>
       paddingTop: theme.spacing.md,
     },
     resultsHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
       marginBottom: theme.spacing.md,
       paddingHorizontal: theme.spacing.md,
     },
@@ -660,8 +672,8 @@ const createStyles = (theme: Theme) =>
       color: theme.colors.neutral.dark300,
     },
     viewInTabButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
+      flexDirection: "row",
+      alignItems: "center",
       gap: theme.spacing.xs,
       paddingHorizontal: theme.spacing.md,
       paddingVertical: theme.spacing.xs,

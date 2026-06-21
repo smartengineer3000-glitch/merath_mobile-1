@@ -4,60 +4,60 @@
  */
 
 // ====== المذاهب الإسلامية ======
-export type MadhhabType = 'shafii' | 'hanafi' | 'maliki' | 'hanbali';
+export type MadhhabType = "shafii" | "hanafi" | "maliki" | "hanbali";
 
 // ====== أنواع الورثة ======
 export type HeirType =
-  | 'husband'
-  | 'wife'
-  | 'son'
-  | 'daughter'
-  | 'grandson'
-  | 'granddaughter'
-  | 'daughter_son'
-  | 'daughter_daughter'
-  | 'sister_children'
-  | 'father'
-  | 'mother'
-  | 'grandfather'
-  | 'grandmother'
-  | 'grandmother_mother'
-  | 'grandmother_father'
-  | 'full_brother'
-  | 'full_sister'
-  | 'paternal_brother'
-  | 'paternal_sister'
-  | 'maternal_brother'
-  | 'maternal_sister'
-  | 'half_brother_paternal'
-  | 'half_sister_paternal'
-  | 'full_nephew'
-  | 'paternal_nephew'
-  | 'nephew_from_brother'
-  | 'niece_from_brother'
-  | 'full_uncle'
-  | 'paternal_uncle'
-  | 'maternal_uncle'
-  | 'full_cousin'
-  | 'paternal_cousin'
-  | 'uncle_paternal'
-  | 'uncle_maternal'
-  | 'aunt_paternal'
-  | 'aunt_maternal'
-  | 'maternal_aunt'
-  | 'paternal_aunt'
-  | 'treasury'
+  | "husband"
+  | "wife"
+  | "son"
+  | "daughter"
+  | "grandson"
+  | "granddaughter"
+  | "daughter_son"
+  | "daughter_daughter"
+  | "sister_children"
+  | "father"
+  | "mother"
+  | "grandfather"
+  | "grandmother"
+  | "grandmother_mother"
+  | "grandmother_father"
+  | "full_brother"
+  | "full_sister"
+  | "paternal_brother"
+  | "paternal_sister"
+  | "maternal_brother"
+  | "maternal_sister"
+  | "half_brother_paternal"
+  | "half_sister_paternal"
+  | "full_nephew"
+  | "paternal_nephew"
+  | "nephew_from_brother"
+  | "niece_from_brother"
+  | "full_uncle"
+  | "paternal_uncle"
+  | "maternal_uncle"
+  | "full_cousin"
+  | "paternal_cousin"
+  | "uncle_paternal"
+  | "uncle_maternal"
+  | "aunt_paternal"
+  | "aunt_maternal"
+  | "maternal_aunt"
+  | "paternal_aunt"
+  | "treasury"
   // Special case keys
-  | 'shared_siblings';
+  | "shared_siblings";
 
 // ====== بيانات التركة ======
 export interface EstateData {
-  total: number;        // إجمالي التركة بالريال
-  funeral: number;     // تكاليف التجهيز والدفن
-  funeralCosts?: number;  // تكاليف التجهيز والدفن (alternative name)
-  debts: number;       // الديون المستحقة
-  will: number;        // الوصية (تُحسب بثلث الباقي عادة)
-  willAmount?: number;  // الوصية (alternative name)
+  total: number; // إجمالي التركة بالريال
+  funeral: number; // تكاليف التجهيز والدفن
+  funeralCosts?: number; // تكاليف التجهيز والدفن (alternative name)
+  debts: number; // الديون المستحقة
+  will: number; // الوصية (تُحسب بثلث الباقي عادة)
+  willAmount?: number; // الوصية (alternative name)
 }
 
 // ====== بيانات الورثة ======
@@ -67,8 +67,8 @@ export interface HeirsData {
 
 // ====== نظام الكسور ======
 export interface FractionData {
-  numerator: number;    // البسط
-  denominator: number;  // المقام
+  numerator: number; // البسط
+  denominator: number; // المقام
 }
 
 // ====== حصة الوارث (Enhanced) ======
@@ -142,11 +142,11 @@ export interface MadhhabConfig {
 
 // ====== قواعد المذهب ======
 export interface MadhhabRules {
-  grandfather_with_siblings: 'hijab' | 'musharak';
-  mother_with_father_children: 'third_of_remainder' | 'sixth';
-  mother_with_father_only: 'third' | 'sixth';
+  grandfather_with_siblings: "hijab" | "musharak";
+  mother_with_father_children: "third_of_remainder" | "sixth";
+  mother_with_father_only: "third" | "sixth";
   spouse_radd: boolean;
-  umariyyah_rule: 'first' | 'second';
+  umariyyah_rule: "first" | "second";
 }
 
 // ====== حالات الاختبار ======
@@ -175,7 +175,7 @@ export interface AuditEntry {
   id: string;
   timestamp: Date;
   action: string;
-  type: 'success' | 'error' | 'warning' | 'info' | 'calculation';
+  type: "success" | "error" | "warning" | "info" | "calculation";
   message: string;
   details?: Record<string, any>;
   component?: string;

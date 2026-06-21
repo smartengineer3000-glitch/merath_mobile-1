@@ -1,7 +1,7 @@
-import { afterEach, beforeEach, vi } from 'vitest';
+import { afterEach, beforeEach, vi } from "vitest";
 
 // Mock AsyncStorage
-vi.mock('@react-native-async-storage/async-storage', () => ({
+vi.mock("@react-native-async-storage/async-storage", () => ({
   default: {
     getItem: vi.fn(),
     setItem: vi.fn(),
@@ -11,8 +11,8 @@ vi.mock('@react-native-async-storage/async-storage', () => ({
 }));
 
 // Mock FileSystem
-vi.mock('expo-file-system', () => ({
-  documentDirectory: '/mock/directory/',
+vi.mock("expo-file-system", () => ({
+  documentDirectory: "/mock/directory/",
   getInfoAsync: vi.fn(),
   deleteAsync: vi.fn(),
   writeAsStringAsync: vi.fn(),
@@ -20,14 +20,14 @@ vi.mock('expo-file-system', () => ({
 }));
 
 // Mock Sharing
-vi.mock('expo-sharing', () => ({
+vi.mock("expo-sharing", () => ({
   isAvailableAsync: vi.fn().mockResolvedValue(true),
   shareAsync: vi.fn(),
 }));
 
 // Mock Print
-vi.mock('expo-print', () => ({
-  printToFileAsync: vi.fn().mockResolvedValue({ uri: '/mock/pdf.pdf' }),
+vi.mock("expo-print", () => ({
+  printToFileAsync: vi.fn().mockResolvedValue({ uri: "/mock/pdf.pdf" }),
 }));
 
 // Clean up after each test

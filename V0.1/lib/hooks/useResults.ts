@@ -2,8 +2,8 @@
  * Adapter hook that wraps the core useResults from inheritance/hooks
  * to provide the API that screen components expect.
  */
-import { useResults as useCoreResults } from '../inheritance/hooks';
-import type { CalculationResult } from '../inheritance/types';
+import { useResults as useCoreResults } from "../inheritance/hooks";
+import type { CalculationResult } from "../inheritance/types";
 
 export function useResults() {
   const core = useCoreResults();

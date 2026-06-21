@@ -5,9 +5,9 @@
  * Defines all navigation types and parameter lists for the app
  */
 
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import type { RouteProp } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import type { RouteProp } from "@react-navigation/native";
 
 /**
  * Root Stack Parameter List
@@ -51,16 +51,18 @@ export type AppTabNavigationProp = BottomTabNavigationProp<TabParamList>;
  * Stack Navigation Props Type
  * For use in any stack screen
  */
-export type AppStackNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+export type AppStackNavigationProp =
+  NativeStackNavigationProp<RootStackParamList>;
 
 /**
  * Calculator Navigation Props
  */
-export type CalculatorNavigationProp = NativeStackNavigationProp<CalculatorParamList>;
+export type CalculatorNavigationProp =
+  NativeStackNavigationProp<CalculatorParamList>;
 
 /**
  * Route Props Types
  */
 export type CalculatorRouteParams = {
-  route: RouteProp<CalculatorParamList, 'Results'>;
+  route: RouteProp<CalculatorParamList, "Results">;
 };

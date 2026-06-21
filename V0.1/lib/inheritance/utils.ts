@@ -3,91 +3,91 @@
  * Helper Functions and Inheritance System Constants
  */
 
-import { MadhhabType, HeirType } from './types';
+import { MadhhabType, HeirType } from "./types";
 
 /**
  * قائمة أسماء الورثة بالعربية
  * Matches original HTML (Merath_Cluade_Pro7.html) exactly
  */
 export const HEIR_NAMES: Record<HeirType, string> = {
-  husband: 'الزوج',
-  wife: 'الزوجة',
-  father: 'الأب',
-  mother: 'الأم',
-  grandfather: 'الجد',
-  grandmother: 'الجدة',
-  grandmother_mother: 'الجدة لأم',
-  grandmother_father: 'الجدة لأب',
-  son: 'الابن',
-  daughter: 'البنت',
-  grandson: 'ابن الابن',
-  granddaughter: 'بنت الابن',
-  full_brother: 'الأخ الشقيق',
-  full_sister: 'الأخت الشقيقة',
-  paternal_brother: 'الأخ لأب',
-  paternal_sister: 'الأخت لأب',
-  maternal_brother: 'الأخ لأم',
-  maternal_sister: 'الأخت لأم',
-  half_brother_paternal: 'نصف أخ لأب',
-  half_sister_paternal: 'نصف أخت لأب',
-  full_nephew: 'ابن الأخ الشقيق',
-  paternal_nephew: 'ابن الأخ لأب',
-  nephew_from_brother: 'ابن الأخ',
-  niece_from_brother: 'بنت الأخ',
-  full_uncle: 'العم الشقيق',
-  paternal_uncle: 'العم لأب',
-  uncle_paternal: 'العم',
-  uncle_maternal: 'الخال',
-  aunt_paternal: 'العمة',
-  aunt_maternal: 'الخالة',
-  full_cousin: 'ابن العم الشقيق',
-  paternal_cousin: 'ابن العم لأب',
-  maternal_uncle: 'الخال',
-  maternal_aunt: 'الخالة',
-  paternal_aunt: 'العمة',
-  daughter_son: 'ابن البنت',
-  daughter_daughter: 'بنت البنت',
-  sister_children: 'أولاد الأخت',
-  treasury: 'بيت المال',
+  husband: "الزوج",
+  wife: "الزوجة",
+  father: "الأب",
+  mother: "الأم",
+  grandfather: "الجد",
+  grandmother: "الجدة",
+  grandmother_mother: "الجدة لأم",
+  grandmother_father: "الجدة لأب",
+  son: "الابن",
+  daughter: "البنت",
+  grandson: "ابن الابن",
+  granddaughter: "بنت الابن",
+  full_brother: "الأخ الشقيق",
+  full_sister: "الأخت الشقيقة",
+  paternal_brother: "الأخ لأب",
+  paternal_sister: "الأخت لأب",
+  maternal_brother: "الأخ لأم",
+  maternal_sister: "الأخت لأم",
+  half_brother_paternal: "نصف أخ لأب",
+  half_sister_paternal: "نصف أخت لأب",
+  full_nephew: "ابن الأخ الشقيق",
+  paternal_nephew: "ابن الأخ لأب",
+  nephew_from_brother: "ابن الأخ",
+  niece_from_brother: "بنت الأخ",
+  full_uncle: "العم الشقيق",
+  paternal_uncle: "العم لأب",
+  uncle_paternal: "العم",
+  uncle_maternal: "الخال",
+  aunt_paternal: "العمة",
+  aunt_maternal: "الخالة",
+  full_cousin: "ابن العم الشقيق",
+  paternal_cousin: "ابن العم لأب",
+  maternal_uncle: "الخال",
+  maternal_aunt: "الخالة",
+  paternal_aunt: "العمة",
+  daughter_son: "ابن البنت",
+  daughter_daughter: "بنت البنت",
+  sister_children: "أولاد الأخت",
+  treasury: "بيت المال",
   // Added for Musharraka special case
-  shared_siblings: 'الإخوة لأم والأشقاء'
+  shared_siblings: "الإخوة لأم والأشقاء",
 };
 
 /**
  * ألوان المذاهب
  */
 export const MADHAB_COLORS: Record<MadhhabType, string> = {
-  shafii: '#FF6B6B',
-  hanafi: '#4ECDC4',
-  maliki: '#45B7D1',
-  hanbali: '#F7DC6F'
+  shafii: "#FF6B6B",
+  hanafi: "#4ECDC4",
+  maliki: "#45B7D1",
+  hanbali: "#F7DC6F",
 };
 
 /**
  * أيقونات المذاهب
  */
 export const MADHAB_ICONS: Record<MadhhabType, string> = {
-  shafii: '🕌',
-  hanafi: '📖',
-  maliki: '⚖️',
-  hanbali: '📜'
+  shafii: "🕌",
+  hanafi: "📖",
+  maliki: "⚖️",
+  hanbali: "📜",
 };
 
 /**
  * أسماء المذاهب
  */
 export const MADHAB_NAMES: Record<MadhhabType, string> = {
-  shafii: 'المذهب الشافعي',
-  hanafi: 'المذهب الحنفي',
-  maliki: 'المذهب المالكي',
-  hanbali: 'المذهب الحنبلي'
+  shafii: "المذهب الشافعي",
+  hanafi: "المذهب الحنفي",
+  maliki: "المذهب المالكي",
+  hanbali: "المذهب الحنبلي",
 };
 
 /**
  * التحقق من صحة المذهب
  */
 export function isValidMadhab(madhab: any): madhab is MadhhabType {
-  return ['shafii', 'hanafi', 'maliki', 'hanbali'].includes(madhab);
+  return ["shafii", "hanafi", "maliki", "hanbali"].includes(madhab);
 }
 
 /**
@@ -100,12 +100,12 @@ export function isValidHeirType(heir: any): heir is HeirType {
 /**
  * تنسيق المبلغ كعملة
  */
-export function formatCurrency(amount: number, currency = 'SAR'): string {
-  return new Intl.NumberFormat('ar-SA', {
-    style: 'currency',
+export function formatCurrency(amount: number, currency = "SAR"): string {
+  return new Intl.NumberFormat("ar-SA", {
+    style: "currency",
     currency,
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   }).format(amount);
 }
 
@@ -160,24 +160,29 @@ export function formatTime(milliseconds: number): string {
 /**
  * التحقق من صحة بيانات التركة
  */
-export function validateEstateData(total: number, funeral: number, debts: number, will: number = 0): string | null {
+export function validateEstateData(
+  total: number,
+  funeral: number,
+  debts: number,
+  will: number = 0,
+): string | null {
   if (total <= 0) {
-    return 'إجمالي التركة يجب أن يكون أكبر من صفر';
+    return "إجمالي التركة يجب أن يكون أكبر من صفر";
   }
   if (funeral < 0) {
-    return 'تكاليف التجهيز لا يمكن أن تكون سالبة';
+    return "تكاليف التجهيز لا يمكن أن تكون سالبة";
   }
   if (debts < 0) {
-    return 'الديون لا يمكن أن تكون سالبة';
+    return "الديون لا يمكن أن تكون سالبة";
   }
   if (will < 0) {
-    return 'الوصية لا يمكن أن تكون سالبة';
+    return "الوصية لا يمكن أن تكون سالبة";
   }
   if (will > total / 3) {
-    return 'الوصية لا يمكن أن تتجاوز ثلث التركة';
+    return "الوصية لا يمكن أن تتجاوز ثلث التركة";
   }
   if (funeral + debts + will > total) {
-    return 'التكاليف والديون والوصية تتجاوز إجمالي التركة';
+    return "التكاليف والديون والوصية تتجاوز إجمالي التركة";
   }
   return null;
 }
@@ -185,7 +190,9 @@ export function validateEstateData(total: number, funeral: number, debts: number
 /**
  * التحقق من صحة بيانات الورثة
  */
-export function validateHeirsData(heirs: Record<string, number | undefined>): string | null {
+export function validateHeirsData(
+  heirs: Record<string, number | undefined>,
+): string | null {
   let hasHeirs = false;
 
   for (const [key, count] of Object.entries(heirs)) {
@@ -203,7 +210,7 @@ export function validateHeirsData(heirs: Record<string, number | undefined>): st
   }
 
   if (!hasHeirs) {
-    return 'يجب تحديد ورثة واحد على الأقل';
+    return "يجب تحديد ورثة واحد على الأقل";
   }
 
   return null;
@@ -212,7 +219,9 @@ export function validateHeirsData(heirs: Record<string, number | undefined>): st
 /**
  * حساب عدد الورثة الإجمالي
  */
-export function countTotalHeirs(heirs: Record<string, number | undefined>): number {
+export function countTotalHeirs(
+  heirs: Record<string, number | undefined>,
+): number {
   let sum = 0;
   for (const count of Object.values(heirs)) {
     if (count !== undefined) {
@@ -225,8 +234,10 @@ export function countTotalHeirs(heirs: Record<string, number | undefined>): numb
 /**
  * حساب عدد أنواع الورثة
  */
-export function countHeirTypes(heirs: Record<string, number | undefined>): number {
-  return Object.values(heirs).filter(count => count && count > 0).length;
+export function countHeirTypes(
+  heirs: Record<string, number | undefined>,
+): number {
+  return Object.values(heirs).filter((count) => count && count > 0).length;
 }
 
 /**

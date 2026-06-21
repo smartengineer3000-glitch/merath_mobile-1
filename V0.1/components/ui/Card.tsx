@@ -3,15 +3,11 @@
  * @description Material Design 3 Card component for elevated content
  */
 
-import React from 'react';
-import {
-  View,
-  ViewStyle,
-  Pressable,
-} from 'react-native';
-import { useAppTheme } from '../../lib/context/ThemeProvider';
+import React from "react";
+import { View, ViewStyle, Pressable } from "react-native";
+import { useAppTheme } from "../../lib/context/ThemeProvider";
 
-export type CardElevation = 'flat' | 'low' | 'medium' | 'high';
+export type CardElevation = "flat" | "low" | "medium" | "high";
 
 export interface ModernCardProps {
   children: React.ReactNode;
@@ -23,7 +19,7 @@ export interface ModernCardProps {
 
 export const ModernCard: React.FC<ModernCardProps> = ({
   children,
-  elevation = 'medium',
+  elevation = "medium",
   onPress,
   style,
   padding,
@@ -32,31 +28,31 @@ export const ModernCard: React.FC<ModernCardProps> = ({
 
   const getElevationStyles = (): ViewStyle => {
     switch (elevation) {
-      case 'flat':
+      case "flat":
         return {
-          shadowColor: 'transparent',
+          shadowColor: "transparent",
           elevation: 0,
         };
-      case 'low':
+      case "low":
         return {
-          shadowColor: '#000',
+          shadowColor: "#000",
           shadowOffset: { width: 0, height: 1 },
           shadowOpacity: 0.15,
           shadowRadius: 2,
           elevation: 2,
         };
-      case 'high':
+      case "high":
         return {
-          shadowColor: '#000',
+          shadowColor: "#000",
           shadowOffset: { width: 0, height: 8 },
           shadowOpacity: 0.25,
           shadowRadius: 10,
           elevation: 8,
         };
-      case 'medium':
+      case "medium":
       default:
         return {
-          shadowColor: '#000',
+          shadowColor: "#000",
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.2,
           shadowRadius: 5,

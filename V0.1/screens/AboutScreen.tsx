@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
@@ -6,11 +6,11 @@ import {
   ScrollView,
   TouchableOpacity,
   Linking,
-} from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import Constants from 'expo-constants';
-import { useAppTheme } from '../lib/context/ThemeProvider';
-import type { Theme } from '../lib/design/theme';
+} from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Constants from "expo-constants";
+import { useAppTheme } from "../lib/context/ThemeProvider";
+import type { Theme } from "../lib/design/theme";
 
 interface FeatureItemProps {
   title: string;
@@ -65,61 +65,61 @@ function CaseItem({ name, description, theme }: CaseItemProps) {
 
 export default function AboutScreen() {
   const { theme } = useAppTheme();
-  const appVersion = Constants.expoConfig?.version ?? '1.1.3';
+  const appVersion = Constants.expoConfig?.version ?? "1.1.3";
   const styles = createStyles(theme);
 
   const features = [
     {
-      title: 'Islamic Inheritance Calculator',
-      description: 'Calculate inheritance shares according to Islamic law',
+      title: "Islamic Inheritance Calculator",
+      description: "Calculate inheritance shares according to Islamic law",
     },
     {
-      title: 'Multi-Madhhab Support',
-      description: 'Supports Hanafi, Maliki, Shafi\'i, and Hanbali schools',
+      title: "Multi-Madhhab Support",
+      description: "Supports Hanafi, Maliki, Shafi'i, and Hanbali schools",
     },
     {
-      title: 'Comprehensive Heirs',
-      description: 'All types of heirs: spouses, children, parents, siblings',
+      title: "Comprehensive Heirs",
+      description: "All types of heirs: spouses, children, parents, siblings",
     },
     {
-      title: 'Real-time Calculations',
-      description: 'Instant calculation with immediate feedback',
+      title: "Real-time Calculations",
+      description: "Instant calculation with immediate feedback",
     },
     {
-      title: 'Export & Share',
-      description: 'Export results and share with family',
+      title: "Export & Share",
+      description: "Export results and share with family",
     },
     {
-      title: 'Educational Content',
-      description: 'Learn about Islamic inheritance laws',
+      title: "Educational Content",
+      description: "Learn about Islamic inheritance laws",
     },
   ];
 
   const madhabs = [
-    { name: 'Hanafi', scholar: 'Imam Abu Hanifa' },
-    { name: 'Maliki', scholar: 'Imam Malik' },
-    { name: 'Shafi\'i', scholar: 'Imam Shafi\'i' },
-    { name: 'Hanbali', scholar: 'Imam Ahmad ibn Hanbal' },
+    { name: "Hanafi", scholar: "Imam Abu Hanifa" },
+    { name: "Maliki", scholar: "Imam Malik" },
+    { name: "Shafi'i", scholar: "Imam Shafi'i" },
+    { name: "Hanbali", scholar: "Imam Ahmad ibn Hanbal" },
   ];
 
   const specialCases = [
-    { name: 'Umm Walad', description: 'Rules for freed concubines' },
-    { name: 'Dhawu al-Arham', description: 'Inheritance by blood relation' },
-    { name: 'Radd (Return)', description: 'Estate returned to heirs' },
-    { name: 'Aul (Increase)', description: 'Portions increased when needed' },
+    { name: "Umm Walad", description: "Rules for freed concubines" },
+    { name: "Dhawu al-Arham", description: "Inheritance by blood relation" },
+    { name: "Radd (Return)", description: "Estate returned to heirs" },
+    { name: "Aul (Increase)", description: "Portions increased when needed" },
   ];
 
   const handleContact = (type: string) => {
-    let url = '';
+    let url = "";
     switch (type) {
-      case 'email':
-        url = 'mailto:support@merath.app';
+      case "email":
+        url = "mailto:support@merath.app";
         break;
-      case 'website':
-        url = 'https://merath.app';
+      case "website":
+        url = "https://merath.app";
         break;
-      case 'github':
-        url = 'https://github.com/merath';
+      case "github":
+        url = "https://github.com/merath";
         break;
     }
     if (url) {
@@ -130,7 +130,11 @@ export default function AboutScreen() {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <MaterialCommunityIcons name="star-crescent" size={48} color={theme.colors.primary.main} />
+        <MaterialCommunityIcons
+          name="star-crescent"
+          size={48}
+          color={theme.colors.primary.main}
+        />
         <Text style={styles.title}>Merath</Text>
         <Text style={styles.subtitle}>Islamic Inheritance Calculator</Text>
         <Text style={styles.version}>Version {appVersion}</Text>
@@ -175,11 +179,13 @@ export default function AboutScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>About Islamic Inheritance</Text>
         <Text style={styles.description}>
-          Islamic inheritance law (Fara&apos;id) is based on the Quran and Sunnah.
-          It ensures fair distribution of wealth among heirs according to prescribed shares.
+          Islamic inheritance law (Fara&apos;id) is based on the Quran and
+          Sunnah. It ensures fair distribution of wealth among heirs according
+          to prescribed shares.
         </Text>
         <Text style={styles.description}>
-          This calculator follows the traditional Islamic inheritance rules for all Sunni schools.
+          This calculator follows the traditional Islamic inheritance rules for
+          all Sunni schools.
         </Text>
       </View>
 
@@ -187,23 +193,35 @@ export default function AboutScreen() {
         <Text style={styles.sectionTitle}>Contact Us</Text>
         <TouchableOpacity
           style={styles.contactButton}
-          onPress={() => handleContact('email')}
+          onPress={() => handleContact("email")}
         >
-          <MaterialCommunityIcons name="email" size={24} color={theme.colors.primary.main} />
+          <MaterialCommunityIcons
+            name="email"
+            size={24}
+            color={theme.colors.primary.main}
+          />
           <Text style={styles.contactButtonText}>Email Support</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.contactButton}
-          onPress={() => handleContact('website')}
+          onPress={() => handleContact("website")}
         >
-          <MaterialCommunityIcons name="web" size={24} color={theme.colors.primary.main} />
+          <MaterialCommunityIcons
+            name="web"
+            size={24}
+            color={theme.colors.primary.main}
+          />
           <Text style={styles.contactButtonText}>Visit Website</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.contactButton}
-          onPress={() => handleContact('github')}
+          onPress={() => handleContact("github")}
         >
-          <MaterialCommunityIcons name="github" size={24} color={theme.colors.primary.main} />
+          <MaterialCommunityIcons
+            name="github"
+            size={24}
+            color={theme.colors.primary.main}
+          />
           <Text style={styles.contactButtonText}>GitHub</Text>
         </TouchableOpacity>
       </View>
@@ -225,7 +243,7 @@ const createStyles = (theme: Theme) =>
       padding: theme.spacing.md,
     },
     header: {
-      alignItems: 'center',
+      alignItems: "center",
       marginBottom: theme.spacing.xxxl,
       paddingTop: theme.spacing.md,
     },
@@ -238,7 +256,7 @@ const createStyles = (theme: Theme) =>
       ...theme.typography.headline.small,
       color: theme.colors.neutral.main,
       marginTop: theme.spacing.xs,
-      textAlign: 'center',
+      textAlign: "center",
     },
     version: {
       ...theme.typography.label.medium,
@@ -259,9 +277,9 @@ const createStyles = (theme: Theme) =>
       marginBottom: theme.spacing.sm,
     },
     featureItem: {
-      flexDirection: 'row',
+      flexDirection: "row",
       marginBottom: 16,
-      alignItems: 'flex-start',
+      alignItems: "flex-start",
     },
     featureDot: {
       width: 8,
@@ -284,9 +302,9 @@ const createStyles = (theme: Theme) =>
       color: theme.colors.neutral.main,
     },
     methodItem: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
       padding: theme.spacing.md,
       backgroundColor: theme.colors.background.light,
       borderRadius: 8,
@@ -320,8 +338,8 @@ const createStyles = (theme: Theme) =>
       color: theme.colors.neutral.main,
     },
     contactButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
+      flexDirection: "row",
+      alignItems: "center",
       padding: theme.spacing.md,
       marginBottom: theme.spacing.xs,
       backgroundColor: theme.colors.background.light,
@@ -335,7 +353,7 @@ const createStyles = (theme: Theme) =>
       color: theme.colors.primary.main,
     },
     footer: {
-      alignItems: 'center',
+      alignItems: "center",
       marginTop: theme.spacing.xxxl,
       marginBottom: theme.spacing.xxxl,
       padding: theme.spacing.md,
@@ -343,6 +361,6 @@ const createStyles = (theme: Theme) =>
     footerText: {
       ...theme.typography.body.medium,
       color: theme.colors.neutral.main,
-      textAlign: 'center',
+      textAlign: "center",
     },
   });

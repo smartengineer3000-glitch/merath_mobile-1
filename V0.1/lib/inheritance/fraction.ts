@@ -1,19 +1,19 @@
 /**
  * فئة الكسور المتقدمة لحساب المواريث الشرعي
  * Enhanced Fraction Class for Islamic Inheritance Calculations
- * 
+ *
  * تدعم العمليات الحسابية على الكسور بدقة عالية جداً
- * 
+ *
  * FIXES:
  * - C6 (🔴): Fraction simplification overflow protection for large denominators (>1e9)
  */
 
-import { FractionData } from './types';
+import { FractionData } from "./types";
 
 export class FractionClass {
   private numerator: number;
   private denominator: number;
-  
+
   // ===== FIX C6: Constants for overflow protection =====
   private static readonly MAX_SAFE_DENOMINATOR = 1_000_000_000; // 1e9
   private static readonly SIMPLIFY_THRESHOLD = 1_000_000; // 1e6 - threshold for aggressive simplification
@@ -21,7 +21,9 @@ export class FractionClass {
 
   constructor(numerator: number, denominator: number = 1) {
     if (denominator === 0) {
-      throw new Error('المقام لا يمكن أن يكون صفراً | Denominator cannot be zero');
+      throw new Error(
+        "المقام لا يمكن أن يكون صفراً | Denominator cannot be zero",
+      );
     }
 
     // تحويل الكسور السالبة
@@ -32,7 +34,7 @@ export class FractionClass {
 
     this.numerator = numerator;
     this.denominator = denominator;
-    
+
     // ===== FIX C6: Safe simplification with overflow protection =====
     this.simplify();
   }
@@ -57,7 +59,7 @@ export class FractionClass {
     }
 
     const gcd = this.safeGcd(Math.abs(this.numerator), this.denominator);
-    
+
     if (gcd > 1) {
       this.numerator /= gcd;
       this.denominator /= gcd;
@@ -75,24 +77,24 @@ export class FractionClass {
   private safeGcd(a: number, b: number): number {
     a = Math.abs(a);
     b = Math.abs(b);
-    
+
     // Check if numbers are too large for standard Euclidean algorithm
     if (a > Number.MAX_SAFE_INTEGER / 2 || b > Number.MAX_SAFE_INTEGER / 2) {
       return this.approximateGcd(a, b);
     }
-    
+
     // Standard Euclidean algorithm for safe numbers
     while (b !== 0) {
       const temp = b;
       b = a % b;
       a = temp;
-      
+
       // Safety check - prevent infinite loop
       if (isNaN(a) || isNaN(b) || !isFinite(a) || !isFinite(b)) {
         return 1;
       }
     }
-    
+
     return a || 1;
   }
 
@@ -102,17 +104,20 @@ export class FractionClass {
   private approximateGcd(a: number, b: number): number {
     // Use floating point approximation for very large numbers
     const ratio = a / b;
-    
+
     // Check if numbers are roughly multiples
     if (Math.abs(ratio - Math.round(ratio)) < FractionClass.TOLERANCE) {
       return b; // b divides a roughly
     }
-    
+
     const inverseRatio = b / a;
-    if (Math.abs(inverseRatio - Math.round(inverseRatio)) < FractionClass.TOLERANCE) {
+    if (
+      Math.abs(inverseRatio - Math.round(inverseRatio)) <
+      FractionClass.TOLERANCE
+    ) {
       return a; // a divides b roughly
     }
-    
+
     // Otherwise, try to find common factors using prime factors of smaller number
     const smaller = Math.min(a, b);
     if (smaller < 1000) {
@@ -122,7 +127,7 @@ export class FractionClass {
         }
       }
     }
-    
+
     return 1; // No common factor found
   }
 
@@ -131,14 +136,14 @@ export class FractionClass {
    */
   private scaleDownToSafeRange(): void {
     if (this.denominator <= FractionClass.MAX_SAFE_DENOMINATOR) return;
-    
+
     // Calculate scaling factor
     const scaleFactor = this.denominator / FractionClass.MAX_SAFE_DENOMINATOR;
-    
+
     // Scale both numerator and denominator
     this.numerator = Math.round(this.numerator / scaleFactor);
     this.denominator = FractionClass.MAX_SAFE_DENOMINATOR;
-    
+
     // Try to simplify after scaling
     const gcd = this.safeGcd(Math.abs(this.numerator), this.denominator);
     if (gcd > 1) {
@@ -154,9 +159,10 @@ export class FractionClass {
    */
   add(other: FractionClass): FractionClass {
     // Check for potential overflow
-    const newNumerator = this.numerator * other.denominator + other.numerator * this.denominator;
+    const newNumerator =
+      this.numerator * other.denominator + other.numerator * this.denominator;
     const newDenominator = this.denominator * other.denominator;
-    
+
     // Check if result might overflow
     if (Math.abs(newDenominator) > FractionClass.MAX_SAFE_DENOMINATOR) {
       // Use decimal addition for very large denominators
@@ -174,9 +180,10 @@ export class FractionClass {
    */
   subtract(other: FractionClass): FractionClass {
     // Check for potential overflow
-    const newNumerator = this.numerator * other.denominator - other.numerator * this.denominator;
+    const newNumerator =
+      this.numerator * other.denominator - other.numerator * this.denominator;
     const newDenominator = this.denominator * other.denominator;
-    
+
     // Check if result might overflow
     if (Math.abs(newDenominator) > FractionClass.MAX_SAFE_DENOMINATOR) {
       // Use decimal subtraction for very large denominators
@@ -193,18 +200,18 @@ export class FractionClass {
    * ===== FIX C6: Added overflow protection =====
    */
   multiply(scalar: number | FractionClass): FractionClass {
-    if (typeof scalar === 'number') {
+    if (typeof scalar === "number") {
       // Check for overflow
-      if (Math.abs(this.denominator) > FractionClass.MAX_SAFE_DENOMINATOR / Math.abs(scalar)) {
+      if (
+        Math.abs(this.denominator) >
+        FractionClass.MAX_SAFE_DENOMINATOR / Math.abs(scalar)
+      ) {
         // Use decimal multiplication
         const decimal = this.toDecimal() * scalar;
         return FractionClass.fromDecimal(decimal, 12);
       }
-      
-      return new FractionClass(
-        this.numerator * scalar,
-        this.denominator
-      );
+
+      return new FractionClass(this.numerator * scalar, this.denominator);
     } else {
       // Check for overflow
       const newDenominator = this.denominator * scalar.denominator;
@@ -213,10 +220,10 @@ export class FractionClass {
         const decimal = this.toDecimal() * scalar.toDecimal();
         return FractionClass.fromDecimal(decimal, 12);
       }
-      
+
       return new FractionClass(
         this.numerator * scalar.numerator,
-        newDenominator
+        newDenominator,
       );
     }
   }
@@ -227,27 +234,26 @@ export class FractionClass {
    * ===== FIX C6: Added overflow protection =====
    */
   divide(scalar: number | FractionClass): FractionClass {
-    if (typeof scalar === 'number') {
+    if (typeof scalar === "number") {
       if (scalar === 0) {
-        throw new Error('لا يمكن القسمة على صفر | Cannot divide by zero');
+        throw new Error("لا يمكن القسمة على صفر | Cannot divide by zero");
       }
-      
+
       // Check for overflow
-      if (Math.abs(this.denominator * scalar) > FractionClass.MAX_SAFE_DENOMINATOR) {
+      if (
+        Math.abs(this.denominator * scalar) > FractionClass.MAX_SAFE_DENOMINATOR
+      ) {
         // Use decimal division
         const decimal = this.toDecimal() / scalar;
         return FractionClass.fromDecimal(decimal, 12);
       }
-      
-      return new FractionClass(
-        this.numerator,
-        this.denominator * scalar
-      );
+
+      return new FractionClass(this.numerator, this.denominator * scalar);
     } else {
       if (scalar.numerator === 0) {
-        throw new Error('لا يمكن القسمة على صفر | Cannot divide by zero');
+        throw new Error("لا يمكن القسمة على صفر | Cannot divide by zero");
       }
-      
+
       // Check for overflow
       const newDenominator = this.denominator * scalar.numerator;
       if (Math.abs(newDenominator) > FractionClass.MAX_SAFE_DENOMINATOR) {
@@ -255,10 +261,10 @@ export class FractionClass {
         const decimal = this.toDecimal() / scalar.toDecimal();
         return FractionClass.fromDecimal(decimal, 12);
       }
-      
+
       return new FractionClass(
         this.numerator * scalar.denominator,
-        newDenominator
+        newDenominator,
       );
     }
   }
@@ -269,8 +275,10 @@ export class FractionClass {
    */
   toDecimal(): number {
     // Handle very large numbers safely
-    if (Math.abs(this.numerator) > Number.MAX_SAFE_INTEGER || 
-        Math.abs(this.denominator) > Number.MAX_SAFE_INTEGER) {
+    if (
+      Math.abs(this.numerator) > Number.MAX_SAFE_INTEGER ||
+      Math.abs(this.denominator) > Number.MAX_SAFE_INTEGER
+    ) {
       // Use high precision division
       return this.numerator / this.denominator;
     }
@@ -285,12 +293,12 @@ export class FractionClass {
     // Cross multiplication for exact comparison (safer than decimal)
     const left = this.numerator * other.denominator;
     const right = other.numerator * this.denominator;
-    
+
     // Check if difference is within tolerance
     if (Math.abs(left - right) <= tolerance * Math.abs(left)) {
       return true;
     }
-    
+
     // Fallback to decimal comparison
     return Math.abs(this.toDecimal() - other.toDecimal()) <= tolerance;
   }
@@ -303,7 +311,7 @@ export class FractionClass {
     // Cross multiplication for accurate comparison
     const left = this.numerator * other.denominator;
     const right = other.numerator * this.denominator;
-    
+
     const diff = left - right;
     if (diff < -FractionClass.TOLERANCE) return -1;
     if (diff > FractionClass.TOLERANCE) return 1;
@@ -327,72 +335,72 @@ export class FractionClass {
    */
   toArabicName(): string {
     const key = `${this.numerator}/${this.denominator}`;
-    
+
     // Comprehensive Arabic fraction names for all inheritance scenarios
     const arabicFractions: Record<string, string> = {
       // Basic fractions
-      '0/1': 'لا شيء',
-      '1/1': 'كامل التركة',
-      '1/2': 'النصف',
-      '1/3': 'الثلث',
-      '2/3': 'الثلثان',
-      '1/4': 'الربع',
-      '3/4': 'ثلاثة أرباع',
-      '1/5': 'الخمس',
-      '2/5': 'خمسان',
-      '3/5': 'ثلاثة أخماس',
-      '4/5': 'أربعة أخماس',
-      '1/6': 'السدس',
-      '5/6': 'خمسة أسداس',
-      '1/7': 'السبع',
-      '2/7': 'سبعان',
-      '3/7': 'ثلاثة أسباع',
-      '4/7': 'أربعة أسباع',
-      '5/7': 'خمسة أسباع',
-      '6/7': 'ستة أسباع',
-      '1/8': 'الثمن',
-      '3/8': 'ثلاثة أثمان',
-      '5/8': 'خمسة أثمان',
-      '7/8': 'سبعة أثمان',
-      '1/9': 'التسع',
-      '2/9': 'تسعان',
-      '4/9': 'أربعة أتساع',
-      '5/9': 'خمسة أتساع',
-      '7/9': 'سبعة أتساع',
-      '8/9': 'ثمانية أتساع',
-      '1/10': 'العشر',
-      '3/10': 'ثلاثة أعشار',
-      '7/10': 'سبعة أعشار',
-      '9/10': 'تسعة أعشار',
+      "0/1": "لا شيء",
+      "1/1": "كامل التركة",
+      "1/2": "النصف",
+      "1/3": "الثلث",
+      "2/3": "الثلثان",
+      "1/4": "الربع",
+      "3/4": "ثلاثة أرباع",
+      "1/5": "الخمس",
+      "2/5": "خمسان",
+      "3/5": "ثلاثة أخماس",
+      "4/5": "أربعة أخماس",
+      "1/6": "السدس",
+      "5/6": "خمسة أسداس",
+      "1/7": "السبع",
+      "2/7": "سبعان",
+      "3/7": "ثلاثة أسباع",
+      "4/7": "أربعة أسباع",
+      "5/7": "خمسة أسباع",
+      "6/7": "ستة أسباع",
+      "1/8": "الثمن",
+      "3/8": "ثلاثة أثمان",
+      "5/8": "خمسة أثمان",
+      "7/8": "سبعة أثمان",
+      "1/9": "التسع",
+      "2/9": "تسعان",
+      "4/9": "أربعة أتساع",
+      "5/9": "خمسة أتساع",
+      "7/9": "سبعة أتساع",
+      "8/9": "ثمانية أتساع",
+      "1/10": "العشر",
+      "3/10": "ثلاثة أعشار",
+      "7/10": "سبعة أعشار",
+      "9/10": "تسعة أعشار",
 
       // Common inheritance combinations
-      '1/12': 'واحد من اثني عشر',
-      '5/12': 'خمسة من اثني عشر',
-      '7/12': 'سبعة من اثني عشر',
-      '11/12': 'أحد عشر من اثني عشر',
-      '1/24': 'واحد من أربعة وعشرين',
-      '5/24': 'خمسة من أربعة وعشرين',
-      '7/24': 'سبعة من أربعة وعشرين',
-      '11/24': 'أحد عشر من أربعة وعشرين',
-      '13/24': 'ثلاثة عشر من أربعة وعشرين',
-      '17/24': 'سبعة عشر من أربعة وعشرين',
-      '19/24': 'تسعة عشر من أربعة وعشرين',
-      '23/24': 'ثلاثة وعشرون من أربعة وعشرين',
+      "1/12": "واحد من اثني عشر",
+      "5/12": "خمسة من اثني عشر",
+      "7/12": "سبعة من اثني عشر",
+      "11/12": "أحد عشر من اثني عشر",
+      "1/24": "واحد من أربعة وعشرين",
+      "5/24": "خمسة من أربعة وعشرين",
+      "7/24": "سبعة من أربعة وعشرين",
+      "11/24": "أحد عشر من أربعة وعشرين",
+      "13/24": "ثلاثة عشر من أربعة وعشرين",
+      "17/24": "سبعة عشر من أربعة وعشرين",
+      "19/24": "تسعة عشر من أربعة وعشرين",
+      "23/24": "ثلاثة وعشرون من أربعة وعشرين",
 
       // Simplified forms
-      '2/6': 'ثلث', // Simplified from 2/6
-      '3/6': 'نصف', // Simplified from 3/6
-      '4/6': 'ثلثان', // Simplified from 4/6
-      '2/8': 'ربع', // Simplified from 2/8
-      '4/8': 'نصف', // Simplified from 4/8
-      '6/8': 'ثلاثة أرباع', // Simplified from 6/8
-      '3/9': 'ثلث', // Simplified from 3/9
-      '6/9': 'ثلثان', // Simplified from 6/9
-      '2/10': 'خمس', // Simplified from 2/10
-      '4/10': 'خمسان', // Simplified from 4/10
-      '5/10': 'نصف', // Simplified from 5/10
-      '6/10': 'ثلاثة أخماس', // Simplified from 6/10
-      '8/10': 'أربعة أخماس', // Simplified from 8/10
+      "2/6": "ثلث", // Simplified from 2/6
+      "3/6": "نصف", // Simplified from 3/6
+      "4/6": "ثلثان", // Simplified from 4/6
+      "2/8": "ربع", // Simplified from 2/8
+      "4/8": "نصف", // Simplified from 4/8
+      "6/8": "ثلاثة أرباع", // Simplified from 6/8
+      "3/9": "ثلث", // Simplified from 3/9
+      "6/9": "ثلثان", // Simplified from 6/9
+      "2/10": "خمس", // Simplified from 2/10
+      "4/10": "خمسان", // Simplified from 4/10
+      "5/10": "نصف", // Simplified from 5/10
+      "6/10": "ثلاثة أخماس", // Simplified from 6/10
+      "8/10": "أربعة أخماس", // Simplified from 8/10
     };
 
     // Check if we have an exact match
@@ -501,7 +509,7 @@ export class FractionClass {
   toData(): FractionData {
     return {
       numerator: this.numerator,
-      denominator: this.denominator
+      denominator: this.denominator,
     };
   }
 
@@ -518,35 +526,40 @@ export class FractionClass {
    */
   static fromDecimal(decimal: number, precision: number = 12): FractionClass {
     if (decimal === 0) return new FractionClass(0);
-    
+
     const sign = decimal < 0 ? -1 : 1;
     decimal = Math.abs(decimal);
-    
+
     // Handle very small decimals by increasing precision
     if (decimal < 0.000001) {
       precision = 15;
     }
-    
+
     // Convert to fraction using continued fractions for better accuracy
     const fraction = this.decimalToFraction(decimal, precision);
-    
+
     return new FractionClass(sign * fraction.numerator, fraction.denominator);
   }
 
   /**
    * ===== FIX C6: Convert decimal to fraction using continued fractions =====
    */
-  private static decimalToFraction(decimal: number, maxDenominator: number = 1000000): { numerator: number; denominator: number } {
+  private static decimalToFraction(
+    decimal: number,
+    maxDenominator: number = 1000000,
+  ): { numerator: number; denominator: number } {
     // Handle integer case
     if (Math.abs(decimal - Math.round(decimal)) < this.TOLERANCE) {
       return { numerator: Math.round(decimal), denominator: 1 };
     }
-    
+
     // Use continued fractions algorithm for best rational approximation
-    let h1 = 1, h2 = 0;
-    let k1 = 0, k2 = 1;
+    let h1 = 1,
+      h2 = 0;
+    let k1 = 0,
+      k2 = 1;
     let b = decimal;
-    
+
     do {
       const a = Math.floor(b);
       let aux = h1;
@@ -556,8 +569,11 @@ export class FractionClass {
       k1 = a * k1 + k2;
       k2 = aux;
       b = 1 / (b - a);
-    } while (Math.abs(decimal - h1 / k1) > decimal * 1e-12 && k1 < maxDenominator);
-    
+    } while (
+      Math.abs(decimal - h1 / k1) > decimal * 1e-12 &&
+      k1 < maxDenominator
+    );
+
     return { numerator: h1, denominator: k1 };
   }
 
@@ -583,7 +599,7 @@ export class FractionClass {
    */
   toDenominator(targetDenominator: number): FractionClass {
     if (targetDenominator % this.denominator !== 0) {
-      throw new Error('المقام المستهدف يجب أن يكون مضاعفاً للمقام الحالي');
+      throw new Error("المقام المستهدف يجب أن يكون مضاعفاً للمقام الحالي");
     }
     const multiplier = targetDenominator / this.denominator;
     return new FractionClass(this.numerator * multiplier, targetDenominator);
@@ -593,9 +609,11 @@ export class FractionClass {
    * ===== FIX C6: Check if fraction is safe (within limits) =====
    */
   isSafe(): boolean {
-    return Math.abs(this.numerator) < Number.MAX_SAFE_INTEGER / 2 &&
-           Math.abs(this.denominator) < Number.MAX_SAFE_INTEGER / 2 &&
-           this.denominator <= FractionClass.MAX_SAFE_DENOMINATOR;
+    return (
+      Math.abs(this.numerator) < Number.MAX_SAFE_INTEGER / 2 &&
+      Math.abs(this.denominator) < Number.MAX_SAFE_INTEGER / 2 &&
+      this.denominator <= FractionClass.MAX_SAFE_DENOMINATOR
+    );
   }
 
   /**
@@ -605,7 +623,7 @@ export class FractionClass {
     const isExact = this.isSafe();
     return {
       value: this.numerator / this.denominator,
-      isExact
+      isExact,
     };
   }
 }
