@@ -1,0 +1,50 @@
+name: V0.1 Quality Gate
+
+on:
+  pull_request:
+    paths:
+      - "V0.1/**"
+      - ".github/workflows/v01-quality-gate.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "V0.1/**"
+      - ".github/workflows/v01-quality-gate.yml"
+
+jobs:
+  quality-gate:
+    name: Type, lint, test, format, and Expo Doctor
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: V0.1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: V0.1/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Expo Doctor
+        run: npm run doctor
+
+      - name: Type check
+        run: npm run check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Format check
+        run: npm run format:check

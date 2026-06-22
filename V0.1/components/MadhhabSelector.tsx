@@ -87,6 +87,17 @@ export function MadhhabSelector({
           <Text style={styles.trustBadgeText}>قابل للمقارنة</Text>
         </View>
       </View>
+      <View style={styles.explanationCard}>
+        <MaterialCommunityIcons
+          name="information-outline"
+          size={20}
+          color={theme.colors.secondary.main}
+        />
+        <Text style={styles.explanationText}>
+          قد تختلف بعض الحالات الخاصة بين المذاهب. اختر المدرسة المعتمدة لديك،
+          ثم استخدم شاشة المقارنة بعد الحساب لفهم أي فروقات.
+        </Text>
+      </View>
       <View style={styles.gridContainer}>
         {MADHAB_DATA.map((madhab) => {
           const isSelected = selectedMadhab === madhab.id;
@@ -176,6 +187,23 @@ const createStyles = (theme: Theme) =>
       ...theme.typography.label.small,
       color: theme.colors.primary.main,
       fontFamily: "Inter-Bold",
+    },
+    explanationCard: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      gap: theme.spacing.sm,
+      padding: theme.spacing.md,
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: theme.colors.secondary.light,
+      borderWidth: 1,
+      borderColor: theme.colors.secondary.lighter,
+      marginBottom: theme.spacing.md,
+    },
+    explanationText: {
+      ...theme.typography.body.small,
+      color: theme.colors.neutral.dark200,
+      flex: 1,
+      fontFamily: "Inter-Regular",
     },
     // Compact Grid Style (2x2 on wide, stacks on narrow)
     gridContainer: {
