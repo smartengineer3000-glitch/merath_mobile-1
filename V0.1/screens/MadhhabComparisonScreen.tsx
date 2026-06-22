@@ -222,8 +222,8 @@ export default function MadhhabComparisonScreen() {
             {(
               [
                 ["all", "الكل"],
-                ["differences", "الفروقات"],
-                ["explanation", "التفسير"],
+                ["differences", "الفروقات فقط"],
+                ["explanation", "الملخص"],
               ] as const
             ).map(([value, label]) => (
               <TouchableOpacity
@@ -339,7 +339,7 @@ export default function MadhhabComparisonScreen() {
                     ))}
                   </View>
 
-                  {heirKeys.map((key) => {
+                  {visibleHeirKeys.map((key) => {
                     const firstShare = comparisonResults
                       .map((comp) => findShare(comp.result, key))
                       .find(Boolean);

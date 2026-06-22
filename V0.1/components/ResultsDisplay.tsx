@@ -962,7 +962,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
                         key={index}
                         style={[
                           styles.tableRow,
-                          index % 2 === 1 && styles.tableRowAlternate,
+                          index % 2 === 0 && styles.tableRowAlternate,
                         ]}
                       >
                         <Text style={styles.tableCell}>

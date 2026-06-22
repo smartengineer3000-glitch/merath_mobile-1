@@ -16,6 +16,7 @@ import {
   I18nManager,
   Platform,
   Alert,
+  TouchableOpacity,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSettings } from "../lib/context/SettingsContext";
@@ -37,7 +38,6 @@ const MadhhabComparisonScreen = React.lazy(
 );
 const TestScreen = React.lazy(() => import("../screens/TestScreen"));
 const SettingsScreen = React.lazy(() => import("../screens/SettingsScreen"));
-const AboutScreen = React.lazy(() => import("../screens/AboutScreen"));
 
 function LazyFallback() {
   const { theme } = useAppTheme();
@@ -70,7 +70,6 @@ function withSuspense<P extends object>(
 const LazyMadhhabComparison = withSuspense(MadhhabComparisonScreen);
 const LazyTestScreen = withSuspense(TestScreen);
 const LazySettingsScreen = withSuspense(SettingsScreen);
-const LazyAboutScreen = withSuspense(AboutScreen);
 
 // Allow RTL layouts on supported platforms, and dynamically update direction based on selected language.
 if (Platform.OS !== "web") {
@@ -89,7 +88,7 @@ export function TabNavigator() {
 
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
+      screenOptions={({ route, navigation }) => ({
         headerShown: true,
         headerStyle: {
           backgroundColor: theme.colors.background.light,
@@ -101,6 +100,20 @@ export function TabNavigator() {
           fontFamily: "Inter-Bold",
           fontSize: 18,
         },
+        headerRight: () => (
+          <TouchableOpacity
+            onPress={() => navigation.getParent()?.navigate("SettingsModal")}
+            accessibilityRole="button"
+            accessibilityLabel="Open settings"
+            style={{ paddingHorizontal: 8, paddingVertical: 4 }}
+          >
+            <MaterialCommunityIcons
+              name="cog-outline"
+              size={24}
+              color={theme.colors.primary.main}
+            />
+          </TouchableOpacity>
+        ),
         tabBarStyle: {
           backgroundColor: theme.colors.background.light,
           borderTopColor: theme.colors.neutral.light300,
@@ -122,9 +135,7 @@ export function TabNavigator() {
             Calculator: "calculator",
             Results: "chart-box",
             MadhhabComparison: "compare",
-            Test: "test-tube",
-            Settings: "cog",
-            About: "information",
+            Test: "lightning-bolt",
           };
 
           return (
@@ -161,30 +172,12 @@ export function TabNavigator() {
           tabBarLabel: "Compare",
         }}
       />
-      {__DEV__ && (
-        <Tab.Screen
-          name="Test"
-          component={LazyTestScreen}
-          options={{
-            title: "Test",
-            tabBarLabel: "Test",
-          }}
-        />
-      )}
       <Tab.Screen
-        name="Settings"
-        component={LazySettingsScreen}
+        name="Test"
+        component={LazyTestScreen}
         options={{
-          title: "Settings",
-          tabBarLabel: "Settings",
-        }}
-      />
-      <Tab.Screen
-        name="About"
-        component={LazyAboutScreen}
-        options={{
-          title: "About",
-          tabBarLabel: "About",
+          title: "Real Test Cases",
+          tabBarLabel: "Test Cases",
         }}
       />
     </Tab.Navigator>
@@ -235,6 +228,17 @@ export function RootNavigator() {
           name="MainApp"
           component={TabNavigator}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="SettingsModal"
+          component={LazySettingsScreen}
+          options={{
+            presentation: "modal",
+            headerShown: true,
+            title: "Settings",
+            headerStyle: { backgroundColor: theme.colors.background.light },
+            headerTintColor: theme.colors.primary.main,
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
