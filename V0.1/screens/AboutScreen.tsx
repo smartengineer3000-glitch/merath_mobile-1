@@ -102,6 +102,13 @@ export default function AboutScreen() {
     { name: "Hanbali", scholar: "Imam Ahmad ibn Hanbal" },
   ];
 
+  const trustBadges = [
+    "4 madhhabs",
+    "Offline calculation",
+    "Audit trail",
+    "Export ready",
+  ];
+
   const specialCases = [
     { name: "Umm Walad", description: "Rules for freed concubines" },
     { name: "Dhawu al-Arham", description: "Inheritance by blood relation" },
@@ -138,6 +145,18 @@ export default function AboutScreen() {
         <Text style={styles.title}>Merath</Text>
         <Text style={styles.subtitle}>Islamic Inheritance Calculator</Text>
         <Text style={styles.version}>Version {appVersion}</Text>
+        <View style={styles.trustBadgeRow}>
+          {trustBadges.map((badge) => (
+            <View key={badge} style={styles.trustBadge}>
+              <MaterialCommunityIcons
+                name="shield-check"
+                size={14}
+                color={theme.colors.primary.main}
+              />
+              <Text style={styles.trustBadgeText}>{badge}</Text>
+            </View>
+          ))}
+        </View>
       </View>
 
       <View style={styles.section}>
@@ -194,6 +213,8 @@ export default function AboutScreen() {
         <TouchableOpacity
           style={styles.contactButton}
           onPress={() => handleContact("email")}
+          accessibilityRole="button"
+          accessibilityLabel="Email support"
         >
           <MaterialCommunityIcons
             name="email"
@@ -205,6 +226,8 @@ export default function AboutScreen() {
         <TouchableOpacity
           style={styles.contactButton}
           onPress={() => handleContact("website")}
+          accessibilityRole="button"
+          accessibilityLabel="Visit Merath website"
         >
           <MaterialCommunityIcons
             name="web"
@@ -216,6 +239,8 @@ export default function AboutScreen() {
         <TouchableOpacity
           style={styles.contactButton}
           onPress={() => handleContact("github")}
+          accessibilityRole="button"
+          accessibilityLabel="Open GitHub project"
         >
           <MaterialCommunityIcons
             name="github"
@@ -262,6 +287,29 @@ const createStyles = (theme: Theme) =>
       ...theme.typography.label.medium,
       color: theme.colors.neutral.light400,
       marginTop: theme.spacing.xs,
+    },
+    trustBadgeRow: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      justifyContent: "center",
+      gap: theme.spacing.sm,
+      marginTop: theme.spacing.lg,
+    },
+    trustBadge: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.xs,
+      borderRadius: theme.borderRadius.full,
+      backgroundColor: theme.colors.primary.light,
+      borderWidth: 1,
+      borderColor: theme.colors.primary.lighter,
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.xs,
+    },
+    trustBadgeText: {
+      ...theme.typography.label.small,
+      color: theme.colors.primary.main,
+      fontFamily: "Inter-Bold",
     },
     section: {
       marginBottom: theme.spacing.xxxl,
@@ -344,6 +392,7 @@ const createStyles = (theme: Theme) =>
       marginBottom: theme.spacing.xs,
       backgroundColor: theme.colors.background.light,
       borderRadius: 8,
+      minHeight: 48,
       borderWidth: 1,
       borderColor: theme.colors.neutral.light200,
     },
