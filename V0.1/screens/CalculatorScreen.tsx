@@ -4,14 +4,12 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
   Alert,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
@@ -23,7 +21,6 @@ import { useResults } from "../lib/hooks/useResults";
 import { EstateInput } from "../components/EstateInput";
 import { HeirSelector } from "../components/HeirSelector";
 import { MadhhabSelector } from "../components/MadhhabSelector";
-import { ResultsDisplay } from "../components/ResultsDisplay";
 import { Card } from "../components/ui/Card";
 import { PrimaryButton, SecondaryButton } from "../components/ui/Button";
 import type { Theme } from "../lib/design/theme";
@@ -40,8 +37,6 @@ type StepCardProps = {
   status: StepStatus;
   children: React.ReactNode;
 };
-
-const Tab = createMaterialTopTabNavigator();
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("ar-SA", {
@@ -117,9 +112,8 @@ export default function CalculatorScreen() {
   const { theme } = useAppTheme();
   const navigation = useNavigation<BottomTabNavigationProp<TabParamList>>();
   const { calculateWithEstate } = useCalculator();
-  const { result, setResult, clearResults } = useResults();
+  const { setResult, clearResults } = useResults();
   const { saveScenario, clearScenario } = useCalculationScenario();
-  const [showResults, setShowResults] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
   const [currentEstate, setCurrentEstate] = useState<EstateData>({
     total: 0,
@@ -184,7 +178,7 @@ export default function CalculatorScreen() {
           madhab,
           result: calculationResult,
         });
-        setShowResults(true);
+        navigation.navigate("Results");
       } else {
         Alert.alert(
           t("common.error"),
@@ -203,6 +197,7 @@ export default function CalculatorScreen() {
     calculateWithEstate,
     setResult,
     saveScenario,
+    navigation,
     t,
   ]);
 
@@ -211,63 +206,20 @@ export default function CalculatorScreen() {
     setCurrentHeirs({});
     clearResults();
     clearScenario();
-    setShowResults(false);
   }, [clearResults, clearScenario]);
 
   const styles = createStyles(theme);
 
-  const EstateDetailsTab = () => (
-    <ScrollView
-      style={styles.tabScreen}
-      contentContainerStyle={styles.tabContent}
-      showsVerticalScrollIndicator={false}
-    >
-      <View style={styles.netEstateBanner}>
-        <MaterialCommunityIcons
-          name="wallet-outline"
-          size={22}
-          color={theme.colors.primary.main}
-        />
-        <View style={styles.netEstateCopy}>
-          <Text style={styles.netEstateLabel}>صافي التركة المتوقع</Text>
-          <Text style={styles.netEstateValue}>{formatCurrency(netEstate)}</Text>
-        </View>
-      </View>
-      <EstateInput onEstateChange={handleEstateChange} />
-    </ScrollView>
-  );
-
-  const HeirsTab = () => (
-    <ScrollView
-      style={styles.tabScreen}
-      contentContainerStyle={styles.tabContent}
-      showsVerticalScrollIndicator={false}
-    >
-      {selectedHeirsCount > 0 && (
-        <View style={styles.selectionSummary}>
-          <MaterialCommunityIcons
-            name="account-check"
-            size={20}
-            color={theme.colors.success.main}
-          />
-          <Text style={styles.selectionSummaryText}>
-            تم اختيار {selectedHeirsCount} من الورثة
-          </Text>
-        </View>
-      )}
-      <HeirSelector onHeirsChange={handleHeirsChange} />
-    </ScrollView>
-  );
-
-  const MadhabTab = () => (
-    <ScrollView
-      style={styles.tabScreen}
-      contentContainerStyle={styles.tabContent}
-      showsVerticalScrollIndicator={false}
-    >
-      <MadhhabSelector selectedMadhab={madhab} onSelect={setMadhab} />
-    </ScrollView>
-  );
+  const estateStepStatus: StepStatus =
+    currentEstate.total > 0 ? "complete" : "active";
+  const heirsStepStatus: StepStatus =
+    selectedHeirsCount > 0
+      ? "complete"
+      : currentEstate.total > 0
+        ? "active"
+        : "pending";
+  const madhabStepStatus: StepStatus =
+    selectedHeirsCount > 0 ? "active" : "pending";
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -323,36 +275,62 @@ export default function CalculatorScreen() {
                 </View>
               </View>
             </View>
-          </ScrollView>
 
-          <View style={styles.tabContainer}>
-            <Tab.Navigator
-              initialRouteName="EstateDetails"
-              screenOptions={{
-                tabBarActiveTintColor: theme.colors.primary.main,
-                tabBarInactiveTintColor: theme.colors.neutral.main,
-                tabBarIndicatorStyle: styles.tabIndicator,
-                tabBarStyle: styles.tabBar,
-                tabBarLabelStyle: styles.tabLabel,
-              }}
+            <StepCard
+              index={1}
+              title={t("calculator.estateDetails")}
+              subtitle="أدخل قيمة التركة والخصومات مع ملخص صافي فوري"
+              icon="wallet-outline"
+              status={estateStepStatus}
             >
-              <Tab.Screen
-                name="EstateDetails"
-                component={EstateDetailsTab}
-                options={{ title: t("calculator.estateDetails") }}
-              />
-              <Tab.Screen
-                name="Heirs"
-                component={HeirsTab}
-                options={{ title: t("calculator.heirs") }}
-              />
-              <Tab.Screen
-                name="Madhab"
-                component={MadhabTab}
-                options={{ title: t("calculator.madhab") }}
-              />
-            </Tab.Navigator>
-          </View>
+              <View style={styles.netEstateBanner}>
+                <MaterialCommunityIcons
+                  name="wallet-outline"
+                  size={22}
+                  color={theme.colors.primary.main}
+                />
+                <View style={styles.netEstateCopy}>
+                  <Text style={styles.netEstateLabel}>صافي التركة المتوقع</Text>
+                  <Text style={styles.netEstateValue}>
+                    {formatCurrency(netEstate)}
+                  </Text>
+                </View>
+              </View>
+              <EstateInput onEstateChange={handleEstateChange} />
+            </StepCard>
+
+            <StepCard
+              index={2}
+              title={t("calculator.heirs")}
+              subtitle="حدد الورثة بأزرار واضحة وراجع العدد المختار قبل الحساب"
+              icon="account-group"
+              status={heirsStepStatus}
+            >
+              {selectedHeirsCount > 0 && (
+                <View style={styles.selectionSummary}>
+                  <MaterialCommunityIcons
+                    name="account-check"
+                    size={20}
+                    color={theme.colors.success.main}
+                  />
+                  <Text style={styles.selectionSummaryText}>
+                    تم اختيار {selectedHeirsCount} من الورثة
+                  </Text>
+                </View>
+              )}
+              <HeirSelector onHeirsChange={handleHeirsChange} />
+            </StepCard>
+
+            <StepCard
+              index={3}
+              title={t("calculator.madhab")}
+              subtitle="اختر طريقة الحساب واعرض أثر الاختيار بعد ظهور النتائج"
+              icon="school"
+              status={madhabStepStatus}
+            >
+              <MadhhabSelector selectedMadhab={madhab} onSelect={setMadhab} />
+            </StepCard>
+          </ScrollView>
 
           <View style={styles.buttonContainer}>
             <PrimaryButton
@@ -382,36 +360,6 @@ export default function CalculatorScreen() {
               accessibilityLabel={t("calculator.resetAllFields")}
             />
           </View>
-
-          {showResults && result && (
-            <View style={styles.resultsContainer}>
-              <View style={styles.resultsHeader}>
-                <Text style={styles.resultsHeaderTitle}>
-                  {t("results.title")}
-                </Text>
-                <TouchableOpacity
-                  style={styles.viewInTabButton}
-                  onPress={() => {
-                    setShowResults(false);
-                    navigation.navigate("Results");
-                  }}
-                >
-                  <MaterialCommunityIcons
-                    name="open-in-new"
-                    size={18}
-                    color={theme.colors.primary.main}
-                  />
-                  <Text style={styles.viewInTabButtonText}>
-                    {t("results.viewInTab")}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <ResultsDisplay
-                result={result}
-                onClose={() => setShowResults(false)}
-              />
-            </View>
-          )}
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -432,34 +380,7 @@ const createStyles = (theme: Theme) =>
     },
     scrollContent: {
       padding: theme.spacing.lg,
-      paddingBottom: theme.spacing.xxxl,
-    },
-    tabContainer: {
-      flex: 1,
-      minHeight: 420,
-      marginBottom: theme.spacing.lg,
-    },
-    tabScreen: {
-      flex: 1,
-      backgroundColor: theme.colors.background.lightVariant,
-    },
-    tabContent: {
-      padding: theme.spacing.lg,
-      paddingBottom: theme.spacing.xxxl,
-    },
-    tabBar: {
-      backgroundColor: theme.colors.background.light,
-      elevation: 0,
-      shadowOpacity: 0,
-    },
-    tabIndicator: {
-      backgroundColor: theme.colors.primary.main,
-      height: 3,
-    },
-    tabLabel: {
-      fontFamily: "Inter-Bold",
-      ...theme.typography.label.small,
-      textTransform: "none",
+      paddingBottom: theme.spacing.xl,
     },
     heroCard: {
       borderRadius: theme.borderRadius.xl,
@@ -646,42 +567,17 @@ const createStyles = (theme: Theme) =>
     buttonContainer: {
       flexDirection: "row",
       gap: theme.spacing.md,
-      marginBottom: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.lg,
+      paddingTop: theme.spacing.md,
+      paddingBottom: theme.spacing.lg,
+      backgroundColor: theme.colors.background.light,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.neutral.light200,
     },
     calculateButton: {
       flex: 1.35,
     },
     resetButton: {
       flex: 1,
-    },
-    resultsContainer: {
-      marginBottom: theme.spacing.lg,
-      borderTopWidth: 1,
-      borderTopColor: theme.colors.neutral.light200,
-      paddingTop: theme.spacing.md,
-    },
-    resultsHeader: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: theme.spacing.md,
-      paddingHorizontal: theme.spacing.md,
-    },
-    resultsHeaderTitle: {
-      ...theme.typography.headline.small,
-      color: theme.colors.neutral.dark300,
-    },
-    viewInTabButton: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: theme.spacing.xs,
-      paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.xs,
-      borderRadius: 16,
-      backgroundColor: theme.colors.primary.light,
-    },
-    viewInTabButtonText: {
-      ...theme.typography.label.small,
-      color: theme.colors.primary.main,
     },
   });
