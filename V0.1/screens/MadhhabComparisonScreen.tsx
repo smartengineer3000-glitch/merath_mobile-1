@@ -32,6 +32,8 @@ interface ComparisonEntry {
   result: CalculationResult;
 }
 
+type ComparisonView = "all" | "differences" | "explanation";
+
 export default function MadhhabComparisonScreen() {
   const { t } = useTranslation();
   const { theme } = useAppTheme();
@@ -44,6 +46,7 @@ export default function MadhhabComparisonScreen() {
     [],
   );
   const [isComparing, setIsComparing] = useState(false);
+  const [comparisonView, setComparisonView] = useState<ComparisonView>("all");
 
   const handleCompare = useCallback(async () => {
     if (!latestScenario) {
@@ -85,6 +88,22 @@ export default function MadhhabComparisonScreen() {
 
   const findShare = (result: CalculationResult, key: HeirShare["key"]) =>
     result.shares.find((share) => share.key === key);
+
+  const hasDifference = useCallback(
+    (key: HeirShare["key"]) => {
+      if (comparisonResults.length < 2) return false;
+      const amounts = comparisonResults.map(
+        (comp) => findShare(comp.result, key)?.amount ?? 0,
+      );
+      return amounts.some((amount) => Math.abs(amount - amounts[0]) > 0.01);
+    },
+    [comparisonResults],
+  );
+
+  const visibleHeirKeys =
+    comparisonView === "differences"
+      ? heirKeys.filter(hasDifference)
+      : heirKeys;
 
   const formatShare = (share?: HeirShare, totalEstate?: number) => {
     if (!share) return "محجوب";
@@ -199,7 +218,63 @@ export default function MadhhabComparisonScreen() {
         <Card style={styles.resultsCard}>
           <Text style={styles.resultsTitle}>{t("comparison.results")}</Text>
 
-          {isNarrowScreen ? (
+          <View style={styles.segmentedControl}>
+            {(
+              [
+                ["all", "الكل"],
+                ["differences", "الفروقات"],
+                ["explanation", "التفسير"],
+              ] as const
+            ).map(([value, label]) => (
+              <TouchableOpacity
+                key={value}
+                style={[
+                  styles.segmentButton,
+                  comparisonView === value && styles.segmentButtonActive,
+                ]}
+                onPress={() => setComparisonView(value)}
+                accessibilityRole="button"
+                accessibilityState={{ selected: comparisonView === value }}
+              >
+                <Text
+                  style={[
+                    styles.segmentButtonText,
+                    comparisonView === value && styles.segmentButtonTextActive,
+                  ]}
+                >
+                  {label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {comparisonView === "explanation" ? (
+            <View style={styles.explanationList}>
+              {visibleHeirKeys.filter(hasDifference).length > 0 ? (
+                visibleHeirKeys.filter(hasDifference).map((key) => {
+                  const firstShare = comparisonResults
+                    .map((comp) => findShare(comp.result, key))
+                    .find(Boolean);
+                  return (
+                    <View key={key} style={styles.differenceCard}>
+                      <Text style={styles.differenceTitle}>
+                        {firstShare?.name || key}
+                      </Text>
+                      <Text style={styles.differenceText}>
+                        يوجد اختلاف في نصيب هذا الوارث بين المذاهب. راجع المبالغ
+                        المظللة واختر المذهب المعتمد لديك أو استشر متخصصاً عند
+                        وجود فرق جوهري.
+                      </Text>
+                    </View>
+                  );
+                })
+              ) : (
+                <Text style={styles.noDifferenceText}>
+                  لا توجد فروقات ظاهرة بين نتائج المذاهب لهذه المسألة.
+                </Text>
+              )}
+            </View>
+          ) : isNarrowScreen ? (
             // Card layout for narrow screens
             <View style={styles.madhabCardsContainer}>
               {comparisonResults.map((comp) => {
@@ -220,16 +295,29 @@ export default function MadhhabComparisonScreen() {
                       />
                     </View>
                     <View style={styles.madhabCardContent}>
-                      {comp.result.shares.map((share, idx) => (
-                        <View key={idx} style={styles.madhabShareRow}>
-                          <Text style={styles.madhabShareName}>
-                            {share.name}
-                          </Text>
-                          <Text style={styles.madhabShareAmount}>
-                            {formatShare(share, totalEstate)}
-                          </Text>
-                        </View>
-                      ))}
+                      {comp.result.shares
+                        .filter(
+                          (share) =>
+                            comparisonView !== "differences" ||
+                            hasDifference(share.key),
+                        )
+                        .map((share, idx) => (
+                          <View
+                            key={idx}
+                            style={[
+                              styles.madhabShareRow,
+                              hasDifference(share.key) &&
+                                styles.changedShareRow,
+                            ]}
+                          >
+                            <Text style={styles.madhabShareName}>
+                              {share.name}
+                            </Text>
+                            <Text style={styles.madhabShareAmount}>
+                              {formatShare(share, totalEstate)}
+                            </Text>
+                          </View>
+                        ))}
                     </View>
                   </View>
                 );
@@ -263,7 +351,13 @@ export default function MadhhabComparisonScreen() {
                       : 0;
 
                     return (
-                      <View key={key} style={styles.tableRow}>
+                      <View
+                        key={key}
+                        style={[
+                          styles.tableRow,
+                          hasDifference(key) && styles.changedTableRow,
+                        ]}
+                      >
                         <Text style={[styles.tableCell, styles.heirColumn]}>
                           {firstShare?.name || key}
                         </Text>
@@ -460,6 +554,61 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
       color: theme.colors.neutral.dark300,
       marginBottom: 16,
     },
+    segmentedControl: {
+      flexDirection: "row",
+      gap: theme.spacing.sm,
+      backgroundColor: theme.colors.neutral.light100,
+      borderRadius: theme.borderRadius.full,
+      padding: theme.spacing.xs,
+      marginBottom: theme.spacing.lg,
+    },
+    segmentButton: {
+      flex: 1,
+      minHeight: 44,
+      borderRadius: theme.borderRadius.full,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: theme.spacing.sm,
+    },
+    segmentButtonActive: {
+      backgroundColor: theme.colors.primary.main,
+    },
+    segmentButtonText: {
+      ...theme.typography.label.medium,
+      color: theme.colors.neutral.dark200,
+      fontFamily: "Inter-Bold",
+    },
+    segmentButtonTextActive: {
+      color: theme.colors.background.light,
+    },
+    explanationList: {
+      gap: theme.spacing.md,
+      marginBottom: theme.spacing.lg,
+    },
+    differenceCard: {
+      borderRadius: theme.borderRadius.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.warning.main,
+      backgroundColor: theme.colors.warning.light,
+      padding: theme.spacing.md,
+    },
+    differenceTitle: {
+      ...theme.typography.title.medium,
+      color: theme.colors.neutral.dark300,
+      fontFamily: "Inter-Bold",
+      marginBottom: theme.spacing.xs,
+    },
+    differenceText: {
+      ...theme.typography.body.small,
+      color: theme.colors.neutral.dark200,
+      fontFamily: "Inter-Regular",
+    },
+    noDifferenceText: {
+      ...theme.typography.body.medium,
+      color: theme.colors.success.dark,
+      textAlign: "center",
+      padding: theme.spacing.lg,
+    },
     table: {
       borderWidth: 1,
       borderColor: theme.colors.neutral.light300,
@@ -471,6 +620,9 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
       flexDirection: "row",
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.neutral.light300,
+    },
+    changedTableRow: {
+      backgroundColor: theme.colors.warning.light,
     },
     tableHeader: {
       width: 150,
@@ -547,6 +699,11 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
       paddingVertical: theme.spacing.xs,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.neutral.light100,
+    },
+    changedShareRow: {
+      backgroundColor: theme.colors.warning.light,
+      borderRadius: theme.borderRadius.md,
+      paddingHorizontal: theme.spacing.sm,
     },
     madhabShareName: {
       fontSize: 14,

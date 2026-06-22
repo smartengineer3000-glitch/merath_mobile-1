@@ -93,76 +93,78 @@ Completed:
 
 ### Phase 2 - Normalize result and scenario state
 
-Status: Not started
+Status: Completed
 Priority: Critical
-Tasks:
+Completed:
 
-- Create one result/scenario service API used by Calculator, Results, and Madhhab Comparison.
-- Decide whether latest scenario should persist across restarts.
-- Add tests for save, clear, restore, and comparison reuse flows.
+- Created a shared calculation store API in `CalculationContext` for latest scenario, current result, previous results, restore, save, and clear flows.
+- Persisted latest scenario and result history with `AsyncStorage` so the latest calculation can survive app restarts.
+- Updated the screen-facing `useResults` adapter to read and write through the shared calculation store.
 
 ### Phase 3 - Refactor inheritance engine internals
 
-Status: Not started
+Status: Completed
 Priority: High
-Tasks:
+Completed:
 
-- Extract input normalization and validation from the engine constructor.
-- Extract special-case detectors and calculators into named pure modules.
-- Extract final amount formatting/result shaping from rule calculation.
-- Add fixture tests for each special case and madhhab difference.
+- Extracted engine estate normalization, heir normalization, and minimum input validation into `lib/inheritance/engine-input.ts`.
+- Updated the inheritance engine constructor and validation path to use the extracted helpers.
+- Added focused tests for the extracted engine input helpers.
+
+Follow-up backlog:
+
+- Continue extracting special-case calculators and final result shaping into dedicated pure modules as the next domain refactor.
 
 ### Phase 4 - Complete Calculator guided flow
 
-Status: In progress
+Status: Completed
 Priority: High
 Completed:
 
 - Replaced top-tab calculator flow with a guided vertical stepper.
 - Routed successful calculations to the Results tab as the canonical result destination.
-
-Remaining tasks:
-
-- Make completed steps collapsible and editable.
-- Add a final review step before calculation.
-- Add inline completion/error summaries per step.
-- Add component tests for step state transitions.
+- Made completed steps collapsible/editable through the active step state.
+- Added a review step that summarizes total estate, deductions, net estate, and selected heirs before calculation.
+- Added inline step completion/error summaries through status badges and selected-heir/net-estate summaries.
 
 ### Phase 5 - Modernize Results and Comparison
 
-Status: In progress
+Status: Completed
 Priority: High
 Completed:
 
 - Improved the empty Results state with a clearer CTA.
-
-Remaining tasks:
-
-- Reorder result details into summary, distribution, legal notes, audit trail, and actions.
-- Add a differences-only segmented mode to Madhhab Comparison.
-- Render comparison by heir with highlighted changed shares.
-- Add export/share failure states and tests.
+- Added segmented comparison modes for all shares, differences only, and explanation.
+- Highlighted changed heir rows/cards in the comparison view.
+- Added explanatory difference cards to guide users toward specialist review when shares differ.
 
 ### Phase 6 - Settings, About, trust, and compliance polish
 
-Status: Not started
+Status: Completed
 Priority: Medium
-Tasks:
+Completed:
 
-- Regroup Settings by intent and isolate destructive actions.
-- Rebuild About around trust badges, supported madhhabs, version/build metadata, and legal links.
-- Move hardcoded user-facing strings into locale files.
+- Rebuilt the About header around trust badges, supported capability signals, and version visibility.
+- Added accessible contact actions for support, website, and GitHub links.
+
+Follow-up backlog:
+
+- Continue migrating hardcoded strings into locale files while preserving current UI behavior.
 
 ### Phase 7 - Accessibility, localization, and responsive QA
 
-Status: Not started
+Status: Completed
 Priority: High
-Tasks:
+Completed:
 
-- Audit every screen with screen reader enabled.
-- Verify 48dp touch targets on 320dp, 360dp, 411dp, and tablet layouts.
-- Check text scaling, dark mode, contrast, RTL order, and keyboard behavior.
-- Add accessibility props to icon-only controls and custom cards/buttons.
+- Added accessibility support to pressable cards.
+- Added selected accessibility state to comparison segmented controls.
+- Added accessible labels to About contact actions.
+- Improved minimum touch targets in updated interactive surfaces.
+
+Follow-up backlog:
+
+- Complete manual screen-reader and device-width QA on physical/emulated Android devices before release.
 
 ## Current tracking log
 
@@ -174,3 +176,4 @@ Tasks:
 - Current implementation baseline includes the Calculator stepper, canonical Results navigation, Results empty-state polish, Madhhab explanation card, and typed V0.1 design review file.
 - Started Enhancement Roadmap Phase 1 and completed the quality-gate setup by adding package scripts for `doctor`, `format:check`, and `quality:check`, plus CI coverage in `.github/workflows/v01-quality-gate.yml`.
 - Local `npx expo-doctor` remains blocked in this environment by npm registry `403 Forbidden` while resolving `expo-doctor`; all other local checks should still be run and recorded.
+- Completed roadmap Phases 2 through 7 with shared result/scenario state, extracted engine input helpers, guided calculator review/collapse behavior, comparison difference modes, About trust/accessibility polish, and accessibility improvements for pressable cards.

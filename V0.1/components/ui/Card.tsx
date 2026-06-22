@@ -4,7 +4,7 @@
  */
 
 import React from "react";
-import { View, ViewStyle, Pressable } from "react-native";
+import { View, ViewStyle, Pressable, AccessibilityRole } from "react-native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 
 export type CardElevation = "flat" | "low" | "medium" | "high";
@@ -15,6 +15,8 @@ export interface ModernCardProps {
   onPress?: () => void;
   style?: ViewStyle;
   padding?: number;
+  accessibilityLabel?: string;
+  accessibilityRole?: AccessibilityRole;
 }
 
 export const ModernCard: React.FC<ModernCardProps> = ({
@@ -23,6 +25,8 @@ export const ModernCard: React.FC<ModernCardProps> = ({
   onPress,
   style,
   padding,
+  accessibilityLabel,
+  accessibilityRole = "button",
 }) => {
   const { theme } = useAppTheme();
 
@@ -72,6 +76,8 @@ export const ModernCard: React.FC<ModernCardProps> = ({
     return (
       <Pressable
         onPress={onPress}
+        accessibilityRole={accessibilityRole}
+        accessibilityLabel={accessibilityLabel}
         style={({ pressed }) => [
           cardStyle,
           style,

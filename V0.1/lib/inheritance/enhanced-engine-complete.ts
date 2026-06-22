@@ -23,6 +23,11 @@ import type {
   HeirType,
 } from "./types";
 import { HijabSystem } from "./hijab-system";
+import {
+  normalizeEstateInput,
+  normalizeHeirsInput,
+  validateEngineInput,
+} from "./engine-input";
 
 interface HeirShareObject {
   key: string;
@@ -72,13 +77,8 @@ export class EnhancedInheritanceCalculationEngine {
 
   constructor(madhab: MadhhabType, estate: EstateData, heirs: HeirsData) {
     this.madhab = madhab;
-    this.estate = {
-      total: estate.total || 0,
-      funeral: estate.funeral || 0,
-      debts: estate.debts || 0,
-      will: estate.will || 0,
-    };
-    this.heirs = this.normalizeHeirs(heirs);
+    this.estate = normalizeEstateInput(estate);
+    this.heirs = normalizeHeirsInput(heirs);
     this.hijabSystem = new HijabSystem(madhab);
   }
 
@@ -1290,59 +1290,7 @@ export class EnhancedInheritanceCalculationEngine {
     return merged;
   }
 
-  private normalizeHeirs(heirs: HeirsData): HeirsData {
-    return {
-      husband: Math.min(heirs.husband || 0, 1),
-      wife: Math.min(heirs.wife || 0, 4),
-      son: heirs.son || 0,
-      daughter: heirs.daughter || 0,
-      father: Math.min(heirs.father || 0, 1),
-      mother: Math.min(heirs.mother || 0, 1),
-      grandfather: Math.min(heirs.grandfather || 0, 1),
-      grandmother: Math.min(heirs.grandmother || 0, 1),
-      grandmother_mother: heirs.grandmother_mother || 0,
-      grandmother_father: heirs.grandmother_father || 0,
-      full_brother: heirs.full_brother || 0,
-      full_sister: heirs.full_sister || 0,
-      half_brother_paternal: heirs.half_brother_paternal || 0,
-      half_sister_paternal: heirs.half_sister_paternal || 0,
-      maternal_brother: heirs.maternal_brother || 0,
-      maternal_sister: heirs.maternal_sister || 0,
-      grandson: heirs.grandson || 0,
-      granddaughter: heirs.granddaughter || 0,
-      nephew_from_brother: heirs.nephew_from_brother || 0,
-      niece_from_brother: heirs.niece_from_brother || 0,
-      uncle_paternal: heirs.uncle_paternal || 0,
-      uncle_maternal: heirs.uncle_maternal || 0,
-      aunt_paternal: heirs.aunt_paternal || 0,
-      aunt_maternal: heirs.aunt_maternal || 0,
-      daughter_son: heirs.daughter_son || 0,
-      daughter_daughter: heirs.daughter_daughter || 0,
-      sister_children: heirs.sister_children || 0,
-      maternal_uncle: heirs.maternal_uncle || 0,
-      maternal_aunt: heirs.maternal_aunt || 0,
-      paternal_aunt: heirs.paternal_aunt || 0,
-    };
-  }
-
   private validateInput() {
-    if (!this.estate.total || this.estate.total <= 0) {
-      return {
-        valid: false,
-        error: "يجب إدخال مبلغ إجمالي التركة",
-      };
-    }
-
-    const totalHeirs = Object.values(this.heirs).filter(
-      (v) => v && v > 0,
-    ).length;
-    if (totalHeirs === 0) {
-      return {
-        valid: false,
-        error: "يجب تحديد وارث واحد على الأقل",
-      };
-    }
-
-    return { valid: true };
+    return validateEngineInput(this.estate, this.heirs);
   }
 }

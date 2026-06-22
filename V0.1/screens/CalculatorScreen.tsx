@@ -36,6 +36,8 @@ type StepCardProps = {
   icon: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
   status: StepStatus;
   children: React.ReactNode;
+  collapsed?: boolean;
+  onPress?: () => void;
 };
 
 const formatCurrency = (value: number) =>
@@ -50,6 +52,8 @@ function StepCard({
   icon,
   status,
   children,
+  collapsed = false,
+  onPress,
 }: StepCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -63,6 +67,7 @@ function StepCard({
         isActive ? styles.stepCardActive : undefined,
       ])}
       elevation={isActive ? "high" : "low"}
+      onPress={onPress}
     >
       <View style={styles.stepHeaderRow}>
         <View
@@ -95,13 +100,13 @@ function StepCard({
         </View>
         <View style={styles.stepIconCircle}>
           <MaterialCommunityIcons
-            name={icon}
+            name={collapsed ? "chevron-down" : icon}
             size={22}
             color={theme.colors.primary.main}
           />
         </View>
       </View>
-      <View style={styles.stepContent}>{children}</View>
+      {!collapsed && <View style={styles.stepContent}>{children}</View>}
     </Card>
   );
 }
@@ -115,6 +120,7 @@ export default function CalculatorScreen() {
   const { setResult, clearResults } = useResults();
   const { saveScenario, clearScenario } = useCalculationScenario();
   const [isCalculating, setIsCalculating] = useState(false);
+  const [activeStep, setActiveStep] = useState(1);
   const [currentEstate, setCurrentEstate] = useState<EstateData>({
     total: 0,
     funeral: 0,
@@ -125,11 +131,29 @@ export default function CalculatorScreen() {
 
   const handleEstateChange = useCallback((estate: EstateData) => {
     setCurrentEstate(estate);
+    if (estate.total > 0) {
+      setActiveStep((step) => (step === 1 ? 2 : step));
+    }
   }, []);
 
   const handleHeirsChange = useCallback((heirs: HeirsData) => {
     setCurrentHeirs(heirs);
+    const heirCount = Object.values(heirs).reduce<number>(
+      (sum, value) => sum + (value ?? 0),
+      0,
+    );
+    if (heirCount > 0) {
+      setActiveStep((step) => (step === 2 ? 3 : step));
+    }
   }, []);
+
+  const handleMadhabSelect = useCallback(
+    (selectedMadhab: typeof madhab) => {
+      setMadhab(selectedMadhab);
+      setActiveStep(4);
+    },
+    [setMadhab],
+  );
 
   const selectedHeirsCount = useMemo(
     () =>
@@ -146,10 +170,11 @@ export default function CalculatorScreen() {
     (currentEstate.will ?? 0);
   const netEstate = Math.max(0, (currentEstate.total ?? 0) - deductions);
   const progress = [
-    Boolean(madhab),
     currentEstate.total > 0,
     selectedHeirsCount > 0,
+    Boolean(madhab),
   ].filter(Boolean).length;
+  const canCalculate = currentEstate.total > 0 && selectedHeirsCount > 0;
 
   const handleCalculate = useCallback(async () => {
     if (currentEstate.total <= 0) {
@@ -206,20 +231,34 @@ export default function CalculatorScreen() {
     setCurrentHeirs({});
     clearResults();
     clearScenario();
+    setActiveStep(1);
   }, [clearResults, clearScenario]);
 
   const styles = createStyles(theme);
 
   const estateStepStatus: StepStatus =
-    currentEstate.total > 0 ? "complete" : "active";
+    activeStep === 1
+      ? "active"
+      : currentEstate.total > 0
+        ? "complete"
+        : "pending";
   const heirsStepStatus: StepStatus =
     selectedHeirsCount > 0
-      ? "complete"
+      ? activeStep === 2
+        ? "active"
+        : "complete"
       : currentEstate.total > 0
         ? "active"
         : "pending";
   const madhabStepStatus: StepStatus =
-    selectedHeirsCount > 0 ? "active" : "pending";
+    activeStep === 3
+      ? "active"
+      : selectedHeirsCount > 0 && madhab
+        ? "complete"
+        : selectedHeirsCount > 0
+          ? "active"
+          : "pending";
+  const reviewStepStatus: StepStatus = canCalculate ? "active" : "pending";
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -282,6 +321,8 @@ export default function CalculatorScreen() {
               subtitle="أدخل قيمة التركة والخصومات مع ملخص صافي فوري"
               icon="wallet-outline"
               status={estateStepStatus}
+              collapsed={activeStep !== 1 && currentEstate.total > 0}
+              onPress={() => setActiveStep(1)}
             >
               <View style={styles.netEstateBanner}>
                 <MaterialCommunityIcons
@@ -305,6 +346,8 @@ export default function CalculatorScreen() {
               subtitle="حدد الورثة بأزرار واضحة وراجع العدد المختار قبل الحساب"
               icon="account-group"
               status={heirsStepStatus}
+              collapsed={activeStep !== 2 && selectedHeirsCount > 0}
+              onPress={() => currentEstate.total > 0 && setActiveStep(2)}
             >
               {selectedHeirsCount > 0 && (
                 <View style={styles.selectionSummary}>
@@ -327,8 +370,49 @@ export default function CalculatorScreen() {
               subtitle="اختر طريقة الحساب واعرض أثر الاختيار بعد ظهور النتائج"
               icon="school"
               status={madhabStepStatus}
+              collapsed={
+                activeStep !== 3 && selectedHeirsCount > 0 && Boolean(madhab)
+              }
+              onPress={() => selectedHeirsCount > 0 && setActiveStep(3)}
             >
-              <MadhhabSelector selectedMadhab={madhab} onSelect={setMadhab} />
+              <MadhhabSelector
+                selectedMadhab={madhab}
+                onSelect={handleMadhabSelect}
+              />
+            </StepCard>
+
+            <StepCard
+              index={4}
+              title="مراجعة قبل الحساب"
+              subtitle="تأكد من صافي التركة وعدد الورثة قبل تنفيذ الحساب"
+              icon="clipboard-check-outline"
+              status={reviewStepStatus}
+              onPress={() => canCalculate && setActiveStep(4)}
+            >
+              <View style={styles.reviewGrid}>
+                <View style={styles.reviewItem}>
+                  <Text style={styles.reviewLabel}>إجمالي التركة</Text>
+                  <Text style={styles.reviewValue}>
+                    {formatCurrency(currentEstate.total)}
+                  </Text>
+                </View>
+                <View style={styles.reviewItem}>
+                  <Text style={styles.reviewLabel}>الخصومات</Text>
+                  <Text style={styles.reviewValue}>
+                    {formatCurrency(deductions)}
+                  </Text>
+                </View>
+                <View style={styles.reviewItem}>
+                  <Text style={styles.reviewLabel}>صافي التركة</Text>
+                  <Text style={styles.reviewValue}>
+                    {formatCurrency(netEstate)}
+                  </Text>
+                </View>
+                <View style={styles.reviewItem}>
+                  <Text style={styles.reviewLabel}>عدد الورثة</Text>
+                  <Text style={styles.reviewValue}>{selectedHeirsCount}</Text>
+                </View>
+              </View>
             </StepCard>
           </ScrollView>
 
@@ -340,7 +424,7 @@ export default function CalculatorScreen() {
                   : t("calculator.calculate")
               }
               onPress={handleCalculate}
-              disabled={isCalculating}
+              disabled={isCalculating || !canCalculate}
               loading={isCalculating}
               icon="calculator"
               iconPosition="left"
@@ -579,5 +663,30 @@ const createStyles = (theme: Theme) =>
     },
     resetButton: {
       flex: 1,
+    },
+    reviewGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: theme.spacing.sm,
+    },
+    reviewItem: {
+      flexBasis: "48%",
+      flexGrow: 1,
+      borderRadius: theme.borderRadius.lg,
+      backgroundColor: theme.colors.neutral.light50,
+      borderWidth: 1,
+      borderColor: theme.colors.neutral.light200,
+      padding: theme.spacing.md,
+    },
+    reviewLabel: {
+      ...theme.typography.label.small,
+      color: theme.colors.neutral.main,
+      fontFamily: "Inter-Regular",
+      marginBottom: theme.spacing.xs,
+    },
+    reviewValue: {
+      ...theme.typography.title.medium,
+      color: theme.colors.neutral.dark300,
+      fontFamily: "Inter-Bold",
     },
   });
