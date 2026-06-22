@@ -16,14 +16,19 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import { useTranslation } from "react-i18next";
+import { useNavigation } from "@react-navigation/native";
+import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useAppTheme } from "../lib/context/ThemeProvider";
 import { useResults } from "../lib/hooks/useResults";
 import { useCalculationScenario } from "../lib/context/CalculationContext";
 import { ResultsDisplay } from "../components/ResultsDisplay";
 import { Card } from "../components/ui/Card";
 import type { Theme } from "../lib/design/theme";
+import type { TabParamList } from "../navigation/types";
 
 /**
  * ResultsScreen - Dedicated tab for viewing calculation results
@@ -38,6 +43,7 @@ import type { Theme } from "../lib/design/theme";
 export default function ResultsScreen() {
   const { t } = useTranslation();
   const { theme } = useAppTheme();
+  const navigation = useNavigation<BottomTabNavigationProp<TabParamList>>();
   const { result, previousResults } = useResults();
   const { latestScenario } = useCalculationScenario();
   const styles = createStyles(theme);
@@ -54,44 +60,47 @@ export default function ResultsScreen() {
     return (
       <ScrollView style={styles.container}>
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyIcon}>📊</Text>
+          <View style={styles.emptyIconContainer}>
+            <MaterialCommunityIcons
+              name="chart-donut"
+              size={52}
+              color={theme.colors.primary.main}
+            />
+          </View>
           <Text style={styles.emptyTitle}>{t("results.noResults")}</Text>
           <Text style={styles.emptyMessage}>
-            {t("results.performCalculation")} استخدم تبويب &quot;الحاسبة&quot;
-            أعلاه وأدخل بيانات التركة والورثة، ثم اضغط &quot;حساب&quot; لعرض
-            النتائج هنا.
+            ابدأ حساباً جديداً لإظهار ملخص التركة، بطاقات الورثة، والملاحظات
+            الشرعية في مكان واحد واضح.
           </Text>
 
+          <TouchableOpacity
+            style={styles.primaryEmptyAction}
+            onPress={() => navigation.navigate("Calculator")}
+            accessibilityRole="button"
+            accessibilityLabel="Start inheritance calculation"
+          >
+            <MaterialCommunityIcons
+              name="calculator"
+              size={20}
+              color={theme.colors.background.light}
+            />
+            <Text style={styles.primaryEmptyActionText}>ابدأ الحساب</Text>
+          </TouchableOpacity>
+
           <Card style={styles.helpCard}>
-            <Text style={styles.helpTitle}>كيفية الاستخدام:</Text>
+            <Text style={styles.helpTitle}>ما الذي سيظهر بعد الحساب؟</Text>
             <View style={styles.helpSteps}>
               <View style={styles.step}>
                 <Text style={styles.stepNumber}>1</Text>
-                <Text style={styles.stepText}>
-                  انتقل إلى تبويب &quot;الحاسبة&quot;
-                </Text>
+                <Text style={styles.stepText}>ملخص صافي التركة والمذهب</Text>
               </View>
               <View style={styles.step}>
                 <Text style={styles.stepNumber}>2</Text>
-                <Text style={styles.stepText}>
-                  أدخل إجمالي التركة والتكاليف
-                </Text>
+                <Text style={styles.stepText}>بطاقات توزيع الورثة</Text>
               </View>
               <View style={styles.step}>
                 <Text style={styles.stepNumber}>3</Text>
-                <Text style={styles.stepText}>اختر الورثة والمذهب</Text>
-              </View>
-              <View style={styles.step}>
-                <Text style={styles.stepNumber}>4</Text>
-                <Text style={styles.stepText}>
-                  اضغط &quot;حساب&quot; لعرض النتائج
-                </Text>
-              </View>
-              <View style={styles.step}>
-                <Text style={styles.stepNumber}>5</Text>
-                <Text style={styles.stepText}>
-                  ستظهر النتائج هنا مع خيارات المشاركة
-                </Text>
+                <Text style={styles.stepText}>خيارات المشاركة والتصدير</Text>
               </View>
             </View>
           </Card>
@@ -128,9 +137,16 @@ const createStyles = (theme: Theme) =>
       padding: theme.spacing.lg,
       paddingTop: theme.spacing.xxxl,
     },
-    emptyIcon: {
-      fontSize: 64,
-      marginBottom: theme.spacing.md,
+    emptyIconContainer: {
+      width: 104,
+      height: 104,
+      borderRadius: theme.borderRadius.full,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: theme.colors.primary.light,
+      borderWidth: 1,
+      borderColor: theme.colors.primary.lighter,
+      marginBottom: theme.spacing.lg,
     },
     emptyTitle: {
       ...theme.typography.headline.medium,
@@ -144,6 +160,24 @@ const createStyles = (theme: Theme) =>
       textAlign: "center",
       marginBottom: theme.spacing.lg,
       lineHeight: 24,
+      maxWidth: 360,
+    },
+    primaryEmptyAction: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: theme.spacing.sm,
+      minHeight: 48,
+      borderRadius: theme.borderRadius.full,
+      backgroundColor: theme.colors.primary.main,
+      paddingHorizontal: theme.spacing.xl,
+      marginBottom: theme.spacing.lg,
+      ...theme.shadows.sm,
+    },
+    primaryEmptyActionText: {
+      ...theme.typography.label.large,
+      color: theme.colors.background.light,
+      fontFamily: "Inter-Bold",
     },
     helpCard: {
       marginBottom: theme.spacing.lg,
