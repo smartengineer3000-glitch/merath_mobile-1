@@ -8,6 +8,7 @@ import {
   Switch,
   Alert,
   Share,
+  BackHandler,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as FileSystem from "expo-file-system/legacy";
@@ -164,6 +165,17 @@ export default function SettingsScreen() {
     } finally {
       setIsBackingUp(false);
     }
+  }, [t]);
+
+  const handleExitApp = useCallback(() => {
+    Alert.alert("Exit App", "Are you sure you want to exit?", [
+      { text: t("common.cancel") || "Cancel", style: "cancel" },
+      {
+        text: "Yes, Exit",
+        style: "destructive",
+        onPress: () => BackHandler.exitApp(),
+      },
+    ]);
   }, [t]);
 
   const appVersion = Constants.expoConfig?.version ?? "1.1.3";
@@ -330,6 +342,34 @@ export default function SettingsScreen() {
       </Card>
 
       <Card style={styles.card}>
+        <Text style={styles.cardTitle}>📊 Test Configuration</Text>
+        <View style={styles.settingRow}>
+          <Text style={styles.settingLabel}>🧪 Auto-run tests on start</Text>
+          <Switch
+            value={false}
+            onValueChange={() => undefined}
+            trackColor={{
+              false: theme.colors.neutral.light300,
+              true: theme.colors.primary.main,
+            }}
+            thumbColor={theme.colors.background.light}
+          />
+        </View>
+        <View style={styles.settingRow}>
+          <Text style={styles.settingLabel}>📋 Show test details</Text>
+          <Switch
+            value={true}
+            onValueChange={() => undefined}
+            trackColor={{
+              false: theme.colors.neutral.light300,
+              true: theme.colors.primary.main,
+            }}
+            thumbColor={theme.colors.background.light}
+          />
+        </View>
+      </Card>
+
+      <Card style={styles.card}>
         <Text style={styles.cardTitle}>{t("settings.about") || "About"}</Text>
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>
@@ -343,6 +383,21 @@ export default function SettingsScreen() {
           </Text>
           <Text style={styles.infoValue}>Merath Team</Text>
         </View>
+      </Card>
+
+      <Card style={styles.exitCard}>
+        <Text style={styles.cardTitle}>🚪 Exit App</Text>
+        <Text style={styles.cardSubtitle}>
+          Close Merath after confirming your choice.
+        </Text>
+        <TouchableOpacity style={styles.exitButton} onPress={handleExitApp}>
+          <MaterialCommunityIcons
+            name="exit-to-app"
+            size={24}
+            color={theme.colors.background.light}
+          />
+          <Text style={styles.exitButtonText}>Yes, Exit</Text>
+        </TouchableOpacity>
       </Card>
     </ScrollView>
   );
@@ -470,6 +525,25 @@ const createStyles = (theme: Theme) =>
     },
     dangerText: {
       color: theme.colors.error.main,
+    },
+    exitCard: {
+      marginBottom: 32,
+      borderColor: theme.colors.error.main,
+      borderWidth: 1,
+    },
+    exitButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 8,
+      backgroundColor: theme.colors.error.main,
+      borderRadius: 8,
+      padding: 14,
+    },
+    exitButtonText: {
+      color: theme.colors.background.light,
+      fontSize: 16,
+      fontWeight: "bold",
     },
     infoRow: {
       flexDirection: "row",

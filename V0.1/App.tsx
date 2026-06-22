@@ -249,12 +249,12 @@ const OnboardingModal = ({
 const AppContent = () => {
   const { theme } = useAppTheme();
   const { t } = useTranslation();
-  const [showDisclaimers, setShowDisclaimers] = useState(true);
+  const [showDisclaimers, setShowDisclaimers] = useState(false);
   const [appReady, setAppReady] = useState(false);
 
   // ===== FIX: Onboarding state =====
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [onboardingLoading, setOnboardingLoading] = useState(true);
+  const [onboardingLoading, setOnboardingLoading] = useState(false);
 
   // ===== FIX: Monitor network changes =====
   useEffect(() => {
@@ -277,7 +277,7 @@ const AppContent = () => {
 
         const count = launchCount ? parseInt(launchCount, 10) : 0;
 
-        if (!completed || count === 0) {
+        if (false && (!completed || count === 0)) {
           setShowOnboarding(true);
         }
 

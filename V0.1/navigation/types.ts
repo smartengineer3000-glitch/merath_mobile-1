@@ -15,6 +15,7 @@ import type { RouteProp } from "@react-navigation/native";
  */
 export type RootStackParamList = {
   MainApp: undefined;
+  SettingsModal: undefined;
   Details: { id: string };
   Error: { message: string };
 };
@@ -28,8 +29,6 @@ export type TabParamList = {
   Results: undefined;
   MadhhabComparison: undefined;
   Test: undefined;
-  Settings: undefined;
-  About: undefined;
 };
 
 /**
