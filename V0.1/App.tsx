@@ -263,9 +263,15 @@ const AppContent = () => {
   const [onboardingLoading, setOnboardingLoading] = useState(true); // Start true
 
   // ===== LOAD FONTS =====
+
   const [fontsLoaded] = useFonts({
-    Cairo: require("@fontsource/cairo/files/cairo-all-700-normal.woff"),
-    PlusJakartaSans: require("@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-all-400-normal.woff"),
+    Cairo: require("@fontsource/cairo/files/cairo-arabic-400-normal.woff"),
+
+    "Cairo-Bold": require("@fontsource/cairo/files/cairo-arabic-700-normal.woff"),
+
+    PlusJakartaSans: require("@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-400-normal.woff"),
+
+    "PlusJakartaSans-Bold": require("@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-700-normal.woff"),
   });
 
   // ===== FIX: Monitor network changes =====
