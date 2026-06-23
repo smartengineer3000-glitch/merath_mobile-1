@@ -45,6 +45,8 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
+    "@fontsource/cairo": "^5.2.7",
+    "@fontsource/plus-jakarta-sans": "^5.2.8",
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-community/netinfo": "11.4.1",
     "@react-native-picker/picker": "^2.11.1",
