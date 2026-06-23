@@ -177,7 +177,6 @@ const createStyles = (theme: Theme) =>
     primaryEmptyActionText: {
       ...theme.typography.label.large,
       color: theme.colors.background.light,
-      fontFamily: "Inter-Bold",
     },
     helpCard: {
       marginBottom: theme.spacing.lg,

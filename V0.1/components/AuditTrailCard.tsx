@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   madhab: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#1976d2",
+    color: "#2e7d32",
     marginBottom: 2,
   },
   date: {

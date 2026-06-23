@@ -33,35 +33,14 @@ export const ModernCard: React.FC<ModernCardProps> = ({
   const getElevationStyles = (): ViewStyle => {
     switch (elevation) {
       case "flat":
-        return {
-          shadowColor: "transparent",
-          elevation: 0,
-        };
+        return theme.shadows.none;
       case "low":
-        return {
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.15,
-          shadowRadius: 2,
-          elevation: 2,
-        };
+        return theme.shadows.sm;
       case "high":
-        return {
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.25,
-          shadowRadius: 10,
-          elevation: 8,
-        };
+        return theme.shadows.lg;
       case "medium":
       default:
-        return {
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.2,
-          shadowRadius: 5,
-          elevation: 5,
-        };
+        return theme.shadows.md;
     }
   };
 

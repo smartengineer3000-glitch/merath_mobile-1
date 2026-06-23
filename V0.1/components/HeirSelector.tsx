@@ -159,7 +159,7 @@ const HEIR_CATEGORIES: {
     name: "الإخوة",
     nameEn: "Siblings",
     icon: "account-group",
-    color: "#9C27B0",
+    color: "#ffa500",
     heirs: [
       {
         key: "full_brother" as HeirType,
@@ -501,7 +501,12 @@ export const HeirSelector = React.memo(function HeirSelector({
             onChangeText={setSearchQuery}
           />
           {searchQuery ? (
-            <TouchableOpacity onPress={() => setSearchQuery("")}>
+            <TouchableOpacity
+              onPress={() => setSearchQuery("")}
+              accessibilityLabel="مسح البحث"
+              accessibilityRole="button"
+              accessibilityHint="مسح نص البحث"
+            >
               <MaterialCommunityIcons
                 name="close"
                 size={20}
@@ -517,7 +522,13 @@ export const HeirSelector = React.memo(function HeirSelector({
         <View style={styles.summaryContainer}>
           <View style={styles.summaryHeader}>
             <Text style={styles.summaryTitle}>الوارثون المختارون</Text>
-            <TouchableOpacity onPress={clearAll} style={styles.clearAllButton}>
+            <TouchableOpacity
+              onPress={clearAll}
+              style={styles.clearAllButton}
+              accessibilityLabel="مسح جميع الورثة المختارين"
+              accessibilityRole="button"
+              accessibilityHint="إزالة جميع الورثة من القائمة"
+            >
               <MaterialCommunityIcons
                 name="delete-sweep"
                 size={16}
@@ -554,7 +565,12 @@ export const HeirSelector = React.memo(function HeirSelector({
                   <Text style={styles.selectedChipText}>
                     {heir?.label || key}: {count}
                   </Text>
-                  <TouchableOpacity onPress={() => removeHeir(key)}>
+                  <TouchableOpacity
+                    onPress={() => removeHeir(key)}
+                    accessibilityLabel={`إزالة ${heir?.label || key}`}
+                    accessibilityRole="button"
+                    accessibilityHint="إزالة هذا الوارث من القائمة"
+                  >
                     <MaterialCommunityIcons
                       name="close"
                       size={14}
@@ -582,6 +598,9 @@ export const HeirSelector = React.memo(function HeirSelector({
               <TouchableOpacity
                 style={styles.categoryHeader}
                 onPress={() => toggleCategory(category.id)}
+                accessibilityLabel={`${category.name} - ${isExpanded ? "طي" : "توسيع"}`}
+                accessibilityRole="button"
+                accessibilityState={{ expanded: isExpanded }}
               >
                 <View
                   style={[
@@ -649,6 +668,10 @@ export const HeirSelector = React.memo(function HeirSelector({
                             ]}
                             onPress={() => updateHeirCount(heir.key, -1)}
                             disabled={count === 0}
+                            accessibilityLabel={`إنقاص ${heir.label}`}
+                            accessibilityRole="button"
+                            accessibilityHint="تقليل عدد هذا الوارث"
+                            accessibilityState={{ disabled: count === 0 }}
                           >
                             <MaterialCommunityIcons
                               name="minus"
@@ -861,8 +884,12 @@ const createStyles = (theme: Theme) =>
       borderRadius: 16,
       marginBottom: 12,
       overflow: "hidden",
-      borderWidth: 1,
-      borderColor: theme.colors.neutral.light200,
+      borderWidth: 0,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 6,
+      elevation: 2,
     },
     categoryHeader: {
       flexDirection: "row",
@@ -946,12 +973,16 @@ const createStyles = (theme: Theme) =>
       backgroundColor: theme.colors.background.light,
       justifyContent: "center",
       alignItems: "center",
-      borderWidth: 1,
-      borderColor: theme.colors.neutral.light200,
+      borderWidth: 0,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+      elevation: 1,
     },
     controlButtonAdd: {
       backgroundColor: `${theme.colors.primary.main}10`,
-      borderColor: theme.colors.primary.main,
+      shadowColor: theme.colors.primary.main,
     },
     controlButtonDisabled: {
       opacity: 0.5,

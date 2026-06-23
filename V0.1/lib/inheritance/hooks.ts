@@ -802,10 +802,10 @@ export function useResults() {
       <head>
         <meta charset="UTF-8">
         <style>
-          body { font-family: Arial, sans-serif; padding: 20px; }
-          h1 { color: #1976d2; text-align: center; }
+          body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; }
+          h1 { color: #2e7d32; text-align: center; }
           table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-          th { background-color: #1976d2; color: white; padding: 10px; }
+          th { background-color: #2e7d32; color: white; padding: 10px; }
           td { padding: 10px; border-bottom: 1px solid #ddd; }
           .identical { color: #4caf50; font-weight: bold; }
           .different { color: #ff9800; font-weight: bold; }

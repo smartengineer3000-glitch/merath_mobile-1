@@ -55,6 +55,8 @@ function StepCard({
   collapsed = false,
   onPress,
 }: StepCardProps) {
+  const statusLabel = status === "complete" ? "complete" : status === "active" ? "active" : "pending";
+
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const isComplete = status === "complete";
@@ -68,6 +70,8 @@ function StepCard({
       ])}
       elevation={isActive ? "high" : "low"}
       onPress={onPress}
+      accessibilityLabel={`${title}, ${status === "complete" ? "completed" : status === "active" ? "active step" : "pending"}`}
+      accessibilityRole="button"
     >
       <View style={styles.stepHeaderRow}>
         <View
@@ -499,19 +503,18 @@ const createStyles = (theme: Theme) =>
       ...theme.typography.label.medium,
       color: theme.colors.tertiary.dark200,
       marginBottom: theme.spacing.xs,
-      fontFamily: "Inter-Bold",
+      fontFamily: theme.fontFamily.english,
       textTransform: "uppercase",
     },
     title: {
       ...theme.typography.display.medium,
       color: theme.colors.primary.dark200,
-      fontFamily: "Inter-Bold",
+      fontFamily: theme.fontFamily.english,
     },
     subtitle: {
       ...theme.typography.body.medium,
       color: theme.colors.neutral.dark200,
       marginTop: theme.spacing.xs,
-      fontFamily: "Inter-Regular",
     },
     progressTrack: {
       height: 8,
@@ -542,12 +545,10 @@ const createStyles = (theme: Theme) =>
       ...theme.typography.label.small,
       color: theme.colors.neutral.main,
       marginBottom: theme.spacing.xs,
-      fontFamily: "Inter-Regular",
     },
     summaryValue: {
       ...theme.typography.title.large,
       color: theme.colors.primary.main,
-      fontFamily: "Inter-Bold",
     },
     stepCard: {
       marginBottom: theme.spacing.lg,
@@ -581,7 +582,6 @@ const createStyles = (theme: Theme) =>
     stepBadgeText: {
       ...theme.typography.label.large,
       color: theme.colors.neutral.dark200,
-      fontFamily: "Inter-Bold",
     },
     stepBadgeTextActive: {
       color: theme.colors.primary.main,
@@ -592,13 +592,11 @@ const createStyles = (theme: Theme) =>
     stepTitle: {
       ...theme.typography.headline.medium,
       color: theme.colors.neutral.dark300,
-      fontFamily: "Inter-Bold",
     },
     stepSubtitle: {
       ...theme.typography.body.small,
       color: theme.colors.neutral.main,
       marginTop: 2,
-      fontFamily: "Inter-Regular",
     },
     stepIconCircle: {
       width: 42,
@@ -626,12 +624,10 @@ const createStyles = (theme: Theme) =>
     netEstateLabel: {
       ...theme.typography.label.medium,
       color: theme.colors.neutral.dark200,
-      fontFamily: "Inter-Regular",
     },
     netEstateValue: {
       ...theme.typography.headline.medium,
       color: theme.colors.primary.main,
-      fontFamily: "Inter-Bold",
       marginTop: 2,
     },
     selectionSummary: {
@@ -646,7 +642,6 @@ const createStyles = (theme: Theme) =>
     selectionSummaryText: {
       ...theme.typography.body.medium,
       color: theme.colors.neutral.dark300,
-      fontFamily: "Inter-Bold",
     },
     buttonContainer: {
       flexDirection: "row",
@@ -681,12 +676,10 @@ const createStyles = (theme: Theme) =>
     reviewLabel: {
       ...theme.typography.label.small,
       color: theme.colors.neutral.main,
-      fontFamily: "Inter-Regular",
       marginBottom: theme.spacing.xs,
     },
     reviewValue: {
       ...theme.typography.title.medium,
       color: theme.colors.neutral.dark300,
-      fontFamily: "Inter-Bold",
     },
   });

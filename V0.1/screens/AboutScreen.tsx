@@ -309,7 +309,6 @@ const createStyles = (theme: Theme) =>
     trustBadgeText: {
       ...theme.typography.label.small,
       color: theme.colors.primary.main,
-      fontFamily: "Inter-Bold",
     },
     section: {
       marginBottom: theme.spacing.xxxl,
@@ -326,13 +325,13 @@ const createStyles = (theme: Theme) =>
     },
     featureItem: {
       flexDirection: "row",
-      marginBottom: 16,
+      marginBottom: theme.spacing.lg,
       alignItems: "flex-start",
     },
     featureDot: {
       width: 8,
       height: 8,
-      borderRadius: 4,
+      borderRadius: theme.borderRadius.xs,
       backgroundColor: theme.colors.primary.main,
       marginTop: theme.spacing.xs,
       marginRight: theme.spacing.sm,
@@ -355,7 +354,7 @@ const createStyles = (theme: Theme) =>
       alignItems: "center",
       padding: theme.spacing.md,
       backgroundColor: theme.colors.background.light,
-      borderRadius: 8,
+      borderRadius: theme.borderRadius.sm,
       marginBottom: theme.spacing.xs,
       borderWidth: 1,
       borderColor: theme.colors.neutral.light200,
@@ -371,7 +370,7 @@ const createStyles = (theme: Theme) =>
     caseItem: {
       padding: theme.spacing.md,
       backgroundColor: theme.colors.background.light,
-      borderRadius: 8,
+      borderRadius: theme.borderRadius.sm,
       marginBottom: theme.spacing.xs,
       borderWidth: 1,
       borderColor: theme.colors.neutral.light200,
@@ -391,7 +390,7 @@ const createStyles = (theme: Theme) =>
       padding: theme.spacing.md,
       marginBottom: theme.spacing.xs,
       backgroundColor: theme.colors.background.light,
-      borderRadius: 8,
+      borderRadius: theme.borderRadius.sm,
       minHeight: 48,
       borderWidth: 1,
       borderColor: theme.colors.neutral.light200,

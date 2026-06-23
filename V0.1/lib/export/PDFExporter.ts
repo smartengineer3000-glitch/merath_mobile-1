@@ -111,16 +111,16 @@ export class PDFExporter {
     if (shares.length === 0) return "";
 
     const colors = [
-      "#4F46E5",
-      "#10B981",
-      "#F59E0B",
-      "#EF4444",
-      "#8B5CF6",
-      "#EC4899",
-      "#06B6D4",
-      "#84CC16",
-      "#6366F1",
-      "#D946EF",
+      "#2e7d32", // Islamic green
+      "#4f9eff", // Professional blue
+      "#ffa500", // Warm gold
+      "#10B981", // Success green
+      "#06B6D4", // Info blue
+      "#F59E0B", // Warning orange
+      "#EF4444", // Error red
+      "#5cc9ac", // Light green
+      "#67aaff", // Light blue
+      "#ffc266", // Light gold
     ];
 
     let cumulativeAngle = 0;
@@ -200,16 +200,16 @@ export class PDFExporter {
     if (shares.length === 0) return "";
 
     const colors = [
-      "#4F46E5",
-      "#10B981",
-      "#F59E0B",
-      "#EF4444",
-      "#8B5CF6",
-      "#EC4899",
-      "#06B6D4",
-      "#84CC16",
-      "#6366F1",
-      "#D946EF",
+      "#2e7d32", // Islamic green
+      "#4f9eff", // Professional blue
+      "#ffa500", // Warm gold
+      "#10B981", // Success green
+      "#06B6D4", // Info blue
+      "#F59E0B", // Warning orange
+      "#EF4444", // Error red
+      "#5cc9ac", // Light green
+      "#67aaff", // Light blue
+      "#ffc266", // Light gold
     ];
 
     const barHeight = 30;
@@ -295,7 +295,7 @@ export class PDFExporter {
           }
 
           body {
-            font-family: 'Arial', sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: ${backgroundColor};
             color: ${textColor};
             line-height: 1.6;
@@ -332,11 +332,20 @@ export class PDFExporter {
           }
 
           .metadata {
-            background-color: #f9f9f9;
-            padding: 15px;
+            background-color: #f0f7ff;
+            padding: 15px 15px 15px 50px;
             border-radius: 5px;
             margin-bottom: 20px;
-            border-right: 4px solid #1F71BA;
+            border-right: 2px solid #1F71BA;
+            position: relative;
+          }
+
+          .metadata::before {
+            content: "ℹ️";
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            font-size: 20px;
           }
 
           .metadata-row {
@@ -370,11 +379,20 @@ export class PDFExporter {
           }
 
           .special-cases {
-            background-color: #fffacd;
-            padding: 15px;
+            background-color: #fffbeb;
+            padding: 15px 15px 15px 50px;
             border-radius: 5px;
             margin-bottom: 15px;
-            border-right: 4px solid #FF9800;
+            border-right: 2px solid #FF9800;
+            position: relative;
+          }
+
+          .special-cases::before {
+            content: "⚠️";
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            font-size: 20px;
           }
 
           .special-cases h3 {
@@ -436,9 +454,18 @@ export class PDFExporter {
 
           .summary {
             background-color: #f0f7ff;
-            padding: 15px;
+            padding: 15px 15px 15px 50px;
             border-radius: 5px;
-            border-right: 4px solid #1F71BA;
+            border-right: 2px solid #1F71BA;
+            position: relative;
+          }
+
+          .summary::before {
+            content: "💰";
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            font-size: 20px;
           }
 
           .summary-row {
@@ -529,13 +556,22 @@ export class PDFExporter {
           }
 
           .disclaimer {
-            background-color: #fff3e0;
-            padding: 15px;
+            background-color: #fff7ed;
+            padding: 15px 15px 15px 50px;
             border-radius: 5px;
-            border-right: 4px solid #FF6F00;
+            border-right: 2px solid #FF6F00;
             font-size: 12px;
             color: #333;
             margin-top: 20px;
+            position: relative;
+          }
+
+          .disclaimer::before {
+            content: "⚖️";
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            font-size: 20px;
           }
 
           @media print {

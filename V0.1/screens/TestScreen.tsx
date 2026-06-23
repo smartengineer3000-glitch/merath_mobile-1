@@ -246,7 +246,6 @@ const createStyles = (theme: Theme) =>
       fontSize: 28,
       fontWeight: "bold",
       color: theme.colors.primary.main,
-      fontFamily: "Inter-Bold",
     },
     subtitle: {
       fontSize: 15,

@@ -411,8 +411,8 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
           body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #2e7d32 0%, #4f9eff 100%);
             margin: 0;
             padding: 20px;
             min-height: 100vh;
@@ -430,12 +430,12 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
           }
           .header {
             text-align: center;
-            border-bottom: 3px solid #667eea;
+            border-bottom: 3px solid #2e7d32;
             padding-bottom: 20px;
             margin-bottom: 20px;
           }
           .header h1 {
-            color: #667eea;
+            color: #2e7d32;
             font-size: 24px;
             margin: 0;
           }
@@ -446,7 +446,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
             font-weight: normal;
           }
           .badge {
-            background: #667eea;
+            background: #2e7d32;
             color: white;
             padding: 5px 15px;
             border-radius: 20px;
@@ -481,7 +481,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
             overflow: hidden;
           }
           .table-header {
-            background: #667eea;
+            background: #2e7d32;
             color: white;
             padding: 12px;
             display: flex;
@@ -845,6 +845,8 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
           <TouchableOpacity
             style={styles.headerShareButton}
             onPress={() => setShareModalVisible(true)}
+            accessibilityLabel={t("calculator.share")}
+            accessibilityRole="button"
           >
             <MaterialCommunityIcons
               name="share"
@@ -1096,6 +1098,8 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
           <TouchableOpacity
             style={styles.comparisonButton}
             onPress={() => setShowComparison(!showComparison)}
+            accessibilityLabel={showComparison ? t("results.hideComparison") : t("results.showComparison")}
+            accessibilityRole="button"
           >
             <Text style={styles.comparisonButtonText}>
               {showComparison
@@ -1128,6 +1132,8 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
                 setComparisonLoading(false);
               }
             }}
+            accessibilityLabel="مقارنة المذاهب الأربعة"
+            accessibilityRole="button"
           >
             <Text style={styles.comparisonButtonText}>
               مقارنة المذاهب الأربعة
@@ -1305,6 +1311,8 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
                 ]}
                 onPress={() => showPreview("pdf")}
                 disabled={shareStatus !== "idle"}
+                accessibilityLabel="PDF - تقرير كامل ومنسق"
+                accessibilityRole="button"
               >
                 <View
                   style={[
@@ -1336,6 +1344,8 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
                 ]}
                 onPress={() => showPreview("image")}
                 disabled={shareStatus !== "idle"}
+                accessibilityLabel="صورة - كصورة للنتائج"
+                accessibilityRole="button"
               >
                 <View
                   style={[
@@ -1367,6 +1377,8 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
                 ]}
                 onPress={() => showPreview("text")}
                 disabled={shareStatus !== "idle"}
+                accessibilityLabel="نص - مشاركة كنص"
+                accessibilityRole="button"
               >
                 <View
                   style={[
@@ -1398,6 +1410,8 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
                 ]}
                 onPress={() => showPreview("clipboard")}
                 disabled={shareStatus !== "idle"}
+                accessibilityLabel="نسخ - نسخ إلى الحافظة"
+                accessibilityRole="button"
               >
                 <View
                   style={[
@@ -1472,11 +1486,7 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
       borderRadius: 20,
       marginHorizontal: 12,
       marginBottom: 16,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.08,
-      shadowRadius: 12,
-      elevation: 4,
+      ...theme.shadows.sm,
       position: "relative",
     },
     madhhabBadge: {
@@ -1532,13 +1542,8 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
       backgroundColor: theme.colors.background.light,
       borderRadius: 16,
       padding: 16,
-      borderWidth: 1,
-      borderColor: theme.colors.neutral.light200,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.05,
-      shadowRadius: 10,
-      elevation: 2,
+      borderWidth: 0,
+      ...theme.shadows.sm,
     },
     sectionTitle: {
       fontSize: 15,
@@ -1786,8 +1791,12 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
       paddingHorizontal: 16,
       backgroundColor: theme.colors.info.light,
       borderRadius: 12,
-      borderWidth: 1,
-      borderColor: theme.colors.info.main,
+      borderWidth: 0,
+      shadowColor: theme.colors.info.main,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.15,
+      shadowRadius: 4,
+      elevation: 2,
       alignItems: "center",
     },
     comparisonButtonText: {
@@ -1800,8 +1809,12 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
       backgroundColor: theme.colors.secondary.light,
       borderRadius: 12,
       padding: 14,
-      borderWidth: 1,
-      borderColor: theme.colors.secondary.light200,
+      borderWidth: 0,
+      shadowColor: theme.colors.secondary.main,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.12,
+      shadowRadius: 4,
+      elevation: 2,
     },
     statRow: {
       flexDirection: "row",
@@ -1985,13 +1998,8 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
       padding: 16,
       marginBottom: 12,
       alignItems: "center",
-      borderWidth: 1,
-      borderColor: theme.colors.neutral.light200,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.06,
-      shadowRadius: 10,
-      elevation: 2,
+      borderWidth: 0,
+      ...theme.shadows.sm,
     },
     shareOptionDisabled: {
       opacity: 0.45,

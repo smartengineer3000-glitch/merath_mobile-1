@@ -419,36 +419,32 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
     container: {
       flex: 1,
       backgroundColor: theme.colors.background.lightVariant,
-      padding: 16,
+      padding: theme.spacing.lg,
     },
     header: {
-      marginBottom: 24,
+      marginBottom: theme.spacing.xl,
     },
     title: {
-      fontSize: 28,
-      fontWeight: "bold",
+      ...theme.typography.display.medium,
       color: theme.colors.primary.main,
-      fontFamily: "Inter-Bold",
     },
     subtitle: {
-      fontSize: 16,
+      ...theme.typography.body.large,
       color: theme.colors.neutral.main,
-      marginTop: 8,
-      fontFamily: "Inter-Regular",
+      marginTop: theme.spacing.sm,
     },
     card: {
-      marginBottom: 16,
+      marginBottom: theme.spacing.lg,
     },
     cardTitle: {
-      fontSize: 20,
-      fontWeight: "bold",
+      ...theme.typography.headline.large,
       color: theme.colors.neutral.dark300,
-      marginBottom: 8,
+      marginBottom: theme.spacing.sm,
     },
     cardSubtitle: {
-      fontSize: 14,
+      ...theme.typography.body.medium,
       color: theme.colors.neutral.main,
-      marginBottom: 16,
+      marginBottom: theme.spacing.lg,
       lineHeight: 22,
     },
     compareButton: {
@@ -456,34 +452,32 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      padding: 16,
-      borderRadius: 8,
+      padding: theme.spacing.lg,
+      borderRadius: theme.borderRadius.sm,
     },
     compareButtonDisabled: {
       opacity: 0.6,
     },
     compareButtonText: {
       color: theme.colors.background.light,
-      fontSize: 16,
-      fontWeight: "bold",
-      marginLeft: 8,
+      ...theme.typography.title.large,
+      marginLeft: theme.spacing.sm,
     },
     emptyCard: {
       alignItems: "center",
-      marginBottom: 16,
-      paddingVertical: 24,
+      marginBottom: theme.spacing.lg,
+      paddingVertical: theme.spacing.xl,
       paddingHorizontal: theme.spacing.lg,
     },
     emptyTitle: {
-      fontSize: 18,
-      fontWeight: "bold",
+      ...theme.typography.headline.medium,
       color: theme.colors.neutral.dark300,
-      marginTop: 12,
-      marginBottom: 8,
+      marginTop: theme.spacing.md,
+      marginBottom: theme.spacing.sm,
       textAlign: "center",
     },
     emptyText: {
-      fontSize: 14,
+      ...theme.typography.body.medium,
       color: theme.colors.neutral.main,
       lineHeight: 22,
       textAlign: "center",
@@ -497,8 +491,7 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
       marginBottom: theme.spacing.lg,
     },
     guideTitle: {
-      fontSize: 16,
-      fontWeight: "bold",
+      ...theme.typography.title.large,
       color: theme.colors.primary.dark,
       marginBottom: theme.spacing.md,
       textAlign: "center",
@@ -520,12 +513,12 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
       justifyContent: "center",
     },
     stepNumberText: {
-      fontSize: 14,
+      ...theme.typography.label.large,
       fontWeight: "bold",
       color: theme.colors.background.light,
     },
     stepText: {
-      fontSize: 14,
+      ...theme.typography.body.medium,
       color: theme.colors.neutral.dark200,
       flex: 1,
     },
@@ -541,18 +534,16 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
       minWidth: 200,
     },
     goToCalculatorButtonText: {
-      fontSize: 16,
-      fontWeight: "bold",
+      ...theme.typography.title.large,
       color: theme.colors.background.light,
     },
     resultsCard: {
-      marginBottom: 16,
+      marginBottom: theme.spacing.lg,
     },
     resultsTitle: {
-      fontSize: 20,
-      fontWeight: "bold",
+      ...theme.typography.headline.large,
       color: theme.colors.neutral.dark300,
-      marginBottom: 16,
+      marginBottom: theme.spacing.lg,
     },
     segmentedControl: {
       flexDirection: "row",
@@ -576,7 +567,6 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
     segmentButtonText: {
       ...theme.typography.label.medium,
       color: theme.colors.neutral.dark200,
-      fontFamily: "Inter-Bold",
     },
     segmentButtonTextActive: {
       color: theme.colors.background.light,
@@ -595,13 +585,11 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
     differenceTitle: {
       ...theme.typography.title.medium,
       color: theme.colors.neutral.dark300,
-      fontFamily: "Inter-Bold",
       marginBottom: theme.spacing.xs,
     },
-    differenceText: {
+    differenceText:
       ...theme.typography.body.small,
       color: theme.colors.neutral.dark200,
-      fontFamily: "Inter-Regular",
     },
     noDifferenceText: {
       ...theme.typography.body.medium,
@@ -612,9 +600,9 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
     table: {
       borderWidth: 1,
       borderColor: theme.colors.neutral.light300,
-      borderRadius: 8,
+      borderRadius: theme.borderRadius.sm,
       overflow: "hidden",
-      marginBottom: 16,
+      marginBottom: theme.spacing.lg,
     },
     tableRow: {
       flexDirection: "row",
@@ -626,7 +614,7 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
     },
     tableHeader: {
       width: 150,
-      padding: 10,
+      padding: theme.spacing.sm,
       backgroundColor: theme.colors.primary.main,
       color: theme.colors.background.light,
       fontWeight: "bold",
@@ -634,7 +622,7 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
     },
     tableCell: {
       width: 150,
-      padding: 10,
+      padding: theme.spacing.sm,
       color: theme.colors.neutral.dark300,
       backgroundColor: theme.colors.background.light,
       textAlign: "center",
@@ -659,7 +647,7 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
       marginTop: theme.spacing.sm,
     },
     scrollHintText: {
-      fontSize: 12,
+      ...theme.typography.body.small,
       color: theme.colors.neutral.main,
     },
     madhabCardsContainer: {
@@ -684,8 +672,7 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
       borderBottomColor: theme.colors.primary.light100,
     },
     madhabCardTitle: {
-      fontSize: 16,
-      fontWeight: "bold",
+      ...theme.typography.title.large,
       color: theme.colors.primary.dark,
     },
     madhabCardContent: {
@@ -706,43 +693,38 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
       paddingHorizontal: theme.spacing.sm,
     },
     madhabShareName: {
-      fontSize: 14,
+      ...theme.typography.body.medium,
       color: theme.colors.neutral.dark200,
       flex: 1,
     },
     madhabShareAmount: {
-      fontSize: 14,
+      ...theme.typography.body.medium,
       fontWeight: "600",
       color: theme.colors.primary.main,
     },
     summaryGrid: {
       flexDirection: "row",
       flexWrap: "wrap",
-      gap: 12,
+      gap: theme.spacing.md,
     },
     summaryCard: {
       width: "48%",
-      padding: 12,
+      padding: theme.spacing.md,
       backgroundColor: theme.colors.background.light,
-      borderRadius: 8,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.08,
-      shadowRadius: 4,
-      elevation: 2,
+      borderRadius: theme.borderRadius.sm,
+      ...theme.shadows.xs,
     },
     madhabName: {
-      fontSize: 18,
-      fontWeight: "bold",
+      ...theme.typography.headline.small,
       color: theme.colors.primary.main,
-      marginBottom: 8,
+      marginBottom: theme.spacing.sm,
     },
     shareName: {
-      fontSize: 14,
+      ...theme.typography.body.medium,
       color: theme.colors.neutral.dark300,
     },
     shareAmount: {
-      fontSize: 14,
+      ...theme.typography.body.medium,
       fontWeight: "600",
       color: theme.colors.primary.main,
     },

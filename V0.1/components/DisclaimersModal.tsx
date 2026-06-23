@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#1976d2",
+    color: "#2e7d32",
     textAlign: "center",
     marginBottom: 4,
   },
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   tabActive: {
-    borderBottomColor: "#1976d2",
+    borderBottomColor: "#2e7d32",
     backgroundColor: "#f5f5f5",
   },
   tabLabel: {
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   tabLabelActive: {
-    color: "#1976d2",
+    color: "#2e7d32",
     fontWeight: "700",
   },
   contentScroll: {
@@ -294,8 +294,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   checkboxChecked: {
-    backgroundColor: "#1976d2",
-    borderColor: "#1976d2",
+    backgroundColor: "#2e7d32",
+    borderColor: "#2e7d32",
   },
   checkboxMark: {
     fontSize: 14,
@@ -337,12 +337,12 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     paddingHorizontal: 16,
-    backgroundColor: "#1976d2",
+    backgroundColor: "#2e7d32",
     borderRadius: 6,
     alignItems: "center",
   },
   acceptButtonDisabled: {
-    backgroundColor: "#90caf9",
+    backgroundColor: "#67aaff",
     opacity: 0.6,
   },
   acceptButtonText: {

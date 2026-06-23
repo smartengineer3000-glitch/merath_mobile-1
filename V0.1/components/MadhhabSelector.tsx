@@ -38,7 +38,7 @@ const MADHAB_DATA: {
     name: "المالكي",
     nameEn: "Maliki",
     icon: "book-open-variant",
-    color: "#8B5CF6",
+    color: "#4f9eff",
     hint: "معتمد في المغرب العربي وأجزاء من إفريقيا",
   },
   {

@@ -6,7 +6,7 @@
  */
 
 // ============================================================================
-// COMPREHENSIVE COLOR PALETTE - Material Design 3
+// COMPREHENSIVE COLOR PALETTE - Material Design 3 with Accessibility
 // ============================================================================
 
 export const Colors = {
@@ -52,7 +52,7 @@ export const Colors = {
     dark: "#b35900",
   },
 
-  // Neutral Palette - Professional grays
+  // Neutral Palette - Professional grays (optimized for contrast)
   neutral: {
     white: "#ffffff",
     light50: "#f9fafb",
@@ -75,27 +75,37 @@ export const Colors = {
     darkVariant: "#1a1f2e",
   },
 
-  // Semantic colors
+  // Semantic colors (optimized for WCAG AA contrast)
   success: {
     light: "#e8f5e9",
-    main: "#4caf50",
-    dark: "#2e7d32",
+    main: "#2e7d32", // Darker for better contrast
+    dark: "#1b5e20",
   },
   warning: {
     light: "#fff3e0",
-    main: "#ff9800",
-    dark: "#e65100",
+    main: "#e65100", // Darker for better contrast
+    dark: "#bf360c",
   },
   error: {
     light: "#ffebee",
-    main: "#f44336",
-    dark: "#d32f2f",
+    main: "#d32f2f", // Darker for better contrast
+    dark: "#b71c1c",
   },
   info: {
     light: "#e3f2fd",
-    main: "#2196f3",
+    main: "#1565c0", // Darker for better contrast
     dark: "#0d47a1",
   },
+};
+
+// ============================================================================
+// FONT FAMILY SYSTEM - Culturally appropriate fonts
+// ============================================================================
+
+export const FontFamily = {
+  arabic: "Cairo",
+  english: "PlusJakartaSans",
+  fallback: "system-ui",
 };
 
 // ============================================================================
@@ -130,19 +140,19 @@ export const Typography = {
     large: {
       fontSize: 20,
       lineHeight: 28,
-      fontWeight: "700" as const,
-      letterSpacing: 0,
+      fontWeight: "800" as const,
+      letterSpacing: -0.5,
     },
     medium: {
       fontSize: 18,
       lineHeight: 26,
       fontWeight: "700" as const,
-      letterSpacing: 0,
+      letterSpacing: -0.25,
     },
     small: {
       fontSize: 16,
       lineHeight: 24,
-      fontWeight: "700" as const,
+      fontWeight: "600" as const,
       letterSpacing: 0,
     },
   },
@@ -152,7 +162,7 @@ export const Typography = {
     large: {
       fontSize: 16,
       lineHeight: 24,
-      fontWeight: "700" as const,
+      fontWeight: "600" as const,
       letterSpacing: 0.15,
     },
     medium: {
@@ -164,7 +174,7 @@ export const Typography = {
     small: {
       fontSize: 12,
       lineHeight: 18,
-      fontWeight: "600" as const,
+      fontWeight: "500" as const,
       letterSpacing: 0.1,
     },
   },
@@ -242,7 +252,18 @@ export const BorderRadius = {
 };
 
 // ============================================================================
-// SHADOWS
+// BORDER WIDTH - Professional border system
+// ============================================================================
+
+export const BorderWidth = {
+  hairline: 1, // Subtle borders
+  thin: 2, // Standard borders
+  medium: 3, // Medium borders
+  thick: 4, // Thick borders (only for sharp edges)
+};
+
+// ============================================================================
+// SHADOWS - Enhanced depth system with colored shadows
 // ============================================================================
 
 export const Shadows = {
@@ -288,6 +309,36 @@ export const Shadows = {
     shadowRadius: 16,
     elevation: 8,
   },
+  // Colored shadows for thematic depth
+  primary: {
+    shadowColor: "#2e7d32",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  secondary: {
+    shadowColor: "#4f9eff",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  tertiary: {
+    shadowColor: "#ffa500",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  // Soft inner shadow for depth
+  inner: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
 };
 
 // ============================================================================
@@ -295,9 +346,16 @@ export const Shadows = {
 // ============================================================================
 
 export const Animations = {
+  instant: 100, // Instant feedback
   quick: 150, // Quick interactions
   standard: 300, // Standard animations
   slow: 500, // Slower animations
+  easing: {
+    ease: "ease",
+    easeIn: "ease-in",
+    easeOut: "ease-out",
+    easeInOut: "ease-in-out",
+  },
 };
 
 // ============================================================================
@@ -353,9 +411,11 @@ export interface ThemeColors {
 export interface Theme {
   mode: ThemeMode;
   colors: ThemeColors;
+  fontFamily: typeof FontFamily;
   typography: typeof Typography;
   spacing: typeof Spacing;
   borderRadius: typeof BorderRadius;
+  borderWidth: typeof BorderWidth;
   shadows: typeof Shadows;
   animations: typeof Animations;
   components: typeof Components;
@@ -370,9 +430,11 @@ export const lightTheme: Theme = {
   colors: {
     ...Colors,
   } as ThemeColors,
+  fontFamily: FontFamily,
   typography: Typography,
   spacing: Spacing,
   borderRadius: BorderRadius,
+  borderWidth: BorderWidth,
   shadows: Shadows,
   animations: Animations,
   components: Components,
@@ -439,22 +501,22 @@ const DarkColors: ThemeColors = {
     darkVariant: "#f3f4f6",
   },
   success: {
-    light: "#1a3a1c",
+    light: "#1b5e20",
     main: "#66BB6A",
     dark: "#A5D6A7",
   },
   warning: {
-    light: "#332200",
+    light: "#bf360c",
     main: "#FFB74D",
     dark: "#FFD494",
   },
   error: {
-    light: "#3a1a1a",
+    light: "#b71c1c",
     main: "#EF5350",
     dark: "#E57373",
   },
   info: {
-    light: "#1a2744",
+    light: "#0d47a1",
     main: "#42A5F5",
     dark: "#90CAF9",
   },
@@ -467,9 +529,11 @@ const DarkColors: ThemeColors = {
 export const darkTheme: Theme = {
   mode: "dark",
   colors: DarkColors,
+  fontFamily: FontFamily,
   typography: Typography,
   spacing: Spacing,
   borderRadius: BorderRadius,
+  borderWidth: BorderWidth,
   shadows: Shadows,
   animations: Animations,
   components: Components,
