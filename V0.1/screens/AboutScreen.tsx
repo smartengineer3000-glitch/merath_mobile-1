@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
+import { PressableScale } from "../components/ui/PressableScale";
+import { Divider } from "../components/ui/Divider";
 import { useAppTheme } from "../lib/context/ThemeProvider";
 import type { Theme } from "../lib/design/theme";
 
@@ -208,11 +210,15 @@ export default function AboutScreen() {
         </Text>
       </View>
 
+      <Divider />
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Contact Us</Text>
-        <TouchableOpacity
+        <PressableScale
           style={styles.contactButton}
           onPress={() => handleContact("email")}
+          haptic="light"
+          scaleTo={0.97}
           accessibilityRole="button"
           accessibilityLabel="Email support"
         >
@@ -222,10 +228,12 @@ export default function AboutScreen() {
             color={theme.colors.primary.main}
           />
           <Text style={styles.contactButtonText}>Email Support</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
+        </PressableScale>
+        <PressableScale
           style={styles.contactButton}
           onPress={() => handleContact("website")}
+          haptic="light"
+          scaleTo={0.97}
           accessibilityRole="button"
           accessibilityLabel="Visit Merath website"
         >
@@ -235,10 +243,12 @@ export default function AboutScreen() {
             color={theme.colors.primary.main}
           />
           <Text style={styles.contactButtonText}>Visit Website</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
+        </PressableScale>
+        <PressableScale
           style={styles.contactButton}
           onPress={() => handleContact("github")}
+          haptic="light"
+          scaleTo={0.97}
           accessibilityRole="button"
           accessibilityLabel="Open GitHub project"
         >
@@ -248,7 +258,7 @@ export default function AboutScreen() {
             color={theme.colors.primary.main}
           />
           <Text style={styles.contactButtonText}>GitHub</Text>
-        </TouchableOpacity>
+        </PressableScale>
       </View>
 
       <View style={styles.footer}>

@@ -22,6 +22,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { PressableScale } from "../components/ui/PressableScale";
 import { useAppTheme } from "../lib/context/ThemeProvider";
 import { useResults } from "../lib/hooks/useResults";
 import { useCalculationScenario } from "../lib/context/CalculationContext";
@@ -73,9 +74,11 @@ export default function ResultsScreen() {
             الشرعية في مكان واحد واضح.
           </Text>
 
-          <TouchableOpacity
+          <PressableScale
             style={styles.primaryEmptyAction}
             onPress={() => navigation.navigate("Calculator")}
+            haptic="medium"
+            scaleTo={0.95}
             accessibilityRole="button"
             accessibilityLabel="Start inheritance calculation"
           >
@@ -85,7 +88,7 @@ export default function ResultsScreen() {
               color={theme.colors.background.light}
             />
             <Text style={styles.primaryEmptyActionText}>ابدأ الحساب</Text>
-          </TouchableOpacity>
+          </PressableScale>
 
           <Card style={styles.helpCard}>
             <Text style={styles.helpTitle}>ما الذي سيظهر بعد الحساب؟</Text>

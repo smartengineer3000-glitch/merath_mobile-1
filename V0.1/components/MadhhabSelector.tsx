@@ -4,8 +4,9 @@
  */
 
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { PressableScale } from "./ui/PressableScale";
 import { useAppTheme } from "../lib/context/ThemeProvider";
 import type { Theme } from "../lib/design/theme";
 import type { MadhhabType } from "../lib/inheritance/types";
@@ -103,7 +104,7 @@ export function MadhhabSelector({
           const isSelected = selectedMadhab === madhab.id;
 
           return (
-            <TouchableOpacity
+            <PressableScale
               key={madhab.id}
               style={[
                 styles.gridItem,
@@ -111,7 +112,8 @@ export function MadhhabSelector({
                 { borderColor: madhab.color },
               ]}
               onPress={() => onSelect(madhab.id)}
-              activeOpacity={0.7}
+              haptic="light"
+              scaleTo={0.97}
               accessibilityRole="radio"
               accessibilityLabel={`${madhab.nameEn} school of law`}
               accessibilityState={{ selected: isSelected }}
@@ -140,10 +142,10 @@ export function MadhhabSelector({
                     { backgroundColor: madhab.color },
                   ]}
                 >
-                  <MaterialCommunityIcons name="check" size={12} color="#fff" />
+                  <MaterialCommunityIcons name="check" size={12} color={theme.colors.background.light} />
                 </View>
               )}
-            </TouchableOpacity>
+            </PressableScale>
           );
         })}
       </View>
@@ -166,13 +168,11 @@ const createStyles = (theme: Theme) =>
     selectorEyebrow: {
       ...theme.typography.label.medium,
       color: theme.colors.tertiary.dark200,
-      fontFamily: "Inter-Bold",
     },
     selectorTitle: {
       ...theme.typography.headline.small,
       color: theme.colors.neutral.dark300,
-      fontFamily: "Inter-Bold",
-      marginTop: 2,
+      marginTop: theme.spacing.xs,
     },
     trustBadge: {
       flexDirection: "row",
@@ -186,7 +186,6 @@ const createStyles = (theme: Theme) =>
     trustBadgeText: {
       ...theme.typography.label.small,
       color: theme.colors.primary.main,
-      fontFamily: "Inter-Bold",
     },
     explanationCard: {
       flexDirection: "row",
@@ -203,7 +202,6 @@ const createStyles = (theme: Theme) =>
       ...theme.typography.body.small,
       color: theme.colors.neutral.dark200,
       flex: 1,
-      fontFamily: "Inter-Regular",
     },
     // Compact Grid Style (2x2 on wide, stacks on narrow)
     gridContainer: {
@@ -249,13 +247,11 @@ const createStyles = (theme: Theme) =>
     madhabNameEn: {
       ...theme.typography.label.small,
       color: theme.colors.neutral.dark200,
-      fontFamily: "Inter-Regular",
     },
     madhabHint: {
       ...theme.typography.body.small,
       color: theme.colors.neutral.main,
       marginTop: theme.spacing.xs,
-      fontFamily: "Inter-Regular",
     },
     selectedBadge: {
       position: "absolute",

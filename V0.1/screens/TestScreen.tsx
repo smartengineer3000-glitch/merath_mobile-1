@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { PressableScale } from "../components/ui/PressableScale";
 import { useAppTheme } from "../lib/context/ThemeProvider";
 import { useCalculator } from "../lib/hooks/useCalculator";
 import { Card } from "../components/ui/Card";
@@ -137,13 +138,15 @@ export default function TestScreen() {
 
       <View style={styles.filterRow}>
         {(["all", "passed", "failed"] as const).map((value) => (
-          <TouchableOpacity
+          <PressableScale
             key={value}
             style={[
               styles.filterButton,
               filter === value && styles.filterButtonActive,
             ]}
             onPress={() => setFilter(value)}
+            haptic="light"
+            scaleTo={0.95}
           >
             <Text
               style={[
@@ -157,7 +160,7 @@ export default function TestScreen() {
                   ? "✅ Passed"
                   : "❌ Failed"}
             </Text>
-          </TouchableOpacity>
+          </PressableScale>
         ))}
       </View>
 
@@ -195,9 +198,11 @@ export default function TestScreen() {
             <Text style={styles.details}>{testCase.notes}</Text>
           )}
           <View style={styles.actions}>
-            <TouchableOpacity
+            <PressableScale
               style={styles.actionButton}
               onPress={() => runCase(testCase)}
+              haptic="light"
+              scaleTo={0.95}
             >
               <MaterialCommunityIcons
                 name="play"
@@ -205,15 +210,17 @@ export default function TestScreen() {
                 color={theme.colors.background.light}
               />
               <Text style={styles.actionText}>Run Test</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </PressableScale>
+            <PressableScale
               style={styles.secondaryAction}
               onPress={() =>
                 setExpandedId(expandedId === testCase.id ? null : testCase.id)
               }
+              haptic="light"
+              scaleTo={0.95}
             >
               <Text style={styles.secondaryActionText}>View Details</Text>
-            </TouchableOpacity>
+            </PressableScale>
           </View>
         </Card>
       ))}
@@ -227,9 +234,9 @@ export default function TestScreen() {
         </View>
       </Card>
 
-      <TouchableOpacity style={styles.runAllButton} onPress={runAll}>
+      <PressableScale style={styles.runAllButton} onPress={runAll} haptic="medium" scaleTo={0.95}>
         <Text style={styles.runAllText}>▶️ RUN ALL TESTS</Text>
-      </TouchableOpacity>
+      </PressableScale>
     </ScrollView>
   );
 }
