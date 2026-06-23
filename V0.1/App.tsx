@@ -2,7 +2,7 @@
  * @file App.tsx
  * @description Root application component with providers, navigation, and global features
  *
- * FIXES: Timeout ref type, add missing imports
+ * FIXES: Timeout ref type, add missing imports, FONT LOADING
  */
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
@@ -23,7 +23,13 @@ import {
 import NetInfo from "@react-native-community/netinfo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SplashScreen from "expo-splash-screen";
+import { useFonts } from "expo-font";
 import "./lib/i18n";
+
+// ===== FONT IMPORTS - CRITICAL FOR DESIGN SYSTEM =====
+// These fonts must be loaded for the design system to work
+import "@fontsource/cairo";
+import "@fontsource/plus-jakarta-sans";
 
 import { useTranslation } from "react-i18next";
 import { ThemeProvider, useAppTheme } from "./lib/context/ThemeProvider";
@@ -254,7 +260,13 @@ const AppContent = () => {
 
   // ===== FIX: Onboarding state =====
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [onboardingLoading, setOnboardingLoading] = useState(false);
+  const [onboardingLoading, setOnboardingLoading] = useState(true); // Start true
+
+  // ===== LOAD FONTS =====
+  const [fontsLoaded] = useFonts({
+    Cairo: require("@fontsource/cairo/files/cairo-all-700-normal.woff"),
+    PlusJakartaSans: require("@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-all-400-normal.woff"),
+  });
 
   // ===== FIX: Monitor network changes =====
   useEffect(() => {
@@ -331,7 +343,8 @@ const AppContent = () => {
     prepare();
   }, []);
 
-  if (!appReady || onboardingLoading) {
+  // ===== SHOW LOADING IF FONTS NOT LOADED OR APP NOT READY =====
+  if (!appReady || onboardingLoading || !fontsLoaded) {
     return <LoadingScreen message={t("loading.appLoading")} />;
   }
 
