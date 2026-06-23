@@ -17,6 +17,7 @@ import {
   Platform,
   Alert,
   TouchableOpacity,
+  Animated,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSettings } from "../lib/context/SettingsContext";
@@ -97,8 +98,8 @@ export function TabNavigator() {
         },
         headerTintColor: theme.colors.primary.main,
         headerTitleStyle: {
-          fontFamily: "Inter-Bold",
-          fontSize: 18,
+          fontSize: theme.typography.title.fontSize,
+          fontWeight: theme.typography.title.fontWeight,
         },
         headerRight: () => (
           <TouchableOpacity
@@ -122,8 +123,8 @@ export function TabNavigator() {
           paddingTop: 6,
         },
         tabBarLabelStyle: {
-          fontFamily: "Inter-Regular",
-          fontSize: 12,
+          fontSize: theme.typography.label.fontSize,
+          fontWeight: theme.typography.label.fontWeight,
         },
         tabBarActiveTintColor: theme.colors.primary.main,
         tabBarInactiveTintColor: theme.colors.neutral.dark200,
@@ -223,7 +224,13 @@ export function RootNavigator() {
         </View>
       }
     >
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          animation: "slide_from_right",
+          animationDuration: 300,
+        }}
+      >
         <Stack.Screen
           name="MainApp"
           component={TabNavigator}
@@ -234,6 +241,8 @@ export function RootNavigator() {
           component={LazySettingsScreen}
           options={{
             presentation: "modal",
+            animation: "slide_from_bottom",
+            animationDuration: 300,
             headerShown: true,
             title: "Settings",
             headerStyle: { backgroundColor: theme.colors.background.light },

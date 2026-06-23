@@ -16,6 +16,7 @@ import * as Sharing from "expo-sharing";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import Constants from "expo-constants";
+import { PressableScale } from "../components/ui/PressableScale";
 import { useAppTheme } from "../lib/context/ThemeProvider";
 import { useSettings } from "../lib/context/SettingsContext";
 import { Card } from "../components/ui/Card";
@@ -203,13 +204,15 @@ export default function SettingsScreen() {
           accessibilityLabel="Language selection"
         >
           {Object.entries(languages).map(([code, info]) => (
-            <TouchableOpacity
+            <PressableScale
               key={code}
               style={[
                 styles.languageCard,
                 state.language === code && styles.languageCardActive,
               ]}
               onPress={() => handleLanguageChange(code)}
+              haptic="light"
+              scaleTo={0.97}
               accessibilityRole="radio"
               accessibilityLabel={`${info.name} language`}
               accessibilityState={{ selected: state.language === code }}
@@ -223,7 +226,7 @@ export default function SettingsScreen() {
                 {info.nativeName}
               </Text>
               <Text style={styles.languageSubtext}>{info.name}</Text>
-            </TouchableOpacity>
+            </PressableScale>
           ))}
         </View>
       </Card>
@@ -260,23 +263,27 @@ export default function SettingsScreen() {
             {t("settings.roundingDecimals") || "Rounding Decimals"}
           </Text>
           <View style={styles.decimalControl}>
-            <TouchableOpacity
+            <PressableScale
               style={styles.decimalButton}
               onPress={() =>
                 setRoundingDecimals(Math.max(0, state.roundingDecimals - 1))
               }
+              haptic="light"
+              scaleTo={0.92}
             >
               <Text style={styles.decimalButtonText}>-</Text>
-            </TouchableOpacity>
+            </PressableScale>
             <Text style={styles.decimalValue}>{state.roundingDecimals}</Text>
-            <TouchableOpacity
+            <PressableScale
               style={styles.decimalButton}
               onPress={() =>
                 setRoundingDecimals(Math.min(6, state.roundingDecimals + 1))
               }
+              haptic="light"
+              scaleTo={0.92}
             >
               <Text style={styles.decimalButtonText}>+</Text>
-            </TouchableOpacity>
+            </PressableScale>
           </View>
         </View>
         <View style={styles.settingRow}>
@@ -313,10 +320,12 @@ export default function SettingsScreen() {
         <Text style={styles.cardTitle}>
           {t("settings.dataManagement") || "Data Management"}
         </Text>
-        <TouchableOpacity
+        <PressableScale
           style={styles.actionButton}
           onPress={handleExportData}
           disabled={isBackingUp}
+          haptic="light"
+          scaleTo={0.97}
         >
           <MaterialCommunityIcons
             name="download"
@@ -328,8 +337,13 @@ export default function SettingsScreen() {
               ? t("common.loading") || "Exporting..."
               : t("settings.exportData") || "Export Data"}
           </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton} onPress={handleClearData}>
+        </PressableScale>
+        <PressableScale
+          style={styles.actionButton}
+          onPress={handleClearData}
+          haptic="medium"
+          scaleTo={0.97}
+        >
           <MaterialCommunityIcons
             name="delete"
             size={24}
@@ -338,7 +352,7 @@ export default function SettingsScreen() {
           <Text style={[styles.actionButtonText, styles.dangerText]}>
             {t("settings.clearAllData") || "Clear All Data"}
           </Text>
-        </TouchableOpacity>
+        </PressableScale>
       </Card>
 
       <Card style={styles.card}>
@@ -390,14 +404,19 @@ export default function SettingsScreen() {
         <Text style={styles.cardSubtitle}>
           Close Merath after confirming your choice.
         </Text>
-        <TouchableOpacity style={styles.exitButton} onPress={handleExitApp}>
+        <PressableScale
+          style={styles.exitButton}
+          onPress={handleExitApp}
+          haptic="medium"
+          scaleTo={0.96}
+        >
           <MaterialCommunityIcons
             name="exit-to-app"
             size={24}
             color={theme.colors.background.light}
           />
           <Text style={styles.exitButtonText}>Yes, Exit</Text>
-        </TouchableOpacity>
+        </PressableScale>
       </Card>
     </ScrollView>
   );
@@ -482,8 +501,8 @@ const createStyles = (theme: Theme) =>
       gap: theme.spacing.md,
     },
     decimalButton: {
-      width: 32,
-      height: 32,
+      width: 44,
+      height: 44,
       borderRadius: theme.borderRadius.full,
       backgroundColor: theme.colors.primary.light,
       alignItems: "center",

@@ -36,6 +36,7 @@ import {
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import { MaterialCommunityIcons } from "../lib/icons";
+import { PressableScale } from "./ui/PressableScale";
 import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system";
 import ViewShot from "react-native-view-shot";
@@ -204,13 +205,13 @@ const SharePreviewModal = ({
                 {t("results.previewTitle", { format: getFormatName() })}
               </Text>
             </View>
-            <TouchableOpacity onPress={onClose}>
+            <PressableScale onPress={onClose} haptic="light" scaleTo={0.88}>
               <MaterialCommunityIcons
                 name="close"
                 size={24}
                 color={theme.colors.neutral.main}
               />
-            </TouchableOpacity>
+            </PressableScale>
           </View>
 
           <ScrollView style={styles.previewScroll}>
@@ -239,24 +240,28 @@ const SharePreviewModal = ({
           </ScrollView>
 
           <View style={styles.previewActions}>
-            <TouchableOpacity
+            <PressableScale
               style={[styles.previewButton, styles.previewCancelButton]}
               onPress={onClose}
+              haptic="light"
+              scaleTo={0.95}
             >
               <Text style={styles.previewCancelText}>{t("common.cancel")}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </PressableScale>
+            <PressableScale
               style={[
                 styles.previewButton,
                 styles.previewConfirmButton,
                 { backgroundColor: theme.colors.primary.main },
               ]}
               onPress={onConfirm}
+              haptic="medium"
+              scaleTo={0.95}
             >
               <Text style={styles.previewConfirmText}>
                 {t("calculator.share")}
               </Text>
-            </TouchableOpacity>
+            </PressableScale>
           </View>
         </View>
       </View>
@@ -842,9 +847,11 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
           )}
 
           {/* Share Button */}
-          <TouchableOpacity
+          <PressableScale
             style={styles.headerShareButton}
             onPress={() => setShareModalVisible(true)}
+            haptic="light"
+            scaleTo={0.95}
             accessibilityLabel={t("calculator.share")}
             accessibilityRole="button"
           >
@@ -854,7 +861,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
               color={theme.colors.background.light}
             />
             <Text style={styles.headerShareText}>{t("calculator.share")}</Text>
-          </TouchableOpacity>
+          </PressableScale>
         </View>
 
         {/* Special Cases */}
@@ -1246,9 +1253,11 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
               ))}
 
               {/* Export Comparison Button */}
-              <TouchableOpacity
+              <PressableScale
                 style={styles.exportComparisonButton}
                 onPress={handleExportComparison}
+                haptic="light"
+                scaleTo={0.95}
               >
                 <MaterialCommunityIcons
                   name="file-pdf-box"
@@ -1258,15 +1267,15 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
                 <Text style={styles.exportComparisonText}>
                   تصدير تقرير المقارنة
                 </Text>
-              </TouchableOpacity>
+              </PressableScale>
             </View>
           )}
 
         {/* Close Button */}
         {onClose && (
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+          <PressableScale style={styles.closeButton} onPress={onClose} haptic="light" scaleTo={0.95}>
             <Text style={styles.closeButtonText}>إغلاق</Text>
-          </TouchableOpacity>
+          </PressableScale>
         )}
 
         <View style={{ height: 20 }} />
@@ -1283,13 +1292,17 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>مشاركة النتائج</Text>
-              <TouchableOpacity onPress={() => setShareModalVisible(false)}>
+              <PressableScale
+                onPress={() => setShareModalVisible(false)}
+                haptic="light"
+                scaleTo={0.88}
+              >
                 <MaterialCommunityIcons
                   name="close"
                   size={24}
                   color={theme.colors.neutral.main}
                 />
-              </TouchableOpacity>
+              </PressableScale>
             </View>
 
             {shareError && (
@@ -1304,13 +1317,15 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
             )}
 
             <View style={styles.shareOptions}>
-              <TouchableOpacity
+              <PressableScale
                 style={[
                   styles.shareOption,
                   shareStatus !== "idle" && styles.shareOptionDisabled,
                 ]}
                 onPress={() => showPreview("pdf")}
                 disabled={shareStatus !== "idle"}
+                haptic="light"
+                scaleTo={0.97}
                 accessibilityLabel="PDF - تقرير كامل ومنسق"
                 accessibilityRole="button"
               >
@@ -1335,15 +1350,17 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
                 </View>
                 <Text style={styles.shareOptionText}>PDF</Text>
                 <Text style={styles.shareOptionDesc}>تقرير كامل ومنسق</Text>
-              </TouchableOpacity>
+              </PressableScale>
 
-              <TouchableOpacity
+              <PressableScale
                 style={[
                   styles.shareOption,
                   shareStatus !== "idle" && styles.shareOptionDisabled,
                 ]}
                 onPress={() => showPreview("image")}
                 disabled={shareStatus !== "idle"}
+                haptic="light"
+                scaleTo={0.97}
                 accessibilityLabel="صورة - كصورة للنتائج"
                 accessibilityRole="button"
               >
@@ -1368,15 +1385,17 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
                 </View>
                 <Text style={styles.shareOptionText}>صورة</Text>
                 <Text style={styles.shareOptionDesc}>كصورة للنتائج</Text>
-              </TouchableOpacity>
+              </PressableScale>
 
-              <TouchableOpacity
+              <PressableScale
                 style={[
                   styles.shareOption,
                   shareStatus !== "idle" && styles.shareOptionDisabled,
                 ]}
                 onPress={() => showPreview("text")}
                 disabled={shareStatus !== "idle"}
+                haptic="light"
+                scaleTo={0.97}
                 accessibilityLabel="نص - مشاركة كنص"
                 accessibilityRole="button"
               >
@@ -1401,15 +1420,17 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
                 </View>
                 <Text style={styles.shareOptionText}>نص</Text>
                 <Text style={styles.shareOptionDesc}>مشاركة كنص</Text>
-              </TouchableOpacity>
+              </PressableScale>
 
-              <TouchableOpacity
+              <PressableScale
                 style={[
                   styles.shareOption,
                   shareStatus !== "idle" && styles.shareOptionDisabled,
                 ]}
                 onPress={() => showPreview("clipboard")}
                 disabled={shareStatus !== "idle"}
+                haptic="light"
+                scaleTo={0.97}
                 accessibilityLabel="نسخ - نسخ إلى الحافظة"
                 accessibilityRole="button"
               >
@@ -1435,7 +1456,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
                 </View>
                 <Text style={styles.shareOptionText}>نسخ</Text>
                 <Text style={styles.shareOptionDesc}>نسخ إلى الحافظة</Text>
-              </TouchableOpacity>
+              </PressableScale>
             </View>
 
             {shareStatus === "success" && (
@@ -1449,12 +1470,14 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
               </View>
             )}
 
-            <TouchableOpacity
+            <PressableScale
               style={styles.modalCancelButton}
               onPress={() => setShareModalVisible(false)}
+              haptic="light"
+              scaleTo={0.96}
             >
               <Text style={styles.modalCancelButtonText}>إلغاء</Text>
-            </TouchableOpacity>
+            </PressableScale>
           </View>
         </View>
       </Modal>

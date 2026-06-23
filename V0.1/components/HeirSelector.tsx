@@ -20,6 +20,7 @@ import {
   Alert,
 } from "react-native";
 import { MaterialCommunityIcons } from "../lib/icons";
+import { PressableScale } from "./ui/PressableScale";
 import { useAppTheme } from "../lib/context/ThemeProvider";
 import type { Theme } from "../lib/design/theme";
 import type { HeirsData, HeirType } from "../lib/inheritance/types";
@@ -501,8 +502,10 @@ export const HeirSelector = React.memo(function HeirSelector({
             onChangeText={setSearchQuery}
           />
           {searchQuery ? (
-            <TouchableOpacity
+            <PressableScale
               onPress={() => setSearchQuery("")}
+              haptic="light"
+              scaleTo={0.9}
               accessibilityLabel="مسح البحث"
               accessibilityRole="button"
               accessibilityHint="مسح نص البحث"
@@ -512,7 +515,7 @@ export const HeirSelector = React.memo(function HeirSelector({
                 size={20}
                 color={theme.colors.neutral.dark200}
               />
-            </TouchableOpacity>
+            </PressableScale>
           ) : null}
         </View>
       </View>
@@ -522,9 +525,11 @@ export const HeirSelector = React.memo(function HeirSelector({
         <View style={styles.summaryContainer}>
           <View style={styles.summaryHeader}>
             <Text style={styles.summaryTitle}>الوارثون المختارون</Text>
-            <TouchableOpacity
+            <PressableScale
               onPress={clearAll}
               style={styles.clearAllButton}
+              haptic="medium"
+              scaleTo={0.95}
               accessibilityLabel="مسح جميع الورثة المختارين"
               accessibilityRole="button"
               accessibilityHint="إزالة جميع الورثة من القائمة"
@@ -535,7 +540,7 @@ export const HeirSelector = React.memo(function HeirSelector({
                 color={theme.colors.error.main}
               />
               <Text style={styles.clearAllText}>مسح الكل</Text>
-            </TouchableOpacity>
+            </PressableScale>
           </View>
 
           <View style={styles.summaryStats}>
@@ -565,8 +570,10 @@ export const HeirSelector = React.memo(function HeirSelector({
                   <Text style={styles.selectedChipText}>
                     {heir?.label || key}: {count}
                   </Text>
-                  <TouchableOpacity
+                  <PressableScale
                     onPress={() => removeHeir(key)}
+                    haptic="light"
+                    scaleTo={0.85}
                     accessibilityLabel={`إزالة ${heir?.label || key}`}
                     accessibilityRole="button"
                     accessibilityHint="إزالة هذا الوارث من القائمة"
@@ -576,7 +583,7 @@ export const HeirSelector = React.memo(function HeirSelector({
                       size={14}
                       color={theme.colors.neutral.dark200}
                     />
-                  </TouchableOpacity>
+                  </PressableScale>
                 </View>
               );
             })}
@@ -595,9 +602,11 @@ export const HeirSelector = React.memo(function HeirSelector({
           return (
             <View key={category.id} style={styles.categoryCard}>
               {/* Category Header */}
-              <TouchableOpacity
+              <PressableScale
                 style={styles.categoryHeader}
                 onPress={() => toggleCategory(category.id)}
+                haptic="light"
+                scaleTo={0.98}
                 accessibilityLabel={`${category.name} - ${isExpanded ? "طي" : "توسيع"}`}
                 accessibilityRole="button"
                 accessibilityState={{ expanded: isExpanded }}
@@ -623,7 +632,7 @@ export const HeirSelector = React.memo(function HeirSelector({
                   size={24}
                   color={theme.colors.neutral.dark200}
                 />
-              </TouchableOpacity>
+              </PressableScale>
 
               {/* Category Heirs */}
               {isExpanded && (
@@ -661,13 +670,15 @@ export const HeirSelector = React.memo(function HeirSelector({
                         )}
 
                         <View style={styles.heirControls}>
-                          <TouchableOpacity
+                          <PressableScale
                             style={[
                               styles.controlButton,
                               count === 0 && styles.controlButtonDisabled,
                             ]}
                             onPress={() => updateHeirCount(heir.key, -1)}
                             disabled={count === 0}
+                            haptic="light"
+                            scaleTo={0.9}
                             accessibilityLabel={`إنقاص ${heir.label}`}
                             accessibilityRole="button"
                             accessibilityHint="تقليل عدد هذا الوارث"
@@ -678,15 +689,13 @@ export const HeirSelector = React.memo(function HeirSelector({
                               size={16}
                               color={count === 0 ? "#ccc" : "#666"}
                             />
-                          </TouchableOpacity>
+                          </PressableScale>
 
-                          <TouchableOpacity
+                          <PressableScale
                             onPress={() => {
-                              // Simple tap to increment
                               updateHeirCount(heir.key, 1);
                             }}
                             onLongPress={() => {
-                              // Long press to show input for direct number entry
                               Alert.prompt(
                                 "تعديل العدد",
                                 `أدخل العدد الجديد لـ ${heir.label}`,
@@ -705,13 +714,15 @@ export const HeirSelector = React.memo(function HeirSelector({
                                 "numeric",
                               );
                             }}
+                            haptic="light"
+                            scaleTo={0.92}
                           >
                             <View style={styles.countContainer}>
                               <Text style={styles.countText}>{count}</Text>
                             </View>
-                          </TouchableOpacity>
+                          </PressableScale>
 
-                          <TouchableOpacity
+                          <PressableScale
                             style={[
                               styles.controlButton,
                               styles.controlButtonAdd,
@@ -723,6 +734,8 @@ export const HeirSelector = React.memo(function HeirSelector({
                             disabled={
                               hasMaxCount(heir) ? count >= heir.maxCount : false
                             }
+                            haptic="light"
+                            scaleTo={0.9}
                           >
                             <MaterialCommunityIcons
                               name="plus"
@@ -733,7 +746,7 @@ export const HeirSelector = React.memo(function HeirSelector({
                                   : theme.colors.primary.main
                               }
                             />
-                          </TouchableOpacity>
+                          </PressableScale>
                         </View>
 
                         {hasMaxCount(heir) && (
@@ -967,9 +980,9 @@ const createStyles = (theme: Theme) =>
       justifyContent: "space-between",
     },
     controlButton: {
-      width: 32,
-      height: 32,
-      borderRadius: 16,
+      width: 44,
+      height: 44,
+      borderRadius: 22,
       backgroundColor: theme.colors.background.light,
       justifyContent: "center",
       alignItems: "center",
