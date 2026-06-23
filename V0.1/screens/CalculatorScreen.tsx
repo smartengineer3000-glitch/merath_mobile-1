@@ -55,7 +55,12 @@ function StepCard({
   collapsed = false,
   onPress,
 }: StepCardProps) {
-  const statusLabel = status === "complete" ? "complete" : status === "active" ? "active" : "pending";
+  const statusLabel =
+    status === "complete"
+      ? "complete"
+      : status === "active"
+        ? "active"
+        : "pending";
 
   const { theme } = useAppTheme();
   const styles = createStyles(theme);

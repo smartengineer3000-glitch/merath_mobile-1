@@ -14,15 +14,15 @@ SplashScreen.preventAutoHideAsync();
 /**
  * Custom hook to load and manage fonts
  * Returns fonts loaded status and hides splash screen when ready
- * 
+ *
  * Note: Font files need to be added to assets/fonts/ directory:
  * - Cairo-Regular.ttf
- * - Cairo-Bold.ttf  
+ * - Cairo-Bold.ttf
  * - PlusJakartaSans-Regular.ttf
  * - PlusJakartaSans-Bold.ttf
- * 
+ *
  * Download from: https://fonts.google.com/
- * 
+ *
  * TEMPORARY: Using system fonts until font files are added
  */
 export function useCustomFonts() {

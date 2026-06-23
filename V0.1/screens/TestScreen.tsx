@@ -234,7 +234,12 @@ export default function TestScreen() {
         </View>
       </Card>
 
-      <PressableScale style={styles.runAllButton} onPress={runAll} haptic="medium" scaleTo={0.95}>
+      <PressableScale
+        style={styles.runAllButton}
+        onPress={runAll}
+        haptic="medium"
+        scaleTo={0.95}
+      >
         <Text style={styles.runAllText}>▶️ RUN ALL TESTS</Text>
       </PressableScale>
     </ScrollView>

@@ -587,7 +587,7 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
       color: theme.colors.neutral.dark300,
       marginBottom: theme.spacing.xs,
     },
-    differenceText:
+    differenceText: {
       ...theme.typography.body.small,
       color: theme.colors.neutral.dark200,
     },

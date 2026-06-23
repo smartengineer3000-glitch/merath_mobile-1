@@ -1105,7 +1105,11 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
           <TouchableOpacity
             style={styles.comparisonButton}
             onPress={() => setShowComparison(!showComparison)}
-            accessibilityLabel={showComparison ? t("results.hideComparison") : t("results.showComparison")}
+            accessibilityLabel={
+              showComparison
+                ? t("results.hideComparison")
+                : t("results.showComparison")
+            }
             accessibilityRole="button"
           >
             <Text style={styles.comparisonButtonText}>
@@ -1273,7 +1277,12 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
 
         {/* Close Button */}
         {onClose && (
-          <PressableScale style={styles.closeButton} onPress={onClose} haptic="light" scaleTo={0.95}>
+          <PressableScale
+            style={styles.closeButton}
+            onPress={onClose}
+            haptic="light"
+            scaleTo={0.95}
+          >
             <Text style={styles.closeButtonText}>إغلاق</Text>
           </PressableScale>
         )}

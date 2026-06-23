@@ -42,7 +42,11 @@ export function useResponsive() {
   const isTablet = width >= BREAKPOINTS.lg;
 
   const spacing = (base: number) =>
-    isTablet ? Math.round(base * 1.2) : isNarrow ? Math.round(base * 0.85) : base;
+    isTablet
+      ? Math.round(base * 1.2)
+      : isNarrow
+        ? Math.round(base * 0.85)
+        : base;
 
   const fontSize = (size: number) => moderateScale(size);
 

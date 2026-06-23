@@ -82,10 +82,7 @@ export const PressableScale: React.FC<PressableScaleProps> = ({
 
   return (
     <Animated.View
-      style={[
-        { transform: [{ scale: scaleAnim }] },
-        containerStyle,
-      ]}
+      style={[{ transform: [{ scale: scaleAnim }] }, containerStyle]}
     >
       <TouchableOpacity
         activeOpacity={0.85}

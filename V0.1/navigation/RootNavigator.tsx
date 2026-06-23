@@ -98,8 +98,7 @@ export function TabNavigator() {
         },
         headerTintColor: theme.colors.primary.main,
         headerTitleStyle: {
-          fontSize: theme.typography.title.fontSize,
-          fontWeight: theme.typography.title.fontWeight,
+          ...theme.typography.title.medium,
         },
         headerRight: () => (
           <TouchableOpacity
@@ -123,8 +122,7 @@ export function TabNavigator() {
           paddingTop: 6,
         },
         tabBarLabelStyle: {
-          fontSize: theme.typography.label.fontSize,
-          fontWeight: theme.typography.label.fontWeight,
+          ...theme.typography.label.small,
         },
         tabBarActiveTintColor: theme.colors.primary.main,
         tabBarInactiveTintColor: theme.colors.neutral.dark200,

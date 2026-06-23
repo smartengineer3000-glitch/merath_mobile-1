@@ -142,7 +142,11 @@ export function MadhhabSelector({
                     { backgroundColor: madhab.color },
                   ]}
                 >
-                  <MaterialCommunityIcons name="check" size={12} color={theme.colors.background.light} />
+                  <MaterialCommunityIcons
+                    name="check"
+                    size={12}
+                    color={theme.colors.background.light}
+                  />
                 </View>
               )}
             </PressableScale>
