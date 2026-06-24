@@ -1763,7 +1763,7 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
       borderRadius: 4,
       padding: 10,
       marginBottom: 8,
-      borderLeftWidth: 3,
+      borderLeftWidth: 2,
       borderLeftColor: theme.colors.info.main,
     },
     stepHeader: {
@@ -1913,7 +1913,7 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
       borderRadius: 6,
       padding: 8,
       marginBottom: 6,
-      borderLeftWidth: 3,
+      borderLeftWidth: 2,
       borderLeftColor: theme.colors.info.main,
     },
     differenceHeir: {

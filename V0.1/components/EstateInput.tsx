@@ -639,17 +639,17 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
     },
     errorItem: {
       backgroundColor: theme.colors.error.light,
-      borderLeftWidth: 4,
+      borderLeftWidth: 2,
       borderLeftColor: theme.colors.error.main,
     },
     warningItem: {
       backgroundColor: theme.colors.warning.light,
-      borderLeftWidth: 4,
+      borderLeftWidth: 2,
       borderLeftColor: theme.colors.warning.main,
     },
     successItem: {
       backgroundColor: theme.colors.success.light,
-      borderLeftWidth: 4,
+      borderLeftWidth: 2,
       borderLeftColor: theme.colors.success.main,
       marginVertical: theme.spacing.xs,
     },
