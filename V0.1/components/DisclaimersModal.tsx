@@ -1,355 +1,218 @@
 /**
- * @file DisclaimersModal.tsx
- * @description Legal Disclaimers & Privacy Policy Modal Component
- * Phase 3: Legal Compliance & User Acceptance
- *
- * Displays legal disclaimers, privacy policy, and terms of service
- * with user acceptance tracking
+ * @file components/DisclaimersModal.tsx
+ * @description Modal for displaying legal disclaimers and obtaining user consent
  */
 
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
-  ScrollView,
-  TouchableOpacity,
   StyleSheet,
   Modal,
-  Alert,
+  ScrollView,
+  TouchableOpacity,
+  SafeAreaView,
 } from "react-native";
-import { getDisclaimer } from "../lib/legal/Disclaimers";
+import { useAppTheme } from "../lib/context/ThemeProvider";
+import { getDisclaimer, recordDisclaimerAcceptance } from "../lib/legal/Disclaimers";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export interface DisclaimersModalProps {
+interface DisclaimersModalProps {
   visible: boolean;
   onAccept: () => void;
   onDecline: () => void;
   showPrivacyPolicy?: boolean;
 }
 
-type DisclaimerTab = "disclaimer" | "privacy" | "terms";
+const DISCLAIMER_ACCEPTED_KEY = "@merath_disclaimers_accepted";
 
-/**
- * Disclaimers Modal Component
- * Displays legal disclaimers with tab navigation for different content
- */
 export function DisclaimersModal({
   visible,
   onAccept,
   onDecline,
   showPrivacyPolicy = false,
 }: DisclaimersModalProps) {
-  const [activeTab, setActiveTab] = useState<DisclaimerTab>("disclaimer");
-  const [acceptedAll, setAcceptedAll] = useState(false);
+  const { theme } = useAppTheme();
+  const [activeTab, setActiveTab] = useState<"main" | "privacy" | "terms">("main");
 
-  const handleAccept = useCallback(() => {
-    if (!acceptedAll) {
-      Alert.alert(
-        "تأكيد القبول",
-        "يجب عليك قراءة وقبول جميع الشروط والأحكام للمتابعة",
-        [{ text: "حسناً", onPress: () => {} }],
-      );
-      return;
-    }
-
-    onAccept();
-  }, [acceptedAll, onAccept]);
-
-  const handleDecline = useCallback(() => {
-    Alert.alert(
-      "تأكيد الرفض",
-      "إذا رفضت الشروط، لن تتمكن من استخدام التطبيق. هل أنت متأكد؟",
-      [
-        { text: "الاستمرار", onPress: () => {} },
-        {
-          text: "أرفض",
-          onPress: onDecline,
-          style: "destructive",
-        },
-      ],
-    );
-  }, [onDecline]);
-
-  const getTabContent = () => {
-    switch (activeTab) {
-      case "disclaimer":
-        return getDisclaimer("main");
-      case "privacy":
-        return getDisclaimer("privacy");
-      case "terms":
-        return getDisclaimer("terms");
-      default:
-        return getDisclaimer("main");
+  const handleAccept = async () => {
+    try {
+      await AsyncStorage.setItem(DISCLAIMER_ACCEPTED_KEY, "true");
+      recordDisclaimerAcceptance("main");
+      onAccept();
+    } catch (error) {
+      console.error("Failed to save disclaimer acceptance:", error);
+      onAccept();
     }
   };
 
-  const getTabLabel = (tab: DisclaimerTab) => {
-    switch (tab) {
-      case "disclaimer":
-        return "إخلاء المسؤولية";
-      case "privacy":
-        return "سياسة الخصوصية";
-      case "terms":
-        return "الشروط والأحكام";
-      default:
-        return "إخلاء المسؤولية";
-    }
-  };
+  const disclaimerText = getDisclaimer(activeTab);
 
   return (
-    <Modal
-      visible={visible}
-      transparent={false}
-      animationType="slide"
-      onRequestClose={() => {}} // Prevent dismiss by back button
-    >
-      <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>القوانين والشروط</Text>
-          <Text style={styles.headerSubtitle}>Terms & Conditions</Text>
-        </View>
-
-        {/* Tab Navigation */}
-        <View
-          style={styles.tabNavigation}
-          accessibilityRole="tablist"
-          accessible={true}
-        >
-          {(["disclaimer", "privacy", "terms"] as DisclaimerTab[]).map(
-            (tab) => (
-              <TouchableOpacity
-                key={tab}
-                style={[styles.tab, activeTab === tab && styles.tabActive]}
-                onPress={() => setActiveTab(tab)}
-                accessibilityRole="tab"
-                accessibilityState={{ selected: activeTab === tab }}
-                accessibilityLabel={getTabLabel(tab)}
-                accessible={true}
-              >
-                <Text
-                  style={[
-                    styles.tabLabel,
-                    activeTab === tab && styles.tabLabelActive,
-                  ]}
-                >
-                  {getTabLabel(tab)}
-                </Text>
-              </TouchableOpacity>
-            ),
-          )}
-        </View>
-
-        {/* Content Scroll Area */}
-        <ScrollView
-          style={styles.contentScroll}
-          showsVerticalScrollIndicator={true}
-        >
-          <View style={styles.content}>
-            <Text style={styles.contentText}>{getTabContent()}</Text>
+    <Modal visible={visible} animationType="slide" transparent>
+      <SafeAreaView style={[styles.overlay, { backgroundColor: "rgba(0,0,0,0.5)" }]}>
+        <View style={[styles.container, { backgroundColor: theme.colors.background.light }]}>
+          <View style={styles.header}>
+            <Text style={[styles.title, { color: theme.colors.primary.main }]}>
+              Legal Disclaimers
+            </Text>
+            <Text style={[styles.subtitle, { color: theme.colors.neutral.dark200 }]}>
+              Please read and accept to continue
+            </Text>
           </View>
-        </ScrollView>
 
-        {/* Acceptance Checkbox */}
-        <View style={styles.acceptanceContainer}>
-          <TouchableOpacity
-            style={[styles.checkbox, acceptedAll && styles.checkboxChecked]}
-            onPress={() => setAcceptedAll(!acceptedAll)}
-            accessibilityRole="checkbox"
-            accessibilityState={{ checked: acceptedAll }}
-            accessibilityLabel="أوافق على جميع الشروط والأحكام وسياسة الخصوصية"
-            accessibilityHint="اضغط لتأكيد قبول الشروط والأحكام وسياسة الخصوصية"
-            accessible={true}
-          >
-            {acceptedAll && <Text style={styles.checkboxMark}>✓</Text>}
-          </TouchableOpacity>
-          <Text style={styles.acceptanceText}>
-            أوافق على جميع الشروط والأحكام وسياسة الخصوصية
-          </Text>
+          <View style={styles.tabs}>
+            <TouchableOpacity
+              style={[
+                styles.tab,
+                activeTab === "main" && { backgroundColor: theme.colors.primary.main },
+              ]}
+              onPress={() => setActiveTab("main")}
+            >
+              <Text
+                style={[
+                  styles.tabText,
+                  { color: activeTab === "main" ? theme.colors.background.light : theme.colors.neutral.dark300 },
+                ]}
+              >
+                Disclaimer
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.tab,
+                activeTab === "privacy" && { backgroundColor: theme.colors.primary.main },
+              ]}
+              onPress={() => setActiveTab("privacy")}
+            >
+              <Text
+                style={[
+                  styles.tabText,
+                  { color: activeTab === "privacy" ? theme.colors.background.light : theme.colors.neutral.dark300 },
+                ]}
+              >
+                Privacy
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.tab,
+                activeTab === "terms" && { backgroundColor: theme.colors.primary.main },
+              ]}
+              onPress={() => setActiveTab("terms")}
+            >
+              <Text
+                style={[
+                  styles.tabText,
+                  { color: activeTab === "terms" ? theme.colors.background.light : theme.colors.neutral.dark300 },
+                ]}
+              >
+                Terms
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView style={styles.content} showsVerticalScrollIndicator={true}>
+            <Text style={[styles.text, { color: theme.colors.neutral.dark300 }]}>
+              {disclaimerText}
+            </Text>
+          </ScrollView>
+
+          <View style={styles.footer}>
+            <TouchableOpacity
+              style={[styles.button, styles.declineButton, { borderColor: theme.colors.error.main }]}
+              onPress={onDecline}
+            >
+              <Text style={[styles.buttonText, { color: theme.colors.error.main }]}>
+                Decline
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, styles.acceptButton, { backgroundColor: theme.colors.primary.main }]}
+              onPress={handleAccept}
+            >
+              <Text style={[styles.buttonText, { color: theme.colors.background.light }]}>
+                Accept & Continue
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-
-        {/* Action Buttons */}
-        <View style={styles.actionButtons}>
-          <TouchableOpacity
-            style={[
-              styles.declineButton,
-              !acceptedAll && styles.declineButtonDisabled,
-            ]}
-            onPress={handleDecline}
-          >
-            <Text style={styles.declineButtonText}>رفض</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.acceptButton,
-              !acceptedAll && styles.acceptButtonDisabled,
-            ]}
-            onPress={handleAccept}
-            disabled={!acceptedAll}
-            accessibilityRole="button"
-            accessibilityState={{ disabled: !acceptedAll }}
-            accessibilityLabel="قبول واستمرار"
-          >
-            <Text style={styles.acceptButtonText}>قبول واستمرار</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      </SafeAreaView>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  overlay: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  container: {
+    width: "90%",
+    maxWidth: 600,
+    maxHeight: "80%",
+    borderRadius: 24,
+    overflow: "hidden",
   },
   header: {
-    backgroundColor: "#fff",
-    paddingTop: 20,
-    paddingBottom: 16,
-    paddingHorizontal: 16,
+    padding: 24,
     borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
+    borderBottomColor: "#e5e7eb",
   },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#2e7d32",
-    textAlign: "center",
-    marginBottom: 4,
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
+    marginBottom: 8,
   },
-  headerSubtitle: {
-    fontSize: 12,
-    color: "#666",
-    textAlign: "center",
+  subtitle: {
+    fontSize: 14,
+    fontWeight: "400",
   },
-  tabNavigation: {
-    backgroundColor: "#fff",
+  tabs: {
     flexDirection: "row",
     borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
-    paddingHorizontal: 8,
+    borderBottomColor: "#e5e7eb",
   },
   tab: {
     flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    borderBottomWidth: 3,
-    borderBottomColor: "transparent",
+    paddingVertical: 16,
     alignItems: "center",
   },
-  tabActive: {
-    borderBottomColor: "#2e7d32",
-    backgroundColor: "#f5f5f5",
-  },
-  tabLabel: {
-    fontSize: 11,
-    fontWeight: "500",
-    color: "#666",
-    textAlign: "center",
-  },
-  tabLabelActive: {
-    color: "#2e7d32",
-    fontWeight: "700",
-  },
-  contentScroll: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
+  tabText: {
+    fontSize: 14,
+    fontWeight: "600",
   },
   content: {
-    backgroundColor: "#fff",
-    margin: 12,
-    padding: 16,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-  },
-  contentText: {
-    fontSize: 12,
-    color: "#333",
-    lineHeight: 20,
-    textAlign: "right",
-  },
-  acceptanceContainer: {
-    backgroundColor: "#fff",
-    marginHorizontal: 12,
-    marginBottom: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 6,
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-  },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 4,
-    borderWidth: 2,
-    borderColor: "#ddd",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-    backgroundColor: "#fff",
-  },
-  checkboxChecked: {
-    backgroundColor: "#2e7d32",
-    borderColor: "#2e7d32",
-  },
-  checkboxMark: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#fff",
-  },
-  acceptanceText: {
-    fontSize: 12,
-    color: "#333",
     flex: 1,
-    textAlign: "right",
-    fontWeight: "500",
+    padding: 24,
   },
-  actionButtons: {
+  text: {
+    fontSize: 14,
+    lineHeight: 22,
+    fontFamily: "monospace",
+  },
+  footer: {
     flexDirection: "row",
-    paddingHorizontal: 12,
-    paddingBottom: 20,
-    gap: 8,
+    padding: 24,
+    gap: 12,
+    borderTopWidth: 1,
+    borderTopColor: "#e5e7eb",
+  },
+  button: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: "center",
   },
   declineButton: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    backgroundColor: "#f5f5f5",
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: "#d32f2f",
-    alignItems: "center",
-  },
-  declineButtonDisabled: {
-    opacity: 0.5,
-  },
-  declineButtonText: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#d32f2f",
+    borderWidth: 2,
   },
   acceptButton: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    backgroundColor: "#2e7d32",
-    borderRadius: 6,
-    alignItems: "center",
+    flex: 2,
   },
-  acceptButtonDisabled: {
-    backgroundColor: "#67aaff",
-    opacity: 0.6,
-  },
-  acceptButtonText: {
-    fontSize: 13,
+  buttonText: {
+    fontSize: 16,
     fontWeight: "600",
-    color: "#fff",
   },
 });
-
-export default DisclaimersModal;

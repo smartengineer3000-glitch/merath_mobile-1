@@ -1,8 +1,0 @@
-node_modules/
-dist/
-*.bundle
-*.jsbundle
-.hbc
-.expo/
-web-build/
-__generated__/

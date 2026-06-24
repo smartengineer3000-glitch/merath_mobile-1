@@ -1,122 +1,139 @@
+/**
+ * @file components/ErrorBoundary.tsx
+ * @description Error boundary component to catch and handle React errors
+ */
+
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import type { Theme } from "../lib/design/theme";
-import { lightTheme } from "../lib/design/theme";
+import { useAppTheme } from "../lib/context/ThemeProvider";
 
-interface ErrorBoundaryProps {
+interface Props {
   children: ReactNode;
-  fallback?: ReactNode;
-  theme?: Theme;
+  theme?: any;
 }
 
-interface ErrorBoundaryState {
+interface State {
   hasError: boolean;
   error: Error | null;
+  errorInfo: ErrorInfo | null;
 }
 
-export class ErrorBoundary extends Component<
-  ErrorBoundaryProps,
-  ErrorBoundaryState
-> {
-  constructor(props: ErrorBoundaryProps) {
+export class ErrorBoundary extends Component<Props, State> {
+  constructor(props: Props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = {
+      hasError: false,
+      error: null,
+      errorInfo: null,
+    };
   }
 
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error };
+  static getDerivedStateFromError(error: Error): State {
+    return {
+      hasError: true,
+      error,
+      errorInfo: null,
+    };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    if (__DEV__) {
-      console.error("ErrorBoundary caught:", error, errorInfo);
-    }
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
+    this.setState({
+      error,
+      errorInfo,
+    });
   }
 
-  handleReset = (): void => {
-    this.setState({ hasError: false, error: null });
+  handleRestart = () => {
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null,
+    });
   };
 
-  render(): ReactNode {
+  render() {
     if (this.state.hasError) {
-      if (this.props.fallback) {
-        return this.props.fallback;
-      }
-
-      const theme = this.props.theme ?? lightTheme;
-      const dynamicStyles = createDynamicStyles(theme);
-
-      return (
-        <View style={dynamicStyles.container}>
-          <View style={dynamicStyles.iconContainer}>
-            <Text style={dynamicStyles.icon}>!</Text>
-          </View>
-          <Text style={dynamicStyles.title}>Something went wrong</Text>
-          <Text style={dynamicStyles.message}>
-            {this.state.error?.message || "An unexpected error occurred"}
-          </Text>
-          <TouchableOpacity
-            style={dynamicStyles.button}
-            onPress={this.handleReset}
-            accessibilityRole="button"
-            accessibilityLabel="Try again"
-          >
-            <Text style={dynamicStyles.buttonText}>Try Again</Text>
-          </TouchableOpacity>
-        </View>
-      );
+      return <ErrorFallback error={this.state.error} onRestart={this.handleRestart} theme={this.props.theme} />;
     }
 
     return this.props.children;
   }
 }
 
-const createDynamicStyles = (theme: Theme) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      padding: 24,
-      backgroundColor: theme.colors.background.lightVariant,
-    },
-    iconContainer: {
-      width: 64,
-      height: 64,
-      borderRadius: 32,
-      backgroundColor: theme.colors.error.light,
-      justifyContent: "center",
-      alignItems: "center",
-      marginBottom: 16,
-    },
-    icon: {
-      fontSize: 32,
-      fontWeight: "700",
-      color: theme.colors.error.main,
-    },
-    title: {
-      fontSize: 24,
-      fontWeight: "bold",
-      color: theme.colors.neutral.dark300,
-      marginBottom: 8,
-    },
-    message: {
-      fontSize: 16,
-      color: theme.colors.neutral.main,
-      textAlign: "center",
-      marginBottom: 24,
-    },
-    button: {
-      backgroundColor: theme.colors.primary.main,
-      paddingHorizontal: 24,
-      paddingVertical: 12,
-      borderRadius: 8,
-    },
-    buttonText: {
-      color: theme.colors.background.light,
-      fontSize: 16,
-      fontWeight: "bold",
-    },
-  });
+function ErrorFallback({ error, onRestart, theme }: { error: Error | null; onRestart: () => void; theme?: any }) {
+  const appTheme = useAppTheme();
+  const currentTheme = theme || appTheme.theme;
 
-export default ErrorBoundary;
+  return (
+    <View style={[styles.container, { backgroundColor: currentTheme.colors.background.light }]}>
+      <View style={styles.content}>
+        <Text style={[styles.icon, { fontSize: 64 }]}>⚠️</Text>
+        <Text style={[styles.title, { color: currentTheme.colors.error.main }]}>
+          Something went wrong
+        </Text>
+        <Text style={[styles.message, { color: currentTheme.colors.neutral.dark200 }]}>
+          An unexpected error occurred. Please try again.
+        </Text>
+        {error && (
+          <Text style={[styles.errorText, { color: currentTheme.colors.neutral.light400 }]}>
+            {error.message}
+          </Text>
+        )}
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: currentTheme.colors.primary.main }]}
+          onPress={onRestart}
+        >
+          <Text style={[styles.buttonText, { color: currentTheme.colors.background.light }]}>
+            Try Again
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+  },
+  content: {
+    alignItems: "center",
+    maxWidth: 400,
+  },
+  icon: {
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  message: {
+    fontSize: 16,
+    marginBottom: 16,
+    textAlign: "center",
+    lineHeight: 24,
+  },
+  errorText: {
+    fontSize: 12,
+    marginBottom: 24,
+    textAlign: "center",
+    fontFamily: "monospace",
+  },
+  button: {
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 12,
+    minWidth: 120,
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+});
