@@ -5,7 +5,7 @@ const { mergeConfig } = require("@react-native/metro-config");
 const expoConfig = getDefaultConfig(__dirname);
 
 expoConfig.resolver.assetExts = Array.from(
-  new Set([...expoConfig.resolver.assetExts, "woff", "woff2"])
+  new Set([...expoConfig.resolver.assetExts, "woff", "woff2"]),
 );
 
 // Performance optimizations
