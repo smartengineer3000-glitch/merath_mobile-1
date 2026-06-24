@@ -283,13 +283,13 @@ export function CalculationButton({
   const getLoadingIcon = () => {
     switch (loadingState) {
       case "calculating":
-        return "🧮";
+        return "⚙";
       case "pdf_generating":
-        return "📄";
+        return "📋";
       case "pdf_sharing":
-        return "📤";
+        return "↗";
       default:
-        return "⏳";
+        return "◌";
     }
   };
 
@@ -299,13 +299,13 @@ export function CalculationButton({
       {!hasValidEstate && (
         <View style={styles.warningBox}>
           <Text style={styles.warningText}>
-            ⚠️ أدخل مبلغ التركة الإجمالي أولاً
+            أدخل مبلغ التركة الإجمالي أولاً
           </Text>
         </View>
       )}
       {!hasValidHeirs && (
         <View style={styles.warningBox}>
-          <Text style={styles.warningText}>⚠️ أضف وارثاً واحداً على الأقل</Text>
+          <Text style={styles.warningText}>أضف وارثاً واحداً على الأقل</Text>
         </View>
       )}
 
@@ -343,7 +343,7 @@ export function CalculationButton({
           onPress={handlePDFExport}
           activeOpacity={0.7}
         >
-          <Text style={styles.pdfButtonIcon}>📄</Text>
+          <Text style={styles.pdfButtonIcon}>PDF</Text>
           <Text style={styles.pdfButtonText}>تصدير PDF</Text>
         </TouchableOpacity>
       )}
@@ -385,7 +385,7 @@ export function CalculationButton({
       {/* رسالة الخطأ */}
       {currentError && loadingState === "error" && (
         <View style={styles.errorContainer}>
-          <Text style={styles.errorIcon}>❌</Text>
+          <Text style={styles.errorIcon}>✕</Text>
           <Text style={styles.errorText}>{currentError}</Text>
           <TouchableOpacity
             style={styles.errorDismiss}
@@ -572,6 +572,7 @@ const createStyles = (theme: Theme) =>
     },
     loadingIcon: {
       fontSize: 16,
+      fontWeight: "700",
       color: theme.colors.background.light,
     },
     spinner: {
@@ -579,16 +580,14 @@ const createStyles = (theme: Theme) =>
     },
     warningBox: {
       backgroundColor: theme.colors.warning.light,
-      borderLeftWidth: 2,
-      borderLeftColor: theme.colors.warning.main,
+      borderWidth: 1,
+      borderColor: theme.colors.warning.main,
       paddingHorizontal: 12,
       paddingVertical: 10,
       borderRadius: 8,
       marginBottom: 12,
-      borderTopRightRadius: 8,
-      borderBottomRightRadius: 8,
       shadowColor: theme.colors.warning.main,
-      shadowOffset: { width: -2, height: 2 },
+      shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.15,
       shadowRadius: 4,
       elevation: 2,
@@ -605,8 +604,8 @@ const createStyles = (theme: Theme) =>
       paddingHorizontal: 12,
       backgroundColor: theme.colors.error.light,
       borderRadius: 8,
-      borderLeftWidth: 2,
-      borderLeftColor: theme.colors.error.dark,
+      borderWidth: 1,
+      borderColor: theme.colors.error.dark,
       shadowColor: theme.colors.error.dark,
       shadowOffset: { width: -2, height: 2 },
       shadowOpacity: 0.1,
@@ -641,8 +640,8 @@ const createStyles = (theme: Theme) =>
       paddingHorizontal: 12,
       backgroundColor: theme.colors.success.light,
       borderRadius: 8,
-      borderLeftWidth: 2,
-      borderLeftColor: theme.colors.success.main,
+      borderWidth: 1,
+      borderColor: theme.colors.success.main,
       shadowColor: theme.colors.success.main,
       shadowOffset: { width: -2, height: 2 },
       shadowOpacity: 0.1,

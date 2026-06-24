@@ -70,7 +70,7 @@ type ShareStatus = "idle" | "generating" | "sharing" | "success" | "error";
 // ===== FIX L2: Animated number component =====
 const AnimatedNumber = ({
   value,
-  duration = 1000,
+  duration = 200,
   format = true,
 }: {
   value: number;
@@ -322,12 +322,12 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 500,
+        duration: 200,
         useNativeDriver: true,
       }),
       Animated.timing(slideAnim, {
         toValue: 0,
-        duration: 500,
+        duration: 200,
         useNativeDriver: true,
       }),
     ]).start();
@@ -365,11 +365,11 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
       const total = result.shares.reduce((sum, s) => sum + s.amount, 0);
       const date = new Date().toLocaleDateString("ar-SA");
 
-      let text = `📊 *نتائج توزيع الميراث*\n`;
-      text += `📅 التاريخ: ${date}\n`;
-      text += `⚖️ المذهب: ${result.madhhabName}\n`;
-      text += `💰 إجمالي التركة: ${total.toFixed(2)} ر.س\n`;
-      text += `📈 مستوى الثقة: ${result.confidence}%\n\n`;
+      let text = `*نتائج توزيع الميراث*\n`;
+      text += `التاريخ: ${date}\n`;
+      text += `المذهب: ${result.madhhabName}\n`;
+      text += `إجمالي التركة: ${total.toFixed(2)} ر.س\n`;
+      text += `مستوى الثقة: ${result.confidence}%\n\n`;
 
       if (includeDetails) {
         text += `*تفاصيل التوزيع:*\n`;
@@ -417,7 +417,7 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
         <style>
           body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #2e7d32 0%, #4f9eff 100%);
+            background: #2e7d32;
             margin: 0;
             padding: 20px;
             min-height: 100vh;
@@ -1211,15 +1211,15 @@ export function ResultsDisplay({ result, onClose }: ResultsDisplayProps) {
                       ]}
                     >
                       {comparison.summary.isIdentical
-                        ? "✓ متطابق"
+                        ? "متطابق"
                         : comparison.summary.majorDifferences > 0
-                          ? "⚠️ اختلافات جوهرية"
-                          : "⚠️ اختلافات طفيفة"}
+                          ? "اختلافات جوهرية"
+                          : "اختلافات طفيفة"}
                     </Text>
 
                     {comparison.summary.recommendation && (
                       <Text style={styles.comparisonRecommendation}>
-                        💡 {comparison.summary.recommendation}
+                        {comparison.summary.recommendation}
                       </Text>
                     )}
                   </View>
@@ -1763,8 +1763,8 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
       borderRadius: 4,
       padding: 10,
       marginBottom: 8,
-      borderLeftWidth: 2,
-      borderLeftColor: theme.colors.info.main,
+      borderWidth: 1,
+      borderColor: theme.colors.info.main,
     },
     stepHeader: {
       flexDirection: "row",
@@ -1913,8 +1913,8 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
       borderRadius: 6,
       padding: 8,
       marginBottom: 6,
-      borderLeftWidth: 2,
-      borderLeftColor: theme.colors.info.main,
+      borderWidth: 1,
+      borderColor: theme.colors.info.main,
     },
     differenceHeir: {
       fontSize: 12,

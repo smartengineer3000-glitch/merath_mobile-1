@@ -78,7 +78,9 @@ export const ModernInput: React.FC<ModernInputProps> = ({
     paddingVertical: multiline ? theme.spacing.md : 0,
     borderWidth: 1,
     borderRadius: theme.borderRadius.md,
-    backgroundColor: disabled ? "#F5F5F5" : "#FFFFFF",
+    backgroundColor: disabled
+      ? theme.colors.neutral.light50
+      : theme.colors.background.light,
     borderColor: error
       ? theme.colors.error.main
       : focused

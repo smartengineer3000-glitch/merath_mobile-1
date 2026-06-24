@@ -356,9 +356,16 @@ export default function SettingsScreen() {
       </Card>
 
       <Card style={styles.card}>
-        <Text style={styles.cardTitle}>📊 Test Configuration</Text>
+        <Text style={styles.cardTitle}>Test Configuration</Text>
         <View style={styles.settingRow}>
-          <Text style={styles.settingLabel}>🧪 Auto-run tests on start</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <MaterialCommunityIcons
+              name="flask"
+              size={20}
+              color={theme.colors.neutral.main}
+            />
+            <Text style={styles.settingLabel}>Auto-run tests on start</Text>
+          </View>
           <Switch
             value={false}
             onValueChange={() => undefined}
@@ -370,7 +377,14 @@ export default function SettingsScreen() {
           />
         </View>
         <View style={styles.settingRow}>
-          <Text style={styles.settingLabel}>📋 Show test details</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <MaterialCommunityIcons
+              name="clipboard-list"
+              size={20}
+              color={theme.colors.neutral.main}
+            />
+            <Text style={styles.settingLabel}>Show test details</Text>
+          </View>
           <Switch
             value={true}
             onValueChange={() => undefined}
@@ -400,7 +414,7 @@ export default function SettingsScreen() {
       </Card>
 
       <Card style={styles.exitCard}>
-        <Text style={styles.cardTitle}>🚪 Exit App</Text>
+        <Text style={styles.cardTitle}>Exit App</Text>
         <Text style={styles.cardSubtitle}>
           Close Merath after confirming your choice.
         </Text>

@@ -314,13 +314,13 @@ export class PDFExporter {
 
           .header {
             text-align: center;
-            border-bottom: 3px solid #1F71BA;
+            border-bottom: 3px solid #2e7d32;
             padding-bottom: 20px;
             margin-bottom: 30px;
           }
 
           .header h1 {
-            color: #1F71BA;
+            color: #2e7d32;
             font-size: 28px;
             margin-bottom: 10px;
           }
@@ -333,19 +333,10 @@ export class PDFExporter {
 
           .metadata {
             background-color: #f0f7ff;
-            padding: 15px 15px 15px 50px;
+            padding: 15px;
             border-radius: 5px;
             margin-bottom: 20px;
-            border-right: 2px solid #1F71BA;
-            position: relative;
-          }
-
-          .metadata::before {
-            content: "ℹ️";
-            position: absolute;
-            left: 15px;
-            top: 15px;
-            font-size: 20px;
+            border: 1px solid #2e7d32;
           }
 
           .metadata-row {
@@ -372,27 +363,18 @@ export class PDFExporter {
           .section-title {
             font-size: 18px;
             font-weight: bold;
-            color: #1F71BA;
-            border-bottom: 2px solid #1F71BA;
+            color: #2e7d32;
+            border-bottom: 2px solid #2e7d32;
             padding-bottom: 10px;
             margin-bottom: 15px;
           }
 
           .special-cases {
             background-color: #fffbeb;
-            padding: 15px 15px 15px 50px;
+            padding: 15px;
             border-radius: 5px;
             margin-bottom: 15px;
-            border-right: 2px solid #FF9800;
-            position: relative;
-          }
-
-          .special-cases::before {
-            content: "⚠️";
-            position: absolute;
-            left: 15px;
-            top: 15px;
-            font-size: 20px;
+            border: 1px solid #FF9800;
           }
 
           .special-cases h3 {
@@ -417,7 +399,7 @@ export class PDFExporter {
           }
 
           th {
-            background-color: #1F71BA;
+            background-color: #2e7d32;
             color: white;
             padding: 12px;
             text-align: center;
@@ -440,7 +422,7 @@ export class PDFExporter {
 
           .amount {
             font-weight: bold;
-            color: #1F71BA;
+            color: #2e7d32;
           }
 
           .percentage {
@@ -454,18 +436,9 @@ export class PDFExporter {
 
           .summary {
             background-color: #f0f7ff;
-            padding: 15px 15px 15px 50px;
+            padding: 15px;
             border-radius: 5px;
-            border-right: 2px solid #1F71BA;
-            position: relative;
-          }
-
-          .summary::before {
-            content: "💰";
-            position: absolute;
-            left: 15px;
-            top: 15px;
-            font-size: 20px;
+            border: 1px solid #2e7d32;
           }
 
           .summary-row {
@@ -480,7 +453,7 @@ export class PDFExporter {
           }
 
           .summary-value {
-            color: #1F71BA;
+            color: #2e7d32;
             font-weight: bold;
           }
 
@@ -523,7 +496,7 @@ export class PDFExporter {
           }
 
           .step-number {
-            background-color: #1F71BA;
+            background-color: #2e7d32;
             color: white;
             width: 30px;
             height: 30px;
@@ -557,21 +530,12 @@ export class PDFExporter {
 
           .disclaimer {
             background-color: #fff7ed;
-            padding: 15px 15px 15px 50px;
+            padding: 15px;
             border-radius: 5px;
-            border-right: 2px solid #FF6F00;
+            border: 1px solid #FF6F00;
             font-size: 12px;
             color: #333;
             margin-top: 20px;
-            position: relative;
-          }
-
-          .disclaimer::before {
-            content: "⚖️";
-            position: absolute;
-            left: 15px;
-            top: 15px;
-            font-size: 20px;
           }
 
           @media print {
@@ -590,7 +554,7 @@ export class PDFExporter {
         <div class="container">
           <!-- Header -->
           <div class="header">
-            <h1>📊 تقرير توزيع التركة</h1>
+            <h1>تقرير توزيع التركة</h1>
             <h2>Inheritance Distribution Report</h2>
           </div>
 
@@ -610,13 +574,13 @@ export class PDFExporter {
             </div>
             <div class="metadata-row">
               <span class="metadata-label">حالة الحساب:</span>
-              <span class="metadata-value">${result.success ? "✓ نجح" : "✗ فشل"}</span>
+              <span class="metadata-value">${result.success ? "نجح" : "فشل"}</span>
             </div>
           </div>
 
           <!-- Visual Charts - FIX M3 -->
           <div class="section">
-            <h2 class="section-title">📊 التوزيع المرئي</h2>
+            <h2 class="section-title">التوزيع المرئي</h2>
             ${pieChart}
             ${barChart}
           </div>
@@ -629,7 +593,7 @@ export class PDFExporter {
               result.specialCases.hijabTypes.length > 0)
               ? `
             <div class="special-cases">
-              <h3>⚠️ الحالات الشرعية الخاصة</h3>
+              <h3>الحالات الشرعية الخاصة</h3>
               ${
                 result.specialCases.awl
                   ? `<div class="case-item"><strong>العول:</strong> تطبيق العول على التركة</div>`
@@ -652,7 +616,7 @@ export class PDFExporter {
 
           <!-- Distribution Table -->
           <div class="section">
-            <h2 class="section-title">📋 جدول التوزيع</h2>
+            <h2 class="section-title">جدول التوزيع</h2>
             <table>
               <thead>
                 <tr>
@@ -687,7 +651,7 @@ export class PDFExporter {
 
           <!-- Summary -->
           <div class="section">
-            <h2 class="section-title">💰 الملخص المالي</h2>
+            <h2 class="section-title">الملخص المالي</h2>
             <div class="summary">
               <div class="summary-row">
                 <span class="summary-label">إجمالي التركة المستحقة:</span>
@@ -719,7 +683,7 @@ export class PDFExporter {
             includeCalculationSteps && result.steps && result.steps.length > 0
               ? `
             <div class="section">
-              <h2 class="section-title">📝 خطوات الحساب</h2>
+              <h2 class="section-title">خطوات الحساب</h2>
               <div class="calculation-steps">
                 ${result.steps
                   .slice(0, 10)
@@ -745,7 +709,7 @@ export class PDFExporter {
 
           <!-- Disclaimer -->
           <div class="disclaimer">
-            <strong>⚠️ تنويه قانوني:</strong>
+            <strong>تنويه قانوني:</strong>
             <p>
               هذا التقرير يعتمد على البيانات المدخلة والمذهب الفقهي المختار. 
               يُنصح بالتحقق من النتائج مع متخصص في الشريعة الإسلامية قبل التنفيذ.

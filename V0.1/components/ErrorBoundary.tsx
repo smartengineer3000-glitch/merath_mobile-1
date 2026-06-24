@@ -48,7 +48,9 @@ export class ErrorBoundary extends Component<
 
       return (
         <View style={dynamicStyles.container}>
-          <Text style={dynamicStyles.icon}>⚠️</Text>
+          <View style={dynamicStyles.iconContainer}>
+            <Text style={dynamicStyles.icon}>!</Text>
+          </View>
           <Text style={dynamicStyles.title}>Something went wrong</Text>
           <Text style={dynamicStyles.message}>
             {this.state.error?.message || "An unexpected error occurred"}
@@ -78,9 +80,19 @@ const createDynamicStyles = (theme: Theme) =>
       padding: 24,
       backgroundColor: theme.colors.background.lightVariant,
     },
-    icon: {
-      fontSize: 48,
+    iconContainer: {
+      width: 64,
+      height: 64,
+      borderRadius: 32,
+      backgroundColor: theme.colors.error.light,
+      justifyContent: "center",
+      alignItems: "center",
       marginBottom: 16,
+    },
+    icon: {
+      fontSize: 32,
+      fontWeight: "700",
+      color: theme.colors.error.main,
     },
     title: {
       fontSize: 24,

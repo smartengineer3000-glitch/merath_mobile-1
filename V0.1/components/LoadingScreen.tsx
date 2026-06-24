@@ -33,43 +33,24 @@ export function LoadingScreen({
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
   const progressAnim = useRef(new Animated.Value(0)).current;
-  const pulseAnim = useRef(new Animated.Value(1)).current;
 
   // Entrance animation
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 800,
+        duration: 200,
         useNativeDriver: true,
         easing: Easing.out(Easing.cubic),
       }),
-      Animated.spring(scaleAnim, {
+      Animated.timing(scaleAnim, {
         toValue: 1,
-        friction: 8,
-        tension: 40,
+        duration: 200,
         useNativeDriver: true,
+        easing: Easing.out(Easing.cubic),
       }),
     ]).start();
-
-    // Pulse animation for logo
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.1,
-          duration: 1000,
-          useNativeDriver: true,
-          easing: Easing.inOut(Easing.sin),
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: true,
-          easing: Easing.inOut(Easing.sin),
-        }),
-      ]),
-    ).start();
-  }, [fadeAnim, pulseAnim, scaleAnim]);
+  }, [fadeAnim, scaleAnim]);
 
   // Progress bar animation
   useEffect(() => {
@@ -112,7 +93,7 @@ export function LoadingScreen({
             <Animated.View
               style={[
                 styles.retryButton,
-                { transform: [{ scale: pulseAnim }] },
+                { transform: [{ scale: scaleAnim }] },
               ]}
             >
               <Text style={styles.retryButtonText} onPress={onRetry}>
@@ -133,9 +114,9 @@ export function LoadingScreen({
           { opacity: fadeAnim, transform: [{ scale: scaleAnim }] },
         ]}
       >
-        {/* Logo with pulse animation */}
+        {/* Logo with scale animation */}
         <Animated.View
-          style={[styles.logoContainer, { transform: [{ scale: pulseAnim }] }]}
+          style={[styles.logoContainer, { transform: [{ scale: scaleAnim }] }]}
         >
           <View style={styles.logo}>
             <MaterialCommunityIcons

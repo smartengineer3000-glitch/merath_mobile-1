@@ -104,12 +104,14 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
     switch (variant) {
       case "primary":
         return {
-          backgroundColor: disabled ? "#BDBDBD" : baseColor,
+          backgroundColor: disabled ? theme.colors.neutral.light300 : baseColor,
           textColor: "#FFFFFF",
         };
       case "secondary":
         return {
-          backgroundColor: disabled ? "#E0E0E0" : secondaryColor,
+          backgroundColor: disabled
+            ? theme.colors.neutral.light200
+            : secondaryColor,
           textColor: "#FFFFFF",
         };
       case "tertiary":
@@ -120,19 +122,21 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
       case "outline":
         return {
           backgroundColor: "transparent",
-          borderColor: disabled ? "#BDBDBD" : baseColor,
-          textColor: disabled ? "#BDBDBD" : baseColor,
+          borderColor: disabled ? theme.colors.neutral.light300 : baseColor,
+          textColor: disabled ? theme.colors.neutral.light300 : baseColor,
         };
       case "ghost":
         return {
           backgroundColor: "transparent",
           textColor: disabled
-            ? "#BDBDBD"
+            ? theme.colors.neutral.light300
             : theme.colors.neutral?.dark300 || "#1F2937",
         };
       case "danger":
         return {
-          backgroundColor: disabled ? "#FFCCCC" : errorColor,
+          backgroundColor: disabled
+            ? theme.colors.neutral.light200
+            : errorColor,
           textColor: "#FFFFFF",
         };
       default:

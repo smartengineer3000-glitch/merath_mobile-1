@@ -28,6 +28,7 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
 } from "react-native";
+import { MaterialCommunityIcons } from "../lib/icons";
 import { useAppTheme } from "../lib/context/ThemeProvider";
 import { useCalculator } from "../lib/inheritance/hooks";
 import type { Theme } from "../lib/design/theme";
@@ -450,7 +451,12 @@ export function EstateInput({
                         key={`error-${index}`}
                         style={[styles.feedbackItem, styles.errorItem]}
                       >
-                        <Text style={styles.errorIcon}>❌</Text>
+                        <MaterialCommunityIcons
+                          name="alert-circle"
+                          size={18}
+                          color={theme.colors.error.main}
+                          style={{ marginRight: 8 }}
+                        />
                         <View style={styles.feedbackContent}>
                           <Text style={styles.errorMessage}>
                             {error.userMessage}
@@ -473,7 +479,12 @@ export function EstateInput({
                       key={`warning-${index}`}
                       style={[styles.feedbackItem, styles.warningItem]}
                     >
-                      <Text style={styles.warningIcon}>⚠️</Text>
+                      <MaterialCommunityIcons
+                        name="alert-outline"
+                        size={18}
+                        color={theme.colors.warning.main}
+                        style={{ marginRight: 8 }}
+                      />
                       <View style={styles.feedbackContent}>
                         <Text style={styles.warningMessage}>
                           {warning.userMessage}
@@ -639,25 +650,22 @@ const createStyles = (theme: Theme, isNarrowScreen: boolean) =>
     },
     errorItem: {
       backgroundColor: theme.colors.error.light,
-      borderLeftWidth: 2,
-      borderLeftColor: theme.colors.error.main,
+      borderWidth: 1,
+      borderColor: theme.colors.error.main,
     },
     warningItem: {
       backgroundColor: theme.colors.warning.light,
-      borderLeftWidth: 2,
-      borderLeftColor: theme.colors.warning.main,
+      borderWidth: 1,
+      borderColor: theme.colors.warning.main,
     },
     successItem: {
       backgroundColor: theme.colors.success.light,
-      borderLeftWidth: 2,
-      borderLeftColor: theme.colors.success.main,
+      borderWidth: 1,
+      borderColor: theme.colors.success.main,
       marginVertical: theme.spacing.xs,
     },
-    errorIcon: {
-      fontSize: 18,
-    },
-    warningIcon: {
-      fontSize: 18,
+    feedbackIcon: {
+      marginRight: theme.spacing.xs,
     },
     successIcon: {
       fontSize: 18,

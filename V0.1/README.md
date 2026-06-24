@@ -86,7 +86,7 @@
 git clone https://github.com/Devlopmenteng/merath_mobile.git
 
 # Navigate to project directory
-cd merath_mobile
+cd merath_mobile-1/V0.1
 
 # Install dependencies
 npm install
@@ -142,23 +142,7 @@ Export as PDF, image, or text
 Copy results to clipboard
 
 Share via any installed app
-merath_mobile/
-├── components/          # Reusable UI components
-│   ├── HeirSelector/   # Heir selection with search
-│   ├── ResultsDisplay/ # Results with sharing
-│   └── LoadingScreen/  # Professional loading
-├── lib/
-│   ├── inheritance/    # Core calculation engine
-│   │   ├── enhanced-engine-complete.ts  # Main engine
-│   │   ├── hijab-system.ts               # Blocking rules
-│   │   ├── fraction.ts                    # Fraction arithmetic
-│   │   └── hooks.ts                        # React hooks
-│   ├── context/        # State management
-│   ├── validation/     # Input validation
-│   └── export/         # PDF/image export
-├── screens/            # App screens
-├── navigation/         # Navigation config
-└── __tests__/          # 237+ unit tests
+  # 237+ unit tests
 🧪 Testing
 # Run all tests
 npm test
@@ -234,9 +218,7 @@ Contributors and testers
 Open source community
 
 📞 Contact & Support
-Email: support@merath.app
-
-Website: https://merath.app
+Email: smartengineer3000@gmail.com
 
 GitHub: @Devlopmenteng
 

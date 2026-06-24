@@ -17,6 +17,7 @@ import {
   TextInput,
   Animated,
   Alert,
+  Modal,
 } from "react-native";
 import { MaterialCommunityIcons } from "../lib/icons";
 import { PressableScale } from "./ui/PressableScale";
@@ -263,6 +264,8 @@ export const HeirSelector = React.memo(function HeirSelector({
   const [validationMessage, setValidationMessage] = useState<string | null>(
     null,
   );
+  const [countModalHeir, setCountModalHeir] = useState<HeirItem | null>(null);
+  const [countModalText, setCountModalText] = useState("");
   const fadeAnim = useState(new Animated.Value(0))[0];
 
   // ===== FIX M4: Debounced search with 300ms delay =====
@@ -277,7 +280,7 @@ export const HeirSelector = React.memo(function HeirSelector({
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 500,
+      duration: 200,
       useNativeDriver: true,
     }).start();
   }, [fadeAnim]);
@@ -692,26 +695,8 @@ export const HeirSelector = React.memo(function HeirSelector({
 
                           <PressableScale
                             onPress={() => {
-                              updateHeirCount(heir.key, 1);
-                            }}
-                            onLongPress={() => {
-                              Alert.prompt(
-                                "تعديل العدد",
-                                `أدخل العدد الجديد لـ ${heir.label}`,
-                                [
-                                  { text: "إلغاء", onPress: () => {} },
-                                  {
-                                    text: "موافق",
-                                    onPress: (text?: string) => {
-                                      if (text)
-                                        handleCountInput(heir.key, text);
-                                    },
-                                  },
-                                ],
-                                "plain-text",
-                                count.toString(),
-                                "numeric",
-                              );
+                              setCountModalHeir(heir);
+                              setCountModalText(count.toString());
                             }}
                             haptic="light"
                             scaleTo={0.92}
@@ -769,6 +754,87 @@ export const HeirSelector = React.memo(function HeirSelector({
           );
         })}
       </ScrollView>
+
+      {/* Count Edit Modal */}
+      {countModalHeir && (
+        <Modal
+          visible={true}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setCountModalHeir(null)}
+        >
+          <View style={styles.modalOverlay}>
+            <View
+              style={[
+                styles.modalContent,
+                { backgroundColor: theme.colors.background.light },
+              ]}
+            >
+              <Text style={styles.modalTitle}>تعديل العدد</Text>
+              <Text style={styles.modalSubtitle}>
+                أدخل العدد الجديد لـ {countModalHeir.label}
+              </Text>
+              <TextInput
+                style={[
+                  styles.modalInput,
+                  {
+                    borderColor: theme.colors.neutral.light300,
+                    color: theme.colors.neutral.dark300,
+                  },
+                ]}
+                value={countModalText}
+                onChangeText={setCountModalText}
+                keyboardType="numeric"
+                autoFocus
+                selectTextOnFocus
+              />
+              <View style={styles.modalActions}>
+                <PressableScale
+                  style={[
+                    styles.modalButton,
+                    { backgroundColor: theme.colors.neutral.light100 },
+                  ]}
+                  onPress={() => setCountModalHeir(null)}
+                  haptic="light"
+                  scaleTo={0.95}
+                >
+                  <Text
+                    style={[
+                      styles.modalButtonText,
+                      { color: theme.colors.neutral.main },
+                    ]}
+                  >
+                    إلغاء
+                  </Text>
+                </PressableScale>
+                <PressableScale
+                  style={[
+                    styles.modalButton,
+                    { backgroundColor: theme.colors.primary.main },
+                  ]}
+                  onPress={() => {
+                    if (countModalText) {
+                      handleCountInput(countModalHeir.key, countModalText);
+                    }
+                    setCountModalHeir(null);
+                  }}
+                  haptic="medium"
+                  scaleTo={0.95}
+                >
+                  <Text
+                    style={[
+                      styles.modalButtonText,
+                      { color: theme.colors.background.light },
+                    ]}
+                  >
+                    موافق
+                  </Text>
+                </PressableScale>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      )}
     </Animated.View>
   );
 });
@@ -1019,6 +1085,55 @@ const createStyles = (theme: Theme) =>
     },
     maxWarningReached: {
       color: theme.colors.success.main,
+      fontWeight: "600",
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: "rgba(0,0,0,0.5)",
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 24,
+    },
+    modalContent: {
+      width: "100%",
+      maxWidth: 340,
+      borderRadius: 16,
+      padding: 24,
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: "700",
+      color: theme.colors.neutral.dark300,
+      textAlign: "center",
+      marginBottom: 8,
+    },
+    modalSubtitle: {
+      fontSize: 14,
+      color: theme.colors.neutral.main,
+      textAlign: "center",
+      marginBottom: 20,
+    },
+    modalInput: {
+      borderWidth: 1,
+      borderRadius: 12,
+      padding: 14,
+      fontSize: 20,
+      fontWeight: "600",
+      textAlign: "center",
+      marginBottom: 20,
+    },
+    modalActions: {
+      flexDirection: "row",
+      gap: 12,
+    },
+    modalButton: {
+      flex: 1,
+      paddingVertical: 14,
+      borderRadius: 12,
+      alignItems: "center",
+    },
+    modalButtonText: {
+      fontSize: 14,
       fontWeight: "600",
     },
   });

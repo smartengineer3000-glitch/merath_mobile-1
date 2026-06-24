@@ -509,7 +509,6 @@ const createStyles = (theme: Theme) =>
       color: theme.colors.tertiary.dark200,
       marginBottom: theme.spacing.xs,
       fontFamily: theme.fontFamily.english,
-      textTransform: "uppercase",
     },
     title: {
       ...theme.typography.display.medium,

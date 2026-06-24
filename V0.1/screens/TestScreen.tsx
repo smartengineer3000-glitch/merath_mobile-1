@@ -130,7 +130,14 @@ export default function TestScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
-        <Text style={styles.title}>⚡ Real Test Cases</Text>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          <MaterialCommunityIcons
+            name="lightning-bolt"
+            size={24}
+            color={theme.colors.primary.main}
+          />
+          <Text style={styles.title}>Real Test Cases</Text>
+        </View>
         <Text style={styles.subtitle}>
           Run real-world inheritance scenarios against the calculator engine.
         </Text>
@@ -155,10 +162,10 @@ export default function TestScreen() {
               ]}
             >
               {value === "all"
-                ? "📋 All"
+                ? "All"
                 : value === "passed"
-                  ? "✅ Passed"
-                  : "❌ Failed"}
+                  ? "Passed"
+                  : "Failed"}
             </Text>
           </PressableScale>
         ))}
@@ -168,7 +175,7 @@ export default function TestScreen() {
         <Card key={testCase.id} style={styles.card}>
           <View style={styles.caseHeader}>
             <Text style={styles.cardTitle}>
-              📋 Test Case {index + 1}: {testCase.title}
+              Test Case {index + 1}: {testCase.title}
             </Text>
             <Text
               style={[
@@ -178,10 +185,10 @@ export default function TestScreen() {
               ]}
             >
               {testCase.status === "passed"
-                ? "✅ Passed"
+                ? "Passed"
                 : testCase.status === "failed"
-                  ? "❌ Failed"
-                  : "⏳ Pending"}
+                  ? "Failed"
+                  : "Pending"}
             </Text>
           </View>
           <View style={styles.metaGrid}>
@@ -226,7 +233,7 @@ export default function TestScreen() {
       ))}
 
       <Card style={styles.summaryCard}>
-        <Text style={styles.cardTitle}>📊 Test Summary</Text>
+        <Text style={styles.cardTitle}>Test Summary</Text>
         <View style={styles.summaryRow}>
           <Text style={styles.summaryText}>Total: {cases.length}</Text>
           <Text style={styles.summaryText}>Passed: {passed}</Text>
@@ -240,7 +247,7 @@ export default function TestScreen() {
         haptic="medium"
         scaleTo={0.95}
       >
-        <Text style={styles.runAllText}>▶️ RUN ALL TESTS</Text>
+        <Text style={styles.runAllText}>RUN ALL TESTS</Text>
       </PressableScale>
     </ScrollView>
   );

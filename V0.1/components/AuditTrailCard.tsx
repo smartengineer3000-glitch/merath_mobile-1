@@ -119,7 +119,7 @@ export function AuditTrailCard({
             style={styles.favoriteButton}
             onPress={handleToggleFavorite}
           >
-            <Text style={styles.favoriteIcon}>{isFavorite ? "⭐" : "☆"}</Text>
+            <Text style={styles.favoriteIcon}>{isFavorite ? "★" : "☆"}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -199,7 +199,7 @@ export function AuditTrailCard({
           disabled={isExporting}
         >
           <Text style={styles.actionButtonText}>
-            {isExporting ? "⏳ جاري..." : "📄 تصدير"}
+            {isExporting ? "جاري..." : "تصدير"}
           </Text>
         </TouchableOpacity>
 
@@ -207,7 +207,7 @@ export function AuditTrailCard({
           style={[styles.actionButton, styles.deleteButton]}
           onPress={handleDelete}
         >
-          <Text style={styles.actionButtonText}>🗑️ حذف</Text>
+          <Text style={styles.actionButtonText}>حذف</Text>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
