@@ -4,6 +4,10 @@ const { mergeConfig } = require("@react-native/metro-config");
 /** @type {import('expo/metro-config').MetroConfig} */
 const expoConfig = getDefaultConfig(__dirname);
 
+expoConfig.resolver.assetExts = Array.from(
+  new Set([...expoConfig.resolver.assetExts, "woff", "woff2"])
+);
+
 // Performance optimizations
 expoConfig.maxWorkers = 4;
 
