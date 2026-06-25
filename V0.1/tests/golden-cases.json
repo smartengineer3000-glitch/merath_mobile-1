@@ -1,0 +1,32 @@
+{
+  "cases": [
+    {
+      "name": "simple_two_heirs",
+      "input": {
+        "estate": 100000,
+        "madhhab": "default",
+        "heirs": {
+          "son": 1,
+          "daughter": 1
+        }
+      },
+      "expected": {
+        "son": 0.5,
+        "daughter": 0.5
+      }
+    },
+    {
+      "name": "single_heir",
+      "input": {
+        "estate": 50000,
+        "madhhab": "default",
+        "heirs": {
+          "daughter": 1
+        }
+      },
+      "expected": {
+        "daughter": 1
+      }
+    }
+  ]
+}
