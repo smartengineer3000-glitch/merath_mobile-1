@@ -346,15 +346,21 @@ export const Shadows = {
 // ============================================================================
 
 export const Animations = {
-  instant: 100, // Instant feedback
-  quick: 150, // Quick interactions
-  standard: 300, // Standard animations
-  slow: 500, // Slower animations
+  instant: 100,
+  quick: 150,
+  standard: 200,
+  slow: 300,
   easing: {
     ease: "ease",
     easeIn: "ease-in",
     easeOut: "ease-out",
     easeInOut: "ease-in-out",
+  },
+  reducedMotion: {
+    scale: 1,
+    opacity: 1,
+    duration: 0,
+    useNativeDriver: true,
   },
 };
 

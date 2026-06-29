@@ -174,7 +174,13 @@ const OnboardingModal = ({
           >
             {step}/{totalSteps}
           </Text>
-          <TouchableOpacity onPress={handleSkip}>
+          <TouchableOpacity
+            onPress={handleSkip}
+            accessible={true}
+            accessibilityLabel={t("common.close")}
+            accessibilityRole="button"
+            accessibilityHint="تخطي التعريف"
+          >
             <Text
               style={[styles.onboardingSkip, { color: theme.colors.info.main }]}
             >
@@ -234,6 +240,18 @@ const OnboardingModal = ({
             { backgroundColor: theme.colors.primary.main },
           ]}
           onPress={handleNext}
+          accessible={true}
+          accessibilityLabel={
+            step === totalSteps
+              ? t("onboarding.startNow")
+              : t("onboarding.next")
+          }
+          accessibilityRole="button"
+          accessibilityHint={
+            step === totalSteps
+              ? "بدء استخدام التطبيق"
+              : "الانتقال إلى الخطوة التالية"
+          }
         >
           <Text
             style={[

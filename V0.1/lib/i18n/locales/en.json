@@ -7,6 +7,8 @@
 
   "navigation": {
     "calculator": "Calculator",
+    "results": "Results",
+    "comparison": "Comparison",
     "history": "History",
     "settings": "Settings",
     "about": "About"
@@ -14,6 +16,7 @@
 
   "calculator": {
     "title": "Inheritance Calculator",
+    "subtitle": "Calculate Islamic inheritance shares accurately and easily",
     "estate": "Estate",
     "heirs": "Heirs",
     "calculate": "Calculate Inheritance",
@@ -24,12 +27,15 @@
     "share": "Share",
     "resetConfirmationTitle": "Confirm Reset",
     "resetConfirmationMessage": "Are you sure you want to reset all data? This action cannot be undone.",
-    "subtitle": "Calculate Islamic inheritance shares",
     "reset": "Reset",
     "resetAllFields": "Reset all fields",
     "calculationFailed": "Calculation failed. Please try again.",
     "calculatingInheritance": "Calculating inheritance",
-    "calculateInheritance": "Calculate inheritance"
+    "calculateInheritance": "Calculate inheritance",
+    "newCalculation": "New Calculation",
+    "viewLastResult": "View Last Result",
+    "recentCalculations": "Recent Calculations",
+    "noRecentCalculations": "No recent calculations"
   },
 
   "estate": {
@@ -150,7 +156,14 @@
     "dataCleared": "All data cleared",
     "about": "About App",
     "version": "Version",
-    "developer": "Developer"
+    "developer": "Developer",
+    "defaultMadhab": "Default Madhab"
+  },
+
+  "history": {
+    "title": "Calculation History",
+    "noHistory": "No calculation history available",
+    "subtitle": "View your past calculations"
   },
 
   "comparison": {
@@ -161,7 +174,8 @@
     "comparing": "Comparing...",
     "compareAcross": "Compare Across Madhabs",
     "results": "Comparison Results",
-    "failed": "Comparison failed. Please try again."
+    "failed": "Comparison failed. Please try again.",
+    "noComparison": "No comparison available. Perform a calculation first."
   },
 
   "about": {
