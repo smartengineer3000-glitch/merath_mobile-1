@@ -37,9 +37,9 @@ import { SettingsProvider } from "./lib/context/SettingsContext";
 import { MadhabProvider } from "./lib/context/MadhabContext";
 import { CalculationProvider } from "./lib/context/CalculationContext";
 import { RootNavigator } from "./navigation/RootNavigator";
-import { ErrorBoundary } from "./components/ErrorBoundary";
+import { ErrorBoundary } from "./components/feedback/ErrorBoundary";
 import { DisclaimersModal } from "./components/DisclaimersModal";
-import { LoadingScreen } from "./components/LoadingScreen";
+import { LoadingScreen } from "./screens/shared/LoadingScreen";
 
 // ===== FIX: Onboarding storage key =====
 const ONBOARDING_COMPLETED_KEY = "@merath_onboarding_completed";
