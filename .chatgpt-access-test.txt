@@ -1,3 +1,0 @@
-ChatGPT GitHub write access verified.
-Branch: audit/production-hardening-plan
-Timestamp: 2026-06-25
