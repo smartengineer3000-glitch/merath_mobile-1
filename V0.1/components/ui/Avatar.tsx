@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { Ionicons } from "../../lib/icons";
 
@@ -25,11 +25,7 @@ export function Avatar({ icon, color, size = 40 }: AvatarProps) {
         },
       ]}
     >
-      <Ionicons
-        name={icon as any}
-        size={size * 0.5}
-        color="#ffffff"
-      />
+      <Ionicons name={icon as any} size={size * 0.5} color="#ffffff" />
     </View>
   );
 }

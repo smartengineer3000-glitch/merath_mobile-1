@@ -40,8 +40,12 @@ export function IconButton({
     >
       <Ionicons name={name as any} size={size} color={iconColor} />
       {badge !== undefined && badge > 0 && (
-        <View style={[styles.badge, { backgroundColor: theme.colors.error.main }]}>
-          <Text style={[styles.badgeText, { color: "#ffffff" }]}>{badge > 99 ? "99+" : badge}</Text>
+        <View
+          style={[styles.badge, { backgroundColor: theme.colors.error.main }]}
+        >
+          <Text style={[styles.badgeText, { color: "#ffffff" }]}>
+            {badge > 99 ? "99+" : badge}
+          </Text>
         </View>
       )}
     </TouchableOpacity>

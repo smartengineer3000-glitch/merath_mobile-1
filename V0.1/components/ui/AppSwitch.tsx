@@ -9,7 +9,12 @@ interface AppSwitchProps {
   description?: string;
 }
 
-export function AppSwitch({ label, value, onValueChange, description }: AppSwitchProps) {
+export function AppSwitch({
+  label,
+  value,
+  onValueChange,
+  description,
+}: AppSwitchProps) {
   const { theme } = useAppTheme();
 
   return (
@@ -18,7 +23,10 @@ export function AppSwitch({ label, value, onValueChange, description }: AppSwitc
         <Text
           style={[
             styles.label,
-            { color: theme.colors.neutral.dark200, fontFamily: theme.fontFamily.english },
+            {
+              color: theme.colors.neutral.dark200,
+              fontFamily: theme.fontFamily.english,
+            },
           ]}
         >
           {label}
@@ -27,7 +35,10 @@ export function AppSwitch({ label, value, onValueChange, description }: AppSwitc
           <Text
             style={[
               styles.description,
-              { color: theme.colors.neutral.light400, fontFamily: theme.fontFamily.english },
+              {
+                color: theme.colors.neutral.light400,
+                fontFamily: theme.fontFamily.english,
+              },
             ]}
           >
             {description}
@@ -37,8 +48,13 @@ export function AppSwitch({ label, value, onValueChange, description }: AppSwitc
       <RNSwitch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: theme.colors.neutral.light200, true: theme.colors.primary.light100 }}
-        thumbColor={value ? theme.colors.primary.main : theme.colors.neutral.light400}
+        trackColor={{
+          false: theme.colors.neutral.light200,
+          true: theme.colors.primary.light100,
+        }}
+        thumbColor={
+          value ? theme.colors.primary.main : theme.colors.neutral.light400
+        }
         accessibilityLabel={label}
         accessibilityRole="switch"
         accessibilityState={{ checked: value }}

@@ -10,7 +10,7 @@ export class AsabaEngine {
   distribute(
     estate: number,
     fixedShares: ShareResult,
-    heirs: Record<string, any>
+    heirs: Record<string, any>,
   ): ShareResult {
     const allocated = Object.values(fixedShares).reduce((a, b) => a + b, 0);
     const remaining = Math.max(0, 1 - allocated);

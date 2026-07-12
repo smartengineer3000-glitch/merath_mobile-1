@@ -27,7 +27,10 @@ export function ProgressBar({
         <Text
           style={[
             styles.label,
-            { color: theme.colors.neutral.light400, fontFamily: theme.fontFamily.english },
+            {
+              color: theme.colors.neutral.light400,
+              fontFamily: theme.fontFamily.english,
+            },
           ]}
         >
           {label || `${Math.round(fill * 100)}%`}

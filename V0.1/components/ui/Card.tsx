@@ -1,11 +1,11 @@
 import React from "react";
-import {
-  View,
-  type ViewStyle,
-  type StyleProp,
-} from "react-native";
+import { View, type ViewStyle, type StyleProp } from "react-native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 
 type CardVariant = "elevated" | "outlined" | "filled";
@@ -38,7 +38,8 @@ export function Card({
 
   const tap = Gesture.Tap()
     .onBegin(() => {
-      if (onPress) scale.value = withSpring(0.98, { damping: 15, stiffness: 400 });
+      if (onPress)
+        scale.value = withSpring(0.98, { damping: 15, stiffness: 400 });
     })
     .onFinalize(() => {
       if (onPress) scale.value = withSpring(1, { damping: 15, stiffness: 400 });

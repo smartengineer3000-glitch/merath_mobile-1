@@ -1,5 +1,11 @@
 import React, { Component, type ErrorInfo, type ReactNode } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
 import type { Theme } from "../../lib/design/theme";
 
 interface ErrorBoundaryProps {
@@ -13,7 +19,10 @@ interface ErrorBoundaryState {
   errorInfo: ErrorInfo | null;
 }
 
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, error: null, errorInfo: null };
@@ -37,22 +46,47 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       const { theme } = this.props;
 
       return (
-        <View style={[styles.container, { backgroundColor: theme.colors.background.light }]}>
+        <View
+          style={[
+            styles.container,
+            { backgroundColor: theme.colors.background.light },
+          ]}
+        >
           <ScrollView contentContainerStyle={styles.content}>
             <Text style={styles.icon}>!</Text>
             <Text style={[styles.title, { color: theme.colors.error.main }]}>
               Something went wrong
             </Text>
-            <Text style={[styles.message, { color: theme.colors.neutral.dark200 }]}>
+            <Text
+              style={[styles.message, { color: theme.colors.neutral.dark200 }]}
+            >
               An unexpected error occurred. Please try again.
             </Text>
 
             {__DEV__ && this.state.error && (
-              <View style={[styles.debugContainer, { backgroundColor: theme.colors.neutral.light50, borderRadius: theme.borderRadius.md }]}>
-                <Text style={[styles.debugTitle, { color: theme.colors.neutral.dark200 }]}>
+              <View
+                style={[
+                  styles.debugContainer,
+                  {
+                    backgroundColor: theme.colors.neutral.light50,
+                    borderRadius: theme.borderRadius.md,
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.debugTitle,
+                    { color: theme.colors.neutral.dark200 },
+                  ]}
+                >
                   Error Details:
                 </Text>
-                <Text style={[styles.debugText, { color: theme.colors.neutral.dark100 }]}>
+                <Text
+                  style={[
+                    styles.debugText,
+                    { color: theme.colors.neutral.dark100 },
+                  ]}
+                >
                   {this.state.error.message}
                 </Text>
               </View>
@@ -60,7 +94,13 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
             <TouchableOpacity
               onPress={this.handleRetry}
-              style={[styles.retryButton, { backgroundColor: theme.colors.primary.main, borderRadius: theme.borderRadius.md }]}
+              style={[
+                styles.retryButton,
+                {
+                  backgroundColor: theme.colors.primary.main,
+                  borderRadius: theme.borderRadius.md,
+                },
+              ]}
             >
               <Text style={styles.retryText}>Try Again</Text>
             </TouchableOpacity>

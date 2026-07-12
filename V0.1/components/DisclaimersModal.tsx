@@ -1,14 +1,7 @@
 import React from "react";
-import {
-  View,
-  Text,
-  Modal,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
+import { View, Text, Modal, ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAppTheme } from "../lib/context/ThemeProvider";
-import { useTranslation } from "react-i18next";
 import { Button } from "./ui";
 
 interface DisclaimersModalProps {
@@ -25,7 +18,6 @@ export function DisclaimersModal({
   showPrivacyPolicy = true,
 }: DisclaimersModalProps) {
   const { theme } = useAppTheme();
-  const { t } = useTranslation();
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
@@ -44,38 +36,100 @@ export function DisclaimersModal({
             <Text
               style={[
                 styles.title,
-                { color: theme.colors.neutral.dark300, fontFamily: theme.fontFamily.english },
+                {
+                  color: theme.colors.neutral.dark300,
+                  fontFamily: theme.fontFamily.english,
+                },
               ]}
             >
               Terms & Disclaimers
             </Text>
 
-            <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+            <ScrollView
+              style={styles.scroll}
+              showsVerticalScrollIndicator={false}
+            >
               <View style={styles.section}>
-                <Text style={[styles.sectionTitle, { color: theme.colors.primary.main, fontFamily: theme.fontFamily.english }]}>
+                <Text
+                  style={[
+                    styles.sectionTitle,
+                    {
+                      color: theme.colors.primary.main,
+                      fontFamily: theme.fontFamily.english,
+                    },
+                  ]}
+                >
                   Calculation Disclaimer
                 </Text>
-                <Text style={[styles.body, { color: theme.colors.neutral.dark200, fontFamily: theme.fontFamily.english }]}>
-                  This application provides inheritance calculations based on the four major Sunni schools of Islamic jurisprudence. Results are for informational and educational purposes only.
+                <Text
+                  style={[
+                    styles.body,
+                    {
+                      color: theme.colors.neutral.dark200,
+                      fontFamily: theme.fontFamily.english,
+                    },
+                  ]}
+                >
+                  This application provides inheritance calculations based on
+                  the four major Sunni schools of Islamic jurisprudence. Results
+                  are for informational and educational purposes only.
                 </Text>
               </View>
 
               <View style={styles.section}>
-                <Text style={[styles.sectionTitle, { color: theme.colors.primary.main, fontFamily: theme.fontFamily.english }]}>
+                <Text
+                  style={[
+                    styles.sectionTitle,
+                    {
+                      color: theme.colors.primary.main,
+                      fontFamily: theme.fontFamily.english,
+                    },
+                  ]}
+                >
                   Not Legal Advice
                 </Text>
-                <Text style={[styles.body, { color: theme.colors.neutral.dark200, fontFamily: theme.fontFamily.english }]}>
-                  The calculations and information provided by this application should not be considered as legal, religious, or professional advice. Always consult a qualified Islamic scholar or legal professional before making inheritance decisions.
+                <Text
+                  style={[
+                    styles.body,
+                    {
+                      color: theme.colors.neutral.dark200,
+                      fontFamily: theme.fontFamily.english,
+                    },
+                  ]}
+                >
+                  The calculations and information provided by this application
+                  should not be considered as legal, religious, or professional
+                  advice. Always consult a qualified Islamic scholar or legal
+                  professional before making inheritance decisions.
                 </Text>
               </View>
 
               {showPrivacyPolicy && (
                 <View style={styles.section}>
-                  <Text style={[styles.sectionTitle, { color: theme.colors.primary.main, fontFamily: theme.fontFamily.english }]}>
+                  <Text
+                    style={[
+                      styles.sectionTitle,
+                      {
+                        color: theme.colors.primary.main,
+                        fontFamily: theme.fontFamily.english,
+                      },
+                    ]}
+                  >
                     Privacy Policy
                   </Text>
-                  <Text style={[styles.body, { color: theme.colors.neutral.dark200, fontFamily: theme.fontFamily.english }]}>
-                    All calculations and data are stored locally on your device. No personal data is transmitted to external servers. You have full control over your data and can export or delete it at any time.
+                  <Text
+                    style={[
+                      styles.body,
+                      {
+                        color: theme.colors.neutral.dark200,
+                        fontFamily: theme.fontFamily.english,
+                      },
+                    ]}
+                  >
+                    All calculations and data are stored locally on your device.
+                    No personal data is transmitted to external servers. You
+                    have full control over your data and can export or delete it
+                    at any time.
                   </Text>
                 </View>
               )}

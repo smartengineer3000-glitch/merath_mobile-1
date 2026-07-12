@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  View,
   Text,
   TouchableOpacity,
   StyleSheet,
@@ -9,7 +8,11 @@ import {
   type TextStyle,
 } from "react-native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
 type ButtonVariant = "primary" | "secondary" | "outline" | "text" | "danger";
@@ -63,7 +66,12 @@ export function Button({
     const base = {
       borderRadius: theme.borderRadius.md,
       paddingHorizontal: theme.spacing.lg,
-      paddingVertical: size === "sm" ? theme.spacing.sm : size === "lg" ? theme.spacing.xl : theme.spacing.md,
+      paddingVertical:
+        size === "sm"
+          ? theme.spacing.sm
+          : size === "lg"
+            ? theme.spacing.xl
+            : theme.spacing.md,
     };
 
     switch (variant) {
@@ -74,12 +82,20 @@ export function Button({
         };
       case "secondary":
         return {
-          container: { ...base, backgroundColor: theme.colors.secondary.lighter },
+          container: {
+            ...base,
+            backgroundColor: theme.colors.secondary.lighter,
+          },
           text: { color: theme.colors.secondary.main },
         };
       case "outline":
         return {
-          container: { ...base, backgroundColor: "transparent", borderWidth: theme.borderWidth.thin, borderColor: theme.colors.primary.main },
+          container: {
+            ...base,
+            backgroundColor: "transparent",
+            borderWidth: theme.borderWidth.thin,
+            borderColor: theme.colors.primary.main,
+          },
           text: { color: theme.colors.primary.main },
         };
       case "text":

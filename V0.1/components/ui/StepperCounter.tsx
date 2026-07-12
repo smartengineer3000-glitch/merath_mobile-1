@@ -1,13 +1,12 @@
 import React from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { Ionicons } from "../../lib/icons";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
 interface StepperCounterProps {
@@ -60,12 +59,21 @@ export function StepperCounter({
   };
 
   return (
-    <View style={styles.container} testID={testID} accessible accessibilityRole="adjustable" accessibilityLabel={`${label || "Counter"}: ${value}`}>
+    <View
+      style={styles.container}
+      testID={testID}
+      accessible
+      accessibilityRole="adjustable"
+      accessibilityLabel={`${label || "Counter"}: ${value}`}
+    >
       {label && (
         <Text
           style={[
             styles.label,
-            { color: theme.colors.neutral.dark200, fontFamily: theme.fontFamily.english },
+            {
+              color: theme.colors.neutral.dark200,
+              fontFamily: theme.fontFamily.english,
+            },
           ]}
         >
           {label}
@@ -84,7 +92,10 @@ export function StepperCounter({
             style={[
               styles.button,
               {
-                backgroundColor: value <= min ? theme.colors.neutral.light100 : theme.colors.primary.lighter,
+                backgroundColor:
+                  value <= min
+                    ? theme.colors.neutral.light100
+                    : theme.colors.primary.lighter,
                 borderRadius: theme.borderRadius.sm,
               },
             ]}
@@ -92,7 +103,11 @@ export function StepperCounter({
             <Ionicons
               name="remove"
               size={18}
-              color={value <= min ? theme.colors.neutral.light400 : theme.colors.primary.main}
+              color={
+                value <= min
+                  ? theme.colors.neutral.light400
+                  : theme.colors.primary.main
+              }
             />
           </TouchableOpacity>
         </Animated.View>
@@ -121,7 +136,10 @@ export function StepperCounter({
             style={[
               styles.button,
               {
-                backgroundColor: value >= max ? theme.colors.neutral.light100 : theme.colors.primary.lighter,
+                backgroundColor:
+                  value >= max
+                    ? theme.colors.neutral.light100
+                    : theme.colors.primary.lighter,
                 borderRadius: theme.borderRadius.sm,
               },
             ]}
@@ -129,7 +147,11 @@ export function StepperCounter({
             <Ionicons
               name="add"
               size={18}
-              color={value >= max ? theme.colors.neutral.light400 : theme.colors.primary.main}
+              color={
+                value >= max
+                  ? theme.colors.neutral.light400
+                  : theme.colors.primary.main
+              }
             />
           </TouchableOpacity>
         </Animated.View>

@@ -1,5 +1,12 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  TextInput,
+  StyleSheet,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { useTranslation } from "react-i18next";
@@ -14,7 +21,8 @@ export default function HistoryScreen() {
   const { theme } = useAppTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<any>();
-  const { previousResults, currentResult, clearResults } = useCalculationStore();
+  const { previousResults, currentResult, clearResults } =
+    useCalculationStore();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filterMadhab, setFilterMadhab] = useState<string | null>(null);
@@ -34,65 +42,136 @@ export default function HistoryScreen() {
     }
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
-      items = items.filter((r) =>
-        r.madhhabName.toLowerCase().includes(q) ||
-        r.shares.some((s) => s.name.toLowerCase().includes(q))
+      items = items.filter(
+        (r) =>
+          r.madhhabName.toLowerCase().includes(q) ||
+          r.shares.some((s) => s.name.toLowerCase().includes(q)),
       );
     }
     return items;
   }, [allResults, filterMadhab, searchQuery]);
 
-  const renderItem = useCallback(({ item }: { item: CalculationResult }) => {
-    const total = item.shares.reduce((sum, s) => sum + s.amount, 0);
-    const uniqueHeirs = [...new Set(item.shares.map((s) => s.name))];
+  const renderItem = useCallback(
+    ({ item }: { item: CalculationResult }) => {
+      const total = item.shares.reduce((sum, s) => sum + s.amount, 0);
+      const uniqueHeirs = [...new Set(item.shares.map((s) => s.name))];
 
-    return (
-      <TouchableOpacity
-        onPress={() => navigation.navigate("HistoryDetail", { result: item })}
-        activeOpacity={0.7}
-        style={[styles.item, { borderColor: theme.colors.neutral.light200 }]}
-      >
-        <View style={styles.itemHeader}>
-          <Badge label={item.madhhabName} color={theme.colors.primary.main} size="sm" />
-          {item.specialCases?.awl && <Badge label="Awl" color={theme.colors.warning.main} size="sm" />}
-          {item.specialCases?.radd && <Badge label="Radd" color={theme.colors.info.main} size="sm" />}
-        </View>
+      return (
+        <TouchableOpacity
+          onPress={() => navigation.navigate("HistoryDetail", { result: item })}
+          activeOpacity={0.7}
+          style={[styles.item, { borderColor: theme.colors.neutral.light200 }]}
+        >
+          <View style={styles.itemHeader}>
+            <Badge
+              label={item.madhhabName}
+              color={theme.colors.primary.main}
+              size="sm"
+            />
+            {item.specialCases?.awl && (
+              <Badge label="Awl" color={theme.colors.warning.main} size="sm" />
+            )}
+            {item.specialCases?.radd && (
+              <Badge label="Radd" color={theme.colors.info.main} size="sm" />
+            )}
+          </View>
 
-        <Text style={[styles.itemAmount, { color: theme.colors.neutral.dark300, fontFamily: theme.fontFamily.english }]}>
-          {formatCurrency(total)} SAR
-        </Text>
-
-        <Text style={[styles.itemHeirs, { color: theme.colors.neutral.light400, fontFamily: theme.fontFamily.english }]} numberOfLines={1}>
-          {uniqueHeirs.join(", ")}
-        </Text>
-
-        <View style={styles.itemFooter}>
-          <Text style={[styles.itemMeta, { color: theme.colors.neutral.light400, fontFamily: theme.fontFamily.english }]}>
-            {item.shares.length} shares
+          <Text
+            style={[
+              styles.itemAmount,
+              {
+                color: theme.colors.neutral.dark300,
+                fontFamily: theme.fontFamily.english,
+              },
+            ]}
+          >
+            {formatCurrency(total)} SAR
           </Text>
-          <Text style={[styles.itemMeta, { color: theme.colors.neutral.light400, fontFamily: theme.fontFamily.english }]}>
-            {item.calculationTime?.toFixed(0)}ms
+
+          <Text
+            style={[
+              styles.itemHeirs,
+              {
+                color: theme.colors.neutral.light400,
+                fontFamily: theme.fontFamily.english,
+              },
+            ]}
+            numberOfLines={1}
+          >
+            {uniqueHeirs.join(", ")}
           </Text>
-        </View>
-      </TouchableOpacity>
-    );
-  }, [navigation, theme]);
+
+          <View style={styles.itemFooter}>
+            <Text
+              style={[
+                styles.itemMeta,
+                {
+                  color: theme.colors.neutral.light400,
+                  fontFamily: theme.fontFamily.english,
+                },
+              ]}
+            >
+              {item.shares.length} shares
+            </Text>
+            <Text
+              style={[
+                styles.itemMeta,
+                {
+                  color: theme.colors.neutral.light400,
+                  fontFamily: theme.fontFamily.english,
+                },
+              ]}
+            >
+              {item.calculationTime?.toFixed(0)}ms
+            </Text>
+          </View>
+        </TouchableOpacity>
+      );
+    },
+    [navigation, theme],
+  );
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background.light }]}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme.colors.background.light },
+      ]}
+    >
       <AnimatedHeader
         title={t("history.title")}
         subtitle={`${filteredResults.length} calculations`}
         rightIcon={searchVisible ? "close" : "search"}
-        onRightPress={() => { setSearchVisible(!searchVisible); if (searchVisible) setSearchQuery(""); }}
+        onRightPress={() => {
+          setSearchVisible(!searchVisible);
+          if (searchVisible) setSearchQuery("");
+        }}
       />
 
       {/* Search bar */}
       {searchVisible && (
-        <View style={[styles.searchContainer, { backgroundColor: theme.colors.neutral.light50, borderRadius: theme.borderRadius.md }]}>
-          <Ionicons name="search" size={16} color={theme.colors.neutral.light400} />
+        <View
+          style={[
+            styles.searchContainer,
+            {
+              backgroundColor: theme.colors.neutral.light50,
+              borderRadius: theme.borderRadius.md,
+            },
+          ]}
+        >
+          <Ionicons
+            name="search"
+            size={16}
+            color={theme.colors.neutral.light400}
+          />
           <TextInput
-            style={[styles.searchInput, { color: theme.colors.neutral.dark200, fontFamily: theme.fontFamily.english }]}
+            style={[
+              styles.searchInput,
+              {
+                color: theme.colors.neutral.dark200,
+                fontFamily: theme.fontFamily.english,
+              },
+            ]}
             placeholder="Search by heir or madhab..."
             placeholderTextColor={theme.colors.neutral.light400}
             value={searchQuery}
@@ -146,7 +225,12 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   searchInput: { flex: 1, fontSize: 13 },
-  filterRow: { flexDirection: "row", paddingHorizontal: 16, marginBottom: 8, flexWrap: "wrap" },
+  filterRow: {
+    flexDirection: "row",
+    paddingHorizontal: 16,
+    marginBottom: 8,
+    flexWrap: "wrap",
+  },
   listContent: { padding: 16, paddingBottom: 32 },
   item: {
     borderWidth: 1,

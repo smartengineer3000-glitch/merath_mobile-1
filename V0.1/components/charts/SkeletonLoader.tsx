@@ -1,5 +1,11 @@
 import React, { useEffect, useRef } from "react";
-import { View, Animated, StyleSheet, Easing } from "react-native";
+import {
+  View,
+  Animated,
+  StyleSheet,
+  Easing,
+  type ViewStyle,
+} from "react-native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 
 interface SkeletonLoaderProps {
@@ -7,7 +13,7 @@ interface SkeletonLoaderProps {
   height?: number;
   borderRadius?: number;
   count?: number;
-  style?: React.ViewStyle;
+  style?: ViewStyle;
 }
 
 export default function SkeletonLoader({
@@ -56,7 +62,7 @@ export default function SkeletonLoader({
           style={[
             styles.skeleton,
             {
-              width,
+              width: width as any,
               height,
               borderRadius: defaultRadius,
               backgroundColor: theme.colors.neutral.light200,
@@ -73,7 +79,16 @@ export default function SkeletonLoader({
 // Pre-built skeleton patterns
 export function CardSkeleton({ theme }: { theme: any }) {
   return (
-    <View style={[styles.cardSkeleton, { backgroundColor: theme.colors.background.light, borderRadius: theme.borderRadius.md, ...theme.shadows.sm }]}>
+    <View
+      style={[
+        styles.cardSkeleton,
+        {
+          backgroundColor: theme.colors.background.light,
+          borderRadius: theme.borderRadius.md,
+          ...theme.shadows.sm,
+        },
+      ]}
+    >
       <SkeletonLoader width={60} height={12} borderRadius={4} />
       <View style={{ height: 12 }} />
       <SkeletonLoader width="100%" height={14} borderRadius={4} />
@@ -84,11 +99,23 @@ export function CardSkeleton({ theme }: { theme: any }) {
   );
 }
 
-export function ListSkeleton({ count = 5, theme }: { count?: number; theme: any }) {
+export function ListSkeleton({
+  count = 5,
+  theme,
+}: {
+  count?: number;
+  theme: any;
+}) {
   return (
     <View style={styles.listSkeleton}>
       {Array.from({ length: count }).map((_, i) => (
-        <View key={i} style={[styles.listItemSkeleton, { borderBottomColor: theme.colors.neutral.light100 }]}>
+        <View
+          key={i}
+          style={[
+            styles.listItemSkeleton,
+            { borderBottomColor: theme.colors.neutral.light100 },
+          ]}
+        >
           <SkeletonLoader width={44} height={44} borderRadius={22} />
           <View style={styles.listItemContent}>
             <SkeletonLoader width="70%" height={14} borderRadius={4} />

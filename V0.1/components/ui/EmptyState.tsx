@@ -10,18 +10,25 @@ interface EmptyStateProps {
   onAction?: () => void;
 }
 
-export function EmptyState({ icon, title, message, actionLabel, onAction }: EmptyStateProps) {
+export function EmptyState({
+  icon,
+  title,
+  message,
+  actionLabel,
+  onAction,
+}: EmptyStateProps) {
   const { theme } = useAppTheme();
 
   return (
     <View style={styles.container}>
-      {icon && (
-        <Text style={styles.icon}>{icon}</Text>
-      )}
+      {icon && <Text style={styles.icon}>{icon}</Text>}
       <Text
         style={[
           styles.title,
-          { color: theme.colors.neutral.dark200, fontFamily: theme.fontFamily.english },
+          {
+            color: theme.colors.neutral.dark200,
+            fontFamily: theme.fontFamily.english,
+          },
         ]}
       >
         {title}
@@ -30,7 +37,10 @@ export function EmptyState({ icon, title, message, actionLabel, onAction }: Empt
         <Text
           style={[
             styles.message,
-            { color: theme.colors.neutral.light400, fontFamily: theme.fontFamily.english },
+            {
+              color: theme.colors.neutral.light400,
+              fontFamily: theme.fontFamily.english,
+            },
           ]}
         >
           {message}

@@ -5,6 +5,7 @@ import Animated, {
   useAnimatedProps,
   withTiming,
   Easing,
+  type SharedValue,
 } from "react-native-reanimated";
 import Svg, { Circle } from "react-native-svg";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
@@ -37,7 +38,7 @@ function DonutArc({
   circumference: number;
   color: string;
   strokeWidth: number;
-  progress: Animated.SharedValue<number>;
+  progress: SharedValue<number>;
 }) {
   const animatedProps = useAnimatedProps(() => ({
     strokeDashoffset: circumference * (1 - fraction * progress.value),
@@ -80,7 +81,7 @@ export default function DonutChart({
       duration: animationDuration,
       easing: Easing.out(Easing.cubic),
     });
-  }, [data, animationDuration]);
+  }, [data, animationDuration, progress]);
 
   let accumulated = 0;
   const arcs = data.map((item) => {

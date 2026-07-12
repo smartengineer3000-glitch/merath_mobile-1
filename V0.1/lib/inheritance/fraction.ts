@@ -1,5 +1,3 @@
-[FULL FILE UPDATED CONTENT BELOW]
-
 /**
  * فئة الكسور المتقدمة لحساب المواريث الشرعي
  * Enhanced Fraction Class for Islamic Inheritance Calculations
@@ -22,7 +20,9 @@ export class FractionClass {
 
   constructor(numerator: number, denominator: number = 1) {
     if (denominator === 0) {
-      throw new Error("المقام لا يمكن أن يكون صفراً | Denominator cannot be zero");
+      throw new Error(
+        "المقام لا يمكن أن يكون صفراً | Denominator cannot be zero",
+      );
     }
 
     if (denominator < 0) {
@@ -88,7 +88,10 @@ export class FractionClass {
     }
 
     const inverseRatio = b / a;
-    if (Math.abs(inverseRatio - Math.round(inverseRatio)) < FractionClass.TOLERANCE) {
+    if (
+      Math.abs(inverseRatio - Math.round(inverseRatio)) <
+      FractionClass.TOLERANCE
+    ) {
       return a;
     }
 
@@ -147,7 +150,10 @@ export class FractionClass {
 
   multiply(scalar: number | FractionClass): FractionClass {
     if (typeof scalar === "number") {
-      if (Math.abs(this.denominator) > FractionClass.MAX_SAFE_DENOMINATOR / Math.abs(scalar)) {
+      if (
+        Math.abs(this.denominator) >
+        FractionClass.MAX_SAFE_DENOMINATOR / Math.abs(scalar)
+      ) {
         const decimal = this.toDecimal() * scalar;
         return FractionClass.fromDecimal(decimal, 12);
       }
@@ -173,7 +179,9 @@ export class FractionClass {
         throw new Error("لا يمكن القسمة على صفر | Cannot divide by zero");
       }
 
-      if (Math.abs(this.denominator * scalar) > FractionClass.MAX_SAFE_DENOMINATOR) {
+      if (
+        Math.abs(this.denominator * scalar) > FractionClass.MAX_SAFE_DENOMINATOR
+      ) {
         const decimal = this.toDecimal() / scalar;
         return FractionClass.fromDecimal(decimal, 12);
       }
@@ -204,8 +212,7 @@ export class FractionClass {
   // 🔴 HARDENED: strict rational equality (no tolerance)
   equals(other: FractionClass): boolean {
     return (
-      this.numerator * other.denominator ===
-      other.numerator * this.denominator
+      this.numerator * other.denominator === other.numerator * this.denominator
     );
   }
 
@@ -220,7 +227,10 @@ export class FractionClass {
   }
 
   private assertValidState(): void {
-    if (!Number.isFinite(this.numerator) || !Number.isFinite(this.denominator)) {
+    if (
+      !Number.isFinite(this.numerator) ||
+      !Number.isFinite(this.denominator)
+    ) {
       throw new Error("Invalid fraction state");
     }
 

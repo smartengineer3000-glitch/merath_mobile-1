@@ -1,5 +1,11 @@
 import React from "react";
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { useTranslation } from "react-i18next";
@@ -21,11 +27,23 @@ export default function LanguagePickerScreen() {
     navigation.goBack();
   };
 
-  const languageEntries = Object.entries(languages) as [Language, typeof languages[Language]][];
+  const languageEntries = Object.entries(languages) as [
+    Language,
+    (typeof languages)[Language],
+  ][];
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background.light }]}>
-      <AnimatedHeader title="Language" leftIcon="arrow-back" onLeftPress={() => navigation.goBack()} />
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme.colors.background.light },
+      ]}
+    >
+      <AnimatedHeader
+        title="Language"
+        leftIcon="arrow-back"
+        onLeftPress={() => navigation.goBack()}
+      />
 
       <ScrollView contentContainerStyle={styles.content}>
         {languageEntries.map(([code, lang]) => {
@@ -38,25 +56,61 @@ export default function LanguagePickerScreen() {
               style={[
                 styles.option,
                 {
-                  backgroundColor: isActive ? theme.colors.primary.lighter : theme.colors.background.light,
-                  borderColor: isActive ? theme.colors.primary.main : theme.colors.neutral.light200,
+                  backgroundColor: isActive
+                    ? theme.colors.primary.lighter
+                    : theme.colors.background.light,
+                  borderColor: isActive
+                    ? theme.colors.primary.main
+                    : theme.colors.neutral.light200,
                   borderRadius: theme.borderRadius.md,
                 },
               ]}
             >
               <View style={styles.optionLeft}>
-                <Text style={[styles.nativeName, { color: isActive ? theme.colors.primary.main : theme.colors.neutral.dark300, fontFamily: theme.fontFamily.english }]}>
+                <Text
+                  style={[
+                    styles.nativeName,
+                    {
+                      color: isActive
+                        ? theme.colors.primary.main
+                        : theme.colors.neutral.dark300,
+                      fontFamily: theme.fontFamily.english,
+                    },
+                  ]}
+                >
                   {lang.nativeName}
                 </Text>
-                <Text style={[styles.englishName, { color: theme.colors.neutral.light400, fontFamily: theme.fontFamily.english }]}>
+                <Text
+                  style={[
+                    styles.englishName,
+                    {
+                      color: theme.colors.neutral.light400,
+                      fontFamily: theme.fontFamily.english,
+                    },
+                  ]}
+                >
                   {lang.name}
                 </Text>
                 {lang.rtl && (
-                  <Text style={[styles.rtlBadge, { color: theme.colors.tertiary.main, fontFamily: theme.fontFamily.english }]}>RTL</Text>
+                  <Text
+                    style={[
+                      styles.rtlBadge,
+                      {
+                        color: theme.colors.tertiary.main,
+                        fontFamily: theme.fontFamily.english,
+                      },
+                    ]}
+                  >
+                    RTL
+                  </Text>
                 )}
               </View>
               {isActive && (
-                <Ionicons name="checkmark-circle" size={22} color={theme.colors.primary.main} />
+                <Ionicons
+                  name="checkmark-circle"
+                  size={22}
+                  color={theme.colors.primary.main}
+                />
               )}
             </TouchableOpacity>
           );

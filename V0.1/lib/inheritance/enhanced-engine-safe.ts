@@ -9,7 +9,7 @@ export function runInheritanceCalculation(input: any) {
   const engine = new EnhancedInheritanceCalculationEngine(
     input.madhhab,
     input.estate,
-    input.heirs
+    input.heirs,
   );
 
   const result = engine.calculate();

@@ -1,12 +1,11 @@
 import React from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import { Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 
 interface ChipProps {
   label: string;
@@ -55,7 +54,9 @@ export function Chip({
           styles.chip,
           size === "sm" && styles.chipSm,
           {
-            backgroundColor: selected ? accentColor : theme.colors.neutral.light100,
+            backgroundColor: selected
+              ? accentColor
+              : theme.colors.neutral.light100,
             borderColor: selected ? accentColor : theme.colors.neutral.light300,
             borderRadius: theme.borderRadius.full,
           },

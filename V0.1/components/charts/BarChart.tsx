@@ -36,10 +36,11 @@ export default function BarChart({
   const { theme } = useAppTheme();
   const max = maxValue || Math.max(...data.map((d) => d.value), 1);
   const gap = 12;
-  const totalWidth = data.length * (barWidth + gap) - gap;
 
   return (
-    <View style={[styles.container, { height: height + (showLabels ? 24 : 0) }]}>
+    <View
+      style={[styles.container, { height: height + (showLabels ? 24 : 0) }]}
+    >
       <View style={styles.barsContainer}>
         {data.map((item, index) => (
           <BarItem
@@ -110,7 +111,7 @@ function BarItem({
       duration: animationDuration + index * 100,
       easing: Easing.out(Easing.cubic),
     });
-  }, [fraction, animationDuration, index]);
+  }, [fraction, animationDuration, index, animatedHeight]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     height: animatedHeight.value * height,
@@ -124,13 +125,21 @@ function BarItem({
         <Text
           style={[
             styles.valueText,
-            { color: theme.colors.neutral.dark200, fontFamily: theme.fontFamily.english },
+            {
+              color: theme.colors.neutral.dark200,
+              fontFamily: theme.fontFamily.english,
+            },
           ]}
         >
           {item.value}
         </Text>
       )}
-      <View style={[styles.barTrack, { height, backgroundColor: theme.colors.neutral.light100 }]}>
+      <View
+        style={[
+          styles.barTrack,
+          { height, backgroundColor: theme.colors.neutral.light100 },
+        ]}
+      >
         <Animated.View
           style={[
             styles.barFill,

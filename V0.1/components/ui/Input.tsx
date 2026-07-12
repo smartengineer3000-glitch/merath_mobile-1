@@ -69,7 +69,11 @@ export function Input({
           <Ionicons
             name={leftIcon as any}
             size={20}
-            color={isFocused ? theme.colors.primary.main : theme.colors.neutral.light400}
+            color={
+              isFocused
+                ? theme.colors.primary.main
+                : theme.colors.neutral.light400
+            }
             style={styles.iconLeft}
           />
         )}
@@ -102,7 +106,9 @@ export function Input({
           style={[
             styles.helper,
             {
-              color: error ? theme.colors.error.main : theme.colors.neutral.light400,
+              color: error
+                ? theme.colors.error.main
+                : theme.colors.neutral.light400,
               fontFamily: theme.fontFamily.english,
             },
           ]}

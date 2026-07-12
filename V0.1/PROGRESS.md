@@ -7,6 +7,7 @@
 ---
 
 ## Phase 1: Foundation
+
 **Status:** `completed`
 **Commit:** `03d6930`
 
@@ -21,6 +22,7 @@
 ---
 
 ## Phase 2: Calculator Flow
+
 **Status:** `completed`
 **Commit:** `129a03e`
 
@@ -34,6 +36,7 @@
 ---
 
 ## Phase 3: History + Comparison
+
 **Status:** `completed`
 **Commit:** `b228ba4`
 
@@ -45,6 +48,7 @@
 ---
 
 ## Phase 4: Settings + About + Onboarding
+
 **Status:** `completed`
 **Commit:** `d6322e4`
 
@@ -57,6 +61,7 @@
 ---
 
 ## Phase 5: Charts + Animations
+
 **Status:** `completed`
 **Commit:** `040be76`
 
@@ -69,6 +74,7 @@
 ---
 
 ## Phase 6: Polish
+
 **Status:** `completed`
 **Commit:** `7981887`
 

@@ -8,7 +8,11 @@ interface SectionHeaderProps {
   onAction?: () => void;
 }
 
-export function SectionHeader({ title, actionLabel, onAction }: SectionHeaderProps) {
+export function SectionHeader({
+  title,
+  actionLabel,
+  onAction,
+}: SectionHeaderProps) {
   const { theme } = useAppTheme();
 
   return (
@@ -29,7 +33,10 @@ export function SectionHeader({ title, actionLabel, onAction }: SectionHeaderPro
           onPress={onAction}
           style={[
             styles.action,
-            { color: theme.colors.primary.main, fontFamily: theme.fontFamily.english },
+            {
+              color: theme.colors.primary.main,
+              fontFamily: theme.fontFamily.english,
+            },
           ]}
         >
           {actionLabel}

@@ -32,7 +32,10 @@ export function AnimatedHeader({
           <Text
             style={[
               styles.title,
-              { color: theme.colors.neutral.dark300, fontFamily: theme.fontFamily.english },
+              {
+                color: theme.colors.neutral.dark300,
+                fontFamily: theme.fontFamily.english,
+              },
             ]}
           >
             {title}
@@ -41,7 +44,10 @@ export function AnimatedHeader({
             <Text
               style={[
                 styles.subtitle,
-                { color: theme.colors.neutral.light400, fontFamily: theme.fontFamily.english },
+                {
+                  color: theme.colors.neutral.light400,
+                  fontFamily: theme.fontFamily.english,
+                },
               ]}
             >
               {subtitle}

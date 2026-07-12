@@ -6,7 +6,12 @@ export function LoadingScreen({ message }: { message?: string }) {
   const { theme } = useAppTheme();
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background.light }]}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme.colors.background.light },
+      ]}
+    >
       <View style={styles.logoContainer}>
         <View
           style={[
@@ -20,11 +25,18 @@ export function LoadingScreen({ message }: { message?: string }) {
           <Text style={styles.logoText}>M</Text>
         </View>
       </View>
-      <ActivityIndicator size="large" color={theme.colors.primary.main} style={styles.spinner} />
+      <ActivityIndicator
+        size="large"
+        color={theme.colors.primary.main}
+        style={styles.spinner}
+      />
       <Text
         style={[
           styles.message,
-          { color: theme.colors.neutral.light400, fontFamily: theme.fontFamily.english },
+          {
+            color: theme.colors.neutral.light400,
+            fontFamily: theme.fontFamily.english,
+          },
         ]}
       >
         {message || "Loading app..."}

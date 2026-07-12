@@ -15,28 +15,69 @@ export default function ComparisonResultsScreen() {
 
   if (results.length === 0) {
     return (
-      <View style={[styles.container, { backgroundColor: theme.colors.background.light }]}>
-        <AnimatedHeader title="Comparison Results" leftIcon="arrow-back" onLeftPress={() => navigation.goBack()} />
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: theme.colors.background.light },
+        ]}
+      >
+        <AnimatedHeader
+          title="Comparison Results"
+          leftIcon="arrow-back"
+          onLeftPress={() => navigation.goBack()}
+        />
       </View>
     );
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background.light }]}>
-      <AnimatedHeader title="Comparison Results" leftIcon="arrow-back" onLeftPress={() => navigation.goBack()} />
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme.colors.background.light },
+      ]}
+    >
+      <AnimatedHeader
+        title="Comparison Results"
+        leftIcon="arrow-back"
+        onLeftPress={() => navigation.goBack()}
+      />
 
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Overview cards */}
         <View style={styles.overviewRow}>
           {results.map((r, i) => {
             const total = r.shares.reduce((sum, s) => sum + s.amount, 0);
             return (
               <Card key={i} variant="elevated" style={styles.overviewCard}>
-                <Badge label={r.madhhabName} color={theme.colors.primary.main} size="sm" />
-                <Text style={[styles.overviewAmount, { color: theme.colors.neutral.dark300, fontFamily: theme.fontFamily.english }]}>
+                <Badge
+                  label={r.madhhabName}
+                  color={theme.colors.primary.main}
+                  size="sm"
+                />
+                <Text
+                  style={[
+                    styles.overviewAmount,
+                    {
+                      color: theme.colors.neutral.dark300,
+                      fontFamily: theme.fontFamily.english,
+                    },
+                  ]}
+                >
                   {formatCurrency(total)} SAR
                 </Text>
-                <Text style={[styles.overviewShares, { color: theme.colors.neutral.light400, fontFamily: theme.fontFamily.english }]}>
+                <Text
+                  style={[
+                    styles.overviewShares,
+                    {
+                      color: theme.colors.neutral.light400,
+                      fontFamily: theme.fontFamily.english,
+                    },
+                  ]}
+                >
                   {r.shares.length} shares
                 </Text>
               </Card>
@@ -47,22 +88,70 @@ export default function ComparisonResultsScreen() {
         {/* Per-heir comparison table */}
         <Card variant="elevated" style={styles.card}>
           <SectionHeader title="Share Comparison" />
-          <View style={[styles.tableHeader, { backgroundColor: theme.colors.primary.main }]}>
-            <Text style={[styles.tableHeaderCell, { fontFamily: theme.fontFamily.english }]}>Heir</Text>
+          <View
+            style={[
+              styles.tableHeader,
+              { backgroundColor: theme.colors.primary.main },
+            ]}
+          >
+            <Text
+              style={[
+                styles.tableHeaderCell,
+                { fontFamily: theme.fontFamily.english },
+              ]}
+            >
+              Heir
+            </Text>
             {results.map((r, i) => (
-              <Text key={i} style={[styles.tableHeaderCell, styles.tableCellValue, { fontFamily: theme.fontFamily.english }]}>
+              <Text
+                key={i}
+                style={[
+                  styles.tableHeaderCell,
+                  styles.tableCellValue,
+                  { fontFamily: theme.fontFamily.english },
+                ]}
+              >
                 {r.madhhabName}
               </Text>
             ))}
           </View>
 
           {getAllHeirs(results).map((heirName, i) => (
-            <View key={i} style={[styles.tableRow, { borderBottomColor: theme.colors.neutral.light100 }]}>
-              <Text style={[styles.tableCell, styles.tableCellName, { color: theme.colors.neutral.dark200, fontFamily: theme.fontFamily.english }]}>{heirName}</Text>
+            <View
+              key={i}
+              style={[
+                styles.tableRow,
+                { borderBottomColor: theme.colors.neutral.light100 },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.tableCell,
+                  styles.tableCellName,
+                  {
+                    color: theme.colors.neutral.dark200,
+                    fontFamily: theme.fontFamily.english,
+                  },
+                ]}
+              >
+                {heirName}
+              </Text>
               {results.map((r, j) => {
                 const share = r.shares.find((s) => s.name === heirName);
                 return (
-                  <Text key={j} style={[styles.tableCell, styles.tableCellValue, { color: share ? theme.colors.neutral.dark300 : theme.colors.neutral.light400, fontFamily: theme.fontFamily.english }]}>
+                  <Text
+                    key={j}
+                    style={[
+                      styles.tableCell,
+                      styles.tableCellValue,
+                      {
+                        color: share
+                          ? theme.colors.neutral.dark300
+                          : theme.colors.neutral.light400,
+                        fontFamily: theme.fontFamily.english,
+                      },
+                    ]}
+                  >
                     {share ? formatCurrency(share.amount) : "-"}
                   </Text>
                 );
@@ -89,9 +178,27 @@ const styles = StyleSheet.create({
   overviewAmount: { fontSize: 14, fontWeight: "700", marginTop: 8 },
   overviewShares: { fontSize: 11, marginTop: 2 },
   card: { marginBottom: 16 },
-  tableHeader: { flexDirection: "row", borderRadius: 8, paddingVertical: 10, paddingHorizontal: 8, marginBottom: 2 },
-  tableHeaderCell: { flex: 1, fontSize: 11, fontWeight: "700", color: "#ffffff", textAlign: "center" },
-  tableRow: { flexDirection: "row", paddingVertical: 8, paddingHorizontal: 8, borderBottomWidth: 1, alignItems: "center" },
+  tableHeader: {
+    flexDirection: "row",
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    marginBottom: 2,
+  },
+  tableHeaderCell: {
+    flex: 1,
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#ffffff",
+    textAlign: "center",
+  },
+  tableRow: {
+    flexDirection: "row",
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    borderBottomWidth: 1,
+    alignItems: "center",
+  },
   tableCell: { flex: 1, fontSize: 11, textAlign: "center" },
   tableCellName: { fontSize: 12, fontWeight: "500", textAlign: "left" },
   tableCellValue: { textAlign: "center" },

@@ -11,7 +11,13 @@ import { EstateCard } from "../../components/estate/EstateCard";
 import { HeirCategory } from "../../components/heirs/HeirCategory";
 import { QuickAddChips } from "../../components/heirs/QuickAddChips";
 import { HeirList } from "../../components/heirs/HeirList";
-import { Button, Card, Chip, SectionHeader, EmptyState } from "../../components/ui";
+import {
+  Button,
+  Card,
+  Chip,
+  SectionHeader,
+  EmptyState,
+} from "../../components/ui";
 import { HEIR_GROUPS } from "../../constants/heirData";
 import type { HeirGroup } from "../../constants/heirData";
 import type { MadhhabType } from "../../lib/inheritance/types";
@@ -28,7 +34,9 @@ export default function CalculatorScreen() {
   const [funeral, setFuneral] = useState(0);
   const [debts, setDebts] = useState(0);
   const [will, setWill] = useState(0);
-  const [selectedHeirs, setSelectedHeirs] = useState<Record<string, number>>({});
+  const [selectedHeirs, setSelectedHeirs] = useState<Record<string, number>>(
+    {},
+  );
   const [isCalculating, setIsCalculating] = useState(false);
 
   const netEstate = useMemo(
@@ -37,7 +45,8 @@ export default function CalculatorScreen() {
   );
 
   const deductionsPercent = useMemo(
-    () => (estateTotal > 0 ? ((funeral + debts + will) / estateTotal) * 100 : 0),
+    () =>
+      estateTotal > 0 ? ((funeral + debts + will) / estateTotal) * 100 : 0,
     [estateTotal, funeral, debts, will],
   );
 
@@ -81,20 +90,44 @@ export default function CalculatorScreen() {
     setIsCalculating(true);
     try {
       const estate = { total: estateTotal, funeral, debts, will };
-      const result = await calculateWithEstate(madhab as MadhhabType, estate, selectedHeirs);
+      const result = await calculateWithEstate(
+        madhab as MadhhabType,
+        estate,
+        selectedHeirs,
+      );
 
       if (result && result.success) {
-        saveScenario({ estate, heirs: selectedHeirs, madhab: madhab as MadhhabType, result });
+        saveScenario({
+          estate,
+          heirs: selectedHeirs,
+          madhab: madhab as MadhhabType,
+          result,
+        });
         navigation.navigate("Results", { result });
       } else {
-        Alert.alert(t("common.error"), result?.error || t("calculator.calculationFailed"));
+        Alert.alert(
+          t("common.error"),
+          result?.error || t("calculator.calculationFailed"),
+        );
       }
     } catch (err) {
       Alert.alert(t("common.error"), t("calculator.calculationFailed"));
     } finally {
       setIsCalculating(false);
     }
-  }, [estateTotal, funeral, debts, will, selectedHeirs, madhab, heirCount, calculateWithEstate, saveScenario, navigation, t]);
+  }, [
+    estateTotal,
+    funeral,
+    debts,
+    will,
+    selectedHeirs,
+    madhab,
+    heirCount,
+    calculateWithEstate,
+    saveScenario,
+    navigation,
+    t,
+  ]);
 
   const madhabOptions: { key: MadhhabType; label: string }[] = [
     { key: "hanafi", label: t("madhab.hanafi") },
@@ -104,11 +137,13 @@ export default function CalculatorScreen() {
   ];
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background.light }]}>
-      <AnimatedHeader
-        title={t("calculator.title")}
-        rightIcon="moon-outline"
-      />
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme.colors.background.light },
+      ]}
+    >
+      <AnimatedHeader title={t("calculator.title")} rightIcon="moon-outline" />
 
       <ScrollView
         style={styles.scroll}
@@ -151,7 +186,10 @@ export default function CalculatorScreen() {
 
         {/* Heirs Categories */}
         <Card variant="elevated" style={styles.section}>
-          <SectionHeader title={t("heirs.title")} actionLabel={`${heirCount} selected`} />
+          <SectionHeader
+            title={t("heirs.title")}
+            actionLabel={`${heirCount} selected`}
+          />
           {(Object.keys(HEIR_GROUPS) as HeirGroup[]).map((group) => (
             <HeirCategory
               key={group}
@@ -172,9 +210,18 @@ export default function CalculatorScreen() {
       </ScrollView>
 
       {/* Calculate Button */}
-      <View style={[styles.bottomBar, { backgroundColor: theme.colors.background.light }]}>
+      <View
+        style={[
+          styles.bottomBar,
+          { backgroundColor: theme.colors.background.light },
+        ]}
+      >
         <Button
-          title={isCalculating ? t("calculator.calculating") : t("calculator.calculate")}
+          title={
+            isCalculating
+              ? t("calculator.calculating")
+              : t("calculator.calculate")
+          }
           onPress={handleCalculate}
           variant="primary"
           fullWidth

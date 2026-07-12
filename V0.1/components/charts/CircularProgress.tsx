@@ -52,7 +52,7 @@ export default function CircularProgress({
       duration: animationDuration,
       easing: Easing.out(Easing.cubic),
     });
-  }, [value, animationDuration]);
+  }, [value, animationDuration, progress, displayValue]);
 
   return (
     <View style={[styles.container, { width: size, height: size }]}>

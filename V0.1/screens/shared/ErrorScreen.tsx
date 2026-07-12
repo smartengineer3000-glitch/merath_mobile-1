@@ -14,12 +14,20 @@ export function ErrorScreen({ message, onRetry }: ErrorScreenProps) {
   const { t } = useTranslation();
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background.light }]}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme.colors.background.light },
+      ]}
+    >
       <Text style={styles.icon}>!</Text>
       <Text
         style={[
           styles.title,
-          { color: theme.colors.neutral.dark300, fontFamily: theme.fontFamily.english },
+          {
+            color: theme.colors.neutral.dark300,
+            fontFamily: theme.fontFamily.english,
+          },
         ]}
       >
         {t("common.error")}
@@ -27,13 +35,21 @@ export function ErrorScreen({ message, onRetry }: ErrorScreenProps) {
       <Text
         style={[
           styles.message,
-          { color: theme.colors.neutral.light400, fontFamily: theme.fontFamily.english },
+          {
+            color: theme.colors.neutral.light400,
+            fontFamily: theme.fontFamily.english,
+          },
         ]}
       >
         {message || "Something went wrong. Please try again."}
       </Text>
       {onRetry && (
-        <Button title="Retry" onPress={onRetry} variant="primary" style={styles.button} />
+        <Button
+          title="Retry"
+          onPress={onRetry}
+          variant="primary"
+          style={styles.button}
+        />
       )}
     </View>
   );

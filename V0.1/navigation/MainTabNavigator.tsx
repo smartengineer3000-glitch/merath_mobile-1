@@ -48,10 +48,26 @@ export function MainTabNavigator() {
         },
       })}
     >
-      <Tab.Screen name="Calculator" component={CalculatorStack} options={{ tabBarLabel: t("navigation.calculator") }} />
-      <Tab.Screen name="History" component={HistoryStack} options={{ tabBarLabel: t("navigation.history") }} />
-      <Tab.Screen name="Compare" component={ComparisonStack} options={{ tabBarLabel: t("navigation.comparison") }} />
-      <Tab.Screen name="Settings" component={SettingsStack} options={{ tabBarLabel: t("navigation.settings") }} />
+      <Tab.Screen
+        name="Calculator"
+        component={CalculatorStack}
+        options={{ tabBarLabel: t("navigation.calculator") }}
+      />
+      <Tab.Screen
+        name="History"
+        component={HistoryStack}
+        options={{ tabBarLabel: t("navigation.history") }}
+      />
+      <Tab.Screen
+        name="Compare"
+        component={ComparisonStack}
+        options={{ tabBarLabel: t("navigation.comparison") }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsStack}
+        options={{ tabBarLabel: t("navigation.settings") }}
+      />
     </Tab.Navigator>
   );
 }

@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-} from "react-native";
+import { Text, StyleSheet, Animated } from "react-native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { Ionicons } from "../../lib/icons";
 
@@ -16,16 +11,30 @@ interface ToastProps {
   onDismiss?: () => void;
 }
 
-export function Toast({ message, type = "info", visible, duration = 3000, onDismiss }: ToastProps) {
+export function Toast({
+  message,
+  type = "info",
+  visible,
+  duration = 3000,
+  onDismiss,
+}: ToastProps) {
   const { theme } = useAppTheme();
   const [fadeAnim] = useState(new Animated.Value(0));
 
   useEffect(() => {
     if (visible) {
       Animated.sequence([
-        Animated.timing(fadeAnim, { toValue: 1, duration: 200, useNativeDriver: true }),
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
         Animated.delay(duration),
-        Animated.timing(fadeAnim, { toValue: 0, duration: 200, useNativeDriver: true }),
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
       ]).start(() => onDismiss?.());
     } else {
       fadeAnim.setValue(0);

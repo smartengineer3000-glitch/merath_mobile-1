@@ -1,5 +1,11 @@
 import React from "react";
-import { View, Text, StyleSheet, type ViewStyle, type StyleProp } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  type ViewStyle,
+  type StyleProp,
+} from "react-native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 
 interface BadgeProps {
