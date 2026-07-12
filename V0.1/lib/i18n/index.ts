@@ -4,6 +4,7 @@
  * Supports: English, Urdu, Turkish, French, German, Arabic
  */
 
+import { I18nManager } from "react-native";
 import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
 import * as en from "./locales/en.json";
@@ -51,3 +52,15 @@ export const languages = {
 } as const;
 
 export type Language = keyof typeof languages;
+
+/**
+ * Apply RTL layout based on language.
+ * Must be called when language changes. Note: I18nManager changes require app reload.
+ */
+export function applyRTLOfLanguage(lang: Language): void {
+  const isRTL = languages[lang].rtl;
+  if (I18nManager.isRTL !== isRTL) {
+    I18nManager.allowRTL(isRTL);
+    I18nManager.forceRTL(isRTL);
+  }
+}

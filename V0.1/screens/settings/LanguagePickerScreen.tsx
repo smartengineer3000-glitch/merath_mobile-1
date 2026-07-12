@@ -5,7 +5,7 @@ import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../../lib/context/SettingsContext";
 import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
-import { languages, type Language } from "../../lib/i18n";
+import { languages, type Language, applyRTLOfLanguage } from "../../lib/i18n";
 import { Ionicons } from "../../lib/icons";
 
 export default function LanguagePickerScreen() {
@@ -17,6 +17,7 @@ export default function LanguagePickerScreen() {
   const handleSelect = (lang: Language) => {
     setLanguage(lang);
     i18n.changeLanguage(lang);
+    applyRTLOfLanguage(lang);
     navigation.goBack();
   };
 

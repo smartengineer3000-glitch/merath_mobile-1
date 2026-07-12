@@ -39,6 +39,9 @@ export function AppSwitch({ label, value, onValueChange, description }: AppSwitc
         onValueChange={onValueChange}
         trackColor={{ false: theme.colors.neutral.light200, true: theme.colors.primary.light100 }}
         thumbColor={value ? theme.colors.primary.main : theme.colors.neutral.light400}
+        accessibilityLabel={label}
+        accessibilityRole="switch"
+        accessibilityState={{ checked: value }}
       />
     </View>
   );

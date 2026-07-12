@@ -17,7 +17,7 @@ import React, {
   useState,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Language } from "../i18n";
+import { Language, applyRTLOfLanguage } from "../i18n";
 
 export interface SettingsState {
   language: Language;
@@ -475,6 +475,15 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     loadSettings();
   }, [loadSettings]);
+
+  /**
+   * Apply RTL layout when language changes
+   */
+  useEffect(() => {
+    if (state.language) {
+      applyRTLOfLanguage(state.language);
+    }
+  }, [state.language]);
 
   const value = {
     state,

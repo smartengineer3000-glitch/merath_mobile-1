@@ -47,6 +47,10 @@ export function Chip({
         testID={testID}
         activeOpacity={0.7}
         onPress={handlePress}
+        accessible
+        accessibilityRole="button"
+        accessibilityLabel={label}
+        accessibilityState={{ selected }}
         style={[
           styles.chip,
           size === "sm" && styles.chipSm,

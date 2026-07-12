@@ -60,7 +60,7 @@ export function StepperCounter({
   };
 
   return (
-    <View style={styles.container} testID={testID}>
+    <View style={styles.container} testID={testID} accessible accessibilityRole="adjustable" accessibilityLabel={`${label || "Counter"}: ${value}`}>
       {label && (
         <Text
           style={[
@@ -77,6 +77,10 @@ export function StepperCounter({
             onPress={handleDecrement}
             disabled={value <= min}
             activeOpacity={0.7}
+            accessible
+            accessibilityRole="button"
+            accessibilityLabel={`Decrease ${label || "counter"}`}
+            accessibilityState={{ disabled: value <= min }}
             style={[
               styles.button,
               {
@@ -110,6 +114,10 @@ export function StepperCounter({
             onPress={handleIncrement}
             disabled={value >= max}
             activeOpacity={0.7}
+            accessible
+            accessibilityRole="button"
+            accessibilityLabel={`Increase ${label || "counter"}`}
+            accessibilityState={{ disabled: value >= max }}
             style={[
               styles.button,
               {
