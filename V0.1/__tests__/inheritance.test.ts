@@ -25,8 +25,8 @@ describe("FractionClass", () => {
 
   it("should simplify fractions", () => {
     const fraction = new FractionClass(2, 4);
-    expect(fraction.numeratorValue).toBe(1);
-    expect(fraction.denominatorValue).toBe(2);
+    expect(fraction.getNumerator()).toBe(1);
+    expect(fraction.getDenominator()).toBe(2);
   });
 
   it("should convert to decimal correctly", () => {
@@ -55,10 +55,10 @@ describe("FractionClass", () => {
     expect(result.toDecimal()).toBeCloseTo(0.25);
   });
 
-  it("should handle Arabic names", () => {
-    expect(half.toArabicName()).toBe("النصف");
-    expect(third.toArabicName()).toBe("الثلث");
-    expect(quarter.toArabicName()).toBe("الربع");
+  it("should convert to string correctly", () => {
+    expect(half.toString()).toBe("1/2");
+    expect(third.toString()).toBe("1/3");
+    expect(quarter.toString()).toBe("1/4");
   });
 
   it("should throw on division by zero", () => {
@@ -67,9 +67,11 @@ describe("FractionClass", () => {
     }).toThrow();
   });
 
-  it("should check equality with tolerance", () => {
-    const similar = new FractionClass(999, 2000); // قريب جداً من 0.5
-    expect(half.equals(similar)).toBe(true);
+  it("should check strict equality", () => {
+    const equal = new FractionClass(2, 4); // simplifies to 1/2
+    expect(half.equals(equal)).toBe(true);
+    const similar = new FractionClass(999, 2000); // close to 0.5 but not exact
+    expect(half.equals(similar)).toBe(false); // strict equality - no tolerance
   });
 });
 

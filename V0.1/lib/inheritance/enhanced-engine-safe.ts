@@ -18,9 +18,12 @@ export function runInheritanceCalculation(input: any) {
     const allocations: any = {};
 
     for (const s of result.shares) {
-      // normalize to FractionClass-like decimal proxy
+      if (!s.key || !s.fraction) continue;
+      const num = s.fraction.numerator;
+      const den = s.fraction.denominator;
+      if (num == null || den == null || den === 0) continue;
       allocations[s.key] = {
-        toDecimal: () => s.fraction?.numerator / s.fraction?.denominator,
+        toDecimal: () => num / den,
       } as any;
     }
 
