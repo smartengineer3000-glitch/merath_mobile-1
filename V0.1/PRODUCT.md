@@ -248,16 +248,9 @@ Manual calculation is error-prone and time-consuming. Merath automates this with
 
 ### Planned Features
 - Multi-language expansion (more languages)
-- Cloud sync for calculation history
 - Collaboration features for family planning
 - Educational content about inheritance rules
 - Integration with legal document systems
-
-### Technical Improvements
-- Web-based calculator for desktop
-- API for third-party integration
-- Advanced special case coverage
-- Machine learning for scenario prediction
 
 ## Legal & Compliance
 
