@@ -1,476 +1,265 @@
-/**
- * Phase 7: Performance Tests
- * Optimization & Deployment
- *
- * Comprehensive performance metrics and benchmarking
- */
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import {
+  CalculationCache,
+  PerformanceMonitor,
+  debounce,
+  throttle,
+  memoize,
+} from "../lib/performance/optimization";
 
-import { describe, it, expect, beforeEach } from "vitest";
+beforeEach(() => {
+  CalculationCache.clear();
+});
 
-describe("Phase 7: Performance Optimization", () => {
-  describe("Application Startup", () => {
-    it("should initialize app in acceptable time", () => {
-      const startTime = performance.now();
-      // Simulate app initialization
-      const modules = 10;
-      for (let i = 0; i < modules; i++) {
-        // Minimal operation
-        Math.random();
-      }
-      const endTime = performance.now();
-      const initTime = endTime - startTime;
+describe("CalculationCache", () => {
+  const estate = { total: 100000, funeral: 5000, debts: 10000, will: 0 };
+  const heirs = { wife: 1, son: 2 };
+  const mockResult = {
+    allocations: [],
+    netEstate: 85000,
+    status: "success" as const,
+    steps: [],
+    timestamp: new Date(),
+    totalDistributed: 85000,
+    confidence: 0.95,
+    success: true,
+    madhab: "hanafi" as const,
+    madhhabName: "Hanafi",
+    shares: [],
+    calculationTime: 50,
+  };
 
-      expect(initTime).toBeLessThan(500);
-    });
-
-    it("should load navigation in < 100ms", () => {
-      const startTime = performance.now();
-      const navStructure = {
-        calculator: true,
-        history: true,
-        settings: true,
-        about: true,
-      };
-      const endTime = performance.now();
-
-      expect(endTime - startTime).toBeLessThan(100);
-    });
-
-    it("should render first screen in < 300ms", () => {
-      const startTime = performance.now();
-      const screen = {
-        components: 5,
-        calculations: 0,
-        elements: 25,
-      };
-      const endTime = performance.now();
-
-      expect(endTime - startTime).toBeLessThan(300);
-    });
+  it("returns null for cache miss", () => {
+    const result = CalculationCache.getCalculation("hanafi", estate, heirs);
+    expect(result).toBeNull();
   });
 
-  describe("Calculation Performance", () => {
-    it("should calculate simple inheritance < 50ms", () => {
-      const startTime = performance.now();
-
-      // Simulate simple calculation
-      const estate = 120000;
-      const shares = { husband: 0.25, daughter: 0.75 };
-      const results = Object.entries(shares).map(([heir, share]) => ({
-        heir,
-        amount: estate * share,
-      }));
-
-      const endTime = performance.now();
-
-      expect(endTime - startTime).toBeLessThan(50);
-      expect(results).toHaveLength(2);
-    });
-
-    it("should calculate complex inheritance < 100ms", () => {
-      const startTime = performance.now();
-
-      // Simulate complex calculation
-      const estate = 500000;
-      const heirs = 8;
-      const madhabs = 4;
-
-      let totalTime = 0;
-      for (let i = 0; i < heirs * madhabs; i++) {
-        totalTime += Math.random() * 5;
-      }
-
-      const endTime = performance.now();
-
-      expect(endTime - startTime).toBeLessThan(100);
-    });
-
-    it("should process calculation with audit log < 75ms", () => {
-      const startTime = performance.now();
-
-      const calculation = {
-        estate: 300000,
-        heirs: 5,
-        steps: 15,
-      };
-
-      // Simulate logging
-      const logs = [];
-      for (let i = 0; i < calculation.steps; i++) {
-        logs.push({
-          step: i,
-          time: Date.now(),
-          action: "calculate",
-        });
-      }
-
-      const endTime = performance.now();
-
-      expect(endTime - startTime).toBeLessThan(75);
-      expect(logs).toHaveLength(15);
-    });
+  it("stores and retrieves cached result", () => {
+    CalculationCache.cacheCalculation("hanafi", estate, heirs, mockResult, 50);
+    const cached = CalculationCache.getCalculation("hanafi", estate, heirs);
+    expect(cached).toEqual(mockResult);
   });
 
-  describe("Navigation Performance", () => {
-    it("should switch tabs in < 100ms", () => {
-      const startTime = performance.now();
-
-      const tabs = ["Calculator", "History", "Settings", "About"];
-      tabs.forEach((tab) => {
-        // Simulate tab switch
-        const state = { active: tab };
-      });
-
-      const endTime = performance.now();
-
-      expect(endTime - startTime).toBeLessThan(100);
-    });
-
-    it("should handle deep link navigation < 150ms", () => {
-      const startTime = performance.now();
-
-      const deepLinks = [
-        "merath://calculator",
-        "merath://history",
-        "merath://settings",
-      ];
-
-      deepLinks.forEach((link) => {
-        // Simulate route parsing
-        const parsed = link.split("://")[1];
-      });
-
-      const endTime = performance.now();
-
-      expect(endTime - startTime).toBeLessThan(150);
-    });
-
-    it("should maintain 60 FPS during interaction", () => {
-      const fps = 60;
-      const frameDuration = 1000 / fps;
-
-      expect(frameDuration).toBeLessThan(16.67);
-      expect(fps).toBeGreaterThanOrEqual(60);
-    });
+  it("returns null for different madhab", () => {
+    CalculationCache.cacheCalculation("hanafi", estate, heirs, mockResult, 50);
+    const cached = CalculationCache.getCalculation("maliki", estate, heirs);
+    expect(cached).toBeNull();
   });
 
-  describe("Memory Usage", () => {
-    it("should use < 100MB for core operations", () => {
-      const baseMemory = 20; // MB
-      const components = 6; // ~5MB each
-      const hooks = 5; // ~2MB each
-      const data = 10; // MB
-
-      const total = baseMemory + components * 5 + hooks * 2 + data;
-
-      expect(total).toBeLessThan(100);
-    });
-
-    it("should handle history with < 50MB", () => {
-      const maxEntries = 1000;
-      const entrySize = 0.05; // MB per entry
-
-      const total = maxEntries * entrySize;
-
-      expect(total).toBeLessThanOrEqual(50);
-    });
-
-    it("should not leak memory on calculations", () => {
-      const initialMemory = 50; // MB
-      const calculations = 1000;
-      const memoryPerCalc = 0.01; // MB
-
-      const finalMemory = initialMemory + calculations * memoryPerCalc;
-      const leakageRate = (finalMemory - initialMemory) / calculations;
-
-      expect(leakageRate).toBeLessThan(0.05);
-    });
+  it("returns null for different estate", () => {
+    CalculationCache.cacheCalculation("hanafi", estate, heirs, mockResult, 50);
+    const differentEstate = { total: 200000, funeral: 0, debts: 0, will: 0 };
+    const cached = CalculationCache.getCalculation(
+      "hanafi",
+      differentEstate,
+      heirs,
+    );
+    expect(cached).toBeNull();
   });
 
-  describe("Network Performance", () => {
-    it("should handle offline mode gracefully", () => {
-      const isOnline = false;
-      const fallbackData = { cached: true };
-
-      expect(fallbackData.cached).toBe(true);
-    });
-
-    it("should sync data efficiently", () => {
-      const dataSize = 1024; // KB
-      const bandwidth = 5000; // KB/s
-      const syncTime = dataSize / bandwidth;
-
-      expect(syncTime).toBeLessThan(1); // 1 second
-    });
+  it("enforces max cache size of 100", () => {
+    for (let i = 0; i < 105; i++) {
+      const e = { total: i * 1000, funeral: 0, debts: 0, will: 0 };
+      CalculationCache.cacheCalculation("hanafi", e, heirs, mockResult, 10);
+    }
+    const stats = CalculationCache.getStats();
+    expect(stats.cacheSize).toBeLessThanOrEqual(100);
   });
 
-  describe("Storage Performance", () => {
-    it("should save calculation < 50ms", () => {
-      const startTime = performance.now();
-
-      const calculation = {
-        estate: 100000,
-        heirs: 3,
-        madhab: "shafii",
-        timestamp: Date.now(),
-      };
-
-      // Simulate storage write
-      JSON.stringify(calculation);
-
-      const endTime = performance.now();
-
-      expect(endTime - startTime).toBeLessThan(50);
-    });
-
-    it("should load history < 100ms", () => {
-      const startTime = performance.now();
-
-      const entries = Array.from({ length: 100 }, (_, i) => ({
-        id: i,
-        calculation: {},
-        timestamp: Date.now(),
-      }));
-
-      // Simulate storage read
-      const parsed = JSON.parse(JSON.stringify(entries));
-
-      const endTime = performance.now();
-
-      expect(endTime - startTime).toBeLessThan(100);
-      expect(parsed).toHaveLength(100);
-    });
+  it("clears cache and metrics", () => {
+    CalculationCache.cacheCalculation("hanafi", estate, heirs, mockResult, 50);
+    CalculationCache.clear();
+    const stats = CalculationCache.getStats();
+    expect(stats.totalCalculations).toBe(0);
+    expect(stats.cacheSize).toBe(0);
   });
 
-  describe("Component Rendering", () => {
-    it("should render EstateInput in < 50ms", () => {
-      const startTime = performance.now();
-
-      const props = {
-        total: 100000,
-        funeral: 5000,
-        debts: 0,
-        will: 0,
-      };
-
-      // Simulate component render
-      const rendered = JSON.stringify(props);
-
-      const endTime = performance.now();
-
-      expect(endTime - startTime).toBeLessThan(50);
-    });
-
-    it("should render ResultsDisplay in < 100ms", () => {
-      const startTime = performance.now();
-
-      const results = {
-        shares: [
-          { heir: "husband", amount: 25000 },
-          { heir: "daughter", amount: 75000 },
-        ],
-        total: 100000,
-        calculations: 5,
-      };
-
-      const rendered = JSON.stringify(results);
-
-      const endTime = performance.now();
-
-      expect(endTime - startTime).toBeLessThan(100);
-    });
-
-    it("should render CalculationHistory in < 200ms", () => {
-      const startTime = performance.now();
-
-      const history = Array.from({ length: 50 }, (_, i) => ({
-        id: i,
-        calculation: {},
-        timestamp: Date.now(),
-      }));
-
-      const rendered = JSON.stringify(history);
-
-      const endTime = performance.now();
-
-      expect(endTime - startTime).toBeLessThan(200);
-    });
+  it("tracks cache hit/miss statistics", () => {
+    CalculationCache.cacheCalculation("hanafi", estate, heirs, mockResult, 50);
+    CalculationCache.getCalculation("hanafi", estate, heirs); // hit
+    CalculationCache.getCalculation("maliki", estate, heirs); // miss
+    const stats = CalculationCache.getStats();
+    expect(stats.totalCalculations).toBeGreaterThan(0);
   });
 
-  describe("Build Metrics", () => {
-    it("should have acceptable bundle size", () => {
-      const targetSize = 50; // MB
-      const estimatedSize = 40; // MB (estimated)
-
-      expect(estimatedSize).toBeLessThan(targetSize);
-    });
-
-    it("should have gzipped size < 20MB", () => {
-      const uncompressed = 40; // MB
-      const compressionRatio = 0.5; // 50% compression
-      const gzipped = uncompressed * compressionRatio;
-
-      expect(gzipped).toBeLessThanOrEqual(20);
-    });
-
-    it("should have minimal dependencies impact", () => {
-      const coreSize = 10; // MB
-      const dependencies = 30; // MB
-      const ratio = dependencies / coreSize;
-
-      expect(ratio).toBeLessThan(4); // Dependencies < 4x core
-    });
-  });
-
-  describe("User Experience Metrics", () => {
-    it("should have acceptable Time to Interactive (TTI)", () => {
-      const tti = 1500; // ms
-      const target = 2000; // ms
-
-      expect(tti).toBeLessThan(target);
-    });
-
-    it("should have minimal First Contentful Paint (FCP)", () => {
-      const fcp = 1000; // ms
-      const target = 1500; // ms
-
-      expect(fcp).toBeLessThan(target);
-    });
-
-    it("should have low Cumulative Layout Shift (CLS)", () => {
-      const cls = 0.05; // score
-      const target = 0.1; // score
-
-      expect(cls).toBeLessThan(target);
-    });
-  });
-
-  describe("Stress Testing", () => {
-    it("should handle rapid tab switching", () => {
-      const startTime = performance.now();
-
-      const tabs = ["calc", "hist", "set", "about"];
-      for (let i = 0; i < 100; i++) {
-        const tab = tabs[i % tabs.length];
-      }
-
-      const endTime = performance.now();
-
-      expect(endTime - startTime).toBeLessThan(200);
-    });
-
-    it("should handle rapid calculations", () => {
-      const startTime = performance.now();
-
-      for (let i = 0; i < 50; i++) {
-        const result = Math.random() * 100;
-      }
-
-      const endTime = performance.now();
-
-      expect(endTime - startTime).toBeLessThan(100);
-    });
-
-    it("should handle large dataset (1000 entries)", () => {
-      const startTime = performance.now();
-
-      const data = Array.from({ length: 1000 }, (_, i) => ({
-        id: i,
-        value: Math.random(),
-      }));
-
-      const filtered = data.filter((d) => d.value > 0.5);
-
-      const endTime = performance.now();
-
-      expect(endTime - startTime).toBeLessThan(500);
-      expect(filtered.length).toBeGreaterThan(0);
-    });
-  });
-
-  describe("Energy Efficiency", () => {
-    it("should use minimal CPU", () => {
-      const idleCpu = 5; // %
-      const targetCpu = 20; // %
-
-      expect(idleCpu).toBeLessThan(targetCpu);
-    });
-
-    it("should use minimal GPU", () => {
-      const gpuUsage = 10; // %
-      const targetGpu = 30; // %
-
-      expect(gpuUsage).toBeLessThan(targetGpu);
-    });
-
-    it("should optimize battery drain", () => {
-      const batteryDrainRate = 5; // % per hour
-      const targetRate = 10; // % per hour
-
-      expect(batteryDrainRate).toBeLessThan(targetRate);
-    });
-  });
-
-  describe("Phase 7 Summary", () => {
-    it("should meet all performance targets", () => {
-      const targets = {
-        appStartup: true,
-        calculation: true,
-        navigation: true,
-        memory: true,
-        bundleSize: true,
-        fps: true,
-        tti: true,
-      };
-
-      Object.values(targets).forEach((target) => {
-        expect(target).toBe(true);
-      });
-    });
-
-    it("should be ready for deployment", () => {
-      const readiness = {
-        performanceOK: true,
-        testsPass: true,
-        buildWorks: true,
-        optimization: true,
-        documentation: true,
-      };
-
-      Object.values(readiness).forEach((item) => {
-        expect(item).toBe(true);
-      });
-    });
+  it("exports metrics as valid JSON", () => {
+    CalculationCache.cacheCalculation("hanafi", estate, heirs, mockResult, 50);
+    const json = CalculationCache.exportMetrics();
+    const parsed = JSON.parse(json);
+    expect(parsed.stats).toBeDefined();
+    expect(parsed.metrics).toBeDefined();
+    expect(parsed.timestamp).toBeDefined();
   });
 });
 
-describe("Deployment Readiness", () => {
-  it("should have all performance metrics within targets", () => {
-    const metrics = {
-      bundleSize: { actual: 40, target: 50, pass: true },
-      appStartup: { actual: 1200, target: 2000, pass: true },
-      calculation: { actual: 75, target: 100, pass: true },
-      navigation: { actual: 80, target: 100, pass: true },
-      memory: { actual: 85, target: 100, pass: true },
+describe("PerformanceMonitor", () => {
+  it("measures async function duration", async () => {
+    const fn = async () => {
+      await new Promise((r) => setTimeout(r, 10));
+      return 42;
     };
-
-    Object.values(metrics).forEach((metric) => {
-      expect(metric.pass).toBe(true);
-      expect(metric.actual).toBeLessThanOrEqual(metric.target);
-    });
+    const { result, duration } = await PerformanceMonitor.measure("test", fn);
+    expect(result).toBe(42);
+    expect(duration).toBeGreaterThanOrEqual(0);
   });
 
-  it("should be production-ready", () => {
-    const checklist = {
-      testsPass: true,
-      noErrors: true,
-      optimized: true,
-      documented: true,
-      buildReady: true,
-    };
+  it("measures sync function duration", () => {
+    const fn = () => 42;
+    const { result, duration } = PerformanceMonitor.measureSync("test", fn);
+    expect(result).toBe(42);
+    expect(duration).toBeGreaterThanOrEqual(0);
+  });
 
-    Object.values(checklist).forEach((item) => {
-      expect(item).toBe(true);
-    });
+  it("propagates errors from async functions", async () => {
+    const fn = async () => {
+      throw new Error("test error");
+    };
+    await expect(
+      PerformanceMonitor.measure("test", fn),
+    ).rejects.toThrow("test error");
+  });
+
+  it("propagates errors from sync functions", () => {
+    const fn = () => {
+      throw new Error("test error");
+    };
+    expect(() => PerformanceMonitor.measureSync("test", fn)).toThrow(
+      "test error",
+    );
+  });
+
+  it("returns duration 0 when disabled", async () => {
+    PerformanceMonitor.disable();
+    const fn = async () => 42;
+    const { result, duration } = await PerformanceMonitor.measure("test", fn);
+    expect(result).toBe(42);
+    expect(duration).toBe(0);
+    PerformanceMonitor.enable();
+  });
+});
+
+describe("debounce", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("delays function execution", () => {
+    const fn = vi.fn();
+    const debounced = debounce(fn, 100);
+
+    debounced();
+    expect(fn).not.toHaveBeenCalled();
+
+    vi.advanceTimersByTime(100);
+    expect(fn).toHaveBeenCalledTimes(1);
+  });
+
+  it("resets delay on subsequent calls", () => {
+    const fn = vi.fn();
+    const debounced = debounce(fn, 100);
+
+    debounced();
+    vi.advanceTimersByTime(50);
+    debounced(); // reset
+    vi.advanceTimersByTime(50);
+    expect(fn).not.toHaveBeenCalled();
+
+    vi.advanceTimersByTime(100);
+    expect(fn).toHaveBeenCalledTimes(1);
+  });
+
+  it("passes arguments to the debounced function", () => {
+    const fn = vi.fn();
+    const debounced = debounce(fn, 100);
+
+    debounced("arg1", "arg2");
+    vi.advanceTimersByTime(100);
+    expect(fn).toHaveBeenCalledWith("arg1", "arg2");
+  });
+});
+
+describe("throttle", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("executes function immediately on first call", () => {
+    const fn = vi.fn();
+    const throttled = throttle(fn, 100);
+
+    throttled();
+    expect(fn).toHaveBeenCalledTimes(1);
+  });
+
+  it("throttles subsequent calls within limit", () => {
+    const fn = vi.fn();
+    const throttled = throttle(fn, 100);
+
+    throttled();
+    throttled(); // should be ignored
+    throttled(); // should be ignored
+    expect(fn).toHaveBeenCalledTimes(1);
+  });
+
+  it("allows calls after throttle period expires", () => {
+    const fn = vi.fn();
+    const throttled = throttle(fn, 100);
+
+    throttled();
+    vi.advanceTimersByTime(100);
+    throttled();
+    expect(fn).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("memoize", () => {
+  it("caches and returns same result for same args", () => {
+    let callCount = 0;
+    const fn = (x: number) => {
+      callCount++;
+      return x * 2;
+    };
+    const memoized = memoize(fn);
+
+    expect(memoized(5)).toBe(10);
+    expect(memoized(5)).toBe(10);
+    expect(memoized(5)).toBe(10);
+    expect(callCount).toBe(1); // only called once
+  });
+
+  it("returns different results for different args", () => {
+    const fn = (x: number) => x * 2;
+    const memoized = memoize(fn);
+
+    expect(memoized(5)).toBe(10);
+    expect(memoized(10)).toBe(20);
+  });
+
+  it("handles multiple arguments", () => {
+    const fn = (a: number, b: number) => a + b;
+    const memoized = memoize(fn);
+
+    expect(memoized(1, 2)).toBe(3);
+    expect(memoized(1, 2)).toBe(3);
+    expect(memoized(2, 1)).toBe(3);
+  });
+
+  it("does not exceed cache size of 1000", () => {
+    const fn = (x: number) => x;
+    const memoized = memoize(fn);
+
+    for (let i = 0; i < 1100; i++) {
+      memoized(i);
+    }
+    // should not throw or leak memory
+    expect(memoized(0)).toBe(0);
   });
 });
