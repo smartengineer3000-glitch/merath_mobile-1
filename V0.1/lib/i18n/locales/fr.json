@@ -6,6 +6,8 @@
   },
   "navigation": {
     "calculator": "Calculatrice",
+    "results": "Résultats",
+    "comparison": "Comparaison",
     "history": "Historique",
     "settings": "Paramètres",
     "about": "À propos"
@@ -27,7 +29,14 @@
     "resetAllFields": "Réinitialiser tous les champs",
     "calculationFailed": "Le calcul a échoué. Veuillez réessayer.",
     "calculatingInheritance": "Calcul de la succession en cours",
-    "calculateInheritance": "Calculer la succession"
+    "calculateInheritance": "Calculer la succession",
+    "newCalculation": "Nouveau calcul",
+    "viewLastResult": "Voir le dernier résultat",
+    "recentCalculations": "Calculs récents",
+    "noRecentCalculations": "Aucun calcul récent",
+    "quickAddScenarios": "Scénarios d'ajout rapide",
+    "selected": "sélectionné",
+    "selectedHeirs": "Héritiers sélectionnés"
   },
   "estate": {
     "title": "Informations sur la succession",
@@ -35,7 +44,11 @@
     "funeral": "Frais funéraires",
     "debts": "Dettes",
     "will": "Testament",
-    "netEstate": "Succession nette"
+    "netEstate": "Succession nette",
+    "deductions": "Déductions :",
+    "hideDeductions": "Masquer les déductions",
+    "deductionsWill": "Déductions et testament",
+    "maxOneThird": "Maximum 1/3 du total"
   },
   "heirs": {
     "title": "Ajouter des héritiers",
@@ -115,7 +128,31 @@
     "showComparison": "Afficher la comparaison",
     "statistics": "Statistiques",
     "totalCalculations": "Calculs totaux",
-    "currentResult": "Résultat actuel"
+    "currentResult": "Résultat actuel",
+    "tabs": {
+      "distribution": "Distribution",
+      "steps": "Étapes",
+      "explanation": "Explication",
+      "export": "Exporter"
+    },
+    "totalDistribution": "Distribution totale",
+    "awlApplied": "Al-Awl appliqué",
+    "raddApplied": "Al-Radd appliqué",
+    "distributionBreakdown": "Détails de la distribution",
+    "fiqhExplanation": "Explication jurisprudentielle",
+    "fiqhExplanationFallback": "Les explications jurisprudentielles détaillées pour ce calcul seront disponibles dans une prochaine mise à jour.",
+    "warnings": "Avertissements",
+    "exportPdf": "Exporter en PDF",
+    "exportPdfDesc": "Générer un rapport professionnel",
+    "exportImage": "Partager en image",
+    "exportImageDesc": "Capturer et partager les résultats",
+    "exportClipboard": "Copier dans le presse-papiers",
+    "exportClipboardDesc": "Copier les résultats en texte",
+    "exportShare": "Partager",
+    "exportShareDesc": "Partager via d'autres applications",
+    "exportOptions": "Options d'exportation",
+    "noResultsTitle": "Aucun résultat",
+    "noResultsDescription": "Veuillez d'abord effectuer un calcul pour voir les résultats"
   },
   "settings": {
     "title": "Paramètres",
@@ -143,7 +180,27 @@
     "dataCleared": "Toutes les données ont été effacées",
     "about": "À propos de l'application",
     "version": "Version",
-    "developer": "Développeur"
+    "developer": "Développeur",
+    "defaultMadhab": "Madhab par défaut",
+    "dark": "Sombre",
+    "light": "Clair",
+    "decimalPlaces": "décimales"
+  },
+  "language": {
+    "title": "Langue",
+    "rtl": "Droite à gauche"
+  },
+  "history": {
+    "title": "Historique des calculs",
+    "noHistory": "Aucun historique de calcul disponible",
+    "subtitle": "Consultez vos calculs passés",
+    "awl": "Awl",
+    "radd": "Radd",
+    "shares": "parts",
+    "calculations": "calculs",
+    "searchPlaceholder": "Rechercher par héritier ou madhab...",
+    "filterAll": "Tout",
+    "detail": "Détail"
   },
   "comparison": {
     "title": "Comparaison des Madhabs",
@@ -153,7 +210,18 @@
     "comparing": "Comparaison en cours...",
     "compareAcross": "Comparer entre les Madhabs",
     "results": "Résultats de la comparaison",
-    "failed": "La comparaison a échoué. Veuillez réessayer."
+    "failed": "La comparaison a échoué. Veuillez réessayer.",
+    "noComparison": "Aucune comparaison disponible. Effectuez d'abord un calcul.",
+    "noDataToCompare": "Aucune donnée à comparer",
+    "currentScenario": "Scénario actuel",
+    "estateLabel": "Succession :",
+    "heirsLabel": "Héritiers :",
+    "compareAcrossAllMadhabs": "Comparer entre toutes les écoles",
+    "compareDescription": "Exécutez les calculs dans les quatre écoles. Cela exécutera le même scénario dans les quatre madhabs et comparera les résultats côte à côte.",
+    "recentComparisonResults": "Résultats de comparaison récents",
+    "comparisonResults": "Résultats de la comparaison",
+    "shareComparison": "Partager la comparaison",
+    "heir": "Héritier"
   },
   "about": {
     "title": "À propos de Merath",
@@ -185,6 +253,38 @@
   },
   "loading": {
     "appLoading": "Chargement de l'application..."
+  },
+  "error": {
+    "somethingWentWrong": "Une erreur s'est produite. Veuillez réessayer.",
+    "retry": "Réessayer",
+    "title": "Une erreur s'est produite",
+    "description": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+    "details": "Détails de l'erreur :",
+    "tryAgain": "Réessayer"
+  },
+  "disclaimer": {
+    "title": "Conditions et avertissements",
+    "calculationDisclaimer": "Avertissement de calcul",
+    "calculationDisclaimerText": "Cette application fournit des calculs de succession basés sur les quatre grandes écoles sunnites de jurisprudence islamique. Les résultats sont fournis à des fins d'information et d'éducation uniquement.",
+    "notLegalAdvice": "Ce n'est pas un conseil juridique",
+    "notLegalAdviceText": "Les calculs et informations fournis par cette application ne doivent pas être considérés comme des conseils juridiques, religieux ou professionnels. Consultez toujours un érudit islamique qualifié ou un professionnel du droit avant de prendre des décisions sur la succession.",
+    "privacyPolicy": "Politique de confidentialité",
+    "privacyPolicyText": "Tous les calculs et données sont stockés localement sur votre appareil. Aucune donnée personnelle n'est transmise à des serveurs externes. Vous avez un contrôle total sur vos données et pouvez les exporter ou les supprimer à tout moment.",
+    "decline": "Refuser",
+    "accept": "Accepter"
+  },
+  "quickAdd": {
+    "wife2Daughters": "Épouse + 2 filles",
+    "husbandSonDaughter": "Mari + fils + fille",
+    "parentsWife": "Parents + épouse",
+    "wifeParentsBrother": "Épouse + parents + frère",
+    "twoSonsWife": "2 fils + épouse",
+    "daughterGrandfather": "Fille + grand-père"
+  },
+  "stepper": {
+    "counter": "Compteur",
+    "decrease": "Diminuer",
+    "increase": "Augmenter"
   },
   "common": {
     "ok": "OK",

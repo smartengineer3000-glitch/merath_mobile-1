@@ -180,7 +180,7 @@ export default function CalculatorScreen() {
 
         {/* Quick Add */}
         <Card variant="elevated" style={styles.section}>
-          <SectionHeader title="Quick Add Scenarios" />
+          <SectionHeader title={t("calculator.quickAddScenarios")} />
           <QuickAddChips onSelect={handleQuickAdd} />
         </Card>
 
@@ -188,7 +188,7 @@ export default function CalculatorScreen() {
         <Card variant="elevated" style={styles.section}>
           <SectionHeader
             title={t("heirs.title")}
-            actionLabel={`${heirCount} selected`}
+            actionLabel={`${heirCount} ${t("calculator.selected")}`}
           />
           {(Object.keys(HEIR_GROUPS) as HeirGroup[]).map((group) => (
             <HeirCategory
@@ -203,7 +203,9 @@ export default function CalculatorScreen() {
         {/* Selected Heirs Summary */}
         {heirCount > 0 && (
           <Card variant="filled" style={styles.section}>
-            <SectionHeader title={`Selected Heirs (${heirCount})`} />
+            <SectionHeader
+              title={`${t("calculator.selectedHeirs")} (${heirCount})`}
+            />
             <HeirList selectedHeirs={selectedHeirs} />
           </Card>
         )}

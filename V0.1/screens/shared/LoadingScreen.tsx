@@ -1,9 +1,11 @@
 import React from "react";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 
 export function LoadingScreen({ message }: { message?: string }) {
   const { theme } = useAppTheme();
+  const { t } = useTranslation();
 
   return (
     <View
@@ -39,7 +41,7 @@ export function LoadingScreen({ message }: { message?: string }) {
           },
         ]}
       >
-        {message || "Loading app..."}
+        {message || t("loading.appLoading")}
       </Text>
     </View>
   );

@@ -16,7 +16,7 @@ import { Ionicons } from "../../lib/icons";
 
 export default function LanguagePickerScreen() {
   const { theme } = useAppTheme();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigation = useNavigation<any>();
   const { setLanguage, state } = useSettings();
 
@@ -40,7 +40,7 @@ export default function LanguagePickerScreen() {
       ]}
     >
       <AnimatedHeader
-        title="Language"
+        title={t("language.title")}
         leftIcon="arrow-back"
         onLeftPress={() => navigation.goBack()}
       />
@@ -101,7 +101,7 @@ export default function LanguagePickerScreen() {
                       },
                     ]}
                   >
-                    RTL
+                    {t("language.rtl")}
                   </Text>
                 )}
               </View>

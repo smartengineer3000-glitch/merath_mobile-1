@@ -169,7 +169,7 @@ export function EstateCard({
               },
             ]}
           >
-            Deductions: {Math.round(deductionsPercent)}%
+            {t("estate.deductions")} {Math.round(deductionsPercent)}%
           </Text>
         </View>
       )}
@@ -192,7 +192,9 @@ export function EstateCard({
             },
           ]}
         >
-          {showAdvanced ? "Hide deductions" : "Deductions & Will"}
+          {showAdvanced
+            ? t("estate.hideDeductions")
+            : t("estate.deductionsWill")}
         </Text>
       </TouchableOpacity>
 
@@ -215,7 +217,7 @@ export function EstateCard({
             value={will}
             onChange={onWillChange}
             theme={theme}
-            hint="Max 1/3 of total"
+            hint={t("estate.maxOneThird")}
           />
         </View>
       )}

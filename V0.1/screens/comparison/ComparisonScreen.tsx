@@ -88,14 +88,14 @@ export default function ComparisonScreen() {
           <Card variant="elevated" style={styles.card}>
             <EmptyState
               icon="git-compare"
-              title="No Data to Compare"
+              title={t("comparison.noDataToCompare")}
               message={t("comparison.noComparison")}
             />
           </Card>
         ) : (
           <>
             <Card variant="elevated" style={styles.card}>
-              <SectionHeader title="Current Scenario" />
+              <SectionHeader title={t("comparison.currentScenario")} />
               <Text
                 style={[
                   styles.infoText,
@@ -105,7 +105,8 @@ export default function ComparisonScreen() {
                   },
                 ]}
               >
-                Estate: {formatCurrency(latestScenario.estate.total)} SAR
+                {t("comparison.estateLabel")}{" "}
+                {formatCurrency(latestScenario.estate.total)} SAR
               </Text>
               <Text
                 style={[
@@ -116,7 +117,7 @@ export default function ComparisonScreen() {
                   },
                 ]}
               >
-                Heirs:{" "}
+                {t("comparison.heirsLabel")}{" "}
                 {Object.entries(latestScenario.heirs)
                   .filter(([_, c]) => c && c > 0)
                   .map(([k, v]) => `${k}(${v})`)
@@ -130,7 +131,7 @@ export default function ComparisonScreen() {
             </Card>
 
             <Card variant="elevated" style={styles.card}>
-              <SectionHeader title="Compare Across All Madhabs" />
+              <SectionHeader title={t("comparison.compareAcrossAllMadhabs")} />
               <Text
                 style={[
                   styles.compareDesc,
@@ -140,9 +141,7 @@ export default function ComparisonScreen() {
                   },
                 ]}
               >
-                Run calculations across all four schools. This will run the same
-                scenario through all four madhabs and compare the results
-                side-by-side.
+                {t("comparison.compareDescription")}
               </Text>
               <Button
                 title={
@@ -159,7 +158,9 @@ export default function ComparisonScreen() {
 
             {comparisonResults.length > 0 && (
               <Card variant="elevated" style={styles.card}>
-                <SectionHeader title="Recent Comparison Results" />
+                <SectionHeader
+                  title={t("comparison.recentComparisonResults")}
+                />
                 {comparisonResults.map((r, i) => (
                   <View
                     key={i}

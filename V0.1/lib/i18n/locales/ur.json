@@ -7,6 +7,8 @@
 
   "navigation": {
     "calculator": "کیلکولیٹر",
+    "results": "نتائج",
+    "comparison": "موازنہ",
     "history": "ہسٹری",
     "settings": "ترتیبات",
     "about": "بارے میں"
@@ -29,7 +31,14 @@
     "resetAllFields": "تمام فیلڈز دوبارہ سیٹ کریں",
     "calculationFailed": "حساب ناکام ہو گیا۔ دوبارہ کوشش کریں۔",
     "calculatingInheritance": "وراثت کا حساب لگایا جا رہا ہے",
-    "calculateInheritance": "وراثت کا حساب لگائیں"
+    "calculateInheritance": "وراثت کا حساب لگائیں",
+    "newCalculation": "نیا حساب",
+    "viewLastResult": "آخری نتیجہ دیکھیں",
+    "recentCalculations": "حالیہ حسابات",
+    "noRecentCalculations": "کوئی حالیہ حسابات نہیں",
+    "quickAddScenarios": "فوری اضافہ منظرنے",
+    "selected": "منتخب",
+    "selectedHeirs": "منتخب وارثین"
   },
 
   "estate": {
@@ -38,7 +47,11 @@
     "funeral": "جنازے کی رقم",
     "debts": "قرضے",
     "will": "وصیت",
-    "netEstate": "خالص ملکیت"
+    "netEstate": "خالص ملکیت",
+    "deductions": "کٹوتیاں:",
+    "hideDeductions": "کٹوتیاں چھپائیں",
+    "deductionsWill": "کٹوتیاں اور وصیت",
+    "maxOneThird": "زیادہ سے زیادہ تہائی کل"
   },
 
   "heirs": {
@@ -121,7 +134,31 @@
     "showComparison": "موازنہ دکھائیں",
     "statistics": "شمار و شماری",
     "totalCalculations": "کل حسابات",
-    "currentResult": "موجودہ نتیجہ"
+    "currentResult": "موجودہ نتیجہ",
+    "tabs": {
+      "distribution": "تقسیم",
+      "steps": " مراحل",
+      "explanation": "وضاحت",
+      "export": "برآمد"
+    },
+    "totalDistribution": "کل تقسیم",
+    "awlApplied": "العول لاگو",
+    "raddApplied": "الرد لاگو",
+    "distributionBreakdown": "تقسیم کی تفصیلات",
+    "fiqhExplanation": "فقہی وضاحت",
+    "fiqhExplanationFallback": "اس حساب کی تفصیلی فقہی وضاحتیں مستقبل کی اپ ڈیٹ میں دستیاب ہوں گی۔",
+    "warnings": "انتباہات",
+    "exportPdf": "PDF کے طور پر برآمد کریں",
+    "exportPdfDesc": "پیشہ ورانہ رپورٹ بنائیں",
+    "exportImage": "تصویر کے طور پر شیئر کریں",
+    "exportImageDesc": "نتائج کی تصویر لیں اور شیئر کریں",
+    "exportClipboard": "کلپ بورڈ میں نقل کریں",
+    "exportClipboardDesc": "نتائج کو متن کے طور پر نقل کریں",
+    "exportShare": "شیئر کریں",
+    "exportShareDesc": "دیگر ایپس کے ذریعے شیئر کریں",
+    "exportOptions": "برآمد کے اختیارات",
+    "noResultsTitle": "کوئی نتائج نہیں",
+    "noResultsDescription": "نتائج دیکھنے کے لیے براہ کرم پہلے حساب کریں"
   },
 
   "settings": {
@@ -150,7 +187,29 @@
     "dataCleared": "تمام ڈیٹا صاف ہو گیا",
     "about": "ایپ کے بارے میں",
     "version": "ورژن",
-    "developer": "ڈیویلپر"
+    "developer": "ڈیویلپر",
+    "defaultMadhab": "طے شدہ مذہب",
+    "dark": "ڈارک",
+    "light": "روشن",
+    "decimalPlaces": "اعشاریہ پلیس"
+  },
+
+  "language": {
+    "title": "زبان",
+    "rtl": "دائیں سے بائیں"
+  },
+
+  "history": {
+    "title": "حساب کی تاریخ",
+    "noHistory": "کوئی حساب کی تاریخ دستیاب نہیں",
+    "subtitle": "اپنے ماضی کے حسابات دیکھیں",
+    "awl": "عول",
+    "radd": "رد",
+    "shares": " حصے",
+    "calculations": "حسابات",
+    "searchPlaceholder": "وارث یا مذہب سے تلاش کریں...",
+    "filterAll": "سب",
+    "detail": "تفصیل"
   },
 
   "comparison": {
@@ -161,7 +220,18 @@
     "comparing": "موازنہ جاری ہے...",
     "compareAcross": "مذاہب میں موازنہ کریں",
     "results": "موازنے کے نتائج",
-    "failed": "موازنہ ناکام ہو گیا۔ دوبارہ کوشش کریں۔"
+    "failed": "موازنہ ناکام ہو گیا۔ دوبارہ کوشش کریں۔",
+    "noComparison": "کوئی موازنہ دستیاب نہیں۔ پہلے حساب کریں۔",
+    "noDataToCompare": "موازنے کے لیے کوئی ڈیٹا نہیں",
+    "currentScenario": "موجودہ منظر",
+    "estateLabel": "ملکیت:",
+    "heirsLabel": "وارثین:",
+    "compareAcrossAllMadhabs": "تمام مذاہب میں موازنہ کریں",
+    "compareDescription": "چاروں مذاہب میں حسابات چلائیں۔ یہ ایک ہی منظر کو چاروں مذاہب میں چلائے گا اور نتائج کا موازنہ کرے گا۔",
+    "recentComparisonResults": "حالیہ موازنے کے نتائج",
+    "comparisonResults": "موازنے کے نتائج",
+    "shareComparison": "موازنہ شیئر کریں",
+    "heir": "وارث"
   },
 
   "about": {
@@ -196,6 +266,42 @@
 
   "loading": {
     "appLoading": "ایپ لوڈ ہو رہی ہے..."
+  },
+
+  "error": {
+    "somethingWentWrong": "کچھ غلط ہو گیا۔ براہ کرم دوبارہ کوشش کریں۔",
+    "retry": "دوبارہ کوشش کریں",
+    "title": "کچھ غلط ہو گیا",
+    "description": "ایک غیر متوقع خرابی پیش آئی۔ براہ کرم دوبارہ کوشش کریں۔",
+    "details": "خرابی کی تفصیلات:",
+    "tryAgain": "دوبارہ کوشش کریں"
+  },
+
+  "disclaimer": {
+    "title": "شرائط و تnar",
+    "calculationDisclaimer": "حساب کی تnar",
+    "calculationDisclaimerText": "یہ ایپ چار بڑی سنی فقہی مذاہب کے بنیاد پر وراثت کے حسابات فراہم کرتی ہے۔ نتائج صرف معلوماتی اور تعلیمی مقاصد کے لیے ہیں۔",
+    "notLegalAdvice": "قانونی مشورہ نہیں",
+    "notLegalAdviceText": "اس ایپ کی طرف سے فراہم کردہ حسابات اور معلومات کو قانونی، مذہبی یا پیشہ ورانہ مشورہ نہیں سمجھا جانا چاہیے۔ وراثت کے فیصلے کرنے سے پہلے ہمیشہ کسی واجد الشریعت عالم یا قانونی پیشہ ور سے رجوع کریں۔",
+    "privacyPolicy": "رازداری کی پالیسی",
+    "privacyPolicyText": "تمام حسابات اور ڈیٹا آپ کے ڈیوائس پر مقامی طور پر محفوظ ہیں۔ کوئی ذاتی ڈیٹا بیرونی سرورز کو نہیں بھیجا جاتا۔ آپ کو اپنے ڈیٹا پر مکمل کنترل ہے اور آپ اسے کسی بھی وقت برآمد یا حذف کر سکتے ہیں۔",
+    "decline": "رد کریں",
+    "accept": "قبول کریں"
+  },
+
+  "quickAdd": {
+    "wife2Daughters": "بیوی + 2 بیٹیاں",
+    "husbandSonDaughter": "خاوند + بیٹا + بیٹی",
+    "parentsWife": "والدین + بیوی",
+    "wifeParentsBrother": "بیوی + والدین + بھائی",
+    "twoSonsWife": "2 بیٹے + بیوی",
+    "daughterGrandfather": "بیٹی + دادا"
+  },
+
+  "stepper": {
+    "counter": "گنتا",
+    "decrease": "کمی",
+    "increase": "اضافہ"
   },
 
   "common": {

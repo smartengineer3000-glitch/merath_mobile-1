@@ -57,7 +57,7 @@ export default function ResultsScreen() {
                 },
               ]}
             >
-              {t("results.noResults")}
+              {t("results.noResultsTitle")}
             </Text>
             <Text
               style={[
@@ -68,7 +68,7 @@ export default function ResultsScreen() {
                 },
               ]}
             >
-              {t("results.performCalculation")}
+              {t("results.noResultsDescription")}
             </Text>
             <Button
               title={t("calculator.newCalculation")}
@@ -127,7 +127,7 @@ export default function ResultsScreen() {
                   },
                 ]}
               >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                {t(`results.tabs.${tab}`)}
               </Text>
             </TouchableOpacity>
           ),
@@ -156,6 +156,7 @@ function DistributionTab({
   total: number;
   theme: any;
 }) {
+  const { t } = useTranslation();
   const confidenceColor =
     result.confidence > 95
       ? theme.colors.success.main
@@ -181,7 +182,7 @@ function DistributionTab({
                 },
               ]}
             >
-              Total Distribution
+              {t("results.totalDistribution")}
             </Text>
             <Text
               style={[
@@ -220,14 +221,14 @@ function DistributionTab({
           />
           {result.awlApplied && (
             <Badge
-              label="Al-Awl Applied"
+              label={t("results.awlApplied")}
               color={theme.colors.warning.main}
               size="sm"
             />
           )}
           {result.raddApplied && (
             <Badge
-              label="Al-Radd Applied"
+              label={t("results.raddApplied")}
               color={theme.colors.info.main}
               size="sm"
             />
@@ -237,7 +238,7 @@ function DistributionTab({
 
       {/* Distribution List */}
       <Card variant="elevated">
-        <SectionHeader title="Distribution Breakdown" />
+        <SectionHeader title={t("results.distributionBreakdown")} />
         {result.shares.map((share, index) => (
           <ShareRow key={index} share={share} total={total} theme={theme} />
         ))}
@@ -245,7 +246,7 @@ function DistributionTab({
 
       {result.blockedHeirs && result.blockedHeirs.length > 0 && (
         <Card variant="outlined" style={{ marginTop: 12 }}>
-          <SectionHeader title="Blocked Heirs" />
+          <SectionHeader title={t("results.blockedHeirs")} />
           {result.blockedHeirs.map((heir, i) => (
             <Text
               key={i}
@@ -346,13 +347,14 @@ function StepsTab({
   result: CalculationResult;
   theme: any;
 }) {
+  const { t } = useTranslation();
   return (
     <ScrollView
       contentContainerStyle={styles.tabContent}
       showsVerticalScrollIndicator={false}
     >
       <Card variant="elevated">
-        <SectionHeader title="Calculation Steps" />
+        <SectionHeader title={t("results.calculationSteps")} />
         {result.steps.map((step, index) => (
           <View
             key={index}
@@ -407,13 +409,14 @@ function ExplanationTab({
   result: CalculationResult;
   theme: any;
 }) {
+  const { t } = useTranslation();
   return (
     <ScrollView
       contentContainerStyle={styles.tabContent}
       showsVerticalScrollIndicator={false}
     >
       <Card variant="elevated">
-        <SectionHeader title="Fiqh Explanation" />
+        <SectionHeader title={t("results.fiqhExplanation")} />
         {result.madhhabNotes && result.madhhabNotes.length > 0 ? (
           result.madhhabNotes.map((note, i) => (
             <View
@@ -449,14 +452,13 @@ function ExplanationTab({
               },
             ]}
           >
-            Detailed fiqh explanations for this calculation will be available in
-            a future update.
+            {t("results.fiqhExplanationFallback")}
           </Text>
         )}
 
         {result.warnings && result.warnings.length > 0 && (
           <View style={{ marginTop: 16 }}>
-            <SectionHeader title="Warnings" />
+            <SectionHeader title={t("results.warnings")} />
             {result.warnings.map((warn, i) => (
               <View
                 key={i}
@@ -505,23 +507,23 @@ function ExportTab({
   const exportOptions = [
     {
       icon: "document-text",
-      label: "Export as PDF",
-      description: "Generate a professional report",
+      label: t("results.exportPdf"),
+      description: t("results.exportPdfDesc"),
     },
     {
       icon: "image",
-      label: "Share as Image",
-      description: "Capture and share results",
+      label: t("results.exportImage"),
+      description: t("results.exportImageDesc"),
     },
     {
       icon: "copy",
-      label: "Copy to Clipboard",
-      description: "Copy results as text",
+      label: t("results.exportClipboard"),
+      description: t("results.exportClipboardDesc"),
     },
     {
       icon: "share-social",
-      label: "Share",
-      description: "Share via other apps",
+      label: t("results.exportShare"),
+      description: t("results.exportShareDesc"),
     },
   ];
 
@@ -531,7 +533,7 @@ function ExportTab({
       showsVerticalScrollIndicator={false}
     >
       <Card variant="elevated">
-        <SectionHeader title="Export Options" />
+        <SectionHeader title={t("results.exportOptions")} />
         {exportOptions.map((option, index) => (
           <TouchableOpacity
             key={index}

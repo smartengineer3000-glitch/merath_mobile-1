@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { Ionicons } from "../../lib/icons";
 import Animated, {
@@ -29,6 +30,7 @@ export function StepperCounter({
   testID,
 }: StepperCounterProps) {
   const { theme } = useAppTheme();
+  const { t } = useTranslation();
   const incScale = useSharedValue(1);
   const decScale = useSharedValue(1);
 
@@ -64,7 +66,7 @@ export function StepperCounter({
       testID={testID}
       accessible
       accessibilityRole="adjustable"
-      accessibilityLabel={`${label || "Counter"}: ${value}`}
+      accessibilityLabel={`${label || t("stepper.counter")}: ${value}`}
     >
       {label && (
         <Text
@@ -87,7 +89,7 @@ export function StepperCounter({
             activeOpacity={0.7}
             accessible
             accessibilityRole="button"
-            accessibilityLabel={`Decrease ${label || "counter"}`}
+            accessibilityLabel={`${t("stepper.decrease")} ${label || t("stepper.counter")}`}
             accessibilityState={{ disabled: value <= min }}
             style={[
               styles.button,
@@ -131,7 +133,7 @@ export function StepperCounter({
             activeOpacity={0.7}
             accessible
             accessibilityRole="button"
-            accessibilityLabel={`Increase ${label || "counter"}`}
+            accessibilityLabel={`${t("stepper.increase")} ${label || t("stepper.counter")}`}
             accessibilityState={{ disabled: value >= max }}
             style={[
               styles.button,

@@ -35,7 +35,10 @@
     "newCalculation": "New Calculation",
     "viewLastResult": "View Last Result",
     "recentCalculations": "Recent Calculations",
-    "noRecentCalculations": "No recent calculations"
+    "noRecentCalculations": "No recent calculations",
+    "quickAddScenarios": "Quick Add Scenarios",
+    "selected": "selected",
+    "selectedHeirs": "Selected Heirs"
   },
 
   "estate": {
@@ -44,7 +47,11 @@
     "funeral": "Funeral Expenses",
     "debts": "Debts",
     "will": "Bequest (Will)",
-    "netEstate": "Net Estate"
+    "netEstate": "Net Estate",
+    "deductions": "Deductions:",
+    "hideDeductions": "Hide deductions",
+    "deductionsWill": "Deductions & Will",
+    "maxOneThird": "Max 1/3 of total"
   },
 
   "heirs": {
@@ -127,7 +134,31 @@
     "showComparison": "Show Comparison",
     "statistics": "Statistics",
     "totalCalculations": "Total Calculations",
-    "currentResult": "Current Result"
+    "currentResult": "Current Result",
+    "tabs": {
+      "distribution": "Distribution",
+      "steps": "Steps",
+      "explanation": "Explanation",
+      "export": "Export"
+    },
+    "totalDistribution": "Total Distribution",
+    "awlApplied": "Al-Awl Applied",
+    "raddApplied": "Al-Radd Applied",
+    "distributionBreakdown": "Distribution Breakdown",
+    "fiqhExplanation": "Fiqh Explanation",
+    "fiqhExplanationFallback": "Detailed fiqh explanations for this calculation will be available in a future update.",
+    "warnings": "Warnings",
+    "exportPdf": "Export as PDF",
+    "exportPdfDesc": "Generate a professional report",
+    "exportImage": "Share as Image",
+    "exportImageDesc": "Capture and share results",
+    "exportClipboard": "Copy to Clipboard",
+    "exportClipboardDesc": "Copy results as text",
+    "exportShare": "Share",
+    "exportShareDesc": "Share via other apps",
+    "exportOptions": "Export Options",
+    "noResultsTitle": "No Results",
+    "noResultsDescription": "Please perform a calculation first to see results"
   },
 
   "settings": {
@@ -157,13 +188,28 @@
     "about": "About App",
     "version": "Version",
     "developer": "Developer",
-    "defaultMadhab": "Default Madhab"
+    "defaultMadhab": "Default Madhab",
+    "dark": "Dark",
+    "light": "Light",
+    "decimalPlaces": "decimal places"
+  },
+
+  "language": {
+    "title": "Language",
+    "rtl": "RTL"
   },
 
   "history": {
     "title": "Calculation History",
     "noHistory": "No calculation history available",
-    "subtitle": "View your past calculations"
+    "subtitle": "View your past calculations",
+    "awl": "Awl",
+    "radd": "Radd",
+    "shares": "shares",
+    "calculations": "calculations",
+    "searchPlaceholder": "Search by heir or madhab...",
+    "filterAll": "All",
+    "detail": "Detail"
   },
 
   "comparison": {
@@ -175,7 +221,17 @@
     "compareAcross": "Compare Across Madhabs",
     "results": "Comparison Results",
     "failed": "Comparison failed. Please try again.",
-    "noComparison": "No comparison available. Perform a calculation first."
+    "noComparison": "No comparison available. Perform a calculation first.",
+    "noDataToCompare": "No Data to Compare",
+    "currentScenario": "Current Scenario",
+    "estateLabel": "Estate:",
+    "heirsLabel": "Heirs:",
+    "compareAcrossAllMadhabs": "Compare Across All Madhabs",
+    "compareDescription": "Run calculations across all four schools. This will run the same scenario through all four madhabs and compare the results side-by-side.",
+    "recentComparisonResults": "Recent Comparison Results",
+    "comparisonResults": "Comparison Results",
+    "shareComparison": "Share Comparison",
+    "heir": "Heir"
   },
 
   "about": {
@@ -210,6 +266,42 @@
 
   "loading": {
     "appLoading": "Loading app..."
+  },
+
+  "error": {
+    "somethingWentWrong": "Something went wrong. Please try again.",
+    "retry": "Retry",
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Please try again.",
+    "details": "Error Details:",
+    "tryAgain": "Try Again"
+  },
+
+  "disclaimer": {
+    "title": "Terms & Disclaimers",
+    "calculationDisclaimer": "Calculation Disclaimer",
+    "calculationDisclaimerText": "This application provides inheritance calculations based on the four major Sunni schools of Islamic jurisprudence. Results are for informational and educational purposes only.",
+    "notLegalAdvice": "Not Legal Advice",
+    "notLegalAdviceText": "The calculations and information provided by this application should not be considered as legal, religious, or professional advice. Always consult a qualified Islamic scholar or legal professional before making inheritance decisions.",
+    "privacyPolicy": "Privacy Policy",
+    "privacyPolicyText": "All calculations and data are stored locally on your device. No personal data is transmitted to external servers. You have full control over your data and can export or delete it at any time.",
+    "decline": "Decline",
+    "accept": "Accept"
+  },
+
+  "quickAdd": {
+    "wife2Daughters": "Wife + 2 Daughters",
+    "husbandSonDaughter": "Husband + Son + Daughter",
+    "parentsWife": "Parents + Wife",
+    "wifeParentsBrother": "Wife + Parents + Brother",
+    "twoSonsWife": "2 Sons + Wife",
+    "daughterGrandfather": "Daughter + Grandfather"
+  },
+
+  "stepper": {
+    "counter": "Counter",
+    "decrease": "Decrease",
+    "increase": "Increase"
   },
 
   "common": {

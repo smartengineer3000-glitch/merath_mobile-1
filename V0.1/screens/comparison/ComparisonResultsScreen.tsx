@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
+import { useTranslation } from "react-i18next";
 import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
 import { Card, SectionHeader, Badge } from "../../components/ui";
 import { formatCurrency, formatPercentage } from "../../lib/utils/formatters";
@@ -9,6 +10,7 @@ import type { CalculationResult } from "../../lib/inheritance/types";
 
 export default function ComparisonResultsScreen() {
   const { theme } = useAppTheme();
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const results: CalculationResult[] = route.params?.results || [];
@@ -22,7 +24,7 @@ export default function ComparisonResultsScreen() {
         ]}
       >
         <AnimatedHeader
-          title="Comparison Results"
+          title={t("comparison.comparisonResults")}
           leftIcon="arrow-back"
           onLeftPress={() => navigation.goBack()}
         />
@@ -38,7 +40,7 @@ export default function ComparisonResultsScreen() {
       ]}
     >
       <AnimatedHeader
-        title="Comparison Results"
+        title={t("comparison.comparisonResults")}
         leftIcon="arrow-back"
         onLeftPress={() => navigation.goBack()}
       />
@@ -78,7 +80,7 @@ export default function ComparisonResultsScreen() {
                     },
                   ]}
                 >
-                  {r.shares.length} shares
+                  {r.shares.length} {t("history.shares")}
                 </Text>
               </Card>
             );
@@ -87,7 +89,7 @@ export default function ComparisonResultsScreen() {
 
         {/* Per-heir comparison table */}
         <Card variant="elevated" style={styles.card}>
-          <SectionHeader title="Share Comparison" />
+          <SectionHeader title={t("comparison.shareComparison")} />
           <View
             style={[
               styles.tableHeader,
@@ -100,7 +102,7 @@ export default function ComparisonResultsScreen() {
                 { fontFamily: theme.fontFamily.english },
               ]}
             >
-              Heir
+              {t("comparison.heir")}
             </Text>
             {results.map((r, i) => (
               <Text

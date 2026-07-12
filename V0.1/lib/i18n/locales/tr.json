@@ -6,6 +6,8 @@
   },
   "navigation": {
     "calculator": "Hesapla",
+    "results": "Sonuçlar",
+    "comparison": "Karşılaştırma",
     "history": "Geçmiş",
     "settings": "Ayarlar",
     "about": "Hakkında"
@@ -27,7 +29,14 @@
     "resetAllFields": "Tüm alanları sıfırla",
     "calculationFailed": "Hesaplama başarısız oldu. Lütfen tekrar deneyin.",
     "calculatingInheritance": "Miras hesaplanıyor",
-    "calculateInheritance": "Mirası hesapla"
+    "calculateInheritance": "Mirası hesapla",
+    "newCalculation": "Yeni Hesaplama",
+    "viewLastResult": "Sonucu Görüntüle",
+    "recentCalculations": "Son Hesaplamalar",
+    "noRecentCalculations": "Son hesaplama yok",
+    "quickAddScenarios": "Hızlı Senaryo Ekleme",
+    "selected": "seçildi",
+    "selectedHeirs": "Seçilen Mirasçılar"
   },
   "estate": {
     "title": "Miras Bilgileri",
@@ -35,7 +44,11 @@
     "funeral": "Cenaze Masrafları",
     "debts": "Borçlar",
     "will": "Vasiyetname",
-    "netEstate": "Net Miras"
+    "netEstate": "Net Miras",
+    "deductions": "Kesintiler:",
+    "hideDeductions": "Kesintileri gizle",
+    "deductionsWill": "Kesintiler ve Vasiyet",
+    "maxOneThird": "Toplamın 1/3'ü kadar"
   },
   "heirs": {
     "title": "Mirasçı Ekle",
@@ -115,7 +128,31 @@
     "showComparison": "Karşılaştırmayı Göster",
     "statistics": "İstatistikler",
     "totalCalculations": "Toplam Hesaplamalar",
-    "currentResult": "Mevcut Sonuç"
+    "currentResult": "Mevcut Sonuç",
+    "tabs": {
+      "distribution": "Dağıtım",
+      "steps": "Adımlar",
+      "explanation": "Açıklama",
+      "export": "Dışa Aktar"
+    },
+    "totalDistribution": "Toplam Dağıtım",
+    "awlApplied": "Al-Awl Uygulandı",
+    "raddApplied": "Al-Radd Uygulandı",
+    "distributionBreakdown": "Dağıtım Detayları",
+    "fiqhExplanation": "Fıkıh Açıklaması",
+    "fiqhExplanationFallback": "Bu hesaplama için detaylı fıkıh açıklamaları gelecek güncellemede mevcut olacaktır.",
+    "warnings": "Uyarılar",
+    "exportPdf": "PDF olarak dışa aktar",
+    "exportPdfDesc": "Profesyonel rapor oluşturun",
+    "exportImage": "Resim olarak paylaş",
+    "exportImageDesc": "Sonuçları yakalayın ve paylaşın",
+    "exportClipboard": "Panoya kopyala",
+    "exportClipboardDesc": "Sonuçları metin olarak kopyalayın",
+    "exportShare": "Paylaş",
+    "exportShareDesc": "Diğer uygulamalar aracılığıyla paylaşın",
+    "exportOptions": "Dışa Aktarma Seçenekleri",
+    "noResultsTitle": "Sonuç Yok",
+    "noResultsDescription": "Sonuçları görmek için lütfen önce hesaplama yapın"
   },
   "settings": {
     "title": "Ayarlar",
@@ -143,7 +180,15 @@
     "dataCleared": "Tüm veriler temizlendi",
     "about": "Uygulama Hakkında",
     "version": "Sürüm",
-    "developer": "Geliştirici"
+    "developer": "Geliştirici",
+    "defaultMadhab": "Varsayılan Mezhep",
+    "dark": "Koyu",
+    "light": "Açık",
+    "decimalPlaces": "ondalık basamak"
+  },
+  "language": {
+    "title": "Dil",
+    "rtl": "Sağdan Sola"
   },
   "comparison": {
     "title": "Mezhep Karşılaştırması",
@@ -153,7 +198,18 @@
     "comparing": "Karşılaştırılıyor...",
     "compareAcross": "Mezheplerde Karşılaştır",
     "results": "Karşılaştırma Sonuçları",
-    "failed": "Karşılaştırma başarısız oldu. Lütfen tekrar deneyin."
+    "failed": "Karşılaştırma başarısız oldu. Lütfen tekrar deneyin.",
+    "noComparison": "Karşılaştırma mevcut değil. Önce bir hesaplama yapın.",
+    "noDataToCompare": "Karşılaştıracak Veri Yok",
+    "currentScenario": "Mevcut Senaryo",
+    "estateLabel": "Miras:",
+    "heirsLabel": "Mirasçılar:",
+    "compareAcrossAllMadhabs": "Tüm Mezheplerde Karşılaştır",
+    "compareDescription": "Dört mezhebin tümünde hesaplama yapın. Bu, aynı senaryoyu dört mezhepte de çalıştıracak ve sonuçları yan yana karşılaştıracaktır.",
+    "recentComparisonResults": "Son Karşılaştırma Sonuçları",
+    "comparisonResults": "Karşılaştırma Sonuçları",
+    "shareComparison": "Karşılaştırmayı Paylaş",
+    "heir": "Mirasçı"
   },
   "about": {
     "title": "Merath Hakkında",
@@ -171,6 +227,18 @@
     "privacy": "Gizlilik Politikası",
     "terms": "Hizmet Şartları"
   },
+  "history": {
+    "title": "Hesaplama Geçmişi",
+    "noHistory": "Hesaplama geçmişi mevcut değil",
+    "subtitle": "Geçmiş hesaplamalarınızı görüntüleyin",
+    "awl": "Awl",
+    "radd": "Radd",
+    "shares": "pay",
+    "calculations": "hesaplama",
+    "searchPlaceholder": "Mirasçı veya mezhebe göre ara...",
+    "filterAll": "Tümü",
+    "detail": "Ayrıntı"
+  },
   "onboarding": {
     "welcome": "Merath'a Hoş Geldiniz",
     "welcomeDescription": "Dört mezhebe göre İslami miras paylarını hesaplamak için kapsamlı uygulama",
@@ -185,6 +253,38 @@
   },
   "loading": {
     "appLoading": "Uygulama yükleniyor..."
+  },
+  "error": {
+    "somethingWentWrong": "Bir şeyler yanlış gitti. Lütfen tekrar deneyin.",
+    "retry": "Tekrar Dene",
+    "title": "Bir şeyler yanlış gitti",
+    "description": "Beklenmedik bir hata oluştu. Lütfen tekrar deneyin.",
+    "details": "Hata Detayları:",
+    "tryAgain": "Tekrar Dene"
+  },
+  "disclaimer": {
+    "title": "Şartlar ve Sorumluluk Reddi",
+    "calculationDisclaimer": "Hesaplama Sorumluluk Reddi",
+    "calculationDisclaimerText": "Bu uygulama, dört büyük Sünni İslam fıkıh okuluna dayalı miras hesaplamaları sağlar. Sonuçlar yalnızca bilgilendirme ve eğitim amaçlıdır.",
+    "notLegalAdvice": "Yasal Tavsiye Değildir",
+    "notLegalAdviceText": "Bu uygulama tarafından sağlanan hesaplamalar ve bilgiler yasal, dini veya profesyonel tavsiye olarak değerlendirilmemelidir. Miras kararları vermeden önce her zaman yetkili bir İslam alımı veya hukuk profesyoneline danışın.",
+    "privacyPolicy": "Gizlilik Politikası",
+    "privacyPolicyText": "Tüm hesaplamalar ve veriler cihazınızda yerel olarak saklanır. Kişisel veriler harici sunuculara iletilmez. Verileriniz üzerinde tam kontrolünüz vardır ve istediğiniz zaman dışa aktarabilir veya silebilirsiniz.",
+    "decline": "Reddet",
+    "accept": "Kabul Et"
+  },
+  "quickAdd": {
+    "wife2Daughters": "Eş + 2 Kız",
+    "husbandSonDaughter": "Koca + Oğul + Kız",
+    "parentsWife": "Ebeveyn + Eş",
+    "wifeParentsBrother": "Eş + Ebeveyn + Kardeş",
+    "twoSonsWife": "2 Oğul + Eş",
+    "daughterGrandfather": "Kız + Dede"
+  },
+  "stepper": {
+    "counter": "Sayaç",
+    "decrease": "Azalt",
+    "increase": "Artır"
   },
   "common": {
     "ok": "Tamam",

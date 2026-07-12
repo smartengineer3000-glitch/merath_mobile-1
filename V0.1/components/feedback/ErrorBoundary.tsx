@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
+import i18next from "../../lib/i18n";
 import type { Theme } from "../../lib/design/theme";
 
 interface ErrorBoundaryProps {
@@ -55,12 +56,12 @@ export class ErrorBoundary extends Component<
           <ScrollView contentContainerStyle={styles.content}>
             <Text style={styles.icon}>!</Text>
             <Text style={[styles.title, { color: theme.colors.error.main }]}>
-              Something went wrong
+              {i18next.t("error.title")}
             </Text>
             <Text
               style={[styles.message, { color: theme.colors.neutral.dark200 }]}
             >
-              An unexpected error occurred. Please try again.
+              {i18next.t("error.description")}
             </Text>
 
             {__DEV__ && this.state.error && (
@@ -79,7 +80,7 @@ export class ErrorBoundary extends Component<
                     { color: theme.colors.neutral.dark200 },
                   ]}
                 >
-                  Error Details:
+                  {i18next.t("error.details")}
                 </Text>
                 <Text
                   style={[
@@ -102,7 +103,9 @@ export class ErrorBoundary extends Component<
                 },
               ]}
             >
-              <Text style={styles.retryText}>Try Again</Text>
+              <Text style={styles.retryText}>
+                {i18next.t("error.tryAgain")}
+              </Text>
             </TouchableOpacity>
           </ScrollView>
         </View>

@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
+import { useTranslation } from "react-i18next";
 import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
 import {
   Card,
@@ -16,6 +17,7 @@ import type { CalculationResult } from "../../lib/inheritance/types";
 
 export default function HistoryDetailScreen() {
   const { theme } = useAppTheme();
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const result: CalculationResult = route.params?.result;
@@ -29,7 +31,7 @@ export default function HistoryDetailScreen() {
         ]}
       >
         <AnimatedHeader
-          title="Detail"
+          title={t("history.detail")}
           leftIcon="arrow-back"
           onLeftPress={() => navigation.goBack()}
         />
@@ -75,7 +77,7 @@ export default function HistoryDetailScreen() {
                   },
                 ]}
               >
-                Total Distribution
+                {t("results.totalDistribution")}
               </Text>
               <Text
                 style={[
@@ -111,20 +113,24 @@ export default function HistoryDetailScreen() {
             />
             {result.awlApplied && (
               <Badge
-                label="Al-Awl"
+                label={t("results.awlApplied")}
                 color={theme.colors.warning.main}
                 size="sm"
               />
             )}
             {result.raddApplied && (
-              <Badge label="Al-Radd" color={theme.colors.info.main} size="sm" />
+              <Badge
+                label={t("results.raddApplied")}
+                color={theme.colors.info.main}
+                size="sm"
+              />
             )}
           </View>
         </Card>
 
         {/* Distribution */}
         <Card variant="elevated" style={styles.card}>
-          <SectionHeader title="Distribution" />
+          <SectionHeader title={t("results.title")} />
           {result.shares.map((share, i) => {
             const pct = total > 0 ? (share.amount / total) * 100 : 0;
             return (
@@ -181,7 +187,7 @@ export default function HistoryDetailScreen() {
         {/* Steps */}
         {result.steps.length > 0 && (
           <Card variant="elevated" style={styles.card}>
-            <SectionHeader title="Calculation Steps" />
+            <SectionHeader title={t("results.calculationSteps")} />
             {result.steps.map((step, i) => (
               <View key={i} style={styles.stepRow}>
                 <View

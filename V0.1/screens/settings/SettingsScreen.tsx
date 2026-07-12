@@ -92,7 +92,7 @@ export default function SettingsScreen() {
               </View>
             </View>
             <Badge
-              label={mode === "dark" ? "Dark" : "Light"}
+              label={mode === "dark" ? t("settings.dark") : t("settings.light")}
               color={theme.colors.primary.main}
               size="sm"
             />
@@ -226,7 +226,7 @@ export default function SettingsScreen() {
                     },
                   ]}
                 >
-                  {state.roundingDecimals} decimal places
+                  {state.roundingDecimals} {t("settings.decimalPlaces")}
                 </Text>
               </View>
             </View>

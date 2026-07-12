@@ -1,27 +1,36 @@
 import React from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
+import { useTranslation } from "react-i18next";
 import { Chip } from "../ui";
 
 interface QuickAddChipsProps {
   onSelect: (heirs: Record<string, number>) => void;
 }
 
-const QUICK_SCENARIOS: { label: string; data: Record<string, number> }[] = [
-  { label: "Wife + 2 Daughters", data: { wife: 1, daughter: 2 } },
-  {
-    label: "Husband + Son + Daughter",
-    data: { husband: 1, son: 1, daughter: 1 },
-  },
-  { label: "Parents + Wife", data: { father: 1, mother: 1, wife: 1 } },
-  {
-    label: "Wife + Parents + Brother",
-    data: { wife: 1, father: 1, mother: 1, full_brother: 1 },
-  },
-  { label: "2 Sons + Wife", data: { son: 2, wife: 1 } },
-  { label: "Daughter + Grandfather", data: { daughter: 1, grandfather: 1 } },
-];
-
 export function QuickAddChips({ onSelect }: QuickAddChipsProps) {
+  const { t } = useTranslation();
+
+  const QUICK_SCENARIOS: { label: string; data: Record<string, number> }[] = [
+    { label: t("quickAdd.wife2Daughters"), data: { wife: 1, daughter: 2 } },
+    {
+      label: t("quickAdd.husbandSonDaughter"),
+      data: { husband: 1, son: 1, daughter: 1 },
+    },
+    {
+      label: t("quickAdd.parentsWife"),
+      data: { father: 1, mother: 1, wife: 1 },
+    },
+    {
+      label: t("quickAdd.wifeParentsBrother"),
+      data: { wife: 1, father: 1, mother: 1, full_brother: 1 },
+    },
+    { label: t("quickAdd.twoSonsWife"), data: { son: 2, wife: 1 } },
+    {
+      label: t("quickAdd.daughterGrandfather"),
+      data: { daughter: 1, grandfather: 1 },
+    },
+  ];
+
   return (
     <View style={styles.container}>
       <ScrollView

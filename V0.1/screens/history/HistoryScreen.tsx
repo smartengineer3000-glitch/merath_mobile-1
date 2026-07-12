@@ -69,10 +69,18 @@ export default function HistoryScreen() {
               size="sm"
             />
             {item.specialCases?.awl && (
-              <Badge label="Awl" color={theme.colors.warning.main} size="sm" />
+              <Badge
+                label={t("history.awl")}
+                color={theme.colors.warning.main}
+                size="sm"
+              />
             )}
             {item.specialCases?.radd && (
-              <Badge label="Radd" color={theme.colors.info.main} size="sm" />
+              <Badge
+                label={t("history.radd")}
+                color={theme.colors.info.main}
+                size="sm"
+              />
             )}
           </View>
 
@@ -111,7 +119,7 @@ export default function HistoryScreen() {
                 },
               ]}
             >
-              {item.shares.length} shares
+              {item.shares.length} {t("history.shares")}
             </Text>
             <Text
               style={[
@@ -140,7 +148,7 @@ export default function HistoryScreen() {
     >
       <AnimatedHeader
         title={t("history.title")}
-        subtitle={`${filteredResults.length} calculations`}
+        subtitle={`${filteredResults.length} ${t("history.calculations")}`}
         rightIcon={searchVisible ? "close" : "search"}
         onRightPress={() => {
           setSearchVisible(!searchVisible);
@@ -172,7 +180,7 @@ export default function HistoryScreen() {
                 fontFamily: theme.fontFamily.english,
               },
             ]}
-            placeholder="Search by heir or madhab..."
+            placeholder={t("history.searchPlaceholder")}
             placeholderTextColor={theme.colors.neutral.light400}
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -186,7 +194,7 @@ export default function HistoryScreen() {
         {[null, "hanafi", "maliki", "shafii", "hanbali"].map((m) => (
           <Chip
             key={m || "all"}
-            label={m ? t(`madhab.${m}`) : "All"}
+            label={m ? t(`madhab.${m}`) : t("history.filterAll")}
             selected={filterMadhab === m}
             onPress={() => setFilterMadhab(m)}
             size="sm"

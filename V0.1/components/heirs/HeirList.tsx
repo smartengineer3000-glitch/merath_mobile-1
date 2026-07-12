@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { getHeirByType } from "../../constants/heirData";
 import { Avatar, Badge } from "../ui";
@@ -10,6 +11,7 @@ interface HeirListProps {
 
 export function HeirList({ selectedHeirs }: HeirListProps) {
   const { theme } = useAppTheme();
+  const { t } = useTranslation();
   const entries = Object.entries(selectedHeirs).filter(
     ([_, count]) => count > 0,
   );
@@ -38,7 +40,7 @@ export function HeirList({ selectedHeirs }: HeirListProps) {
                   },
                 ]}
               >
-                {key.replace(/_/g, " ")}
+                {t(`heirs.${key}`)}
               </Text>
             </View>
             <Badge count={count} color={heir.color} size="sm" />

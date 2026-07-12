@@ -41,11 +41,11 @@ export function ErrorScreen({ message, onRetry }: ErrorScreenProps) {
           },
         ]}
       >
-        {message || "Something went wrong. Please try again."}
+        {message || t("error.somethingWentWrong")}
       </Text>
       {onRetry && (
         <Button
-          title="Retry"
+          title={t("error.retry")}
           onPress={onRetry}
           variant="primary"
           style={styles.button}

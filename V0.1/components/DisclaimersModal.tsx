@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, Modal, ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 import { useAppTheme } from "../lib/context/ThemeProvider";
 import { Button } from "./ui";
 
@@ -18,6 +19,7 @@ export function DisclaimersModal({
   showPrivacyPolicy = true,
 }: DisclaimersModalProps) {
   const { theme } = useAppTheme();
+  const { t } = useTranslation();
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
@@ -42,7 +44,7 @@ export function DisclaimersModal({
                 },
               ]}
             >
-              Terms & Disclaimers
+              {t("disclaimer.title")}
             </Text>
 
             <ScrollView
@@ -59,7 +61,7 @@ export function DisclaimersModal({
                     },
                   ]}
                 >
-                  Calculation Disclaimer
+                  {t("disclaimer.calculationDisclaimer")}
                 </Text>
                 <Text
                   style={[
@@ -70,9 +72,7 @@ export function DisclaimersModal({
                     },
                   ]}
                 >
-                  This application provides inheritance calculations based on
-                  the four major Sunni schools of Islamic jurisprudence. Results
-                  are for informational and educational purposes only.
+                  {t("disclaimer.calculationDisclaimerText")}
                 </Text>
               </View>
 
@@ -86,7 +86,7 @@ export function DisclaimersModal({
                     },
                   ]}
                 >
-                  Not Legal Advice
+                  {t("disclaimer.notLegalAdvice")}
                 </Text>
                 <Text
                   style={[
@@ -97,10 +97,7 @@ export function DisclaimersModal({
                     },
                   ]}
                 >
-                  The calculations and information provided by this application
-                  should not be considered as legal, religious, or professional
-                  advice. Always consult a qualified Islamic scholar or legal
-                  professional before making inheritance decisions.
+                  {t("disclaimer.notLegalAdviceText")}
                 </Text>
               </View>
 
@@ -115,7 +112,7 @@ export function DisclaimersModal({
                       },
                     ]}
                   >
-                    Privacy Policy
+                    {t("disclaimer.privacyPolicy")}
                   </Text>
                   <Text
                     style={[
@@ -126,10 +123,7 @@ export function DisclaimersModal({
                       },
                     ]}
                   >
-                    All calculations and data are stored locally on your device.
-                    No personal data is transmitted to external servers. You
-                    have full control over your data and can export or delete it
-                    at any time.
+                    {t("disclaimer.privacyPolicyText")}
                   </Text>
                 </View>
               )}
@@ -137,13 +131,13 @@ export function DisclaimersModal({
 
             <View style={styles.buttons}>
               <Button
-                title="Decline"
+                title={t("disclaimer.decline")}
                 onPress={onDecline}
                 variant="text"
                 style={styles.declineButton}
               />
               <Button
-                title="Accept"
+                title={t("disclaimer.accept")}
                 onPress={onAccept}
                 variant="primary"
                 style={styles.acceptButton}

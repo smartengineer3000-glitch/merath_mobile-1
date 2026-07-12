@@ -6,6 +6,8 @@
   },
   "navigation": {
     "calculator": "Rechner",
+    "results": "Ergebnisse",
+    "comparison": "Vergleich",
     "history": "Verlauf",
     "settings": "Einstellungen",
     "about": "Über"
@@ -27,7 +29,14 @@
     "resetAllFields": "Alle Felder zurücksetzen",
     "calculationFailed": "Berechnung fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "calculatingInheritance": "Erbschaft wird berechnet",
-    "calculateInheritance": "Erbschaft berechnen"
+    "calculateInheritance": "Erbschaft berechnen",
+    "newCalculation": "Neue Berechnung",
+    "viewLastResult": "Letztes Ergebnis anzeigen",
+    "recentCalculations": "Letzte Berechnungen",
+    "noRecentCalculations": "Keine letzten Berechnungen",
+    "quickAddScenarios": "Schnelle Szenarien hinzufügen",
+    "selected": "ausgewählt",
+    "selectedHeirs": "Ausgewählte Erben"
   },
   "estate": {
     "title": "Erbschaftsinformationen",
@@ -35,7 +44,11 @@
     "funeral": "Bestattungskosten",
     "debts": "Schulden",
     "will": "Testament",
-    "netEstate": "Nettovermögen"
+    "netEstate": "Nettovermögen",
+    "deductions": "Abzüge:",
+    "hideDeductions": "Abzüge ausblenden",
+    "deductionsWill": "Abzüge & Testament",
+    "maxOneThird": "Max. 1/3 des Gesamtbetrags"
   },
   "heirs": {
     "title": "Erben hinzufügen",
@@ -115,7 +128,31 @@
     "showComparison": "Vergleich anzeigen",
     "statistics": "Statistiken",
     "totalCalculations": "Gesamtberechnungen",
-    "currentResult": "Aktuelles Ergebnis"
+    "currentResult": "Aktuelles Ergebnis",
+    "tabs": {
+      "distribution": "Verteilung",
+      "steps": "Schritte",
+      "explanation": "Erklärung",
+      "export": "Exportieren"
+    },
+    "totalDistribution": "Gesamtverteilung",
+    "awlApplied": "Al-Awl angewandt",
+    "raddApplied": "Al-Radd angewandt",
+    "distributionBreakdown": "Verteilungsdetails",
+    "fiqhExplanation": "Rechtsgelehrte Erklärung",
+    "fiqhExplanationFallback": "Detaillierte rechtsgelehrte Erklärungen zu dieser Berechnung werden in einem zukünftigen Update verfügbar sein.",
+    "warnings": "Warnungen",
+    "exportPdf": "Als PDF exportieren",
+    "exportPdfDesc": "Professionellen Bericht erstellen",
+    "exportImage": "Als Bild teilen",
+    "exportImageDesc": "Ergebnisse erfassen und teilen",
+    "exportClipboard": "In Zwischenablage kopieren",
+    "exportClipboardDesc": "Ergebnisse als Text kopieren",
+    "exportShare": "Teilen",
+    "exportShareDesc": "Über andere Apps teilen",
+    "exportOptions": "Exportoptionen",
+    "noResultsTitle": "Keine Ergebnisse",
+    "noResultsDescription": "Bitte führen Sie zuerst eine Berechnung durch, um Ergebnisse zu sehen"
   },
   "settings": {
     "title": "Einstellungen",
@@ -143,7 +180,27 @@
     "dataCleared": "Alle Daten gelöscht",
     "about": "Über die App",
     "version": "Version",
-    "developer": "Entwickler"
+    "developer": "Entwickler",
+    "defaultMadhab": "Standard-Madhab",
+    "dark": "Dunkel",
+    "light": "Hell",
+    "decimalPlaces": "Dezimalstellen"
+  },
+  "language": {
+    "title": "Sprache",
+    "rtl": "Rechts nach links"
+  },
+  "history": {
+    "title": "Berechnungsverlauf",
+    "noHistory": "Kein Berechnungsverlauf verfügbar",
+    "subtitle": "Sehen Sie sich Ihre vergangenen Berechnungen an",
+    "awl": "Awl",
+    "radd": "Radd",
+    "shares": "Anteile",
+    "calculations": "Berechnungen",
+    "searchPlaceholder": "Nach Erbe oder Madhab suchen...",
+    "filterAll": "Alle",
+    "detail": "Details"
   },
   "comparison": {
     "title": "Madhab-Vergleich",
@@ -153,7 +210,18 @@
     "comparing": "Wird verglichen...",
     "compareAcross": "Madhabs vergleichen",
     "results": "Vergleichsergebnisse",
-    "failed": "Vergleich fehlgeschlagen. Bitte versuchen Sie es erneut."
+    "failed": "Vergleich fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "noComparison": "Kein Vergleich verfügbar. Führen Sie zuerst eine Berechnung durch.",
+    "noDataToCompare": "Keine Daten zum Vergleichen",
+    "currentScenario": "Aktuelles Szenario",
+    "estateLabel": "Erbschaft:",
+    "heirsLabel": "Erben:",
+    "compareAcrossAllMadhabs": "Alle Madhabs vergleichen",
+    "compareDescription": "Führen Sie Berechnungen in allen vier Rechtsschulen durch. Dies wird dasselbe Szenario in allen vier Madhabs ausführen und die Ergebnisse nebeneinander vergleichen.",
+    "recentComparisonResults": "Letzte Vergleichsergebnisse",
+    "comparisonResults": "Vergleichsergebnisse",
+    "shareComparison": "Vergleich teilen",
+    "heir": "Erbe"
   },
   "about": {
     "title": "Über Merath",
@@ -185,6 +253,38 @@
   },
   "loading": {
     "appLoading": "App wird geladen..."
+  },
+  "error": {
+    "somethingWentWrong": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+    "retry": "Erneut versuchen",
+    "title": "Etwas ist schiefgelaufen",
+    "description": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+    "details": "Fehlerdetails:",
+    "tryAgain": "Erneut versuchen"
+  },
+  "disclaimer": {
+    "title": "Bedingungen & Haftungsausschluss",
+    "calculationDisclaimer": "Berechnungshaftungsausschluss",
+    "calculationDisclaimerText": "Diese Anwendung bietet Erbschaftsberechnungen auf Basis der vier großen sunnitischen Schulen der islamischen Rechtsgelehrsamkeit. Die Ergebnisse dienen nur zu Informations- und Bildungszwecken.",
+    "notLegalAdvice": "Keine Rechtsberatung",
+    "notLegalAdviceText": "Die von dieser Anwendung bereitgestellten Berechnungen und Informationen sollten nicht als rechtliche, religiöse oder professionelle Beratung betrachtet werden. Konsultieren Sie immer einen qualifizierten islamischen Gelehrten oder Rechtsberater, bevor Sie Erbschaftsentscheidungen treffen.",
+    "privacyPolicy": "Datenschutzrichtlinie",
+    "privacyPolicyText": "Alle Berechnungen und Daten werden lokal auf Ihrem Gerät gespeichert. Es werden keine persönlichen Daten an externe Server übertragen. Sie haben die volle Kontrolle über Ihre Daten und können diese jederzeit exportieren oder löschen.",
+    "decline": "Ablehnen",
+    "accept": "Akzeptieren"
+  },
+  "quickAdd": {
+    "wife2Daughters": "Ehefrau + 2 Töchter",
+    "husbandSonDaughter": "Ehemann + Sohn + Tochter",
+    "parentsWife": "Eltern + Ehefrau",
+    "wifeParentsBrother": "Ehefrau + Eltern + Bruder",
+    "twoSonsWife": "2 Söhne + Ehefrau",
+    "daughterGrandfather": "Tochter + Großvater"
+  },
+  "stepper": {
+    "counter": "Zähler",
+    "decrease": "Verringern",
+    "increase": "Erhöhen"
   },
   "common": {
     "ok": "OK",

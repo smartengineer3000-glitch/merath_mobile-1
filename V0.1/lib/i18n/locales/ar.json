@@ -7,6 +7,8 @@
 
   "navigation": {
     "calculator": "آلة الحساب",
+    "results": "النتائج",
+    "comparison": "المقارنة",
     "history": "السجل",
     "settings": "الإعدادات",
     "about": "حول"
@@ -29,7 +31,14 @@
     "resetAllFields": "إعادة تعيين جميع الحقول",
     "calculationFailed": "فشل الحساب. يرجى المحاولة مرة أخرى.",
     "calculatingInheritance": "جارٍ حساب الميراث",
-    "calculateInheritance": "حساب الميراث"
+    "calculateInheritance": "حساب الميراث",
+    "newCalculation": "حساب جديد",
+    "viewLastResult": "عرض آخر نتيجة",
+    "recentCalculations": "الحسابات الأخيرة",
+    "noRecentCalculations": "لا توجد حسابات حديثة",
+    "quickAddScenarios": "سيناريوهات إضافة سريعة",
+    "selected": "محدد",
+    "selectedHeirs": "الورثة المحددون"
   },
 
   "estate": {
@@ -38,7 +47,11 @@
     "funeral": "نفقات الجنازة",
     "debts": "الديون",
     "will": "الوصية",
-    "netEstate": "التركة الصافية"
+    "netEstate": "التركة الصافية",
+    "deductions": "الخصومات:",
+    "hideDeductions": "إخفاء الخصومات",
+    "deductionsWill": "الخصومات والوصية",
+    "maxOneThird": "الحد الأقصى ثلث الإجمالي"
   },
 
   "heirs": {
@@ -121,7 +134,31 @@
     "showComparison": "عرض المقارنة",
     "statistics": "الإحصائيات",
     "totalCalculations": "إجمالي الحسابات",
-    "currentResult": "النتيجة الحالية"
+    "currentResult": "النتيجة الحالية",
+    "tabs": {
+      "distribution": "التوزيع",
+      "steps": "الخطوات",
+      "explanation": "التفسير",
+      "export": "تصدير"
+    },
+    "totalDistribution": "إجمالي التوزيع",
+    "awlApplied": "تم تطبيق العول",
+    "raddApplied": "تم تطبيق الرد",
+    "distributionBreakdown": "تفاصيل التوزيع",
+    "fiqhExplanation": "التفسير الفقهي",
+    "fiqhExplanationFallback": "ستتوفر شروحات فقهية تفصيلية لهذا الحساب في تحديث مستقبلي.",
+    "warnings": "تحذيرات",
+    "exportPdf": "تصدير كملف PDF",
+    "exportPdfDesc": "إنشاء تقرير احترافي",
+    "exportImage": "مشاركة كصورة",
+    "exportImageDesc": "التقاط النتائج ومشاركتها",
+    "exportClipboard": "نسخ إلى الحافظة",
+    "exportClipboardDesc": "نسخ النتائج كنص",
+    "exportShare": "مشاركة",
+    "exportShareDesc": "مشاركة عبر تطبيقات أخرى",
+    "exportOptions": "خيارات التصدير",
+    "noResultsTitle": "لا توجد نتائج",
+    "noResultsDescription": "يرجى إجراء حساب أولاً لرؤية النتائج"
   },
 
   "settings": {
@@ -150,7 +187,29 @@
     "dataCleared": "تم مسح جميع البيانات",
     "about": "حول التطبيق",
     "version": "الإصدار",
-    "developer": "المطور"
+    "developer": "المطور",
+    "defaultMadhab": "المذهب الافتراضي",
+    "dark": "داكن",
+    "light": "فاتح",
+    "decimalPlaces": "أجزاء عشرية"
+  },
+
+  "language": {
+    "title": "اللغة",
+    "rtl": "من اليمين لليسار"
+  },
+
+  "history": {
+    "title": "سجل الحسابات",
+    "noHistory": "لا يوجد سجل حسابات",
+    "subtitle": "عرض حساباتك السابقة",
+    "awl": "عول",
+    "radd": "رد",
+    "shares": "حصص",
+    "calculations": "حسابات",
+    "searchPlaceholder": "بحث بالوارث أو المذهب...",
+    "filterAll": "الكل",
+    "detail": "التفاصيل"
   },
 
   "comparison": {
@@ -161,7 +220,18 @@
     "comparing": "جارٍ المقارنة...",
     "compareAcross": "مقارنة عبر المذاهب",
     "results": "نتائج المقارنة",
-    "failed": "فشلت المقارنة. يرجى المحاولة مرة أخرى."
+    "failed": "فشلت المقارنة. يرجى المحاولة مرة أخرى.",
+    "noComparison": "لا توجد مقارنة متاحة. قم بإجراء حساب أولاً.",
+    "noDataToCompare": "لا توجد بيانات للمقارنة",
+    "currentScenario": "السيناريو الحالي",
+    "estateLabel": "التركة:",
+    "heirsLabel": "الورثة:",
+    "compareAcrossAllMadhabs": "مقارنة عبر جميع المذاهب",
+    "compareDescription": "قم بتشغيل الحسابات عبر المذاهب الأربعة. سيقوم هذا بتشغيل نفس السيناريو عبر جميع المذاهب الأربعة ومقارنة النتائج جنباً إلى جنب.",
+    "recentComparisonResults": "نتائج المقارنة الأخيرة",
+    "comparisonResults": "نتائج المقارنة",
+    "shareComparison": "مشاركة المقارنة",
+    "heir": "الوارث"
   },
 
   "about": {
@@ -196,6 +266,42 @@
 
   "loading": {
     "appLoading": "جاري تحميل التطبيق..."
+  },
+
+  "error": {
+    "somethingWentWrong": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "retry": "إعادة المحاولة",
+    "title": "حدث خطأ ما",
+    "description": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.",
+    "details": "تفاصيل الخطأ:",
+    "tryAgain": "حاول مرة أخرى"
+  },
+
+  "disclaimer": {
+    "title": "الشروط والتنويهات",
+    "calculationDisclaimer": "تنويه الحساب",
+    "calculationDisclaimerText": "يقدم هذا التطبيق حسابات الميراث بناءً على المذاهب السنية الأربعة الرئيسية في الفقه الإسلامي. النتائج لأغراض تثقيفية وإعلامية فقط.",
+    "notLegalAdvice": "ليس نصيحة قانونية",
+    "notLegalAdviceText": "لا يجب اعتبار الحسابات والمعلومات المقدمة من هذا التطبيق نصيحة قانونية أو دينية أو مهنية. استشر دائماً عالماً إسلامياً مؤهلاً أو متخصصاً قانونياً قبل اتخاذ قرارات الميراث.",
+    "privacyPolicy": "سياسة الخصوصية",
+    "privacyPolicyText": "يتم تخزين جميع الحسابات والبيانات محلياً على جهازك. لا يتم نقل أي بيانات شخصية إلى خوادم خارجية. لديك السيطرة الكاملة على بياناتك ويمكنك تصديرها أو حذفها في أي وقت.",
+    "decline": "رفض",
+    "accept": "قبول"
+  },
+
+  "quickAdd": {
+    "wife2Daughters": "زوجة + بنتان",
+    "husbandSonDaughter": "زوج + ابن + بنت",
+    "parentsWife": "والدان + زوجة",
+    "wifeParentsBrother": "زوجة + والدان + أخ",
+    "twoSonsWife": "ابنان + زوجة",
+    "daughterGrandfather": "بنت + جد"
+  },
+
+  "stepper": {
+    "counter": "عداد",
+    "decrease": "نقصان",
+    "increase": "زيادة"
   },
 
   "common": {
