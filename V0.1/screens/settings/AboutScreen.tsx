@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, ScrollView, Linking, StyleSheet } from "react-native";
+import { View, Text, ScrollView, Linking, StyleSheet, I18nManager } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { useTranslation } from "react-i18next";
@@ -116,7 +116,7 @@ export default function AboutScreen() {
               >
                 <Ionicons
                   name={feature.icon as any}
-                  size={16}
+                  size={22}
                   color={theme.colors.primary.main}
                 />
               </View>
@@ -162,7 +162,7 @@ export default function AboutScreen() {
                 {link.label}
               </Text>
               <Ionicons
-                name="chevron-forward"
+                name={I18nManager.isRTL ? "chevron-back" : "chevron-forward"}
                 size={16}
                 color={theme.colors.neutral.light400}
               />
@@ -211,9 +211,9 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   featureIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
   },

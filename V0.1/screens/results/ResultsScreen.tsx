@@ -5,6 +5,8 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  Alert,
+  I18nManager,
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
@@ -542,6 +544,13 @@ function ExportTab({
               exportStyles.option,
               { borderBottomColor: theme.colors.neutral.light100 },
             ]}
+            activeOpacity={0.7}
+            onPress={() =>
+              Alert.alert(
+                t("results.exportOptions"),
+                `${option.label} — ${t("results.comingSoon")}`,
+              )
+            }
           >
             <View
               style={[
@@ -580,7 +589,7 @@ function ExportTab({
               </Text>
             </View>
             <Ionicons
-              name="chevron-forward"
+              name={I18nManager.isRTL ? "chevron-back" : "chevron-forward"}
               size={18}
               color={theme.colors.neutral.light400}
             />
@@ -649,8 +658,8 @@ const stepStyles = StyleSheet.create({
   step: {
     flexDirection: "row",
     paddingVertical: 12,
-    borderLeftWidth: 2,
-    paddingLeft: 12,
+    borderStartWidth: 2,
+    paddingStart: 12,
     gap: 10,
   },
   number: {

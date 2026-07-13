@@ -606,7 +606,7 @@ const styles = StyleSheet.create({
   testRowRight: { flexDirection: "row", alignItems: "center", gap: 6 },
   testDetail: {
     padding: 10,
-    marginLeft: 26,
+    marginStart: 26,
     marginBottom: 4,
     borderRadius: 6,
   },

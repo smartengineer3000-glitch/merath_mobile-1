@@ -84,8 +84,8 @@ export function Input({
               color: theme.colors.neutral.dark300,
               fontFamily: theme.fontFamily.english,
             },
-            leftIcon ? { paddingLeft: 0 } : null,
-            rightIcon ? { paddingRight: 0 } : null,
+            leftIcon ? { paddingStart: 0 } : null,
+            rightIcon ? { paddingEnd: 0 } : null,
           ]}
           placeholderTextColor={theme.colors.neutral.light400}
           onFocus={() => setIsFocused(true)}
@@ -142,10 +142,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   iconLeft: {
-    marginRight: 8,
+    marginEnd: 8,
   },
   iconRight: {
-    marginLeft: 8,
+    marginStart: 8,
   },
   helper: {
     fontSize: 11,

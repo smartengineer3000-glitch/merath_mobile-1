@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   titleWithIcon: {
-    marginLeft: 8,
+    marginStart: 8,
   },
   titleOnly: {},
   title: {

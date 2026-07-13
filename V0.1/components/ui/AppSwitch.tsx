@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
-    marginRight: 12,
+    marginEnd: 12,
   },
   label: {
     fontSize: 14,

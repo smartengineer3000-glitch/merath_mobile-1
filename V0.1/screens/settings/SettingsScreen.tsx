@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
+  I18nManager,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
@@ -139,7 +140,7 @@ export default function SettingsScreen() {
               </View>
             </View>
             <Ionicons
-              name="chevron-forward"
+              name={I18nManager.isRTL ? "chevron-back" : "chevron-forward"}
               size={18}
               color={theme.colors.neutral.light400}
             />
@@ -192,7 +193,7 @@ export default function SettingsScreen() {
               </View>
             </View>
             <Ionicons
-              name="chevron-forward"
+              name={I18nManager.isRTL ? "chevron-back" : "chevron-forward"}
               size={18}
               color={theme.colors.neutral.light400}
             />
@@ -282,7 +283,7 @@ export default function SettingsScreen() {
               </View>
             </View>
             <Ionicons
-              name="chevron-forward"
+              name={I18nManager.isRTL ? "chevron-back" : "chevron-forward"}
               size={18}
               color={theme.colors.neutral.light400}
             />
@@ -310,7 +311,7 @@ export default function SettingsScreen() {
               </View>
             </View>
             <Ionicons
-              name="chevron-forward"
+              name={I18nManager.isRTL ? "chevron-back" : "chevron-forward"}
               size={18}
               color={theme.colors.neutral.light400}
             />
@@ -367,7 +368,7 @@ export default function SettingsScreen() {
               </View>
             </View>
             <Ionicons
-              name="chevron-forward"
+              name={I18nManager.isRTL ? "chevron-back" : "chevron-forward"}
               size={18}
               color={theme.colors.neutral.light400}
             />
@@ -410,7 +411,7 @@ export default function SettingsScreen() {
               </View>
             </View>
             <Ionicons
-              name="chevron-forward"
+              name={I18nManager.isRTL ? "chevron-back" : "chevron-forward"}
               size={18}
               color={theme.colors.neutral.light400}
             />

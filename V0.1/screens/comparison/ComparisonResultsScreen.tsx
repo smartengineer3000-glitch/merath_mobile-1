@@ -202,6 +202,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   tableCell: { flex: 1, fontSize: 11, textAlign: "center" },
-  tableCellName: { fontSize: 12, fontWeight: "500", textAlign: "left" },
+  tableCellName: { fontSize: 12, fontWeight: "500", textAlign: "auto" },
   tableCellValue: { textAlign: "center" },
 });

@@ -85,14 +85,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderWidth: 1,
-    marginRight: 8,
+    marginEnd: 8,
     marginBottom: 8,
     alignItems: "center",
     justifyContent: "center",
   },
   chipSm: {
     paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingVertical: 14,
   },
   label: {
     fontSize: 13,

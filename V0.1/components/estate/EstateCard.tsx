@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     paddingVertical: 10,
   },
-  currency: { fontSize: 14, fontWeight: "500", marginLeft: 8 },
+  currency: { fontSize: 14, fontWeight: "500", marginStart: 8 },
   netEstateRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -336,7 +336,7 @@ const deductionStyles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 10,
   },
-  labelContainer: { flex: 1, marginRight: 12 },
+  labelContainer: { flex: 1, marginEnd: 12 },
   label: { fontSize: 13, fontWeight: "500" },
   hint: { fontSize: 10, marginTop: 2 },
   input: {
@@ -345,6 +345,6 @@ const deductionStyles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 10,
     fontSize: 14,
-    textAlign: "right",
+    textAlign: "auto",
   },
 });
