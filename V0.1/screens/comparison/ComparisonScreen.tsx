@@ -106,7 +106,7 @@ export default function ComparisonScreen() {
                 ]}
               >
                 {t("comparison.estateLabel")}{" "}
-                {formatCurrency(latestScenario.estate.total)} SAR
+                {formatCurrency(latestScenario.estate.total)} {t("common.currency")}
               </Text>
               <Text
                 style={[
@@ -186,7 +186,7 @@ export default function ComparisonScreen() {
                       {formatCurrency(
                         r.shares.reduce((sum, s) => sum + s.amount, 0),
                       )}{" "}
-                      SAR
+                      {t("common.currency")}
                     </Text>
                   </View>
                 ))}

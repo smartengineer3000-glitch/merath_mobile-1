@@ -93,7 +93,7 @@ export default function HistoryScreen() {
               },
             ]}
           >
-            {formatCurrency(total)} SAR
+            {formatCurrency(total)} {t("common.currency")}
           </Text>
 
           <Text
@@ -130,7 +130,7 @@ export default function HistoryScreen() {
                 },
               ]}
             >
-              {item.calculationTime?.toFixed(0)}ms
+              {item.calculationTime?.toFixed(0)}{t("common.ms")}
             </Text>
           </View>
         </TouchableOpacity>

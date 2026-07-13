@@ -349,7 +349,7 @@ export default function SettingsScreen() {
                     },
                   ]}
                 >
-                  Test Engine
+                  {t("settings.testEngine")}
                 </Text>
                 <Text
                   style={[
@@ -360,7 +360,7 @@ export default function SettingsScreen() {
                     },
                   ]}
                 >
-                  Run 40+ test cases
+                  {t("settings.testEngineDesc")}
                 </Text>
               </View>
             </View>

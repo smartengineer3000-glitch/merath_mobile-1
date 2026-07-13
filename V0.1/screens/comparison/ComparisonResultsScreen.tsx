@@ -69,7 +69,7 @@ export default function ComparisonResultsScreen() {
                     },
                   ]}
                 >
-                  {formatCurrency(total)} SAR
+                  {formatCurrency(total)} {t("common.currency")}
                 </Text>
                 <Text
                   style={[

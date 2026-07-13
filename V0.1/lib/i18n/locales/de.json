@@ -184,7 +184,9 @@
     "defaultMadhab": "Standard-Madhab",
     "dark": "Dunkel",
     "light": "Hell",
-    "decimalPlaces": "Dezimalstellen"
+    "decimalPlaces": "Dezimalstellen",
+    "testEngine": "Motor testen",
+    "testEngineDesc": "Über 40 Testszenarien ausführen"
   },
   "language": {
     "title": "Sprache",
@@ -303,6 +305,31 @@
     "info": "Information",
     "empty": "Keine Daten",
     "noResults": "Keine Ergebnisse gefunden",
-    "noNetwork": "Keine Internetverbindung – einige Funktionen sind möglicherweise nicht verfügbar"
+    "noNetwork": "Keine Internetverbindung – einige Funktionen sind möglicherweise nicht verfügbar",
+    "currency": "SAR",
+    "ms": "ms"
+  },
+
+  "engineTest": {
+    "title": "Motor-Testergebnisse",
+    "info": "Über 40 reale Erbschaftstestszenarien in allen 4 Madhabs ausführen",
+    "runAll": "Alle Tests ausführen",
+    "rerun": "Tests erneut ausführen",
+    "running": "Tests werden ausgeführt...",
+    "passed": "Bestanden",
+    "failed": "Fehlgeschlagen",
+    "total": "Gesamt",
+    "cases": "Fälle",
+    "category": {
+      "simple": "Einfach",
+      "moderate": "Mittel",
+      "complex": "Komplex",
+      "special": "Spezial"
+    },
+    "awl": "AWL",
+    "radd": "RADD",
+    "computed": "berechnet",
+    "expected": "erwartet",
+    "na": "k.A."
   }
 }

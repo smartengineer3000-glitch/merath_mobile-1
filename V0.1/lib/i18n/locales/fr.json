@@ -184,7 +184,9 @@
     "defaultMadhab": "Madhab par défaut",
     "dark": "Sombre",
     "light": "Clair",
-    "decimalPlaces": "décimales"
+    "decimalPlaces": "décimales",
+    "testEngine": "Tester le moteur",
+    "testEngineDesc": "Exécuter plus de 40 cas de test"
   },
   "language": {
     "title": "Langue",
@@ -303,6 +305,31 @@
     "info": "Information",
     "empty": "Aucune donnée",
     "noResults": "Aucun résultat trouvé",
-    "noNetwork": "Pas de connexion Internet – certaines fonctionnalités peuvent ne pas être disponibles"
+    "noNetwork": "Pas de connexion Internet – certaines fonctionnalités peuvent ne pas être disponibles",
+    "currency": "SAR",
+    "ms": "ms"
+  },
+
+  "engineTest": {
+    "title": "Résultats des tests du moteur",
+    "info": "Exécuter plus de 40 cas de test réels dans les 4 madhhabs",
+    "runAll": "Exécuter tous les tests",
+    "rerun": "Re-exécuter les tests",
+    "running": "Exécution des tests...",
+    "passed": "Réussi",
+    "failed": "Échoué",
+    "total": "Total",
+    "cases": "Cas",
+    "category": {
+      "simple": "Simple",
+      "moderate": "Modéré",
+      "complex": "Complexe",
+      "special": "Spécial"
+    },
+    "awl": "AWL",
+    "radd": "RADD",
+    "computed": "calculé",
+    "expected": "attendu",
+    "na": "N/D"
   }
 }

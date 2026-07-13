@@ -191,7 +191,9 @@
     "defaultMadhab": "Default Madhab",
     "dark": "Dark",
     "light": "Light",
-    "decimalPlaces": "decimal places"
+    "decimalPlaces": "decimal places",
+    "testEngine": "Test Engine",
+    "testEngineDesc": "Run 40+ test cases"
   },
 
   "language": {
@@ -304,6 +306,29 @@
     "increase": "Increase"
   },
 
+  "engineTest": {
+    "title": "Engine Test Results",
+    "info": "Run 40+ real-world inheritance test cases across all 4 madhhabs",
+    "runAll": "Run All Tests",
+    "rerun": "Re-run Tests",
+    "running": "Running tests...",
+    "passed": "Passed",
+    "failed": "Failed",
+    "total": "Total",
+    "cases": "Cases",
+    "category": {
+      "simple": "Simple",
+      "moderate": "Moderate",
+      "complex": "Complex",
+      "special": "Special"
+    },
+    "awl": "AWL",
+    "radd": "RADD",
+    "computed": "computed",
+    "expected": "expected",
+    "na": "N/A"
+  },
+
   "common": {
     "ok": "OK",
     "cancel": "Cancel",
@@ -321,6 +346,8 @@
     "info": "Information",
     "empty": "No data",
     "noResults": "No results found",
-    "noNetwork": "No internet connection - some features may not work"
+    "noNetwork": "No internet connection - some features may not work",
+    "currency": "SAR",
+    "ms": "ms"
   }
 }

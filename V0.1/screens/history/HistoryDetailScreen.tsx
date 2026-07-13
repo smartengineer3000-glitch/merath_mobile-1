@@ -88,7 +88,7 @@ export default function HistoryDetailScreen() {
                   },
                 ]}
               >
-                {formatCurrency(total)} SAR
+                {formatCurrency(total)} {t("common.currency")}
               </Text>
             </View>
             <View style={[styles.confidence, { borderColor: confidenceColor }]}>
@@ -177,7 +177,7 @@ export default function HistoryDetailScreen() {
                     },
                   ]}
                 >
-                  {formatCurrency(share.amount)} SAR
+                  {formatCurrency(share.amount)} {t("common.currency")}
                 </Text>
               </View>
             );

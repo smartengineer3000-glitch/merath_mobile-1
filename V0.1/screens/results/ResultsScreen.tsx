@@ -193,7 +193,7 @@ function DistributionTab({
                 },
               ]}
             >
-              {formatCurrency(total)} SAR
+              {formatCurrency(total)} {t("common.currency")}
             </Text>
           </View>
           <View
@@ -276,6 +276,7 @@ function ShareRow({
   total: number;
   theme: any;
 }) {
+  const { t } = useTranslation();
   const percentage = total > 0 ? (share.amount / total) * 100 : 0;
 
   return (
@@ -334,7 +335,7 @@ function ShareRow({
           },
         ]}
       >
-        {formatCurrency(share.amount)} SAR
+        {formatCurrency(share.amount)} {t("common.currency")}
       </Text>
     </View>
   );

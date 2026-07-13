@@ -184,7 +184,9 @@
     "defaultMadhab": "Varsayılan Mezhep",
     "dark": "Koyu",
     "light": "Açık",
-    "decimalPlaces": "ondalık basamak"
+    "decimalPlaces": "ondalık basamak",
+    "testEngine": "Motor Testi",
+    "testEngineDesc": "40'tan fazla test senaryosu çalıştır"
   },
   "language": {
     "title": "Dil",
@@ -303,6 +305,31 @@
     "info": "Bilgi",
     "empty": "Veri yok",
     "noResults": "Sonuç bulunamadı",
-    "noNetwork": "İnternet bağlantısı yok – bazı özellikler çalışmayabilir"
+    "noNetwork": "İnternet bağlantısı yok – bazı özellikler çalışmayabilir",
+    "currency": "SAR",
+    "ms": "ms"
+  },
+
+  "engineTest": {
+    "title": "Motor Test Sonuçları",
+    "info": "4 mezhepte 40'tan fazla gerçek dünya miras test senaryosu çalıştırın",
+    "runAll": "Tüm Testleri Çalıştır",
+    "rerun": "Testleri Tekrar Çalıştır",
+    "running": "Testler çalıştırılıyor...",
+    "passed": "Başarılı",
+    "failed": "Başarısız",
+    "total": "Toplam",
+    "cases": "Durum",
+    "category": {
+      "simple": "Basit",
+      "moderate": "Orta",
+      "complex": "Karmaşık",
+      "special": "Özel"
+    },
+    "awl": "AWL",
+    "radd": "RADD",
+    "computed": "hesaplanan",
+    "expected": "beklenen",
+    "na": "YOK"
   }
 }

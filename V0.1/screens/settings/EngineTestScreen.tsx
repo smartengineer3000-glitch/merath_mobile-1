@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
 import { Card, SectionHeader, Badge, Button } from "../../components/ui";
@@ -186,17 +187,15 @@ function runSingleTest(tc: TestCase): TestResult {
   };
 }
 
-const CATEGORY_META: Record<
-  string,
-  { label: string; icon: string; color: string }
-> = {
-  simple: { label: "Simple", icon: "checkmark-circle", color: "#4CAF50" },
-  moderate: { label: "Moderate", icon: "settings", color: "#FF9800" },
-  complex: { label: "Complex", icon: "analytics", color: "#2196F3" },
-  special: { label: "Special", icon: "star", color: "#9C27B0" },
+const CATEGORY_ICONS: Record<string, { icon: string; color: string }> = {
+  simple: { icon: "checkmark-circle", color: "#4CAF50" },
+  moderate: { icon: "settings", color: "#FF9800" },
+  complex: { icon: "analytics", color: "#2196F3" },
+  special: { icon: "star", color: "#9C27B0" },
 };
 
 export default function EngineTestScreen() {
+  const { t } = useTranslation();
   const { theme } = useAppTheme();
   const navigation = useNavigation<any>();
   const [results, setResults] = useState<TestResult[]>([]);
@@ -235,7 +234,7 @@ export default function EngineTestScreen() {
       ]}
     >
       <AnimatedHeader
-        title="Engine Test Results"
+        title={t("engineTest.title")}
         leftIcon="arrow-back"
         onLeftPress={() => navigation.goBack()}
       />
@@ -262,10 +261,10 @@ export default function EngineTestScreen() {
                   },
                 ]}
               >
-                Run 40+ real-world inheritance test cases across all 4 madhhabs
+                {t("engineTest.info")}
               </Text>
               <Button
-                title="Run All Tests"
+                title={t("engineTest.runAll")}
                 onPress={runTests}
                 variant="primary"
                 style={styles.runButton}
@@ -290,7 +289,7 @@ export default function EngineTestScreen() {
                   },
                 ]}
               >
-                Running tests...
+                {t("engineTest.running")}
               </Text>
             </View>
           </Card>
@@ -322,7 +321,7 @@ export default function EngineTestScreen() {
                       },
                     ]}
                   >
-                    Passed
+                    {t("engineTest.passed")}
                   </Text>
                 </View>
                 <View style={styles.summaryItem}>
@@ -348,7 +347,7 @@ export default function EngineTestScreen() {
                       },
                     ]}
                   >
-                    Failed
+                    {t("engineTest.failed")}
                   </Text>
                 </View>
                 <View style={styles.summaryItem}>
@@ -372,12 +371,12 @@ export default function EngineTestScreen() {
                       },
                     ]}
                   >
-                    Total
+                    {t("engineTest.total")}
                   </Text>
                 </View>
               </View>
               <Button
-                title="Re-run Tests"
+                title={t("engineTest.rerun")}
                 onPress={runTests}
                 variant="outline"
                 style={styles.rerunButton}
@@ -389,8 +388,9 @@ export default function EngineTestScreen() {
               (cat) => {
                 const catResults = byCategory[cat];
                 if (!catResults) return null;
-                const meta = CATEGORY_META[cat];
+                const catMeta = CATEGORY_ICONS[cat];
                 const catPassed = catResults.filter((r) => r.passed).length;
+                const catLabel = t(`engineTest.category.${cat}`);
 
                 return (
                   <Card
@@ -401,9 +401,9 @@ export default function EngineTestScreen() {
                     <View style={styles.categoryHeader}>
                       <View style={styles.categoryTitleRow}>
                         <Ionicons
-                          name={meta.icon as any}
+                          name={catMeta.icon as any}
                           size={18}
-                          color={meta.color}
+                          color={catMeta.color}
                         />
                         <Text
                           style={[
@@ -414,7 +414,7 @@ export default function EngineTestScreen() {
                             },
                           ]}
                         >
-                          {meta.label} Cases
+                          {catLabel} {t("engineTest.cases")}
                         </Text>
                       </View>
                       <Badge
@@ -474,14 +474,14 @@ export default function EngineTestScreen() {
                         <View style={styles.testRowRight}>
                           {r.awlApplied && (
                             <Badge
-                              label="AWL"
+                              label={t("engineTest.awl")}
                               color={theme.colors.tertiary.main}
                               size="sm"
                             />
                           )}
                           {r.raddApplied && (
                             <Badge
-                              label="RADD"
+                              label={t("engineTest.radd")}
                               color="#9C27B0"
                               size="sm"
                             />
@@ -542,9 +542,9 @@ export default function EngineTestScreen() {
                                       },
                                     ]}
                                   >
-                                    {key}: computed{" "}
-                                    {r.computed[key] ?? "N/A"} /{" "}
-                                    expected {exp}
+                                    {key}: {t("engineTest.computed")}{" "}
+                                    {r.computed[key] ?? t("engineTest.na")} /{" "}
+                                    {t("engineTest.expected")} {exp}
                                   </Text>
                                 ),
                               )}
