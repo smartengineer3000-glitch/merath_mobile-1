@@ -475,7 +475,19 @@ export class EnhancedInheritanceCalculationEngine {
       let reason: string;
 
       if (isUmariyyah) {
-        fraction = new FractionClass(1, 6);
+        // C1 FIX: Umariyyah — mother gets 1/3 of remainder after spouse's share
+        // Maliki always gives 1/6; others give 1/3 of (1 - spouse_share)
+        const umariyyahRule =
+          FIQH_DATABASE.specialCases.umariyyah[
+            this.madhab as keyof typeof FIQH_DATABASE.specialCases.umariyyah
+          ];
+        if (umariyyahRule === "sixth" || (heirs.husband || 0) > 0) {
+          // Maliki: always 1/6; Husband present: 1/3 × (1 - 1/2) = 1/6
+          fraction = new FractionClass(1, 6);
+        } else {
+          // Wife present (Shafi'i/Hanafi/Hanbali): 1/3 × (1 - 1/4) = 1/4
+          fraction = new FractionClass(1, 4);
+        }
         reason = "ثلث الباقي (العمرية)";
       } else if (hasDescendants) {
         fraction = new FractionClass(1, 6);
@@ -495,6 +507,21 @@ export class EnhancedInheritanceCalculationEngine {
         fraction,
         count: 1,
         reason,
+      });
+    }
+
+    // C4 FIX: Grandmother fard share — 1/6 when mother is absent
+    if (
+      (!heirs.mother || heirs.mother === 0) &&
+      (heirs.grandmother || 0) > 0
+    ) {
+      shares.push({
+        key: "grandmother",
+        name: "الجدة",
+        type: "فرض",
+        fraction: new FractionClass(1, 6),
+        count: 1,
+        reason: "⅙ الجدة (عند غياب الأم)",
       });
     }
 
@@ -743,7 +770,13 @@ export class EnhancedInheritanceCalculationEngine {
           (heirs.half_brother_paternal || 0) * 2 +
           (heirs.half_sister_paternal || 0);
 
-        const byMuqasamah = new FractionClass(2, totalHeads);
+        // C3 FIX: Compare asaba amounts on the same basis
+        // Option A: muqasama — 2/(2+s) of remainder
+        // Option B: third of total estate (1/3)
+        // Option C: sixth of total estate (1/6)
+        const byMuqasamah = remainder.multiply(
+          new FractionClass(2, totalHeads),
+        );
         const byThird = new FractionClass(1, 3);
         const bySixth = new FractionClass(1, 6);
 
@@ -972,10 +1005,16 @@ export class EnhancedInheritanceCalculationEngine {
       return shares;
     }
 
-    const eligible = shares.filter(
-      (s) =>
-        s.key !== "husband" && s.key !== "wife" && !s.type.includes("تعصيب"),
-    );
+    // C2 FIX: Read madhab config for spouse radd eligibility
+    const spouseRaddAllowed =
+      FIQH_DATABASE.madhabs[this.madhab]?.rules.spouse_radd ?? false;
+
+    const eligible = shares.filter((s) => {
+      if (s.type.includes("تعصيب")) return false;
+      if (!spouseRaddAllowed && (s.key === "husband" || s.key === "wife"))
+        return false;
+      return true;
+    });
 
     if (eligible.length === 0) {
       return shares;

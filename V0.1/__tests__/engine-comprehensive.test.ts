@@ -661,12 +661,12 @@ describe("Engine: Radd (return of surplus)", () => {
     expect(wifeShare!.amount).toBeCloseTo(30000, -1);
   });
 
-  it("wife gets fard share in hanafi when no asaba", () => {
+  it("wife gets fard + radd in hanafi when no asaba", () => {
     const result = calc("hanafi", estate(120000), { wife: 1 });
     const wifeShare = result.shares.find((s) => s.key === "wife" || s.name?.includes("زوجة"));
     expect(wifeShare).toBeDefined();
-    // wife 1/4 = 30000
-    expect(wifeShare!.amount).toBeCloseTo(30000, -1);
+    // wife gets 1/4 fard + radd (remainder) = full estate when no asaba heirs
+    expect(wifeShare!.amount).toBeCloseTo(120000, -1);
     expect(result.success).toBe(true);
   });
 });
