@@ -196,6 +196,12 @@ export const FIQH_DATABASE = {
         hijabbed: ["grandfather"],
         type: "complete" as const,
       },
+      {
+        hijabber: "father",
+        hijabbed: ["mother"],
+        type: "partial" as const,
+        reason: "from_third_to_sixth",
+      },
     ],
     maliki: [
       {
@@ -208,6 +214,12 @@ export const FIQH_DATABASE = {
         hijabbed: ["grandfather"],
         type: "complete" as const,
       },
+      {
+        hijabber: "father",
+        hijabbed: ["mother"],
+        type: "partial" as const,
+        reason: "from_third_to_sixth",
+      },
     ],
     hanbali: [
       {
@@ -219,6 +231,12 @@ export const FIQH_DATABASE = {
         hijabber: "father",
         hijabbed: ["grandfather"],
         type: "complete" as const,
+      },
+      {
+        hijabber: "father",
+        hijabbed: ["mother"],
+        type: "partial" as const,
+        reason: "from_third_to_sixth",
       },
     ],
   },

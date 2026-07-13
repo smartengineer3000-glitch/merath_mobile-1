@@ -125,8 +125,8 @@ export class EnhancedInheritanceCalculationEngine {
 
       let fixedShares: HeirShareObject[] = [];
 
-      if (this.isMusharraka()) {
-        fixedShares = this.computeMusharraka();
+      if (this.isMusharraka(validHeirs)) {
+        fixedShares = this.computeMusharraka(validHeirs);
         this.state.specialCases.push({
           type: "musharraka",
           name: "المشتركة",
@@ -155,7 +155,9 @@ export class EnhancedInheritanceCalculationEngine {
         steps.push("الأول: awl");
       }
 
-      const remainder = new FractionClass(1, 1).subtract(totalFixed);
+      // M1 FIX: Compute remainder from adjusted fractions (post-awl), not pre-awl totalFixed
+      const totalAdjusted = this.sumFractions(adjustedFixed.map((s) => s.fraction));
+      const remainder = new FractionClass(1, 1).subtract(totalAdjusted);
       steps.push("حساب الباقي: remainder");
 
       const asabaShares = this.computeAsaba(
@@ -291,12 +293,12 @@ export class EnhancedInheritanceCalculationEngine {
     return result.heirs;
   }
 
-  private isMusharraka(): boolean {
+  private isMusharraka(filteredHeirs?: HeirsData): boolean {
     // Musharraka is only recognized in Shafii madhab (and maybe others, but definitely not Maliki)
     if (this.madhab !== "shafii") {
       return false;
     }
-    const h = this.heirs;
+    const h = filteredHeirs || this.heirs;
     const hasHusband = (h.husband || 0) > 0;
     const hasMother = (h.mother || 0) > 0;
     const hasGrandmother = (h.grandmother_mother || 0) > 0;
@@ -317,9 +319,9 @@ export class EnhancedInheritanceCalculationEngine {
     );
   }
 
-  private computeMusharraka(): HeirShareObject[] {
+  private computeMusharraka(filteredHeirs?: HeirsData): HeirShareObject[] {
     const shares: HeirShareObject[] = [];
-    const h = this.heirs;
+    const h = filteredHeirs || this.heirs;
 
     shares.push({
       key: "husband",
@@ -426,6 +428,13 @@ export class EnhancedInheritanceCalculationEngine {
     });
 
     this.state.awlApplied = true;
+
+    // M2 FIX: Sync specialCases with awlApplied flag
+    this.state.specialCases.push({
+      type: "awl",
+      name: "الحجب بالنقص",
+      description: "الأكدرية: تقسيم خاص مع الحجب بالنقص",
+    });
 
     this.steps.push({
       step: "الأكدرية (الغراء)",
