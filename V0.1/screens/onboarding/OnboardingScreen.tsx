@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAppTheme } from "../../lib/context/ThemeProvider";
 
 const ONBOARDING_COMPLETED_KEY = "@merath_onboarding_completed";
 
@@ -45,6 +46,7 @@ export const OnboardingScreen = ({
   onComplete?: () => void;
 }) => {
   const { t } = useTranslation();
+  const { theme } = useAppTheme();
   const [step, setStep] = useState(0);
   const [visible, setVisible] = useState(true);
 
@@ -82,9 +84,25 @@ export const OnboardingScreen = ({
         style={[styles.overlay, { backgroundColor: "rgba(0,0,0,0.5)" }]}
       >
         <SafeAreaView style={styles.safeArea}>
-          <View style={styles.card}>
+          <View
+            style={[
+              styles.card,
+              {
+                backgroundColor: theme.colors.background.light,
+                shadowColor: theme.colors.neutral.dark300,
+              },
+            ]}
+          >
             <View style={styles.header}>
-              <Text style={styles.stepCounter}>
+              <Text
+                style={[
+                  styles.stepCounter,
+                  {
+                    color: theme.colors.neutral.light400,
+                    fontFamily: theme.fontFamily.english,
+                  },
+                ]}
+              >
                 {step + 1}/{totalSteps}
               </Text>
               <TouchableOpacity
@@ -93,7 +111,17 @@ export const OnboardingScreen = ({
                 accessibilityLabel={t("common.close")}
                 accessibilityRole="button"
               >
-                <Text style={styles.skip}>{t("common.close")}</Text>
+                <Text
+                  style={[
+                    styles.skip,
+                    {
+                      color: theme.colors.primary.main,
+                      fontFamily: theme.fontFamily.english,
+                    },
+                  ]}
+                >
+                  {t("common.close")}
+                </Text>
               </TouchableOpacity>
             </View>
 
@@ -101,14 +129,43 @@ export const OnboardingScreen = ({
               <Text style={styles.icon}>{current.icon}</Text>
             </View>
 
-            <Text style={styles.title}>{t(current.titleKey)}</Text>
+            <Text
+              style={[
+                styles.title,
+                {
+                  color: theme.colors.primary.main,
+                  fontFamily: theme.fontFamily.english,
+                },
+              ]}
+            >
+              {t(current.titleKey)}
+            </Text>
 
-            <Text style={styles.description}>
+            <Text
+              style={[
+                styles.description,
+                {
+                  color: theme.colors.neutral.dark200,
+                  fontFamily: theme.fontFamily.english,
+                },
+              ]}
+            >
               {t(current.descriptionKey)}
             </Text>
 
             {current.detailsKey && (
-              <Text style={styles.details}>{t(current.detailsKey)}</Text>
+              <Text
+                style={[
+                  styles.details,
+                  {
+                    color: theme.colors.neutral.dark300,
+                    fontFamily: theme.fontFamily.english,
+                    textAlign: I18nManager.isRTL ? "left" : "right",
+                  },
+                ]}
+              >
+                {t(current.detailsKey)}
+              </Text>
             )}
 
             <View style={styles.dots}>
@@ -119,7 +176,9 @@ export const OnboardingScreen = ({
                     styles.dot,
                     {
                       backgroundColor:
-                        i === step ? "#2e7d32" : "#d0d0d0",
+                        i === step
+                          ? theme.colors.primary.main
+                          : theme.colors.neutral.light200,
                     },
                   ]}
                 />
@@ -127,7 +186,10 @@ export const OnboardingScreen = ({
             </View>
 
             <TouchableOpacity
-              style={styles.button}
+              style={[
+                styles.button,
+                { backgroundColor: theme.colors.primary.main },
+              ]}
               onPress={handleNext}
               accessible
               accessibilityLabel={
@@ -137,7 +199,15 @@ export const OnboardingScreen = ({
               }
               accessibilityRole="button"
             >
-              <Text style={styles.buttonText}>
+              <Text
+                style={[
+                  styles.buttonText,
+                  {
+                    color: theme.colors.background.light,
+                    fontFamily: theme.fontFamily.english,
+                  },
+                ]}
+              >
                 {step === totalSteps - 1
                   ? t("onboarding.startNow")
                   : t("onboarding.next")}
@@ -178,8 +248,6 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     borderRadius: 24,
     padding: 24,
-    backgroundColor: "#ffffff",
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 12,
@@ -194,13 +262,11 @@ const styles = StyleSheet.create({
   stepCounter: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#999",
   },
   skip: {
     fontSize: 14,
     fontWeight: "600",
     padding: 8,
-    color: "#1565c0",
   },
   iconContainer: {
     alignItems: "center",
@@ -214,22 +280,18 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
     marginBottom: 12,
-    color: "#2e7d32",
   },
   description: {
     fontSize: 16,
     textAlign: "center",
     marginBottom: 16,
     lineHeight: 24,
-    color: "#333",
   },
   details: {
     fontSize: 14,
-    textAlign: I18nManager.isRTL ? "left" : "right",
     marginBottom: 24,
     lineHeight: 22,
     paddingHorizontal: 8,
-    color: "#555",
   },
   dots: {
     flexDirection: "row",
@@ -247,11 +309,9 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: "center",
-    backgroundColor: "#2e7d32",
   },
   buttonText: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#ffffff",
   },
 });

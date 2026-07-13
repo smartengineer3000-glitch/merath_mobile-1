@@ -60,7 +60,7 @@ export default function HistoryScreen() {
         <TouchableOpacity
           onPress={() => navigation.navigate("HistoryDetail", { result: item })}
           activeOpacity={0.7}
-          style={[styles.item, { borderColor: theme.colors.neutral.light200 }]}
+          style={[styles.item, { borderColor: theme.colors.neutral.light200, backgroundColor: theme.colors.background.light }]}
         >
           <View style={styles.itemHeader}>
             <Badge

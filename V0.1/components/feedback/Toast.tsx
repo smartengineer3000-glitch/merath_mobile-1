@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Text, StyleSheet, Animated } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { Ionicons } from "../../lib/icons";
 
@@ -19,6 +20,7 @@ export function Toast({
   onDismiss,
 }: ToastProps) {
   const { theme } = useAppTheme();
+  const insets = useSafeAreaInsets();
   const [fadeAnim] = useState(new Animated.Value(0));
 
   useEffect(() => {
@@ -65,11 +67,12 @@ export function Toast({
           backgroundColor: colorMap[type],
           borderRadius: theme.borderRadius.md,
           opacity: fadeAnim,
+          bottom: insets.bottom + 16,
         },
       ]}
     >
-      <Ionicons name={iconMap[type] as any} size={18} color="#ffffff" />
-      <Text style={styles.text}>{message}</Text>
+      <Ionicons name={iconMap[type] as any} size={18} color={theme.colors.background.light} />
+      <Text style={[styles.text, { color: theme.colors.background.light }]}>{message}</Text>
     </Animated.View>
   );
 }
@@ -77,7 +80,6 @@ export function Toast({
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    bottom: 100,
     left: 16,
     right: 16,
     flexDirection: "row",
@@ -88,7 +90,6 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   text: {
-    color: "#ffffff",
     fontSize: 13,
     fontWeight: "500",
     flex: 1,

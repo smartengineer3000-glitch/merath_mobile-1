@@ -10,6 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../../lib/context/SettingsContext";
+import { useMadhab } from "../../lib/context/MadhabContext";
 import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
 import { Card, AppSwitch, Divider, Badge, Button } from "../../components/ui";
 import { Ionicons } from "../../lib/icons";
@@ -21,6 +22,7 @@ export default function SettingsScreen() {
   const navigation = useNavigation<any>();
   const { state, setLanguage, setNotifications, setAutoSave, resetSettings } =
     useSettings();
+  const { madhab } = useMadhab();
 
   const currentLang = languages[state.language as Language];
 
@@ -185,7 +187,7 @@ export default function SettingsScreen() {
                     },
                   ]}
                 >
-                  {state.language}
+                  {t(`madhab.${madhab}`)}
                 </Text>
               </View>
             </View>

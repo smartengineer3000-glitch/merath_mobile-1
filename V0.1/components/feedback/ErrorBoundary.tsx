@@ -54,7 +54,14 @@ export class ErrorBoundary extends Component<
           ]}
         >
           <ScrollView contentContainerStyle={styles.content}>
-            <Text style={styles.icon}>!</Text>
+            <Text
+              style={[
+                styles.icon,
+                { color: theme.colors.error.main },
+              ]}
+            >
+              !
+            </Text>
             <Text style={[styles.title, { color: theme.colors.error.main }]}>
               {i18next.t("error.title")}
             </Text>

@@ -187,11 +187,11 @@ function runSingleTest(tc: TestCase): TestResult {
   };
 }
 
-const CATEGORY_ICONS: Record<string, { icon: string; color: string }> = {
-  simple: { icon: "checkmark-circle", color: "#4CAF50" },
-  moderate: { icon: "settings", color: "#FF9800" },
-  complex: { icon: "analytics", color: "#2196F3" },
-  special: { icon: "star", color: "#9C27B0" },
+const CATEGORY_ICONS: Record<string, { icon: string; colorKey: string }> = {
+  simple: { icon: "checkmark-circle", colorKey: "success" },
+  moderate: { icon: "settings", colorKey: "warning" },
+  complex: { icon: "analytics", colorKey: "primary" },
+  special: { icon: "star", colorKey: "tertiary" },
 };
 
 export default function EngineTestScreen() {
@@ -391,6 +391,7 @@ export default function EngineTestScreen() {
                 const catMeta = CATEGORY_ICONS[cat];
                 const catPassed = catResults.filter((r) => r.passed).length;
                 const catLabel = t(`engineTest.category.${cat}`);
+                const catColor = (theme.colors as any)[catMeta.colorKey]?.main ?? theme.colors.primary.main;
 
                 return (
                   <Card
@@ -398,12 +399,12 @@ export default function EngineTestScreen() {
                     variant="elevated"
                     style={styles.card}
                   >
-                    <View style={styles.categoryHeader}>
+                    <View style={[styles.categoryHeader, { borderBottomColor: theme.colors.neutral.light100 }]}>
                       <View style={styles.categoryTitleRow}>
                         <Ionicons
                           name={catMeta.icon as any}
                           size={18}
-                          color={catMeta.color}
+                          color={catColor}
                         />
                         <Text
                           style={[
@@ -434,7 +435,7 @@ export default function EngineTestScreen() {
                         style={[
                           styles.testRow,
                           {
-                            borderBottomColor: theme.colors.neutral.light100,
+    borderBottomColor: "#E0E0E0",
                           },
                         ]}
                         onPress={() =>
@@ -482,7 +483,7 @@ export default function EngineTestScreen() {
                           {r.raddApplied && (
                             <Badge
                               label={t("engineTest.radd")}
-                              color="#9C27B0"
+                              color={theme.colors.tertiary.dark}
                               size="sm"
                             />
                           )}

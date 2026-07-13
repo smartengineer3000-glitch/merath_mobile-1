@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
+import { Ionicons } from "../../lib/icons";
 
 interface EmptyStateProps {
   icon?: string;
@@ -21,7 +22,14 @@ export function EmptyState({
 
   return (
     <View style={styles.container}>
-      {icon && <Text style={styles.icon}>{icon}</Text>}
+      {icon && (
+        <Ionicons
+          name={icon as any}
+          size={48}
+          color={theme.colors.neutral.light300}
+          style={styles.icon}
+        />
+      )}
       <Text
         style={[
           styles.title,
