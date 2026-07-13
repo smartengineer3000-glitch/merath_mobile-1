@@ -178,8 +178,8 @@ export function validateEstateData(
   if (will < 0) {
     return "الوصية لا يمكن أن تكون سالبة";
   }
-  if (will > total / 3) {
-    return "الوصية لا يمكن أن تتجاوز ثلث التركة";
+  if (will > (total - funeral - debts) / 3) {
+    return "الوصية لا يمكن أن تتجاوز ثلث التركة الصافية (بعد الخصم والديون)";
   }
   if (funeral + debts + will > total) {
     return "التكاليف والديون والوصية تتجاوز إجمالي التركة";

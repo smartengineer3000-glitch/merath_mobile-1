@@ -14,6 +14,7 @@
 
 import { FractionClass } from "./fraction";
 import { FIQH_DATABASE } from "./constants";
+import { InvariantEngine } from "./invariant";
 import type {
   EstateData,
   HeirsData,
@@ -211,7 +212,22 @@ export class EnhancedInheritanceCalculationEngine {
       const results = this.calculateFinalAmounts(finalShares, netEstate);
       steps.push("تحويل للمبالغ: amounts");
 
-      const confidence = this.calculateConfidence(results, validHeirs);
+      // D1 FIX: Wire InvariantEngine conservation check
+      let invariantFailed = false;
+      try {
+        const allocations: Record<string, { toDecimal: () => number }> = {};
+        for (const s of finalShares) {
+          allocations[s.key] = { toDecimal: () => s.fraction.toDecimal() };
+        }
+        InvariantEngine.assertConservation(allocations);
+      } catch (invariantError) {
+        invariantFailed = true;
+        this.state.confidenceFactors.push(
+          `انتهاك حفظ الكتلة: ${(invariantError as Error).message}`,
+        );
+      }
+
+      const confidence = this.calculateConfidence(results, validHeirs, invariantFailed);
       steps.push("حساب مستوى الثقة: confidence");
 
       const endTime = performance.now();
@@ -1165,45 +1181,34 @@ export class EnhancedInheritanceCalculationEngine {
     }));
   }
 
-  private calculateConfidence(results: HeirShare[], heirs: HeirsData): number {
+  private calculateConfidence(results: HeirShare[], heirs: HeirsData, invariantFailed: boolean = false): number {
     let confidence = 100;
     const factors: string[] = [];
 
     const heirCount = Object.values(heirs).filter((v) => v && v > 0).length;
     if (heirCount > 8) {
-      confidence -= 15;
+      confidence -= 10;
       factors.push("عدد كبير من الورثة (أكثر من 8)");
     } else if (heirCount > 5) {
-      confidence -= 10;
+      confidence -= 5;
       factors.push("عدد متوسط من الورثة (6-8)");
-    } else if (heirCount > 3) {
-      confidence -= 5;
-      factors.push("عدد قليل من الورثة (4-5)");
     }
 
-    if (this.state.awlApplied) {
-      confidence -= 8;
-      factors.push("تم تطبيق العول");
+    // D2 FIX: Check mathematical invariants instead of penalizing rule application
+    const totalFraction = results.reduce(
+      (sum, r) => sum + (r.fraction?.numerator || 0) / (r.fraction?.denominator || 1),
+      0,
+    );
+    const deviation = Math.abs(totalFraction - 1);
+    if (deviation > 0.01) {
+      confidence -= 30;
+      factors.push(`انحراف في مجموع الكسور: ${deviation.toFixed(4)}`);
     }
 
-    if (this.state.raddApplied) {
-      confidence -= 5;
-      factors.push("تم تطبيق الرد");
-    }
-
-    if (this.state.bloodRelativesApplied) {
-      confidence -= 10;
-      factors.push("تم توزيع الباقي على ذوي الأرحام");
-    }
-
-    if (this.specialCases.some((sc) => sc.type === "musharraka")) {
-      confidence -= 8;
-      factors.push("المسألة المشتركة (الحمارية)");
-    }
-
-    if (this.specialCases.some((sc) => sc.type === "akdariyya")) {
-      confidence -= 12;
-      factors.push("مسألة الأكدرية");
+    // D1 FIX: Apply invariant violation penalty
+    if (invariantFailed) {
+      confidence = 0;
+      factors.push("انتهاك حفظ الكتلة: مجموع الأسهم لا يساوي التركة");
     }
 
     const hasChildren = heirs.son || heirs.daughter;
@@ -1330,7 +1335,15 @@ export class EnhancedInheritanceCalculationEngine {
       if (existing && asaba.addToExisting) {
         existing.fraction = existing.fraction.add(asaba.fraction);
         existing.type = "فرض + تعصيب";
-      } else if (!existing) {
+      } else if (existing && !asaba.addToExisting) {
+        // D5 FIX: Log dropped asaba shares instead of silently ignoring
+        this.steps.push({
+          step: "تنبيه: asaba_dropped",
+          description: `عصبة ${asaba.name} (${asaba.key}) لم تُدمج لأن المفتاح موجود مسبقاً`,
+          code: "asaba_dropped",
+          data: { key: asaba.key, asabaFraction: asaba.fraction.toString() },
+        });
+      } else {
         merged.push(asaba);
       }
     });
