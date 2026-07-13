@@ -991,6 +991,8 @@ export class EnhancedInheritanceCalculationEngine {
           ),
           count: heirs.full_sister || 0,
           reason: "الأخت الشقيقة مع الأخ",
+          // F3 FIX: addToExisting so fard + asaba merge correctly
+          addToExisting: true,
         });
       }
 
@@ -1022,6 +1024,8 @@ export class EnhancedInheritanceCalculationEngine {
           ),
           count: heirs.half_sister_paternal || 0,
           reason: "الأخت لأب مع الأخ",
+          // F3 FIX: addToExisting so fard + asaba merge correctly
+          addToExisting: true,
         });
       }
 
@@ -1116,17 +1120,48 @@ export class EnhancedInheritanceCalculationEngine {
 
     const h = this.heirs;
 
+    // F2 FIX: Extended dhawu al-arham hierarchy — all blood relative classes
+    // Ordered by proximity of blood relation (closest first)
     const classes = [
+      // Class 1: Descendants of daughters (closest blood relatives after direct heirs)
       [
         { key: "daughter_son", name: "ابن البنت", weight: 1 },
         { key: "daughter_daughter", name: "بنت البنت", weight: 1 },
       ],
+      // Class 2: Sons of brothers (male-line nephews)
+      [
+        { key: "full_nephew", name: "ابن الأخ الشقيق", weight: 1 },
+        { key: "nephew_from_brother", name: "ابن الأخ", weight: 1 },
+      ],
+      // Class 3: Sons of paternal half-brothers
+      [
+        { key: "paternal_nephew", name: "ابن الأخ لأب", weight: 1 },
+      ],
+      // Class 4: Daughters of brothers (female-line nephews)
+      [
+        { key: "niece_from_brother", name: "بنت الأخ", weight: 1 },
+      ],
+      // Class 5: Children of sisters
       [{ key: "sister_children", name: "أولاد الأخت", weight: 1 }],
+      // Class 6: Sons of paternal uncles (cousins)
+      [
+        { key: "full_cousin", name: "ابن العم الشقيق", weight: 1 },
+        { key: "paternal_cousin", name: "ابن العم لأب", weight: 1 },
+      ],
+      // Class 7: Maternal uncles/aunts (maternal line)
       [
         { key: "maternal_uncle", name: "الخال", weight: 1 },
         { key: "maternal_aunt", name: "الخالة", weight: 1 },
       ],
-      [{ key: "paternal_aunt", name: "العمة", weight: 1 }],
+      // Class 8: Paternal aunts (female-line paternal)
+      [
+        { key: "aunt_paternal", name: "الخالة لأب", weight: 1 },
+        { key: "paternal_aunt", name: "العمة", weight: 1 },
+      ],
+      // Class 9: Maternal aunts (female-line maternal, furthest)
+      [
+        { key: "aunt_maternal", name: "الخالة لأم", weight: 1 },
+      ],
     ];
 
     let inheritingClass: Array<{
@@ -1362,9 +1397,23 @@ export class EnhancedInheritanceCalculationEngine {
     asabaShares: HeirShareObject[],
   ): HeirShareObject[] {
     const merged = [...fixedShares];
+    const seenKeys = new Set<string>();
 
     asabaShares.forEach((asaba) => {
       const existing = merged.find((s) => s.key === asaba.key);
+
+      // F3 FIX: Prevent double asaba — if same key already in merged asaba, skip
+      if (seenKeys.has(asaba.key) && !existing) {
+        this.steps.push({
+          step: "تنبيه: double_asaba",
+          description: `عصبة مكررة: ${asaba.name} (${asaba.key}) تم تجاهلها لتجنب التكرار`,
+          code: "double_asaba",
+          data: { key: asaba.key },
+        });
+        return;
+      }
+      seenKeys.add(asaba.key);
+
       if (existing && asaba.addToExisting) {
         existing.fraction = existing.fraction.add(asaba.fraction);
         existing.type = "فرض + تعصيب";
