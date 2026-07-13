@@ -535,19 +535,52 @@ export class EnhancedInheritanceCalculationEngine {
       });
     }
 
-    // C4 FIX: Grandmother fard share — 1/6 when mother is absent
-    if (
-      (!heirs.mother || heirs.mother === 0) &&
-      (heirs.grandmother || 0) > 0
-    ) {
-      shares.push({
-        key: "grandmother",
-        name: "الجدة",
-        type: "فرض",
-        fraction: new FractionClass(1, 6),
-        count: 1,
-        reason: "⅙ الجدة (عند غياب الأم)",
-      });
+    // C4 + F1 FIX: Grandmother fard share — 1/6 when mother is absent
+    // Handles competing grandmothers: paternal gets priority, or shared
+    if (!heirs.mother || heirs.mother === 0) {
+      const hasPaternalGM = (heirs.grandmother_father || 0) > 0;
+      const hasMaternalGM = (heirs.grandmother_mother || 0) > 0;
+      const hasGenericGM = (heirs.grandmother || 0) > 0;
+
+      if (hasPaternalGM && hasMaternalGM) {
+        // Both lines compete: paternal gets priority (Islamic rule)
+        // If paternal grandmother exists, she takes the full 1/6
+        shares.push({
+          key: "grandmother_father",
+          name: "الجدة لأب",
+          type: "فرض",
+          fraction: new FractionClass(1, 6),
+          count: 1,
+          reason: "⅙ الجدة لأب (أولوية على الجدة لأم)",
+        });
+      } else if (hasPaternalGM) {
+        shares.push({
+          key: "grandmother_father",
+          name: "الجدة لأب",
+          type: "فرض",
+          fraction: new FractionClass(1, 6),
+          count: 1,
+          reason: "⅙ الجدة لأب (عند غياب الأم)",
+        });
+      } else if (hasMaternalGM) {
+        shares.push({
+          key: "grandmother_mother",
+          name: "الجدة لأم",
+          type: "فرض",
+          fraction: new FractionClass(1, 6),
+          count: 1,
+          reason: "⅙ الجدة لأم (عند غياب الأم)",
+        });
+      } else if (hasGenericGM) {
+        shares.push({
+          key: "grandmother",
+          name: "الجدة",
+          type: "فرض",
+          fraction: new FractionClass(1, 6),
+          count: 1,
+          reason: "⅙ الجدة (عند غياب الأم)",
+        });
+      }
     }
 
     if (

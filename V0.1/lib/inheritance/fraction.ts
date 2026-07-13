@@ -277,7 +277,13 @@ export class FractionClass {
       aux = k1;
       k1 = a * k1 + k2;
       k2 = aux;
-      b = 1 / (b - a);
+
+      // Z1 FIX: Guard against Infinity when b - a == 0 (integer input)
+      const remainder = b - a;
+      if (Math.abs(remainder) < 1e-15 || !Number.isFinite(1 / remainder)) {
+        break;
+      }
+      b = 1 / remainder;
     } while (Math.abs(decimal - h1 / k1) > decimal * 1e-12);
 
     return new FractionClass(sign * h1, k1);
