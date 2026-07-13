@@ -174,3 +174,141 @@
 #### Fix 7 — D3+D4: Clean up dead data and fix validation
 - Either remove `FIQH_DATABASE.provisions` or refactor engine to read from it
 - Fix `validateEstateData()` to check will against `(total - funeral - debts)/3`
+
+---
+
+## UI/UX Audit Report
+
+**Date:** 2026-07-13
+**Overall Score:** 6.5 / 10
+
+**Justification:** The app has a well-defined design system (`theme.ts` is excellent) and consistent component architecture. However, execution has significant gaps: the OnboardingScreen bypasses the theme system entirely with hardcoded colors, many touch targets are undersized, RTL support is incomplete, dark mode is broken in several places, and there's no transition animation between screens. The app is functional and structured but not yet "world-class".
+
+---
+
+### Top 10 Issues (Prioritized)
+
+#### P0 — Critical
+
+| # | Issue | File:Line |
+|---|-------|-----------|
+| 1 | **OnboardingScreen ignores theme entirely** — 10+ hardcoded colors (`#2e7d32`, `#ffffff`, `#999`, etc.), will break in dark mode | `OnboardingScreen.tsx:122,181-182,198,204,216-218,224,232,247,251,254` |
+| 2 | **HistoryScreen hardcoded `#ffffff` background** — broken in dark mode | `HistoryScreen.tsx:249` |
+| 3 | **Toast has no SafeAreaView** — fixed `bottom: 100` overlaps notched devices | `Toast.tsx:79` |
+| 4 | **Export tab is dead** — all 4 export buttons have NO `onPress` handler | `ResultsScreen.tsx:539-588` |
+| 5 | **SettingsScreen default madhab row shows language** instead of madhab name | `SettingsScreen.tsx:188` |
+
+#### P1 — High
+
+| # | Issue | File:Line |
+|---|-------|-----------|
+| 6 | **Touch targets below 44pt** — StepperCounter 36x36, QuickAddChips ~30px, About icons 32x32 | Multiple files |
+| 7 | **No screen transition animations** — AnimatedHeader has zero animation, all nav is default stack | `AnimatedHeader.tsx` |
+| 8 | **EngineTestScreen hardcoded colors** — `#9C27B0`, `#4CAF50`, `#FF9800`, `#E0E0E0` not from theme | `EngineTestScreen.tsx:190-195,593` |
+| 9 | **EmptyState icon renders as text** — shows literal string "time" instead of Ionicons icon | `EmptyState.tsx:24` |
+| 10 | **RTL broken** — all `flexDirection: "row"`, `marginLeft`, `chevron-forward` are hardcoded LTR | Multiple files |
+
+---
+
+### Per-Screen Assessment
+
+| Screen | Rating | Key Issue |
+|--------|--------|-----------|
+| CalculatorScreen | Good | Missing moon icon onPress wiring |
+| ResultsScreen | Needs Work | Export tab dead, hardcoded colors |
+| HistoryScreen | Needs Work | Hardcoded white background |
+| HistoryDetailScreen | Needs Work | Blank empty state |
+| ComparisonScreen | Good | Clean flow |
+| ComparisonResultsScreen | Needs Work | RTL textAlign broken |
+| SettingsScreen | Good | Default madhab bug |
+| LanguagePickerScreen | Good | — |
+| EngineTestScreen | Needs Work | All colors hardcoded |
+| OnboardingScreen | **Issue** | Completely ignores theme |
+| LoadingScreen | Good | — |
+| DisclaimersModal | Needs Work | Hardcoded handle color |
+| ErrorBoundary | Good | — |
+| Toast | Needs Work | No SafeAreaView |
+
+---
+
+### Component Quality
+
+| Component | Grade | Notes |
+|-----------|-------|-------|
+| Button | A | Best component — spring animation + haptics + a11y |
+| Card | A- | Gesture press, 3 variants |
+| Chip | B+ | Animated, missing haptics |
+| Input | A- | Focus/error/helper states |
+| StepperCounter | B | Good haptics but 36px buttons too small |
+| EmptyState | C | Icon renders as text, not Ionicons |
+| AnimatedHeader | D | Misleading name — zero animation |
+
+---
+
+### Accessibility Gaps
+
+- `neutral.light400` text on white fails WCAG AA (2.93:1 vs 4.5:1 required)
+- Touch targets below 44pt on multiple interactive elements
+- No `accessibilityRole` on history items, settings rows, or Toast
+
+### RTL Issues
+
+- All `marginLeft`/`marginRight` should be `marginStart`/`marginEnd`
+- `chevron-forward` icons don't flip in RTL
+- `textAlign: "left"` hardcoded in ComparisonResultsScreen
+
+### Specific Code Issues
+
+| File:Line | Issue |
+|-----------|-------|
+| `OnboardingScreen.tsx:122` | Hardcoded `"#2e7d32"` for dots, should use `theme.colors.primary.main` |
+| `OnboardingScreen.tsx:181` | Hardcoded `backgroundColor: "#ffffff"` for card |
+| `EngineTestScreen.tsx:190-195` | `CATEGORY_ICONS` colors are all hardcoded Material Design colors, not theme tokens |
+| `EngineTestScreen.tsx:593` | `borderBottomColor: "#E0E0E0"` hardcoded |
+| `EngineTestScreen.tsx:486` | Radd badge `"#9C27B0"` not in design system |
+| `HistoryScreen.tsx:249` | `backgroundColor: "#ffffff"` hardcoded in item style |
+| `DisclaimersModal.tsx:170` | `backgroundColor: "#d1d5db"` hardcoded handle bar |
+| `ResultsScreen.tsx:612` | `heroLeft: {}` empty style object (dead code) |
+| `EmptyState.tsx:24` | Icon rendered as `Text` — Ionicons name string shows as text, not icon |
+| `SettingsScreen.tsx:188` | Default madhab row shows `state.language` instead of madhab name |
+| `ComparisonResultsScreen.tsx:205` | `textAlign: "left"` hardcoded — broken in RTL |
+| `ErrorBoundary.tsx:131` | `color: "#d32f2f"` hardcoded — close to but not exactly `theme.colors.error.main` |
+| `AboutScreen.tsx:201` | Logo `"M"` text uses hardcoded `color: "#ffffff"` |
+| `Toast.tsx:79` | `bottom: 100` is a magic number — should account for safe area insets |
+
+---
+
+### Recommendations Summary
+
+#### Immediate fixes (1-2 days):
+1. Refactor `OnboardingScreen` to use `useAppTheme()` — replace all 10+ hardcoded colors
+2. Replace `EmptyState` icon `Text` with actual `Ionicons` component
+3. Fix `HistoryScreen` item `backgroundColor: "#ffffff"` to `theme.colors.background.light`
+4. Add `onPress` handlers or "Coming Soon" labels to export options
+5. Fix `SettingsScreen` default madhab row to show madhab, not language
+6. Wire up `AnimatedHeader` `rightIcon` press in CalculatorScreen (moon-outline)
+7. Fix `AboutScreen` links that have no `onPress`/URL
+8. Replace all `marginLeft`/`marginRight`/`paddingLeft`/`paddingRight` with `marginStart`/`marginEnd`/`paddingStart`/`paddingEnd` for RTL
+9. Replace hardcoded `"chevron-forward"` with directional icon in RTL contexts
+10. Fix `ComparisonResultsScreen:205` `textAlign: "left"` to `textAlign: "start"`
+
+#### Short-term improvements (1 week):
+- Add `accessibilityRole="button"` + labels to all list items
+- Increase StepperCounter buttons to 44x44
+- Increase QuickAddChips `chipSm` touch area
+- Use `Typography` tokens in screens instead of raw fontSize/fontWeight
+- Add `accessibilityRole="alert"` to Toast
+- Add haptic feedback to Chip and IconButton
+- Replace `neutral.light400` text on white with a darker shade for WCAG AA
+- Add pull-to-refresh to HistoryScreen FlatList
+- Add actual animation to AnimatedHeader (scroll-reactive parallax or opacity)
+- Implement skeleton loading states for ResultsScreen
+
+#### Medium-term (2-4 weeks):
+- Screen transition animations (shared element or fade)
+- Lottie animation for LoadingScreen
+- Drag-to-dismiss for DisclaimersModal
+- Swipe actions on HistoryScreen items (delete, re-calculate)
+- Proper dark mode audit (fix all hardcoded colors that break in dark)
+- Use `Shadows` tokens consistently instead of inline shadow styles
+- Add error boundary per-tab in ResultsScreen for crash isolation
