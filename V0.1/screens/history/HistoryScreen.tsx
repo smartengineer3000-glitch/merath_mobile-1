@@ -93,7 +93,7 @@ export default function HistoryScreen() {
               },
             ]}
           >
-            {formatCurrency(total)} {t("common.currency")}
+            {formatCurrency(total)}
           </Text>
 
           <Text

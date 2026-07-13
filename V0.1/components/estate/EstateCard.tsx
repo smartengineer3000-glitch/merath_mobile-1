@@ -91,7 +91,7 @@ export function EstateCard({
               },
             ]}
           >
-            {t("common.currency")}
+            SAR
           </Text>
         </View>
       </View>
@@ -130,7 +130,7 @@ export function EstateCard({
               },
             ]}
           >
-            {t("estate.netEstate")}: {formatCurrency(netEstate)} {t("common.currency")}
+            {t("estate.netEstate")}: {formatCurrency(netEstate)}
           </Text>
         </View>
       )}

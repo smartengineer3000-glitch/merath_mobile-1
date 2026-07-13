@@ -193,7 +193,7 @@ function DistributionTab({
                 },
               ]}
             >
-              {formatCurrency(total)} {t("common.currency")}
+              {formatCurrency(total)}
             </Text>
           </View>
           <View
@@ -335,7 +335,7 @@ function ShareRow({
           },
         ]}
       >
-        {formatCurrency(share.amount)} {t("common.currency")}
+        {formatCurrency(share.amount)}
       </Text>
     </View>
   );
