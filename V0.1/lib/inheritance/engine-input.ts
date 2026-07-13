@@ -51,6 +51,17 @@ export function normalizeHeirsInput(heirs: HeirsData): HeirsData {
     maternal_uncle: clamp(heirs.maternal_uncle),
     maternal_aunt: clamp(heirs.maternal_aunt),
     paternal_aunt: clamp(heirs.paternal_aunt),
+    full_nephew: clamp(heirs.full_nephew),
+    paternal_nephew: clamp(heirs.paternal_nephew),
+    paternal_brother: clamp(heirs.paternal_brother),
+    paternal_sister: clamp(heirs.paternal_sister),
+    half_brother_maternal: clamp(heirs.half_brother_maternal),
+    half_sister_maternal: clamp(heirs.half_sister_maternal),
+    full_uncle: clamp(heirs.full_uncle),
+    paternal_uncle: clamp(heirs.paternal_uncle),
+    full_cousin: clamp(heirs.full_cousin),
+    paternal_cousin: clamp(heirs.paternal_cousin),
+    maternal_cousin: clamp(heirs.maternal_cousin),
   };
 }
 

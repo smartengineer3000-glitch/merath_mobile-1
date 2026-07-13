@@ -179,9 +179,12 @@ export class EnhancedInheritanceCalculationEngine {
 
       let finalShares = allShares;
       if (finalRemainder.toDecimal() > 0.0001 && asabaShares.length === 0) {
-        finalShares = this.applyRadd(allShares, finalRemainder);
-        this.state.raddApplied = true;
-        steps.push("الرد: radd");
+        const raddResult = this.applyRadd(allShares, finalRemainder);
+        finalShares = raddResult.shares;
+        if (raddResult.applied) {
+          this.state.raddApplied = true;
+          steps.push("الرد: radd");
+        }
       }
 
       // Recalculate remainder after radd
@@ -532,6 +535,18 @@ export class EnhancedInheritanceCalculationEngine {
         fraction,
         count: 1,
         reason,
+      });
+    }
+
+    // Quran 4:11: Father gets 1/6 fard when there are children
+    if (heirs.father && heirs.father > 0 && hasDescendants && !isUmariyyah) {
+      shares.push({
+        key: "father",
+        name: "الأب",
+        type: "فرض",
+        fraction: new FractionClass(1, 6),
+        count: 1,
+        reason: "⅙ مع وجود فرع وارث (Quran 4:11)",
       });
     }
 
@@ -939,6 +954,80 @@ export class EnhancedInheritanceCalculationEngine {
               reason: "مع الجد بالمقاسمة",
             });
           }
+        } else {
+          // Grandfather took 1/3 or 1/6 — siblings get the remaining estate as asaba
+          const remainingAfterGrandfather = remainder.subtract(bestOption);
+          if (remainingAfterGrandfather.toDecimal() > 0.0001) {
+            const siblingHeads =
+              (heirs.full_brother || 0) * 2 +
+              (heirs.full_sister || 0) +
+              (heirs.half_brother_paternal || 0) * 2 +
+              (heirs.half_sister_paternal || 0);
+            if (siblingHeads > 0) {
+              if (heirs.full_brother && heirs.full_brother > 0) {
+                asabaShares.push({
+                  key: "full_brother",
+                  name: "الأخ الشقيق",
+                  type: "تعصيب",
+                  fraction: remainingAfterGrandfather.multiply(
+                    new FractionClass(heirs.full_brother * 2, siblingHeads),
+                  ),
+                  count: heirs.full_brother || 0,
+                  reason: "الباقي بعد الجد",
+                });
+              }
+              if (heirs.full_sister && heirs.full_sister > 0) {
+                asabaShares.push({
+                  key: "full_sister",
+                  name: "الأخت الشقيقة",
+                  type: "تعصيب",
+                  fraction: remainingAfterGrandfather.multiply(
+                    new FractionClass(heirs.full_sister, siblingHeads),
+                  ),
+                  count: heirs.full_sister || 0,
+                  reason: "الباقي بعد الجد",
+                  addToExisting: true,
+                });
+              }
+              if (
+                heirs.half_brother_paternal &&
+                heirs.half_brother_paternal > 0
+              ) {
+                asabaShares.push({
+                  key: "half_brother_paternal",
+                  name: "الأخ لأب",
+                  type: "تعصيب",
+                  fraction: remainingAfterGrandfather.multiply(
+                    new FractionClass(
+                      heirs.half_brother_paternal * 2,
+                      siblingHeads,
+                    ),
+                  ),
+                  count: heirs.half_brother_paternal || 0,
+                  reason: "الباقي بعد الجد",
+                });
+              }
+              if (
+                heirs.half_sister_paternal &&
+                heirs.half_sister_paternal > 0
+              ) {
+                asabaShares.push({
+                  key: "half_sister_paternal",
+                  name: "الأخت لأب",
+                  type: "تعصيب",
+                  fraction: remainingAfterGrandfather.multiply(
+                    new FractionClass(
+                      heirs.half_sister_paternal,
+                      siblingHeads,
+                    ),
+                  ),
+                  count: heirs.half_sister_paternal || 0,
+                  reason: "الباقي بعد الجد",
+                  addToExisting: true,
+                });
+              }
+            }
+          }
         }
 
         return asabaShares;
@@ -1062,24 +1151,35 @@ export class EnhancedInheritanceCalculationEngine {
   private applyRadd(
     shares: HeirShareObject[],
     remainder: FractionClass,
-  ): HeirShareObject[] {
+  ): { shares: HeirShareObject[]; applied: boolean } {
     if (remainder.toDecimal() <= 0.0001) {
-      return shares;
+      return { shares, applied: false };
     }
 
     // C2 FIX: Read madhab config for spouse radd eligibility
     const spouseRaddAllowed =
       FIQH_DATABASE.madhabs[this.madhab]?.rules.spouse_radd ?? false;
 
+    // Spouse radd only applies when spouse is the SOLE fard heir
+    // When other fard heirs exist (e.g. daughters), remainder goes to them, not spouse
+    const hasNonSpouseFardHeirs = shares.some(
+      (s) =>
+        s.key !== "husband" &&
+        s.key !== "wife" &&
+        !s.type.includes("تعصيب"),
+    );
+
     const eligible = shares.filter((s) => {
       if (s.type.includes("تعصيب")) return false;
-      if (!spouseRaddAllowed && (s.key === "husband" || s.key === "wife"))
-        return false;
+      if (s.key === "husband" || s.key === "wife") {
+        if (!spouseRaddAllowed) return false;
+        if (hasNonSpouseFardHeirs) return false;
+      }
       return true;
     });
 
     if (eligible.length === 0) {
-      return shares;
+      return { shares, applied: false };
     }
 
     this.specialCases.push({
@@ -1091,10 +1191,10 @@ export class EnhancedInheritanceCalculationEngine {
     const totalEligible = this.sumFractions(eligible.map((s) => s.fraction));
 
     if (totalEligible.toDecimal() <= 0) {
-      return shares;
+      return { shares, applied: false };
     }
 
-    return shares.map((share) => {
+    const updatedShares = shares.map((share) => {
       if (eligible.includes(share)) {
         const proportion = share.fraction.divide(totalEligible);
         const additionalShare = remainder.multiply(proportion);
@@ -1106,6 +1206,8 @@ export class EnhancedInheritanceCalculationEngine {
       }
       return share;
     });
+
+    return { shares: updatedShares, applied: true };
   }
 
   private distributeToBloodRelatives(
