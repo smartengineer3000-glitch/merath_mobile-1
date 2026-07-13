@@ -1,11 +1,32 @@
-# .easignore – Files to exclude from EAS Build
+# .easignore – Files excluded from EAS Build upload
 
 # Git metadata
 .git/
 .gitignore
 
-# Dependencies (EAS reinstalls these fresh)
+# Dependencies (EAS reinstalls fresh)
 node_modules/
+
+# Documentation
+*.md
+docs/
+scripts/
+
+# Test files
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+test-reports/
+test-results/
+coverage/
+.nyc_output/
+vitest.config.ts
+
+# Linting
+.eslintrc.js
+eslint.config.js
 
 # IDE & OS
 .idea/
@@ -13,29 +34,16 @@ node_modules/
 .DS_Store
 Thumbs.db
 
-# Development / Test files
-__tests__/
-*.test.ts
-*.test.tsx
-*.spec.ts
-*.spec.tsx
-test-reports/
-coverage/
-.nyc_output/
-
-# Local development configs
+# Dev configs not needed at build time
+eas.json
 .expo-shared/
+package-lock.json
+
+# Logs
 npm-debug.log*
 *.log
 
-# Documentation
-*.md
-CHANGELOG.md
-README.md
-docs/
-scripts/
-
-# Temporary
+# Temp
 *.tmp
 .cache/
 .eas/
