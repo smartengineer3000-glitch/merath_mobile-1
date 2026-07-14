@@ -30,6 +30,7 @@ import "@fontsource/cairo";
 import "@fontsource/plus-jakarta-sans";
 
 import { useTranslation } from "react-i18next";
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { ThemeProvider, useAppTheme } from "./lib/context/ThemeProvider";
 import { SettingsProvider } from "./lib/context/SettingsContext";
 import { MadhabProvider } from "./lib/context/MadhabContext";
@@ -198,7 +199,23 @@ const AppContent = () => {
       <NetworkStatusIndicator />
       <ErrorBoundary theme={theme}>
         <CalculationProvider>
-          <RootNavigator />
+          <NavigationContainer
+            theme={{
+              ...DefaultTheme,
+              dark: theme.mode === "dark",
+              colors: {
+                ...DefaultTheme.colors,
+                primary: theme.colors.primary.main,
+                background: theme.colors.background.light,
+                card: theme.colors.background.light,
+                text: theme.colors.neutral.dark300,
+                border: theme.colors.neutral.light200,
+                notification: theme.colors.primary.main,
+              },
+            }}
+          >
+            <RootNavigator />
+          </NavigationContainer>
         </CalculationProvider>
       </ErrorBoundary>
       <DisclaimersModal

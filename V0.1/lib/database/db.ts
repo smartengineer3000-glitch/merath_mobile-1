@@ -159,15 +159,25 @@ export class MerathDatabase extends Dexie {
   }
 }
 
-// Export a singleton instance
-export const db = new MerathDatabase();
+// Lazy singleton — avoids crash on environments without IndexedDB (React Native)
+let _db: MerathDatabase | null = null;
 
-// export type { DBAuditLogEntry }; // Already exported
+export function getDb(): MerathDatabase {
+  if (!_db) {
+    _db = new MerathDatabase();
+    _db.on("ready", () => {
+      if (typeof __DEV__ !== "undefined" && __DEV__)
+        console.log("[Database] MerathDatabase ready");
+    });
+  }
+  return _db;
+}
 
-// Initialize database
-db.on("ready", () => {
-  if (typeof __DEV__ !== "undefined" && __DEV__)
-    console.log("[Database] MerathDatabase ready");
+// Keep `db` as a lazy accessor so existing imports keep working
+export const db = new Proxy({} as MerathDatabase, {
+  get(_target, prop, receiver) {
+    return Reflect.get(getDb(), prop, receiver);
+  },
 });
 
 export default db;

@@ -71,31 +71,64 @@ export class ErrorBoundary extends Component<
               {i18next.t("error.description")}
             </Text>
 
-            {__DEV__ && this.state.error && (
+            {this.state.error && (
               <View
                 style={[
-                  styles.debugContainer,
+                  styles.errorBox,
                   {
                     backgroundColor: theme.colors.neutral.light50,
+                    borderColor: theme.colors.error.main,
                     borderRadius: theme.borderRadius.md,
                   },
                 ]}
               >
                 <Text
                   style={[
-                    styles.debugTitle,
-                    { color: theme.colors.neutral.dark200 },
+                    styles.errorBoxTitle,
+                    { color: theme.colors.error.main },
                   ]}
                 >
                   {i18next.t("error.details")}
                 </Text>
                 <Text
+                  selectable
                   style={[
-                    styles.debugText,
+                    styles.errorBoxMessage,
+                    { color: theme.colors.neutral.dark300 },
+                  ]}
+                >
+                  {this.state.error.message || String(this.state.error)}
+                </Text>
+              </View>
+            )}
+
+            {this.state.errorInfo && this.state.errorInfo.componentStack && (
+              <View
+                style={[
+                  styles.errorBox,
+                  {
+                    backgroundColor: theme.colors.neutral.light50,
+                    borderColor: theme.colors.neutral.light200,
+                    borderRadius: theme.borderRadius.md,
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.errorBoxTitle,
+                    { color: theme.colors.neutral.dark200 },
+                  ]}
+                >
+                  Component Stack
+                </Text>
+                <Text
+                  selectable
+                  style={[
+                    styles.errorBoxMessage,
                     { color: theme.colors.neutral.dark100 },
                   ]}
                 >
-                  {this.state.error.message}
+                  {this.state.errorInfo.componentStack}
                 </Text>
               </View>
             )}
@@ -150,24 +183,27 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     marginBottom: 24,
   },
-  debugContainer: {
+  errorBox: {
     width: "100%",
     padding: 12,
-    marginBottom: 24,
+    marginBottom: 16,
+    borderWidth: 1,
   },
-  debugTitle: {
+  errorBoxTitle: {
     fontSize: 12,
-    fontWeight: "600",
-    marginBottom: 4,
+    fontWeight: "700",
+    marginBottom: 6,
+    textTransform: "uppercase",
   },
-  debugText: {
-    fontSize: 11,
+  errorBoxMessage: {
+    fontSize: 12,
     fontFamily: "monospace",
-    lineHeight: 16,
+    lineHeight: 18,
   },
   retryButton: {
     paddingHorizontal: 32,
     paddingVertical: 14,
+    marginTop: 8,
   },
   retryText: {
     color: "#ffffff",
