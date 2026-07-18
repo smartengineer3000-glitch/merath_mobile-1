@@ -556,11 +556,11 @@ describe("FIQH_DATABASE integrity", () => {
     }
   });
 
-  it("radd rules: hanafi and maliki allow spouse radd, shafii and hanbali do not", () => {
+  it("radd rules: hanafi and hanbali allow spouse radd, shafii and maliki do not", () => {
     expect(FIQH_DATABASE.madhabs.hanafi.rules.spouse_radd).toBe(true);
-    expect(FIQH_DATABASE.madhabs.maliki.rules.spouse_radd).toBe(true);
+    expect(FIQH_DATABASE.madhabs.hanbali.rules.spouse_radd).toBe(true);
     expect(FIQH_DATABASE.madhabs.shafii.rules.spouse_radd).toBe(false);
-    expect(FIQH_DATABASE.madhabs.hanbali.rules.spouse_radd).toBe(false);
+    expect(FIQH_DATABASE.madhabs.maliki.rules.spouse_radd).toBe(false);
   });
 
   it("grandfather_with_siblings: shafii/hanafi=hijab, maliki/hanbali=musharak", () => {

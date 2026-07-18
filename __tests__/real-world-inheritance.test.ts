@@ -46,13 +46,13 @@ describe("Simple Cases — Basic Fard & Asaba (Quran 4:11-12)", () => {
 
   // S1: Wife only — 1/4 fard + radd (Hanafi/Maliki) or just 1/4 (Shafii/Hanbali)
   // Quran 4:12: "فَلَهُنَّ رُبُعُ مَا تَرَكَ"
-  // Hanafi/Maliki: spouse radd when sole heir → wife gets full estate
-  // Shafii/Hanbali: no spouse radd → wife keeps 1/4 only
+  // Hanafi/Hanbali: spouse radd when sole heir → wife gets full estate
+  // Shafii/Maliki: no spouse radd → wife keeps 1/4 only
   madhabs.forEach((m) => {
-    it(`S1 [${m}]: Wife only — ${["hanafi", "maliki"].includes(m) ? "1/4 + radd = 120,000" : "1/4 = 30,000"}`, () => {
+    it(`S1 [${m}]: Wife only — ${["hanafi", "hanbali"].includes(m) ? "1/4 + radd = 120,000" : "1/4 = 30,000"}`, () => {
       const r = calc(m, { wife: 1 });
       expect(r.success).toBe(true);
-      if (["hanafi", "maliki"].includes(m)) {
+      if (["hanafi", "hanbali"].includes(m)) {
         expectShare(r, "wife", 120000);
         expect(r.raddApplied).toBe(true);
       } else {
@@ -61,13 +61,13 @@ describe("Simple Cases — Basic Fard & Asaba (Quran 4:11-12)", () => {
     });
   });
 
-  // S2: Husband only — 1/2 fard + radd (Hanafi/Maliki) or just 1/2 (Shafii/Hanbali)
+  // S2: Husband only — 1/2 fard + radd (Hanafi/Hanbali) or just 1/2 (Shafii/Maliki)
   // Quran 4:12: "لِلزَّوْجِ نِصْفُ مَا تَرَكَ"
   madhabs.forEach((m) => {
-    it(`S2 [${m}]: Husband only — ${["hanafi", "maliki"].includes(m) ? "1/2 + radd = 120,000" : "1/2 = 60,000"}`, () => {
+    it(`S2 [${m}]: Husband only — ${["hanafi", "hanbali"].includes(m) ? "1/2 + radd = 120,000" : "1/2 = 60,000"}`, () => {
       const r = calc(m, { husband: 1 });
       expect(r.success).toBe(true);
-      if (["hanafi", "maliki"].includes(m)) {
+      if (["hanafi", "hanbali"].includes(m)) {
         expectShare(r, "husband", 120000);
         expect(r.raddApplied).toBe(true);
       } else {

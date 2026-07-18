@@ -48,7 +48,7 @@ export const HEIRS: HeirConfig[] = [
     gender: "female",
     group: "spouses",
     labelKey: "heirs.wife",
-    maxCount: 3,
+    maxCount: 4,
   },
   {
     key: "son",
