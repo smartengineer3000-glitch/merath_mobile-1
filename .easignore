@@ -1,0 +1,20 @@
+# Root .easignore – exclude everything not needed for the Android build
+
+# Documentation
+*.md
+
+# GitHub config, CI, skills
+.github/
+
+# Git metadata
+.gitignore
+.git/
+
+# IDE & OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Root-level files not needed in build
+UI_UX_PLAN.md
