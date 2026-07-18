@@ -39,7 +39,10 @@
     "quickAddScenarios": "سيناريوهات إضافة سريعة",
     "selected": "محدد",
     "selectedHeirs": "الورثة المحددون",
-    "willExceedsOneThird": "لا يمكن أن تتجاوز الوصية ثلث إجمالي التركة"
+    "willExceedsOneThird": "لا يمكن أن تتجاوز الوصية ثلث إجمالي التركة",
+    "deceasedGender": "جنس المتوفى",
+    "deceasedGenderMale": "ذكر",
+    "deceasedGenderFemale": "أنثى"
   },
 
   "estate": {
@@ -80,9 +83,22 @@
     "paternalSister": "الأخت لأب",
     "maternalBrother": "الأخ لأم",
     "maternalSister": "الأخت لأم",
+    "grandson": "ابن الابن",
+    "granddaughter": "بنت الابن",
+    "grandmotherMother": "الجدة لأم",
+    "grandmotherFather": "الجدة لأب",
     "nephew": "ابن الأخ",
+    "paternalNephew": "ابن الأخ لأب",
     "uncle": "العم",
-    "cousin": "ابن العم"
+    "paternalUncle": "العم لأب",
+    "cousin": "ابن العم",
+    "paternalCousin": "ابن العم لأب",
+    "daughterSon": "ابن البنت",
+    "daughterDaughter": "بنت البنت",
+    "maternalUncle": "الخال",
+    "maternalAunt": "الخالة",
+    "paternalAunt": "العمة",
+    "sisterChildren": "أولاد الأخت"
   },
 
   "madhab": {

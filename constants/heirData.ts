@@ -5,7 +5,8 @@ export type HeirGroup =
   | "descendants"
   | "ascendants"
   | "siblings"
-  | "extended";
+  | "extended"
+  | "blood_relatives";
 
 export interface HeirConfig {
   key: HeirType;
@@ -29,6 +30,10 @@ export const HEIR_GROUPS: Record<
   },
   siblings: { icon: "account-multiple", labelKey: "heirs.group.siblings" },
   extended: { icon: "account-network", labelKey: "heirs.group.nephews" },
+  blood_relatives: {
+    icon: "account-heart",
+    labelKey: "heirs.group.bloodRelatives",
+  },
 };
 
 export const HEIRS: HeirConfig[] = [
@@ -74,7 +79,7 @@ export const HEIRS: HeirConfig[] = [
     color: "#66BB6A",
     gender: "male",
     group: "descendants",
-    labelKey: "heirs.son",
+    labelKey: "heirs.grandson",
     maxCount: 20,
   },
   {
@@ -83,7 +88,7 @@ export const HEIRS: HeirConfig[] = [
     color: "#f06292",
     gender: "female",
     group: "descendants",
-    labelKey: "heirs.daughter",
+    labelKey: "heirs.granddaughter",
     maxCount: 20,
   },
   {
@@ -114,13 +119,22 @@ export const HEIRS: HeirConfig[] = [
     maxCount: 1,
   },
   {
-    key: "grandmother",
+    key: "grandmother_mother",
     icon: "account",
     color: "#7B1FA2",
     gender: "female",
     group: "ascendants",
-    labelKey: "heirs.grandmother",
-    maxCount: 2,
+    labelKey: "heirs.grandmotherMother",
+    maxCount: 1,
+  },
+  {
+    key: "grandmother_father",
+    icon: "account",
+    color: "#6A1B9A",
+    gender: "female",
+    group: "ascendants",
+    labelKey: "heirs.grandmotherFather",
+    maxCount: 1,
   },
   {
     key: "full_brother",
@@ -186,6 +200,15 @@ export const HEIRS: HeirConfig[] = [
     maxCount: 20,
   },
   {
+    key: "paternal_nephew",
+    icon: "account-child",
+    color: "#FB8C00",
+    gender: "male",
+    group: "extended",
+    labelKey: "heirs.paternalNephew",
+    maxCount: 20,
+  },
+  {
     key: "full_uncle",
     icon: "account-tie",
     color: "#AB47BC",
@@ -195,12 +218,84 @@ export const HEIRS: HeirConfig[] = [
     maxCount: 20,
   },
   {
+    key: "paternal_uncle",
+    icon: "account-tie",
+    color: "#8E24AA",
+    gender: "male",
+    group: "extended",
+    labelKey: "heirs.paternalUncle",
+    maxCount: 20,
+  },
+  {
     key: "full_cousin",
     icon: "account-group",
     color: "#5C6BC0",
     gender: "male",
     group: "extended",
     labelKey: "heirs.cousin",
+    maxCount: 20,
+  },
+  {
+    key: "paternal_cousin",
+    icon: "account-group",
+    color: "#3949AB",
+    gender: "male",
+    group: "extended",
+    labelKey: "heirs.paternalCousin",
+    maxCount: 20,
+  },
+  {
+    key: "daughter_son",
+    icon: "baby-face-outline",
+    color: "#FF7043",
+    gender: "male",
+    group: "blood_relatives",
+    labelKey: "heirs.daughterSon",
+    maxCount: 20,
+  },
+  {
+    key: "daughter_daughter",
+    icon: "baby-face-outline",
+    color: "#EC407A",
+    gender: "female",
+    group: "blood_relatives",
+    labelKey: "heirs.daughterDaughter",
+    maxCount: 20,
+  },
+  {
+    key: "maternal_uncle",
+    icon: "account-tie",
+    color: "#26A69A",
+    gender: "male",
+    group: "blood_relatives",
+    labelKey: "heirs.maternalUncle",
+    maxCount: 20,
+  },
+  {
+    key: "maternal_aunt",
+    icon: "account",
+    color: "#EF5350",
+    gender: "female",
+    group: "blood_relatives",
+    labelKey: "heirs.maternalAunt",
+    maxCount: 20,
+  },
+  {
+    key: "paternal_aunt",
+    icon: "account",
+    color: "#8E24AA",
+    gender: "female",
+    group: "blood_relatives",
+    labelKey: "heirs.paternalAunt",
+    maxCount: 20,
+  },
+  {
+    key: "sister_children",
+    icon: "account-child",
+    color: "#66BB6A",
+    gender: "male",
+    group: "blood_relatives",
+    labelKey: "heirs.sisterChildren",
     maxCount: 20,
   },
 ];

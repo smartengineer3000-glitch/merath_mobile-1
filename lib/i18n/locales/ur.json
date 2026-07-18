@@ -39,7 +39,10 @@
     "quickAddScenarios": "فوری اضافہ منظرنے",
     "selected": "منتخب",
     "selectedHeirs": "منتخب وارثین",
-    "willExceedsOneThird": "وصیت کل ملکیت کے تہائی سے زیادہ نہیں ہو سکتی"
+    "willExceedsOneThird": "وصیت کل ملکیت کے تہائی سے زیادہ نہیں ہو سکتی",
+    "deceasedGender": "مرتحل کی جنس",
+    "deceasedGenderMale": "مرد",
+    "deceasedGenderFemale": "عورت"
   },
 
   "estate": {
@@ -80,9 +83,22 @@
     "paternalSister": "سوتیلی بہن",
     "maternalBrother": "ماں کی طرف سے بھائی",
     "maternalSister": "ماں کی طرف سے بہن",
+    "grandson": "پوتا",
+    "granddaughter": "پوتی",
+    "grandmotherMother": "ماں کی طرف سے دادی",
+    "grandmotherFather": "باپ کی طرف سے دادی",
     "nephew": "بھتیجہ",
+    "paternalNephew": "باپ کی طرف سے بھتیجہ",
     "uncle": "چاچا",
-    "cousin": "کزن"
+    "paternalUncle": "باپ کی طرف سے چاچا",
+    "cousin": "کزن",
+    "paternalCousin": "باپ کی طرف سے کزن",
+    "daughterSon": "بیٹی کا بیٹا",
+    "daughterDaughter": "بیٹی کی بیٹی",
+    "maternalUncle": "خال",
+    "maternalAunt": "خالہ",
+    "paternalAunt": "چچی",
+    "sisterChildren": "بہن کے بچے"
   },
 
   "madhab": {

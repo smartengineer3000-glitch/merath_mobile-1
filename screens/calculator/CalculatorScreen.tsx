@@ -39,6 +39,9 @@ export default function CalculatorScreen() {
   const [funeral, setFuneral] = useState(0);
   const [debts, setDebts] = useState(0);
   const [will, setWillRaw] = useState(0);
+  const [deceasedGender, setDeceasedGender] = useState<"male" | "female">(
+    "male",
+  );
 
   const setWill = useCallback(
     (val: number) => {
@@ -185,6 +188,25 @@ export default function CalculatorScreen() {
           ))}
         </View>
 
+        {/* Deceased Gender */}
+        <Card variant="outlined" style={styles.section}>
+          <SectionHeader title={t("calculator.deceasedGender")} />
+          <View style={styles.genderRow}>
+            <Chip
+              label={t("calculator.deceasedGenderMale")}
+              selected={deceasedGender === "male"}
+              onPress={() => setDeceasedGender("male")}
+              size="sm"
+            />
+            <Chip
+              label={t("calculator.deceasedGenderFemale")}
+              selected={deceasedGender === "female"}
+              onPress={() => setDeceasedGender("female")}
+              size="sm"
+            />
+          </View>
+        </Card>
+
         {/* Estate Card */}
         <EstateCard
           total={estateTotal}
@@ -261,6 +283,7 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: { padding: 16, paddingBottom: 120 },
   madhabRow: { flexDirection: "row", flexWrap: "wrap", marginBottom: 12 },
+  genderRow: { flexDirection: "row", gap: 8 },
   section: { marginBottom: 12 },
   bottomBar: {
     paddingHorizontal: 16,

@@ -37,7 +37,10 @@
     "quickAddScenarios": "Schnelle Szenarien hinzufügen",
     "selected": "ausgewählt",
     "selectedHeirs": "Ausgewählte Erben",
-    "willExceedsOneThird": "Das Testament darf 1/3 des Gesamtvermögens nicht überschreiten"
+    "willExceedsOneThird": "Das Testament darf 1/3 des Gesamtvermögens nicht überschreiten",
+    "deceasedGender": "Geschlecht des Verstorbenen",
+    "deceasedGenderMale": "Männlich",
+    "deceasedGenderFemale": "Weiblich"
   },
   "estate": {
     "title": "Erbschaftsinformationen",
@@ -76,9 +79,22 @@
     "paternalSister": "Halbschwester (väterlich)",
     "maternalBrother": "Halbbruder (mütterlich)",
     "maternalSister": "Halbschwester (mütterlich)",
+    "grandson": "Enkelsohn",
+    "granddaughter": "Enkeltochter",
+    "grandmotherMother": "Mütterliche Großmutter",
+    "grandmotherFather": "Väterliche Großmutter",
     "nephew": "Neffe",
+    "paternalNephew": "Väterlicher Neffe",
     "uncle": "Onkel",
-    "cousin": "Cousin"
+    "paternalUncle": "Väterlicher Onkel",
+    "cousin": "Cousin",
+    "paternalCousin": "Väterlicher Cousin",
+    "daughterSon": "Sohn der Tochter",
+    "daughterDaughter": "Tochter der Tochter",
+    "maternalUncle": "Mütterlicher Onkel",
+    "maternalAunt": "Mütterliche Tante",
+    "paternalAunt": "Väterliche Tante",
+    "sisterChildren": "Kinder der Schwester"
   },
   "madhab": {
     "title": "Islamische Rechtsschule",

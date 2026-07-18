@@ -37,7 +37,10 @@
     "quickAddScenarios": "Scénarios d'ajout rapide",
     "selected": "sélectionné",
     "selectedHeirs": "Héritiers sélectionnés",
-    "willExceedsOneThird": "Le testament ne peut pas dépasser 1/3 de la succession totale"
+    "willExceedsOneThird": "Le testament ne peut pas dépasser 1/3 de la succession totale",
+    "deceasedGender": "Genre du défunt",
+    "deceasedGenderMale": "Masculin",
+    "deceasedGenderFemale": "Féminin"
   },
   "estate": {
     "title": "Informations sur la succession",
@@ -76,9 +79,22 @@
     "paternalSister": "Demi-sœur paternelle",
     "maternalBrother": "Demi-frère maternel",
     "maternalSister": "Demi-sœur maternelle",
+    "grandson": "Petit-fils",
+    "granddaughter": "Petite-fille",
+    "grandmotherMother": "Grand-mère maternelle",
+    "grandmotherFather": "Grand-mère paternelle",
     "nephew": "Neveu",
+    "paternalNephew": "Neveu paternel",
     "uncle": "Oncle",
-    "cousin": "Cousin"
+    "paternalUncle": "Oncle paternel",
+    "cousin": "Cousin",
+    "paternalCousin": "Cousin paternel",
+    "daughterSon": "Fils de la fille",
+    "daughterDaughter": "Fille de la fille",
+    "maternalUncle": "Oncle maternel",
+    "maternalAunt": "Tante maternelle",
+    "paternalAunt": "Tante paternelle",
+    "sisterChildren": "Enfants de la sœur"
   },
   "madhab": {
     "title": "École islamique (Madhab)",

@@ -37,7 +37,10 @@
     "quickAddScenarios": "Hızlı Senaryo Ekleme",
     "selected": "seçildi",
     "selectedHeirs": "Seçilen Mirasçılar",
-    "willExceedsOneThird": "Vasiyetname toplam mirasın 1/3'ünü aşamaz"
+    "willExceedsOneThird": "Vasiyetname toplam mirasın 1/3'ünü aşamaz",
+    "deceasedGender": "Merhum Cinsiyeti",
+    "deceasedGenderMale": "Erkek",
+    "deceasedGenderFemale": "Kadın"
   },
   "estate": {
     "title": "Miras Bilgileri",
@@ -76,9 +79,22 @@
     "paternalSister": "Baba Tarafından Kız Kardeş",
     "maternalBrother": "Anne Tarafından Kardeş",
     "maternalSister": "Anne Tarafından Kız Kardeş",
+    "grandson": "Torun (Erkek)",
+    "granddaughter": "Torun (Kız)",
+    "grandmotherMother": "Anne Tarafından Nine",
+    "grandmotherFather": "Baba Tarafından Nine",
     "nephew": "Yeğen",
+    "paternalNephew": "Baba Tarafından Yeğen",
     "uncle": "Amca",
-    "cousin": "Kuzen"
+    "paternalUncle": "Baba Tarafından Amca",
+    "cousin": "Kuzen",
+    "paternalCousin": "Baba Tarafından Kuzen",
+    "daughterSon": "Kızın Oğlu",
+    "daughterDaughter": "Kızın Kızı",
+    "maternalUncle": "Dayı",
+    "maternalAunt": "Teyze",
+    "paternalAunt": "Hala",
+    "sisterChildren": "Kız Kardeşin Çocukları"
   },
   "madhab": {
     "title": "İslami Mezhep",

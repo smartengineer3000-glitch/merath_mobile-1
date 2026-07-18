@@ -313,8 +313,8 @@ export class EnhancedInheritanceCalculationEngine {
   }
 
   private isMusharraka(filteredHeirs?: HeirsData): boolean {
-    // Musharraka is only recognized in Shafii madhab (and maybe others, but definitely not Maliki)
-    if (this.madhab !== "shafii") {
+    // Musharraka (المشتركة/الحمارية) is recognized in Shafii and Maliki madhabs
+    if (this.madhab !== "shafii" && this.madhab !== "maliki") {
       return false;
     }
     const h = filteredHeirs || this.heirs;

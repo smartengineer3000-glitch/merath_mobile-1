@@ -100,7 +100,7 @@ describe("Special Cases - Complete Test Suite", () => {
       expect(siblings).toBeUndefined();
     });
 
-    it("Case 5: Should NOT apply Musharraka in Maliki madhab", () => {
+    it("Case 5: SHOULD apply Musharraka in Maliki madhab (per Pro7 rules)", () => {
       const heirs: HeirsData = {
         husband: 1,
         mother: 1,
@@ -113,9 +113,9 @@ describe("Special Cases - Complete Test Suite", () => {
 
       expect(result.success).toBe(true);
 
-      // In Maliki, full brothers should be blocked by grandfather? No, but they shouldn't share with maternal
+      // In Maliki, Musharraka is enabled — full siblings share with maternal siblings
       const siblings = result.shares.find((s) => s.key === "shared_siblings");
-      expect(siblings).toBeUndefined();
+      expect(siblings).toBeDefined();
     });
   });
 

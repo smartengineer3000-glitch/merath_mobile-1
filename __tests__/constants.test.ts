@@ -7,8 +7,8 @@ import {
 } from "../constants/heirData";
 
 describe("HEIRS array", () => {
-  it("contains 19 heir configurations", () => {
-    expect(HEIRS.length).toBe(19);
+  it("contains 29 heir configurations", () => {
+    expect(HEIRS.length).toBe(29);
   });
 
   it("each heir has a unique key", () => {
@@ -28,10 +28,10 @@ describe("HEIRS array", () => {
     }
   });
 
-  it("covers all 5 groups", () => {
+  it("covers all 6 groups", () => {
     const groups = new Set(HEIRS.map((h) => h.group));
     expect(groups).toEqual(
-      new Set(["spouses", "descendants", "ascendants", "siblings", "extended"]),
+      new Set(["spouses", "descendants", "ascendants", "siblings", "extended", "blood_relatives"]),
     );
   });
 
@@ -48,9 +48,9 @@ describe("HEIRS array", () => {
     expect(descendants.length).toBe(4);
   });
 
-  it("has 4 ascendants", () => {
+  it("has 5 ascendants (father, mother, grandfather, maternal & paternal grandmother)", () => {
     const ascendants = getHeirsByGroup("ascendants");
-    expect(ascendants.length).toBe(4);
+    expect(ascendants.length).toBe(5);
   });
 
   it("has 6 siblings", () => {
@@ -58,15 +58,20 @@ describe("HEIRS array", () => {
     expect(siblings.length).toBe(6);
   });
 
-  it("has 3 extended family members", () => {
+  it("has 6 extended family members (3 full + 3 paternal)", () => {
     const extended = getHeirsByGroup("extended");
-    expect(extended.length).toBe(3);
+    expect(extended.length).toBe(6);
+  });
+
+  it("has 6 blood relatives", () => {
+    const blood = getHeirsByGroup("blood_relatives");
+    expect(blood.length).toBe(6);
   });
 });
 
 describe("HEIR_GROUPS", () => {
-  it("has 5 groups", () => {
-    expect(Object.keys(HEIR_GROUPS).length).toBe(5);
+  it("has 6 groups", () => {
+    expect(Object.keys(HEIR_GROUPS).length).toBe(6);
   });
 
   it("each group has icon and labelKey", () => {
@@ -116,8 +121,9 @@ describe("getHeirsByGroup", () => {
   it("returns correct count for each group", () => {
     expect(getHeirsByGroup("spouses").length).toBe(2);
     expect(getHeirsByGroup("descendants").length).toBe(4);
-    expect(getHeirsByGroup("ascendants").length).toBe(4);
+    expect(getHeirsByGroup("ascendants").length).toBe(5);
     expect(getHeirsByGroup("siblings").length).toBe(6);
-    expect(getHeirsByGroup("extended").length).toBe(3);
+    expect(getHeirsByGroup("extended").length).toBe(6);
+    expect(getHeirsByGroup("blood_relatives").length).toBe(6);
   });
 });
