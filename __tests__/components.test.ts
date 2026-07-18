@@ -49,9 +49,7 @@ describe("Component data structures", () => {
       expect(HEIRS.find((h) => h.key === "granddaughter")?.gender).toBe(
         "female",
       );
-      expect(HEIRS.find((h) => h.key === "full_sister")?.gender).toBe(
-        "female",
-      );
+      expect(HEIRS.find((h) => h.key === "full_sister")?.gender).toBe("female");
       expect(HEIRS.find((h) => h.key === "paternal_sister")?.gender).toBe(
         "female",
       );
@@ -186,8 +184,7 @@ describe("Component data structures", () => {
 
   describe("SectionHeader data flow", () => {
     it("formats action label with count", () => {
-      const format = (count: number, label: string) =>
-        `${count} ${label}`;
+      const format = (count: number, label: string) => `${count} ${label}`;
       expect(format(3, "selected")).toBe("3 selected");
       expect(format(0, "items")).toBe("0 items");
     });

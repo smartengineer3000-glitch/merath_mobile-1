@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import { FractionClass } from "../lib/inheritance/fraction";
 import { HijabSystem } from "../lib/inheritance/hijab-system";
 import { InvariantEngine } from "../lib/inheritance/invariant";
@@ -8,8 +8,16 @@ import {
   validateEngineInput,
 } from "../lib/inheritance/engine-input";
 import { EnhancedInheritanceCalculationEngine } from "../lib/inheritance/enhanced-engine-complete";
-import { FIQH_DATABASE, getHijabRules, isValidMadhab } from "../lib/inheritance/constants";
-import type { MadhhabType, EstateData, HeirsData } from "../lib/inheritance/types";
+import {
+  FIQH_DATABASE,
+  getHijabRules,
+  isValidMadhab,
+} from "../lib/inheritance/constants";
+import type {
+  MadhhabType,
+  EstateData,
+  HeirsData,
+} from "../lib/inheritance/types";
 
 // ============================================================
 // FractionClass: Edge cases
@@ -494,14 +502,24 @@ describe("Engine input: advanced normalization", () => {
   });
 
   it("validateEngineInput: will exceeding 1/3 of estate still valid (engine handles)", () => {
-    const estate: EstateData = { total: 100000, funeral: 0, debts: 0, will: 50000 };
+    const estate: EstateData = {
+      total: 100000,
+      funeral: 0,
+      debts: 0,
+      will: 50000,
+    };
     const heirs: HeirsData = { husband: 1 };
     const result = validateEngineInput(estate, heirs);
     expect(result.valid).toBe(true);
   });
 
   it("validateEngineInput: funeral exceeding total", () => {
-    const estate: EstateData = { total: 10000, funeral: 20000, debts: 0, will: 0 };
+    const estate: EstateData = {
+      total: 10000,
+      funeral: 20000,
+      debts: 0,
+      will: 0,
+    };
     const heirs: HeirsData = { wife: 1 };
     const result = validateEngineInput(estate, heirs);
     expect(result.valid).toBe(true);
@@ -564,10 +582,18 @@ describe("FIQH_DATABASE integrity", () => {
   });
 
   it("grandfather_with_siblings: shafii/hanafi=hijab, maliki/hanbali=musharak", () => {
-    expect(FIQH_DATABASE.madhabs.shafii.rules.grandfather_with_siblings).toBe("hijab");
-    expect(FIQH_DATABASE.madhabs.hanafi.rules.grandfather_with_siblings).toBe("hijab");
-    expect(FIQH_DATABASE.madhabs.maliki.rules.grandfather_with_siblings).toBe("musharak");
-    expect(FIQH_DATABASE.madhabs.hanbali.rules.grandfather_with_siblings).toBe("musharak");
+    expect(FIQH_DATABASE.madhabs.shafii.rules.grandfather_with_siblings).toBe(
+      "hijab",
+    );
+    expect(FIQH_DATABASE.madhabs.hanafi.rules.grandfather_with_siblings).toBe(
+      "hijab",
+    );
+    expect(FIQH_DATABASE.madhabs.maliki.rules.grandfather_with_siblings).toBe(
+      "musharak",
+    );
+    expect(FIQH_DATABASE.madhabs.hanbali.rules.grandfather_with_siblings).toBe(
+      "musharak",
+    );
   });
 });
 
@@ -576,7 +602,11 @@ describe("FIQH_DATABASE integrity", () => {
 // ============================================================
 
 function calc(madhab: MadhhabType, estate: EstateData, heirs: HeirsData) {
-  const engine = new EnhancedInheritanceCalculationEngine(madhab, estate, heirs);
+  const engine = new EnhancedInheritanceCalculationEngine(
+    madhab,
+    estate,
+    heirs,
+  );
   return engine.calculate();
 }
 
@@ -646,7 +676,9 @@ describe("Engine: Radd (return of surplus)", () => {
     // daughter gets 1/2 as fard, plus radd of remaining 1/2
     // since no asaba heirs exist, radd goes to her
     expect(result.raddApplied).toBe(true);
-    const daughterShare = result.shares.find((s) => s.key === "daughter" || s.name?.includes("بنت"));
+    const daughterShare = result.shares.find(
+      (s) => s.key === "daughter" || s.name?.includes("بنت"),
+    );
     expect(daughterShare).toBeDefined();
     // She should get the full estate
     expect(daughterShare!.amount).toBeCloseTo(120000, -1);
@@ -656,14 +688,18 @@ describe("Engine: Radd (return of surplus)", () => {
     const result = calc("shafii", estate(120000), { wife: 1 });
     // wife gets 1/4 = 30000
     // radd goes to blood relatives or stays
-    const wifeShare = result.shares.find((s) => s.key === "wife" || s.name?.includes("زوجة"));
+    const wifeShare = result.shares.find(
+      (s) => s.key === "wife" || s.name?.includes("زوجة"),
+    );
     expect(wifeShare).toBeDefined();
     expect(wifeShare!.amount).toBeCloseTo(30000, -1);
   });
 
   it("wife gets fard + radd in hanafi when no asaba", () => {
     const result = calc("hanafi", estate(120000), { wife: 1 });
-    const wifeShare = result.shares.find((s) => s.key === "wife" || s.name?.includes("زوجة"));
+    const wifeShare = result.shares.find(
+      (s) => s.key === "wife" || s.name?.includes("زوجة"),
+    );
     expect(wifeShare).toBeDefined();
     // wife gets 1/4 fard + radd (remainder) = full estate when no asaba heirs
     expect(wifeShare!.amount).toBeCloseTo(120000, -1);
@@ -674,8 +710,12 @@ describe("Engine: Radd (return of surplus)", () => {
 describe("Engine: Asaba distribution", () => {
   it("son takes remainder after wife's share", () => {
     const result = calc("hanafi", estate(120000), { wife: 1, son: 1 });
-    const wifeShare = result.shares.find((s) => s.key === "wife" || s.name?.includes("زوجة"));
-    const sonShare = result.shares.find((s) => s.key === "son" || s.name?.includes("ابن"));
+    const wifeShare = result.shares.find(
+      (s) => s.key === "wife" || s.name?.includes("زوجة"),
+    );
+    const sonShare = result.shares.find(
+      (s) => s.key === "son" || s.name?.includes("ابن"),
+    );
     expect(wifeShare).toBeDefined();
     expect(sonShare).toBeDefined();
     // wife gets 1/8 = 15000, son gets remainder = 105000
@@ -684,10 +724,13 @@ describe("Engine: Asaba distribution", () => {
   });
 
   it("son and daughter: 2:1 ratio for remainder", () => {
-    const result = calc("hanafi", estate(120000), { wife: 1, son: 1, daughter: 1 });
-    const sonShare = result.shares.find((s) => s.key === "son" || s.name?.includes("ابن"));
-    const daughterAsAsaba = result.shares.find(
-      (s) => (s.key === "daughter" || s.name?.includes("بنت")) && s.shareType !== "fard",
+    const result = calc("hanafi", estate(120000), {
+      wife: 1,
+      son: 1,
+      daughter: 1,
+    });
+    const sonShare = result.shares.find(
+      (s) => s.key === "son" || s.name?.includes("ابن"),
     );
     expect(sonShare).toBeDefined();
     // wife 1/8 = 15000, remainder = 105000
@@ -701,12 +744,14 @@ describe("Engine: Madhab comparison", () => {
   const baseHeirs: HeirsData = { wife: 1, son: 1, daughter: 1 };
 
   it("same scenario gives same wife share across all madhabs", () => {
-    const results = (["hanafi", "maliki", "shafii", "hanbali"] as MadhhabType[]).map(
-      (m) => calc(m, baseEstate, baseHeirs),
-    );
+    const results = (
+      ["hanafi", "maliki", "shafii", "hanbali"] as MadhhabType[]
+    ).map((m) => calc(m, baseEstate, baseHeirs));
 
     const wifeAmounts = results.map((r) => {
-      const w = r.shares.find((s) => s.key === "wife" || s.name?.includes("زوجة"));
+      const w = r.shares.find(
+        (s) => s.key === "wife" || s.name?.includes("زوجة"),
+      );
       return w?.amount ?? 0;
     });
 
@@ -768,7 +813,9 @@ describe("Engine: Multiple wives", () => {
 
   it("single wife without children gets 1/4 fard", () => {
     const result = calc("hanafi", estate(120000), { wife: 1, son: 1 });
-    const wifeShare = result.shares.find((s) => s.key === "wife" || s.name?.includes("زوجة"));
+    const wifeShare = result.shares.find(
+      (s) => s.key === "wife" || s.name?.includes("زوجة"),
+    );
     expect(wifeShare).toBeDefined();
     expect(wifeShare!.amount).toBeCloseTo(15000, -1);
   });
@@ -797,7 +844,10 @@ describe("Engine: Mother's share variations", () => {
     expect(motherShare).toBeDefined();
     // mother gets 1/3 = 40000 as fard, radd distributes remainder to her
     expect(motherShare!.amount).toBeGreaterThanOrEqual(40000);
-    const totalDistributed = result.shares.reduce((sum, s) => sum + s.amount, 0);
+    const totalDistributed = result.shares.reduce(
+      (sum, s) => sum + s.amount,
+      0,
+    );
     expect(totalDistributed).toBeCloseTo(120000, -1);
   });
 });
@@ -810,7 +860,10 @@ describe("Engine: Father's share", () => {
       wife: 1,
     });
     // Total should be distributed, father gets 1/6 = 20000
-    const totalDistributed = result.shares.reduce((sum, s) => sum + s.amount, 0);
+    const totalDistributed = result.shares.reduce(
+      (sum, s) => sum + s.amount,
+      0,
+    );
     expect(totalDistributed).toBeCloseTo(120000, -1);
     // Find father by any heuristic
     const fatherShare = result.shares.find(
@@ -833,7 +886,9 @@ describe("Engine: Father's share", () => {
     const fatherShare = result.shares.find(
       (s) => s.key === "father" || s.name?.includes("أب"),
     );
-    const wifeShare = result.shares.find((s) => s.key === "wife" || s.name?.includes("زوجة"));
+    const wifeShare = result.shares.find(
+      (s) => s.key === "wife" || s.name?.includes("زوجة"),
+    );
     expect(fatherShare).toBeDefined();
     expect(wifeShare).toBeDefined();
     // wife 1/4 = 30000, father gets remainder = 90000
@@ -893,17 +948,25 @@ describe("Engine: Confidence score", () => {
 
 describe("Engine: Net estate calculation", () => {
   it("net = total - funeral - debts - will", () => {
-    const result = calc("hanafi", estate(200000, { funeral: 10000, debts: 30000, will: 20000 }), {
-      wife: 1,
-      son: 1,
-    });
+    const result = calc(
+      "hanafi",
+      estate(200000, { funeral: 10000, debts: 30000, will: 20000 }),
+      {
+        wife: 1,
+        son: 1,
+      },
+    );
     expect(result.netEstate).toBe(140000);
   });
 
   it("net never goes below 0", () => {
-    const result = calc("hanafi", estate(10000, { funeral: 5000, debts: 8000 }), {
-      wife: 1,
-    });
+    const result = calc(
+      "hanafi",
+      estate(10000, { funeral: 5000, debts: 8000 }),
+      {
+        wife: 1,
+      },
+    );
     expect(result.netEstate).toBe(0);
   });
 });

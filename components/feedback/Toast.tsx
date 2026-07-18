@@ -71,8 +71,14 @@ export function Toast({
         },
       ]}
     >
-      <Ionicons name={iconMap[type] as any} size={18} color={theme.colors.background.light} />
-      <Text style={[styles.text, { color: theme.colors.background.light }]}>{message}</Text>
+      <Ionicons
+        name={iconMap[type] as any}
+        size={18}
+        color={theme.colors.background.light}
+      />
+      <Text style={[styles.text, { color: theme.colors.background.light }]}>
+        {message}
+      </Text>
     </Animated.View>
   );
 }

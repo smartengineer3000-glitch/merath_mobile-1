@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useAppTheme } from "../lib/context/ThemeProvider";
 import { Ionicons } from "../lib/icons";
 import { useTranslation } from "react-i18next";
-import { Platform, View, StyleSheet } from "react-native";
+import { Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CalculatorStack } from "./CalculatorStack";
 import { HistoryStack } from "./HistoryStack";
@@ -18,13 +18,6 @@ const TAB_ICONS: Record<string, { focused: string; default: string }> = {
   History: { focused: "time", default: "time-outline" },
   Compare: { focused: "git-compare", default: "git-compare-outline" },
   Settings: { focused: "settings", default: "settings-outline" },
-};
-
-const TAB_EVENT_LABELS: Record<string, string> = {
-  Calculator: "calculator_tab",
-  History: "history_tab",
-  Compare: "comparison_tab",
-  Settings: "settings_tab",
 };
 
 export function MainTabNavigator() {
@@ -53,8 +46,7 @@ export function MainTabNavigator() {
         tabBarStyle: {
           backgroundColor: theme.colors.background.light,
           borderTopColor: theme.colors.neutral.light200,
-          height:
-            (Platform.OS === "ios" ? 88 : 64) + insets.bottom,
+          height: (Platform.OS === "ios" ? 88 : 64) + insets.bottom,
           paddingTop: 8,
           paddingBottom: insets.bottom,
           ...theme.shadows.sm,

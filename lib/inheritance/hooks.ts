@@ -11,11 +11,9 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { EnhancedInheritanceCalculationEngine as InheritanceCalculationEngine } from "./enhanced-engine-complete";
-import { AuditLog, createAuditLog, type AuditLogEntry } from "./audit-log";
-import {
-  CalculationCache,
-  PerformanceMonitor,
-} from "../performance/optimization";
+import { AuditLog, createAuditLog } from "./audit-log";
+import type { AuditLogEntry } from "./audit-log";
+import { CalculationCache } from "../performance/optimization";
 import type {
   EstateData,
   CalculationResult,
@@ -124,6 +122,7 @@ export function useCalculator() {
   }, []);
 
   // ===== FIX H7: Debounced calculation to prevent rapid successive calls =====
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedCalculate = useCallback(
     debounce(
       async (
@@ -1114,7 +1113,7 @@ export function useMadhab(defaultMadhab: MadhhabType = "shafii") {
 
 export function useHeirs(initialHeirs: HeirsData = {}) {
   const [heirs, setHeirs] = useState<
-    Array<{ id: string; key: HeirType; count: number }>
+    { id: string; key: HeirType; count: number }[]
   >(
     Object.entries(initialHeirs).map(([key, count]) => ({
       id: `heir-${key}`,

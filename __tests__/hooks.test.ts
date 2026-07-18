@@ -411,9 +411,7 @@ describe("Type System Validation", () => {
   });
 
   it("should handle valid madhab values", async () => {
-    const madhabs: Array<"hanafi" | "maliki" | "shafii" | "hanbali"> = [
-      "hanafi",
-    ];
+    const madhabs: ("hanafi" | "maliki" | "shafii" | "hanbali")[] = ["hanafi"];
 
     const heirs = { son: 1 };
     const estate = { total: 1000, funeral: 0, debts: 0, will: 0 };

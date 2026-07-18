@@ -80,9 +80,7 @@ export const OnboardingScreen = ({
       animationType="fade"
       onRequestClose={handleComplete}
     >
-      <View
-        style={[styles.overlay, { backgroundColor: "rgba(0,0,0,0.5)" }]}
-      >
+      <View style={[styles.overlay, { backgroundColor: "rgba(0,0,0,0.5)" }]}>
         <SafeAreaView style={styles.safeArea}>
           <View
             style={[

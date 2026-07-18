@@ -9,7 +9,11 @@
 
 import { describe, it, expect } from "vitest";
 import { EnhancedInheritanceCalculationEngine } from "../lib/inheritance/enhanced-engine-complete";
-import type { EstateData, HeirsData, MadhhabType } from "../lib/inheritance/types";
+import type {
+  EstateData,
+  HeirsData,
+  MadhhabType,
+} from "../lib/inheritance/types";
 
 const E: EstateData = { total: 120000, funeral: 0, debts: 0, will: 0 };
 
@@ -201,7 +205,12 @@ describe("Moderate Cases — Multiple Heirs & Rule Interactions", () => {
 
   // M3: Husband + mother + full_brother + full_sister — Brother+split remainder 2:1
   it("M3: Husband + mother + full_brother + full_sister", () => {
-    const r = calc("shafii", { husband: 1, mother: 1, full_brother: 1, full_sister: 1 });
+    const r = calc("shafii", {
+      husband: 1,
+      mother: 1,
+      full_brother: 1,
+      full_sister: 1,
+    });
     expect(r.success).toBe(true);
     expectShare(r, "husband", 60000); // 1/2
     expectShare(r, "mother", 20000); // 1/6 (siblings present)
@@ -236,7 +245,12 @@ describe("Moderate Cases — Multiple Heirs & Rule Interactions", () => {
   // M6: Husband + mother + maternal siblings — AWL case
   // H=1/2, M=1/3 (no paternal siblings), MS=1/3 → total=7/6 → AWL
   it("M6: Husband + mother + 2 maternal siblings — AWL (7/6 > 1)", () => {
-    const r = calc("shafii", { husband: 1, mother: 1, maternal_brother: 1, maternal_sister: 1 });
+    const r = calc("shafii", {
+      husband: 1,
+      mother: 1,
+      maternal_brother: 1,
+      maternal_sister: 1,
+    });
     expect(r.success).toBe(true);
     expect(r.awlApplied).toBe(true);
     // After AWL: each fraction / (7/6) × estate
@@ -269,7 +283,12 @@ describe("Moderate Cases — Multiple Heirs & Rule Interactions", () => {
   // M9: Wife + grandfather + full_brother + full_sister (Maliki musharak)
   // In Maliki, grandfather shares with siblings via optimal choice
   it("M9: Wife + grandfather + full_brother + full_sister [maliki]", () => {
-    const r = calc("maliki", { wife: 1, grandfather: 1, full_brother: 1, full_sister: 1 });
+    const r = calc("maliki", {
+      wife: 1,
+      grandfather: 1,
+      full_brother: 1,
+      full_sister: 1,
+    });
     expect(r.success).toBe(true);
     expectShare(r, "wife", 30000); // 1/4 (no descendants)
     // Grandfather: best of muqasamah (3/4×2/5=0.3), third (0.333), sixth (0.167) → third wins
@@ -468,7 +487,10 @@ describe("Special Cases — Musharraka, Akdariyya, Dhawu al-Arham", () => {
   // SP1: Musharraka (Shafii) — Husband + mother + 2 maternal brothers + full_sister
   it("SP1 [shafii]: Musharraka — Husband + mother + 2 maternal + full_sister", () => {
     const r = calc("shafii", {
-      husband: 1, mother: 1, maternal_brother: 2, full_sister: 1,
+      husband: 1,
+      mother: 1,
+      maternal_brother: 2,
+      full_sister: 1,
     });
     expect(r.success).toBe(true);
     // Husband: 1/2 = 60,000
@@ -482,7 +504,10 @@ describe("Special Cases — Musharraka, Akdariyya, Dhawu al-Arham", () => {
   // SP2: Akdariyya (Shafii) — Husband + mother + grandfather + full_sister
   it("SP2 [shafii]: Akdariyya — Husband + mother + grandfather + full_sister", () => {
     const r = calc("shafii", {
-      husband: 1, mother: 1, grandfather: 1, full_sister: 1,
+      husband: 1,
+      mother: 1,
+      grandfather: 1,
+      full_sister: 1,
     });
     expect(r.success).toBe(true);
     // Akdariyya: H=9/27, M=6/27, G=8/27, S=4/27
@@ -536,7 +561,9 @@ describe("Special Cases — Musharraka, Akdariyya, Dhawu al-Arham", () => {
   // SP7: Grandmother priority — paternal vs maternal
   it("SP7: Grandmother priority — paternal gets 1/6 + radd over maternal", () => {
     const r = calc("shafii", {
-      wife: 1, grandmother_father: 1, grandmother_mother: 1,
+      wife: 1,
+      grandmother_father: 1,
+      grandmother_mother: 1,
     });
     expect(r.success).toBe(true);
     expectShare(r, "wife", 30000); // 1/4
@@ -571,7 +598,9 @@ describe("Special Cases — Musharraka, Akdariyya, Dhawu al-Arham", () => {
   // SP10: Complex — Husband + grandfather + 3 full brothers (Maliki musharak)
   it("SP10 [maliki]: Husband + grandfather + 3 brothers — Musharak", () => {
     const r = calc("maliki", {
-      husband: 1, grandfather: 1, full_brother: 3,
+      husband: 1,
+      grandfather: 1,
+      full_brother: 3,
     });
     expect(r.success).toBe(true);
     expectShare(r, "husband", 60000); // 1/2 (no descendants)
@@ -582,15 +611,3 @@ describe("Special Cases — Musharraka, Akdariyya, Dhawu al-Arham", () => {
     expectTotal(r);
   });
 });
-
-// ============================================================
-// Helper for maternal siblings
-// ============================================================
-function result_shares_for(
-  result: ReturnType<typeof calc>,
-  ...keys: string[]
-): number {
-  return result.shares
-    .filter((s) => keys.includes(s.key || ""))
-    .reduce((sum, s) => sum + s.amount, 0);
-}

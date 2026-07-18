@@ -97,24 +97,16 @@ export function DonutChart({
 
           return (
             <View key={index} style={styles.legendItem}>
-              <View
-                style={[styles.legendDot, { backgroundColor: color }]}
-              />
+              <View style={[styles.legendDot, { backgroundColor: color }]} />
               <Text
                 style={[styles.legendText, { fontFamily }]}
                 numberOfLines={1}
               >
                 {segment.name}
               </Text>
-              <Text
-                style={[styles.legendPercent, { fontFamily }]}
-              >
-                {pct}%
-              </Text>
+              <Text style={[styles.legendPercent, { fontFamily }]}>{pct}%</Text>
               {segment.fraction ? (
-                <Text
-                  style={[styles.legendFraction, { fontFamily }]}
-                >
+                <Text style={[styles.legendFraction, { fontFamily }]}>
                   {segment.fraction}
                 </Text>
               ) : null}

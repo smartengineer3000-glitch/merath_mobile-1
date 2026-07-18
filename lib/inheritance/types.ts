@@ -84,10 +84,10 @@ export interface HeirShare {
   shareType?: string;
   madhab?: MadhhabType;
   type?: string;
-  shares?: Array<{
+  shares?: {
     person: number;
     amount: number;
-  }>;
+  }[];
 }
 
 // ====== الحالات الخاصة ======

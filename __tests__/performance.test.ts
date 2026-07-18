@@ -114,9 +114,9 @@ describe("PerformanceMonitor", () => {
     const fn = async () => {
       throw new Error("test error");
     };
-    await expect(
-      PerformanceMonitor.measure("test", fn),
-    ).rejects.toThrow("test error");
+    await expect(PerformanceMonitor.measure("test", fn)).rejects.toThrow(
+      "test error",
+    );
   });
 
   it("propagates errors from sync functions", () => {

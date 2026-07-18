@@ -24,7 +24,21 @@ export interface CalculationScenario {
 export interface AuditEvent {
   id: string;
   timestamp: number;
-  type: "app_open" | "screen_view" | "calculation_start" | "calculation_complete" | "calculation_error" | "heir_update" | "estate_update" | "madhab_change" | "settings_change" | "data_clear" | "comparison_start" | "comparison_complete" | "export" | "info";
+  type:
+    | "app_open"
+    | "screen_view"
+    | "calculation_start"
+    | "calculation_complete"
+    | "calculation_error"
+    | "heir_update"
+    | "estate_update"
+    | "madhab_change"
+    | "settings_change"
+    | "data_clear"
+    | "comparison_start"
+    | "comparison_complete"
+    | "export"
+    | "info";
   message: string;
   details?: Record<string, any>;
 }
@@ -38,7 +52,11 @@ interface StoredCalculationState {
 interface CalculationContextValue extends StoredCalculationState {
   isHydrated: boolean;
   events: AuditEvent[];
-  logEvent: (type: AuditEvent["type"], message: string, details?: Record<string, any>) => void;
+  logEvent: (
+    type: AuditEvent["type"],
+    message: string,
+    details?: Record<string, any>,
+  ) => void;
   saveScenario: (scenario: CalculationScenario) => void;
   saveResult: (result: CalculationResult) => void;
   restoreState: () => Promise<void>;
@@ -169,7 +187,11 @@ export function CalculationProvider({
   }, [updateState]);
 
   const logEvent = useCallback(
-    (type: AuditEvent["type"], message: string, details?: Record<string, any>) => {
+    (
+      type: AuditEvent["type"],
+      message: string,
+      details?: Record<string, any>,
+    ) => {
       setEvents((prev) => [
         {
           id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,

@@ -1,5 +1,12 @@
 import React from "react";
-import { View, Text, ScrollView, Linking, StyleSheet, I18nManager } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Linking,
+  StyleSheet,
+  I18nManager,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { useTranslation } from "react-i18next";

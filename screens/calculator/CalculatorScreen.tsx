@@ -11,15 +11,8 @@ import { EstateCard } from "../../components/estate/EstateCard";
 import { HeirCategory } from "../../components/heirs/HeirCategory";
 import { QuickAddChips } from "../../components/heirs/QuickAddChips";
 import { HeirList } from "../../components/heirs/HeirList";
-import {
-  Button,
-  Card,
-  Chip,
-  SectionHeader,
-  EmptyState,
-} from "../../components/ui";
-import { HEIR_GROUPS } from "../../constants/heirData";
-import { HEIRS } from "../../constants/heirData";
+import { Button, Card, Chip, SectionHeader } from "../../components/ui";
+import { HEIR_GROUPS, HEIRS } from "../../constants/heirData";
 import type { HeirGroup } from "../../constants/heirData";
 import type { MadhhabType } from "../../lib/inheritance/types";
 
@@ -112,11 +105,15 @@ export default function CalculatorScreen() {
     }
 
     setIsCalculating(true);
-    logEvent("calculation_start", `Calculating ${madhab} inheritance for ${heirCount} heirs`, {
-      madhab,
-      estate: estateTotal,
-      heirCount,
-    });
+    logEvent(
+      "calculation_start",
+      `Calculating ${madhab} inheritance for ${heirCount} heirs`,
+      {
+        madhab,
+        estate: estateTotal,
+        heirCount,
+      },
+    );
     try {
       const estate = { total: estateTotal, funeral, debts, will };
       const result = await calculateWithEstate(
@@ -132,11 +129,15 @@ export default function CalculatorScreen() {
           madhab: madhab as MadhhabType,
           result,
         });
-        logEvent("calculation_complete", `Calculation complete: ${result.shares.length} shares, confidence ${result.confidence}%`, {
-          madhab,
-          shares: result.shares.length,
-          confidence: result.confidence,
-        });
+        logEvent(
+          "calculation_complete",
+          `Calculation complete: ${result.shares.length} shares, confidence ${result.confidence}%`,
+          {
+            madhab,
+            shares: result.shares.length,
+            confidence: result.confidence,
+          },
+        );
         navigation.navigate("Results", { result });
       } else {
         logEvent("calculation_error", result?.error || "Calculation failed");
@@ -146,7 +147,10 @@ export default function CalculatorScreen() {
         );
       }
     } catch (err) {
-      logEvent("calculation_error", `Calculation error: ${(err as Error).message}`);
+      logEvent(
+        "calculation_error",
+        `Calculation error: ${(err as Error).message}`,
+      );
       Alert.alert(t("common.error"), t("calculator.calculationFailed"));
     } finally {
       setIsCalculating(false);

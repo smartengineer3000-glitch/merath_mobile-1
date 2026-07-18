@@ -34,7 +34,12 @@ export function DisclaimersModal({
               },
             ]}
           >
-            <View style={[styles.handle, { backgroundColor: theme.colors.neutral.light200 }]} />
+            <View
+              style={[
+                styles.handle,
+                { backgroundColor: theme.colors.neutral.light200 },
+              ]}
+            />
             <Text
               style={[
                 styles.title,

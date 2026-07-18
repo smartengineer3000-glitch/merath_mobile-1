@@ -12,12 +12,7 @@ import {
 } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Platform,
-} from "react-native";
+import { View, Text, StyleSheet, Platform } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SplashScreen from "expo-splash-screen";
@@ -34,7 +29,10 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { ThemeProvider, useAppTheme } from "./lib/context/ThemeProvider";
 import { SettingsProvider } from "./lib/context/SettingsContext";
 import { MadhabProvider } from "./lib/context/MadhabContext";
-import { CalculationProvider, useCalculationStore } from "./lib/context/CalculationContext";
+import {
+  CalculationProvider,
+  useCalculationStore,
+} from "./lib/context/CalculationContext";
 import { RootNavigator } from "./navigation/RootNavigator";
 import { ErrorBoundary } from "./components/feedback/ErrorBoundary";
 import { DisclaimersModal } from "./components/DisclaimersModal";
@@ -154,7 +152,7 @@ const AppContent = () => {
 
     checkOnboardingStatus();
     logEvent("app_open", "Application launched");
-  }, []);
+  }, [logEvent]);
 
   // ===== Handle onboarding complete =====
   const handleOnboardingComplete = useCallback(() => {
@@ -200,23 +198,23 @@ const AppContent = () => {
       <StatusBar style={theme.mode === "dark" ? "light" : "dark"} />
       <NetworkStatusIndicator />
       <ErrorBoundary theme={theme}>
-          <NavigationContainer
-            theme={{
-              ...DefaultTheme,
-              dark: theme.mode === "dark",
-              colors: {
-                ...DefaultTheme.colors,
-                primary: theme.colors.primary.main,
-                background: theme.colors.background.light,
-                card: theme.colors.background.light,
-                text: theme.colors.neutral.dark300,
-                border: theme.colors.neutral.light200,
-                notification: theme.colors.primary.main,
-              },
-            }}
-          >
-            <RootNavigator />
-          </NavigationContainer>
+        <NavigationContainer
+          theme={{
+            ...DefaultTheme,
+            dark: theme.mode === "dark",
+            colors: {
+              ...DefaultTheme.colors,
+              primary: theme.colors.primary.main,
+              background: theme.colors.background.light,
+              card: theme.colors.background.light,
+              text: theme.colors.neutral.dark300,
+              border: theme.colors.neutral.light200,
+              notification: theme.colors.primary.main,
+            },
+          }}
+        >
+          <RootNavigator />
+        </NavigationContainer>
       </ErrorBoundary>
       <DisclaimersModal
         visible={showDisclaimers}

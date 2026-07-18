@@ -235,7 +235,7 @@ describe("AuditLog System", () => {
 
   describe("Import Functionality", () => {
     it("should import valid JSON data", async () => {
-      const entry1 = await auditLog.addEntry({
+      await auditLog.addEntry({
         operation: "calculate",
         madhab: "shafii",
         heirs: { husband: 1 },
@@ -298,7 +298,7 @@ describe("AuditLog System", () => {
     });
 
     it("should delete entries older than specified days", async () => {
-      const entry1 = await auditLog.addEntry({
+      await auditLog.addEntry({
         operation: "calculate",
         madhab: "shafii",
         heirs: { husband: 1 },

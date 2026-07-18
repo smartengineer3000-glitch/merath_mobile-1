@@ -282,7 +282,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     marginBottom: 2,
   },
-  subHeaderText: { flex: 1, fontSize: 9, fontWeight: "500", textAlign: "center", color: "#888" },
+  subHeaderText: {
+    flex: 1,
+    fontSize: 9,
+    fontWeight: "500",
+    textAlign: "center",
+    color: "#888",
+  },
   tableRow: {
     flexDirection: "row",
     paddingVertical: 8,
@@ -293,5 +299,10 @@ const styles = StyleSheet.create({
   tableCell: { flex: 1, alignItems: "center" },
   tableCellName: { flex: 1.5, alignItems: "flex-start" },
   cellFraction: { fontSize: 11, fontWeight: "500", textAlign: "center" },
-  cellAmount: { fontSize: 10, fontWeight: "600", textAlign: "center", marginTop: 1 },
+  cellAmount: {
+    fontSize: 10,
+    fontWeight: "600",
+    textAlign: "center",
+    marginTop: 1,
+  },
 });

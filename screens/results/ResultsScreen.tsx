@@ -699,7 +699,8 @@ function ExportTab({
         const frac = s.fraction
           ? ` (${s.fraction.numerator}/${s.fraction.denominator})`
           : "";
-        const pct = total > 0 ? ` [${((s.amount / total) * 100).toFixed(1)}%]` : "";
+        const pct =
+          total > 0 ? ` [${((s.amount / total) * 100).toFixed(1)}%]` : "";
         text += `${s.name}${frac}: ${formatCurrency(s.amount)}${pct}\n`;
       });
 
@@ -891,7 +892,12 @@ const tableStyles = StyleSheet.create({
     alignItems: "center",
   },
   dataCell: { flex: 1, fontSize: 12, textAlign: "center" },
-  dataCellName: { flex: 1.8, fontSize: 12, fontWeight: "600", textAlign: "left" },
+  dataCellName: {
+    flex: 1.8,
+    fontSize: 12,
+    fontWeight: "600",
+    textAlign: "left",
+  },
 });
 
 const stepStyles = StyleSheet.create({

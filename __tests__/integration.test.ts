@@ -24,7 +24,7 @@ describe("App configuration", () => {
   });
 
   it("all languages have required properties", () => {
-    for (const [code, lang] of Object.entries(LANGUAGES)) {
+    for (const [, lang] of Object.entries(LANGUAGES)) {
       expect(typeof lang.name).toBe("string");
       expect(typeof lang.nativeName).toBe("string");
       expect(typeof lang.rtl).toBe("boolean");
@@ -189,7 +189,7 @@ describe("Locale file structure", () => {
     }
 
     const enCount = countKeys(en);
-    for (const [lang, data] of Object.entries(locales)) {
+    for (const [, data] of Object.entries(locales)) {
       expect(countKeys(data)).toBe(enCount);
     }
   });
@@ -197,7 +197,10 @@ describe("Locale file structure", () => {
   it("all locales have results.section titles", () => {
     for (const [lang, data] of Object.entries(locales)) {
       const results = (data as any).results;
-      expect(results.calculationSteps, `${lang} missing calculationSteps`).toBeTruthy();
+      expect(
+        results.calculationSteps,
+        `${lang} missing calculationSteps`,
+      ).toBeTruthy();
       expect(results.blockedHeirs, `${lang} missing blockedHeirs`).toBeTruthy();
       expect(results.heir, `${lang} missing heir`).toBeTruthy();
     }
@@ -225,7 +228,10 @@ describe("Locale file structure", () => {
   it("all locales have error messages", () => {
     for (const [lang, data] of Object.entries(locales)) {
       const error = (data as any).error;
-      expect(error.somethingWentWrong, `${lang} missing error.somethingWentWrong`).toBeTruthy();
+      expect(
+        error.somethingWentWrong,
+        `${lang} missing error.somethingWentWrong`,
+      ).toBeTruthy();
       expect(error.retry, `${lang} missing error.retry`).toBeTruthy();
       expect(error.tryAgain, `${lang} missing error.tryAgain`).toBeTruthy();
     }

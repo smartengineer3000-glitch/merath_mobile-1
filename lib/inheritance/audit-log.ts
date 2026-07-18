@@ -10,9 +10,8 @@
  */
 
 import { MadhhabType, HeirsData, EstateData, CalculationResult } from "./types";
-import { generateId, formatTime } from "./utils";
+import { generateId } from "./utils";
 import { db } from "../database/db";
-import type { DBAuditLogEntry } from "../database/db"; // We'll create this next
 
 // ============================================================================
 // FIX H1: Dexie Database Integration
@@ -95,7 +94,7 @@ class Mutex {
  * Transaction queue for sequential operations
  */
 class TransactionQueue {
-  private queue: Array<() => Promise<any>> = [];
+  private queue: (() => Promise<any>)[] = [];
   private processing = false;
   private mutex = new Mutex();
 

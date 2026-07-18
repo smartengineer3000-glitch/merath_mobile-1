@@ -72,28 +72,29 @@ describe("i18n locale content quality", () => {
 
   it("all locales have navigation section with same keys", () => {
     const enNavKeys = Object.keys(en.navigation).sort();
-    for (const [lang, localeData] of Object.entries(locales)) {
-      const navKeys = Object.keys(
-        (localeData as any).navigation,
-      ).sort();
+    for (const [, localeData] of Object.entries(locales)) {
+      const navKeys = Object.keys((localeData as any).navigation).sort();
       expect(navKeys).toEqual(enNavKeys);
     }
   });
 
   it("all locales have results section with same keys", () => {
     const enResultsKeys = Object.keys(en.results).sort();
-    for (const [lang, localeData] of Object.entries(locales)) {
-      const resultsKeys = Object.keys(
-        (localeData as any).results,
-      ).sort();
+    for (const [, localeData] of Object.entries(locales)) {
+      const resultsKeys = Object.keys((localeData as any).results).sort();
       expect(resultsKeys).toEqual(enResultsKeys);
     }
   });
 
   it("all madhab names are unique per locale", () => {
-    for (const [lang, localeData] of Object.entries(locales)) {
+    for (const [, localeData] of Object.entries(locales)) {
       const madhabObj = (localeData as any).madhab;
-      const names = [madhabObj.hanafi, madhabObj.maliki, madhabObj.shafii, madhabObj.hanbali];
+      const names = [
+        madhabObj.hanafi,
+        madhabObj.maliki,
+        madhabObj.shafii,
+        madhabObj.hanbali,
+      ];
       const uniqueNames = new Set(names);
       expect(uniqueNames.size).toBe(4);
     }

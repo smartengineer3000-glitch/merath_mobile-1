@@ -47,7 +47,7 @@ interface EngineState {
   raddApplied: boolean;
   bloodRelativesApplied: boolean;
   confidenceFactors: string[];
-  specialCases: Array<{ type: string; name: string; description: string }>;
+  specialCases: { type: string; name: string; description: string }[];
 }
 
 export class EnhancedInheritanceCalculationEngine {
@@ -55,17 +55,17 @@ export class EnhancedInheritanceCalculationEngine {
   private estate: EstateData;
   private heirs: HeirsData;
   private hijabSystem: HijabSystem;
-  private steps: Array<{
+  private steps: {
     step: string;
     description: string;
     code: string;
     data?: unknown;
-  }> = [];
-  private specialCases: Array<{
+  }[] = [];
+  private specialCases: {
     type: string;
     name: string;
     description: string;
-  }> = [];
+  }[] = [];
   private state: EngineState = {
     blockedHeirs: [],
     hijabTypes: [],
@@ -157,7 +157,9 @@ export class EnhancedInheritanceCalculationEngine {
       }
 
       // M1 FIX: Compute remainder from adjusted fractions (post-awl), not pre-awl totalFixed
-      const totalAdjusted = this.sumFractions(adjustedFixed.map((s) => s.fraction));
+      const totalAdjusted = this.sumFractions(
+        adjustedFixed.map((s) => s.fraction),
+      );
       const remainder = new FractionClass(1, 1).subtract(totalAdjusted);
       steps.push("حساب الباقي: remainder");
 
@@ -230,7 +232,11 @@ export class EnhancedInheritanceCalculationEngine {
         );
       }
 
-      const confidence = this.calculateConfidence(results, validHeirs, invariantFailed);
+      const confidence = this.calculateConfidence(
+        results,
+        validHeirs,
+        invariantFailed,
+      );
       steps.push("حساب مستوى الثقة: confidence");
 
       const endTime = performance.now();
@@ -830,12 +836,6 @@ export class EnhancedInheritanceCalculationEngine {
         madhabConfig?.rules.grandfather_with_siblings === "musharak";
 
       if (siblingsCount > 0 && shouldShare) {
-        const totalHeadsCalc =
-          2 +
-          (heirs.full_brother || 0) * 2 +
-          (heirs.full_sister || 0) +
-          (heirs.half_brother_paternal || 0) * 2 +
-          (heirs.half_sister_paternal || 0);
         const totalHeads =
           2 +
           (heirs.full_brother || 0) * 2 +
@@ -1016,10 +1016,7 @@ export class EnhancedInheritanceCalculationEngine {
                   name: "الأخت لأب",
                   type: "تعصيب",
                   fraction: remainingAfterGrandfather.multiply(
-                    new FractionClass(
-                      heirs.half_sister_paternal,
-                      siblingHeads,
-                    ),
+                    new FractionClass(heirs.half_sister_paternal, siblingHeads),
                   ),
                   count: heirs.half_sister_paternal || 0,
                   reason: "الباقي بعد الجد",
@@ -1164,9 +1161,7 @@ export class EnhancedInheritanceCalculationEngine {
     // When other fard heirs exist (e.g. daughters), remainder goes to them, not spouse
     const hasNonSpouseFardHeirs = shares.some(
       (s) =>
-        s.key !== "husband" &&
-        s.key !== "wife" &&
-        !s.type.includes("تعصيب"),
+        s.key !== "husband" && s.key !== "wife" && !s.type.includes("تعصيب"),
     );
 
     const eligible = shares.filter((s) => {
@@ -1236,13 +1231,9 @@ export class EnhancedInheritanceCalculationEngine {
         { key: "nephew_from_brother", name: "ابن الأخ", weight: 1 },
       ],
       // Class 3: Sons of paternal half-brothers
-      [
-        { key: "paternal_nephew", name: "ابن الأخ لأب", weight: 1 },
-      ],
+      [{ key: "paternal_nephew", name: "ابن الأخ لأب", weight: 1 }],
       // Class 4: Daughters of brothers (female-line nephews)
-      [
-        { key: "niece_from_brother", name: "بنت الأخ", weight: 1 },
-      ],
+      [{ key: "niece_from_brother", name: "بنت الأخ", weight: 1 }],
       // Class 5: Children of sisters
       [{ key: "sister_children", name: "أولاد الأخت", weight: 1 }],
       // Class 6: Sons of paternal uncles (cousins)
@@ -1261,17 +1252,15 @@ export class EnhancedInheritanceCalculationEngine {
         { key: "paternal_aunt", name: "العمة", weight: 1 },
       ],
       // Class 9: Maternal aunts (female-line maternal, furthest)
-      [
-        { key: "aunt_maternal", name: "الخالة لأم", weight: 1 },
-      ],
+      [{ key: "aunt_maternal", name: "الخالة لأم", weight: 1 }],
     ];
 
-    let inheritingClass: Array<{
+    let inheritingClass: {
       key: string;
       name: string;
       count: number;
       weight: number;
-    }> = [];
+    }[] = [];
 
     for (let classIndex = 0; classIndex < classes.length; classIndex++) {
       const currentClass = classes[classIndex];
@@ -1351,7 +1340,11 @@ export class EnhancedInheritanceCalculationEngine {
     }));
   }
 
-  private calculateConfidence(results: HeirShare[], heirs: HeirsData, invariantFailed: boolean = false): number {
+  private calculateConfidence(
+    results: HeirShare[],
+    heirs: HeirsData,
+    invariantFailed: boolean = false,
+  ): number {
     let confidence = 100;
     const factors: string[] = [];
 
@@ -1366,7 +1359,8 @@ export class EnhancedInheritanceCalculationEngine {
 
     // D2 FIX: Check mathematical invariants instead of penalizing rule application
     const totalFraction = results.reduce(
-      (sum, r) => sum + (r.fraction?.numerator || 0) / (r.fraction?.denominator || 1),
+      (sum, r) =>
+        sum + (r.fraction?.numerator || 0) / (r.fraction?.denominator || 1),
       0,
     );
     const deviation = Math.abs(totalFraction - 1);

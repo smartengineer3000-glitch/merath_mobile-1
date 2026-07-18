@@ -158,7 +158,6 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [lastSaveError, setLastSaveError] = useState<string | null>(null);
 
   // ===== FIX C7: Refs for tracking pending saves =====
-  const pendingSaveRef = useRef<Promise<void> | null>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mountedRef = useRef(true);
   const lastSavedStateRef = useRef<string>("");
@@ -312,6 +311,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   /**
    * ===== FIX C7: Debounced save to prevent multiple writes =====
    */
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSave = useCallback(
     debounce(async (stateToSave: SettingsState) => {
       if (!mountedRef.current) return;

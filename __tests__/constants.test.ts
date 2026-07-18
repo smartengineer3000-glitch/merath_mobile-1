@@ -31,7 +31,14 @@ describe("HEIRS array", () => {
   it("covers all 6 groups", () => {
     const groups = new Set(HEIRS.map((h) => h.group));
     expect(groups).toEqual(
-      new Set(["spouses", "descendants", "ascendants", "siblings", "extended", "blood_relatives"]),
+      new Set([
+        "spouses",
+        "descendants",
+        "ascendants",
+        "siblings",
+        "extended",
+        "blood_relatives",
+      ]),
     );
   });
 

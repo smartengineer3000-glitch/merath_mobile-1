@@ -12,20 +12,64 @@ const EVENT_TYPE_CONFIG: Record<
   AuditEvent["type"],
   { color: string; icon: string; labelKey: string }
 > = {
-  app_open: { color: "#4caf50", icon: "phone-portrait", labelKey: "events.appOpen" },
+  app_open: {
+    color: "#4caf50",
+    icon: "phone-portrait",
+    labelKey: "events.appOpen",
+  },
   screen_view: { color: "#2196f3", icon: "eye", labelKey: "events.screenView" },
-  calculation_start: { color: "#ff9800", icon: "calculator", labelKey: "events.calcStart" },
-  calculation_complete: { color: "#4caf50", icon: "checkmark-circle", labelKey: "events.calcComplete" },
-  calculation_error: { color: "#f44336", icon: "alert-circle", labelKey: "events.calcError" },
-  heir_update: { color: "#9c27b0", icon: "people", labelKey: "events.heirUpdate" },
-  estate_update: { color: "#00bcd4", icon: "wallet", labelKey: "events.estateUpdate" },
-  madhab_change: { color: "#ff5722", icon: "school", labelKey: "events.madhabChange" },
-  settings_change: { color: "#607d8b", icon: "settings", labelKey: "events.settingsChange" },
+  calculation_start: {
+    color: "#ff9800",
+    icon: "calculator",
+    labelKey: "events.calcStart",
+  },
+  calculation_complete: {
+    color: "#4caf50",
+    icon: "checkmark-circle",
+    labelKey: "events.calcComplete",
+  },
+  calculation_error: {
+    color: "#f44336",
+    icon: "alert-circle",
+    labelKey: "events.calcError",
+  },
+  heir_update: {
+    color: "#9c27b0",
+    icon: "people",
+    labelKey: "events.heirUpdate",
+  },
+  estate_update: {
+    color: "#00bcd4",
+    icon: "wallet",
+    labelKey: "events.estateUpdate",
+  },
+  madhab_change: {
+    color: "#ff5722",
+    icon: "school",
+    labelKey: "events.madhabChange",
+  },
+  settings_change: {
+    color: "#607d8b",
+    icon: "settings",
+    labelKey: "events.settingsChange",
+  },
   data_clear: { color: "#795548", icon: "trash", labelKey: "events.dataClear" },
-  comparison_start: { color: "#3f51b5", icon: "git-compare", labelKey: "events.comparisonStart" },
-  comparison_complete: { color: "#4caf50", icon: "checkmark-done", labelKey: "events.comparisonComplete" },
+  comparison_start: {
+    color: "#3f51b5",
+    icon: "git-compare",
+    labelKey: "events.comparisonStart",
+  },
+  comparison_complete: {
+    color: "#4caf50",
+    icon: "checkmark-done",
+    labelKey: "events.comparisonComplete",
+  },
   export: { color: "#009688", icon: "share", labelKey: "events.export" },
-  info: { color: "#9e9e9e", icon: "information-circle", labelKey: "events.info" },
+  info: {
+    color: "#9e9e9e",
+    icon: "information-circle",
+    labelKey: "events.info",
+  },
 };
 
 export default function HistoryScreen() {
@@ -34,7 +78,10 @@ export default function HistoryScreen() {
   const navigation = useNavigation<any>();
   const { events } = useCalculationStore();
 
-  const sortedEvents = useMemo(() => [...events].sort((a, b) => b.timestamp - a.timestamp), [events]);
+  const sortedEvents = useMemo(
+    () => [...events].sort((a, b) => b.timestamp - a.timestamp),
+    [events],
+  );
 
   const renderItem = ({ item }: { item: AuditEvent }) => {
     const config = EVENT_TYPE_CONFIG[item.type] || EVENT_TYPE_CONFIG.info;
@@ -62,10 +109,16 @@ export default function HistoryScreen() {
       >
         <View style={styles.eventHeader}>
           <View
-            style={[styles.eventTypeBadge, { backgroundColor: config.color + "18" }]}
+            style={[
+              styles.eventTypeBadge,
+              { backgroundColor: config.color + "18" },
+            ]}
           >
             <Text
-              style={[styles.eventTypeLabel, { color: config.color, fontFamily: theme.fontFamily.english }]}
+              style={[
+                styles.eventTypeLabel,
+                { color: config.color, fontFamily: theme.fontFamily.english },
+              ]}
             >
               {t(config.labelKey)}
             </Text>
@@ -73,7 +126,10 @@ export default function HistoryScreen() {
           <Text
             style={[
               styles.eventTime,
-              { color: theme.colors.neutral.light400, fontFamily: theme.fontFamily.english },
+              {
+                color: theme.colors.neutral.light400,
+                fontFamily: theme.fontFamily.english,
+              },
             ]}
           >
             {dateStr} {timeStr}
@@ -82,7 +138,10 @@ export default function HistoryScreen() {
         <Text
           style={[
             styles.eventMessage,
-            { color: theme.colors.neutral.dark200, fontFamily: theme.fontFamily.english },
+            {
+              color: theme.colors.neutral.dark200,
+              fontFamily: theme.fontFamily.english,
+            },
           ]}
           numberOfLines={3}
         >
@@ -143,7 +202,11 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     borderRadius: 6,
   },
-  eventTypeLabel: { fontSize: 10, fontWeight: "700", textTransform: "uppercase" },
+  eventTypeLabel: {
+    fontSize: 10,
+    fontWeight: "700",
+    textTransform: "uppercase",
+  },
   eventTime: { fontSize: 10, fontWeight: "500" },
   eventMessage: { fontSize: 12, lineHeight: 18 },
 });
