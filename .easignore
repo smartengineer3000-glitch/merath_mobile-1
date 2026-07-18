@@ -1,14 +1,25 @@
-# Root .easignore – exclude everything not needed for the Android build
+# Root .easignore — files to exclude from EAS Build upload
 
 # Documentation
 *.md
+docs/
+scripts/
 
-# GitHub config, CI, skills
-.github/
+# Test files
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+test-reports/
+test-results/
+coverage/
+.nyc_output/
+vitest.config.ts
 
-# Git metadata
-.gitignore
-.git/
+# Linting
+.eslintrc.js
+eslint.config.js
 
 # IDE & OS
 .idea/
@@ -16,5 +27,16 @@
 .DS_Store
 Thumbs.db
 
-# Root-level files not needed in build
-UI_UX_PLAN.md
+# Dev configs not needed at build time
+eas.json
+.expo-shared/
+package-lock.json
+
+# Logs
+npm-debug.log*
+*.log
+
+# Temp
+*.tmp
+.cache/
+.eas/
