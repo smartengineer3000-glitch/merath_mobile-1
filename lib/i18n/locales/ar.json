@@ -366,5 +366,25 @@
     "computed": "محسوب",
     "expected": "متوقع",
     "na": "غ/م"
+  },
+
+  "events": {
+    "title": "سجل النشاط",
+    "totalEvents": "أحداث",
+    "noEvents": "لم يتم تسجيل أحداث بعد. استخدم الحاسبة لتوليد النشاط.",
+    "appOpen": "فتح التطبيق",
+    "screenView": "عرض شاشة",
+    "calcStart": "بدء الحساب",
+    "calcComplete": "اكتمال الحساب",
+    "calcError": "خطأ في الحساب",
+    "heirUpdate": "تحديث الوارث",
+    "estateUpdate": "تحديث التركة",
+    "madhabChange": "تغيير المذهب",
+    "settingsChange": "تغيير الإعدادات",
+    "dataClear": "مسح البيانات",
+    "comparisonStart": "بدء المقارنة",
+    "comparisonComplete": "اكتمال المقارنة",
+    "export": "تصدير",
+    "info": "معلومات"
   }
 }

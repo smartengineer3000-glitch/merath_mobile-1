@@ -348,5 +348,25 @@
     "computed": "calculé",
     "expected": "attendu",
     "na": "N/D"
+  },
+
+  "events": {
+    "title": "Journal d'activité",
+    "totalEvents": "événements",
+    "noEvents": "Aucun événement enregistré. Utilisez la calculatrice pour générer de l'activité.",
+    "appOpen": "Ouverture de l'appli",
+    "screenView": "Affichage d'écran",
+    "calcStart": "Début de calcul",
+    "calcComplete": "Calcul terminé",
+    "calcError": "Erreur de calcul",
+    "heirUpdate": "Mise à jour héritier",
+    "estateUpdate": "Mise à jour succession",
+    "madhabChange": "Changement d'école",
+    "settingsChange": "Changement de paramètres",
+    "dataClear": "Effacement des données",
+    "comparisonStart": "Début de comparaison",
+    "comparisonComplete": "Comparaison terminée",
+    "export": "Exportation",
+    "info": "Info"
   }
 }

@@ -366,5 +366,25 @@
     "computed": "محاسبہ شدہ",
     "expected": "متوقع",
     "na": "غ/م"
+  },
+
+  "events": {
+    "title": "سرگرمی لاگ",
+    "totalEvents": "واقعات",
+    "noEvents": "ابھی تک کوئی واقعات درج نہیں ہوئے۔ سرگرمی پیدا کرنے کے لیے کیلکولیٹر استعمال کریں۔",
+    "appOpen": "ایپ کھولیں",
+    "screenView": "اسکرین دیکھیں",
+    "calcStart": "حساب شروع",
+    "calcComplete": "حساب مکمل",
+    "calcError": "حساب میں خرابی",
+    "heirUpdate": "وارث اپ ڈیٹ",
+    "estateUpdate": "ترکہ اپ ڈیٹ",
+    "madhabChange": "مذهب تبدیل",
+    "settingsChange": "ترتیبات تبدیل",
+    "dataClear": "ڈیٹا صاف",
+    "comparisonStart": "موازنہ شروع",
+    "comparisonComplete": "موازنہ مکمل",
+    "export": "برآمد",
+    "info": "معلومات"
   }
 }

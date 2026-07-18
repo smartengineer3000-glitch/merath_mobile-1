@@ -348,5 +348,25 @@
     "computed": "hesaplanan",
     "expected": "beklenen",
     "na": "YOK"
+  },
+
+  "events": {
+    "title": "Etkinlik Günlüğü",
+    "totalEvents": "etkinlik",
+    "noEvents": "Henüz etkinlik kaydı yok. Etkinlik oluşturmak için hesaplayıcıyı kullanın.",
+    "appOpen": "Uygulama Açılış",
+    "screenView": "Ekran Görünümü",
+    "calcStart": "Hesaplama Başladı",
+    "calcComplete": "Hesaplama Tamamlandı",
+    "calcError": "Hesaplama Hatası",
+    "heirUpdate": "Mirascı Güncellemesi",
+    "estateUpdate": "Tereke Güncellemesi",
+    "madhabChange": "Mezhep Değişikliği",
+    "settingsChange": "Ayar Değişikliği",
+    "dataClear": "Veri Temizleme",
+    "comparisonStart": "Karşılaştırma Başladı",
+    "comparisonComplete": "Karşılaştırma Tamamlandı",
+    "export": "Dışa Aktarım",
+    "info": "Bilgi"
   }
 }

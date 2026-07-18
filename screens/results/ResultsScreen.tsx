@@ -18,7 +18,6 @@ import {
   Button,
   Badge,
   ProgressBar,
-  Avatar,
 } from "../../components/ui";
 import { Ionicons } from "../../lib/icons";
 import { formatCurrency, formatPercentage } from "../../lib/utils/formatters";
@@ -198,19 +197,35 @@ function DistributionTab({
               {formatCurrency(total)}
             </Text>
           </View>
-          <View
-            style={[styles.confidenceCircle, { borderColor: confidenceColor }]}
-          >
+          <View style={styles.confidenceGroup}>
+            <View
+              style={[
+                styles.confidenceCircle,
+                { borderColor: confidenceColor },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.confidenceValue,
+                  {
+                    color: confidenceColor,
+                    fontFamily: theme.fontFamily.english,
+                  },
+                ]}
+              >
+                {Math.round(result.confidence)}%
+              </Text>
+            </View>
             <Text
               style={[
-                styles.confidenceValue,
+                styles.confidenceLabel,
                 {
-                  color: confidenceColor,
+                  color: theme.colors.neutral.light400,
                   fontFamily: theme.fontFamily.english,
                 },
               ]}
             >
-              {Math.round(result.confidence)}%
+              {t("results.trustLevel")}
             </Text>
           </View>
         </View>
@@ -238,12 +253,122 @@ function DistributionTab({
         </View>
       </Card>
 
-      {/* Distribution List */}
-      <Card variant="elevated">
+      {/* Distribution Table (Pro7-style) */}
+      <Card variant="elevated" style={styles.distributionCard}>
         <SectionHeader title={t("results.distributionBreakdown")} />
-        {result.shares.map((share, index) => (
-          <ShareRow key={index} share={share} total={total} theme={theme} />
-        ))}
+
+        {/* Table Header */}
+        <View
+          style={[
+            tableStyles.headerRow,
+            { backgroundColor: theme.colors.primary.main },
+          ]}
+        >
+          <Text
+            style={[
+              tableStyles.headerCell,
+              tableStyles.headerCellName,
+              { fontFamily: theme.fontFamily.english },
+            ]}
+          >
+            {t("results.heir")}
+          </Text>
+          <Text
+            style={[
+              tableStyles.headerCell,
+              { fontFamily: theme.fontFamily.english },
+            ]}
+          >
+            {t("results.fraction")}
+          </Text>
+          <Text
+            style={[
+              tableStyles.headerCell,
+              { fontFamily: theme.fontFamily.english },
+            ]}
+          >
+            %
+          </Text>
+          <Text
+            style={[
+              tableStyles.headerCell,
+              { fontFamily: theme.fontFamily.english },
+            ]}
+          >
+            {t("results.amount")}
+          </Text>
+        </View>
+
+        {/* Table Rows */}
+        {result.shares.map((share, index) => {
+          const percentage = total > 0 ? (share.amount / total) * 100 : 0;
+          const fractionStr = share.fraction
+            ? `${share.fraction.numerator}/${share.fraction.denominator}`
+            : "-";
+
+          return (
+            <View
+              key={index}
+              style={[
+                tableStyles.dataRow,
+                {
+                  backgroundColor:
+                    index % 2 === 0
+                      ? theme.colors.background.light
+                      : theme.colors.neutral.light50,
+                  borderBottomColor: theme.colors.neutral.light100,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  tableStyles.dataCell,
+                  tableStyles.dataCellName,
+                  {
+                    color: theme.colors.primary.main,
+                    fontFamily: theme.fontFamily.english,
+                  },
+                ]}
+                numberOfLines={1}
+              >
+                {share.name}
+              </Text>
+              <Text
+                style={[
+                  tableStyles.dataCell,
+                  {
+                    color: theme.colors.neutral.dark200,
+                    fontFamily: theme.fontFamily.english,
+                  },
+                ]}
+              >
+                {fractionStr}
+              </Text>
+              <Text
+                style={[
+                  tableStyles.dataCell,
+                  {
+                    color: theme.colors.neutral.dark200,
+                    fontFamily: theme.fontFamily.english,
+                  },
+                ]}
+              >
+                {formatPercentage(percentage)}
+              </Text>
+              <Text
+                style={[
+                  tableStyles.dataCell,
+                  {
+                    color: theme.colors.neutral.dark300,
+                    fontFamily: theme.fontFamily.english,
+                  },
+                ]}
+              >
+                {formatCurrency(share.amount)}
+              </Text>
+            </View>
+          );
+        })}
       </Card>
 
       {result.blockedHeirs && result.blockedHeirs.length > 0 && (
@@ -266,80 +391,6 @@ function DistributionTab({
         </Card>
       )}
     </ScrollView>
-  );
-}
-
-function ShareRow({
-  share,
-  total,
-  theme,
-}: {
-  share: HeirShare;
-  total: number;
-  theme: any;
-}) {
-  const { t } = useTranslation();
-  const percentage = total > 0 ? (share.amount / total) * 100 : 0;
-
-  return (
-    <View
-      style={[
-        shareStyles.row,
-        { borderBottomColor: theme.colors.neutral.light100 },
-      ]}
-    >
-      <Avatar icon="account" color={theme.colors.primary.lighter} size={32} />
-      <View style={shareStyles.info}>
-        <Text
-          style={[
-            shareStyles.name,
-            {
-              color: theme.colors.neutral.dark200,
-              fontFamily: theme.fontFamily.english,
-            },
-          ]}
-        >
-          {share.name}
-        </Text>
-        <View style={shareStyles.meta}>
-          {share.fraction && (
-            <Text
-              style={[
-                shareStyles.fraction,
-                {
-                  color: theme.colors.neutral.light400,
-                  fontFamily: theme.fontFamily.english,
-                },
-              ]}
-            >
-              {share.fraction.numerator}/{share.fraction.denominator}
-            </Text>
-          )}
-          <Text
-            style={[
-              shareStyles.percentage,
-              {
-                color: theme.colors.primary.main,
-                fontFamily: theme.fontFamily.english,
-              },
-            ]}
-          >
-            {formatPercentage(percentage)}
-          </Text>
-        </View>
-      </View>
-      <Text
-        style={[
-          shareStyles.amount,
-          {
-            color: theme.colors.neutral.dark300,
-            fontFamily: theme.fontFamily.english,
-          },
-        ]}
-      >
-        {formatCurrency(share.amount)}
-      </Text>
-    </View>
   );
 }
 
@@ -621,6 +672,7 @@ const styles = StyleSheet.create({
   heroLeft: {},
   heroLabel: { fontSize: 12, fontWeight: "500", marginBottom: 4 },
   heroAmount: { fontSize: 28, fontWeight: "800" },
+  confidenceGroup: { alignItems: "center" },
   confidenceCircle: {
     width: 56,
     height: 56,
@@ -630,6 +682,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   confidenceValue: { fontSize: 14, fontWeight: "700" },
+  confidenceLabel: { fontSize: 10, fontWeight: "500", marginTop: 4 },
+  distributionCard: { marginBottom: 16 },
   heroBadges: { flexDirection: "row", gap: 8, marginTop: 12, flexWrap: "wrap" },
   emptyCard: { margin: 16, flex: 1 },
   emptyContainer: { alignItems: "center", paddingVertical: 40 },
@@ -638,20 +692,31 @@ const styles = StyleSheet.create({
   blockedHeir: { fontSize: 13, paddingVertical: 4 },
 });
 
-const shareStyles = StyleSheet.create({
-  row: {
+const tableStyles = StyleSheet.create({
+  headerRow: {
     flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    gap: 10,
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    marginBottom: 2,
   },
-  info: { flex: 1 },
-  name: { fontSize: 13, fontWeight: "600", marginBottom: 2 },
-  meta: { flexDirection: "row", gap: 8 },
-  fraction: { fontSize: 11, fontWeight: "500" },
-  percentage: { fontSize: 11, fontWeight: "600" },
-  amount: { fontSize: 14, fontWeight: "700" },
+  headerCell: {
+    flex: 1,
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#ffffff",
+    textAlign: "center",
+  },
+  headerCellName: { flex: 1.8, textAlign: "left" },
+  dataRow: {
+    flexDirection: "row",
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    borderBottomWidth: 1,
+    alignItems: "center",
+  },
+  dataCell: { flex: 1, fontSize: 12, textAlign: "center" },
+  dataCellName: { flex: 1.8, fontSize: 12, fontWeight: "600", textAlign: "left" },
 });
 
 const stepStyles = StyleSheet.create({

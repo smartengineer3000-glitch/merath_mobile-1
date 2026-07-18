@@ -34,7 +34,7 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { ThemeProvider, useAppTheme } from "./lib/context/ThemeProvider";
 import { SettingsProvider } from "./lib/context/SettingsContext";
 import { MadhabProvider } from "./lib/context/MadhabContext";
-import { CalculationProvider } from "./lib/context/CalculationContext";
+import { CalculationProvider, useCalculationStore } from "./lib/context/CalculationContext";
 import { RootNavigator } from "./navigation/RootNavigator";
 import { ErrorBoundary } from "./components/feedback/ErrorBoundary";
 import { DisclaimersModal } from "./components/DisclaimersModal";
@@ -108,6 +108,7 @@ const AppContent = () => {
   const [showDisclaimers, setShowDisclaimers] = useState(false);
   const [appReady, setAppReady] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const { logEvent } = useCalculationStore();
 
   // ===== LOAD FONTS =====
 
@@ -152,6 +153,7 @@ const AppContent = () => {
     };
 
     checkOnboardingStatus();
+    logEvent("app_open", "Application launched");
   }, []);
 
   // ===== Handle onboarding complete =====
@@ -198,7 +200,6 @@ const AppContent = () => {
       <StatusBar style={theme.mode === "dark" ? "light" : "dark"} />
       <NetworkStatusIndicator />
       <ErrorBoundary theme={theme}>
-        <CalculationProvider>
           <NavigationContainer
             theme={{
               ...DefaultTheme,
@@ -216,7 +217,6 @@ const AppContent = () => {
           >
             <RootNavigator />
           </NavigationContainer>
-        </CalculationProvider>
       </ErrorBoundary>
       <DisclaimersModal
         visible={showDisclaimers}
@@ -239,7 +239,9 @@ export default function App() {
         <ThemeProvider>
           <SettingsProvider>
             <MadhabProvider>
-              <AppContent />
+              <CalculationProvider>
+                <AppContent />
+              </CalculationProvider>
             </MadhabProvider>
           </SettingsProvider>
         </ThemeProvider>

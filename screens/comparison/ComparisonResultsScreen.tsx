@@ -7,6 +7,7 @@ import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
 import { Card, SectionHeader, Badge } from "../../components/ui";
 import { formatCurrency, formatPercentage } from "../../lib/utils/formatters";
 import type { CalculationResult } from "../../lib/inheritance/types";
+import { MADHAB_COLORS } from "../../lib/inheritance/utils";
 
 export default function ComparisonResultsScreen() {
   const { theme } = useAppTheme();
@@ -31,6 +32,8 @@ export default function ComparisonResultsScreen() {
       </View>
     );
   }
+
+  const allHeirs = getAllHeirs(results);
 
   return (
     <View
@@ -57,7 +60,7 @@ export default function ComparisonResultsScreen() {
               <Card key={i} variant="elevated" style={styles.overviewCard}>
                 <Badge
                   label={r.madhhabName}
-                  color={theme.colors.primary.main}
+                  color={MADHAB_COLORS[r.madhab] || theme.colors.primary.main}
                   size="sm"
                 />
                 <Text
@@ -90,6 +93,8 @@ export default function ComparisonResultsScreen() {
         {/* Per-heir comparison table */}
         <Card variant="elevated" style={styles.card}>
           <SectionHeader title={t("comparison.shareComparison")} />
+
+          {/* Header */}
           <View
             style={[
               styles.tableHeader,
@@ -99,6 +104,7 @@ export default function ComparisonResultsScreen() {
             <Text
               style={[
                 styles.tableHeaderCell,
+                styles.tableHeaderCellName,
                 { fontFamily: theme.fontFamily.english },
               ]}
             >
@@ -109,7 +115,6 @@ export default function ComparisonResultsScreen() {
                 key={i}
                 style={[
                   styles.tableHeaderCell,
-                  styles.tableCellValue,
                   { fontFamily: theme.fontFamily.english },
                 ]}
               >
@@ -118,12 +123,45 @@ export default function ComparisonResultsScreen() {
             ))}
           </View>
 
-          {getAllHeirs(results).map((heirName, i) => (
+          {/* Fraction sub-header */}
+          <View
+            style={[
+              styles.subHeaderRow,
+              { backgroundColor: theme.colors.neutral.light50 },
+            ]}
+          >
+            <Text
+              style={[
+                styles.subHeaderText,
+                { fontFamily: theme.fontFamily.english },
+              ]}
+            />
+            {results.map((_, i) => (
+              <Text
+                key={i}
+                style={[
+                  styles.subHeaderText,
+                  { fontFamily: theme.fontFamily.english },
+                ]}
+              >
+                {t("results.fraction")} / %
+              </Text>
+            ))}
+          </View>
+
+          {/* Heir rows */}
+          {allHeirs.map((heirName, i) => (
             <View
               key={i}
               style={[
                 styles.tableRow,
-                { borderBottomColor: theme.colors.neutral.light100 },
+                {
+                  backgroundColor:
+                    i % 2 === 0
+                      ? theme.colors.background.light
+                      : theme.colors.neutral.light50,
+                  borderBottomColor: theme.colors.neutral.light100,
+                },
               ]}
             >
               <Text
@@ -131,31 +169,74 @@ export default function ComparisonResultsScreen() {
                   styles.tableCell,
                   styles.tableCellName,
                   {
-                    color: theme.colors.neutral.dark200,
+                    color: theme.colors.primary.main,
                     fontFamily: theme.fontFamily.english,
                   },
                 ]}
+                numberOfLines={1}
               >
                 {heirName}
               </Text>
               {results.map((r, j) => {
                 const share = r.shares.find((s) => s.name === heirName);
+                if (!share) {
+                  return (
+                    <Text
+                      key={j}
+                      style={[
+                        styles.tableCell,
+                        {
+                          color: theme.colors.neutral.light400,
+                          fontFamily: theme.fontFamily.english,
+                        },
+                      ]}
+                    >
+                      -
+                    </Text>
+                  );
+                }
+                const total = r.shares.reduce((sum, s) => sum + s.amount, 0);
+                const percentage = total > 0 ? (share.amount / total) * 100 : 0;
+                const fractionStr = share.fraction
+                  ? `${share.fraction.numerator}/${share.fraction.denominator}`
+                  : "-";
+
                 return (
-                  <Text
-                    key={j}
-                    style={[
-                      styles.tableCell,
-                      styles.tableCellValue,
-                      {
-                        color: share
-                          ? theme.colors.neutral.dark300
-                          : theme.colors.neutral.light400,
-                        fontFamily: theme.fontFamily.english,
-                      },
-                    ]}
-                  >
-                    {share ? formatCurrency(share.amount) : "-"}
-                  </Text>
+                  <View key={j} style={styles.tableCell}>
+                    <Text
+                      style={[
+                        styles.cellFraction,
+                        {
+                          color: theme.colors.neutral.dark200,
+                          fontFamily: theme.fontFamily.english,
+                        },
+                      ]}
+                    >
+                      {fractionStr}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.cellAmount,
+                        {
+                          color: theme.colors.neutral.dark300,
+                          fontFamily: theme.fontFamily.english,
+                        },
+                      ]}
+                    >
+                      {formatPercentage(percentage)}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.cellAmount,
+                        {
+                          color: theme.colors.neutral.dark300,
+                          fontFamily: theme.fontFamily.english,
+                        },
+                      ]}
+                    >
+                      {formatCurrency(share.amount)}
+                    </Text>
+                  </View>
                 );
               })}
             </View>
@@ -194,6 +275,14 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     textAlign: "center",
   },
+  tableHeaderCellName: { flex: 1.5, textAlign: "left" },
+  subHeaderRow: {
+    flexDirection: "row",
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    marginBottom: 2,
+  },
+  subHeaderText: { flex: 1, fontSize: 9, fontWeight: "500", textAlign: "center", color: "#888" },
   tableRow: {
     flexDirection: "row",
     paddingVertical: 8,
@@ -201,7 +290,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     alignItems: "center",
   },
-  tableCell: { flex: 1, fontSize: 11, textAlign: "center" },
-  tableCellName: { fontSize: 12, fontWeight: "500", textAlign: "auto" },
-  tableCellValue: { textAlign: "center" },
+  tableCell: { flex: 1, alignItems: "center" },
+  tableCellName: { flex: 1.5, alignItems: "flex-start" },
+  cellFraction: { fontSize: 11, fontWeight: "500", textAlign: "center" },
+  cellAmount: { fontSize: 10, fontWeight: "600", textAlign: "center", marginTop: 1 },
 });

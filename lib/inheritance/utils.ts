@@ -101,7 +101,7 @@ export function isValidHeirType(heir: any): heir is HeirType {
  * تنسيق المبلغ كعملة
  */
 export function formatCurrency(amount: number, currency = "SAR"): string {
-  return new Intl.NumberFormat("ar-SA", {
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency,
     minimumFractionDigits: 2,

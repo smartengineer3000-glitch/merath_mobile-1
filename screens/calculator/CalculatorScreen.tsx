@@ -33,7 +33,7 @@ export default function CalculatorScreen() {
   const navigation = useNavigation<any>();
   const { madhab, setMadhab } = useMadhab();
   const { calculateWithEstate } = useCalculator();
-  const { saveScenario } = useCalculationStore();
+  const { saveScenario, logEvent } = useCalculationStore();
 
   const [estateTotal, setEstateTotal] = useState(0);
   const [funeral, setFuneral] = useState(0);
@@ -112,6 +112,11 @@ export default function CalculatorScreen() {
     }
 
     setIsCalculating(true);
+    logEvent("calculation_start", `Calculating ${madhab} inheritance for ${heirCount} heirs`, {
+      madhab,
+      estate: estateTotal,
+      heirCount,
+    });
     try {
       const estate = { total: estateTotal, funeral, debts, will };
       const result = await calculateWithEstate(
@@ -127,14 +132,21 @@ export default function CalculatorScreen() {
           madhab: madhab as MadhhabType,
           result,
         });
+        logEvent("calculation_complete", `Calculation complete: ${result.shares.length} shares, confidence ${result.confidence}%`, {
+          madhab,
+          shares: result.shares.length,
+          confidence: result.confidence,
+        });
         navigation.navigate("Results", { result });
       } else {
+        logEvent("calculation_error", result?.error || "Calculation failed");
         Alert.alert(
           t("common.error"),
           result?.error || t("calculator.calculationFailed"),
         );
       }
     } catch (err) {
+      logEvent("calculation_error", `Calculation error: ${(err as Error).message}`);
       Alert.alert(t("common.error"), t("calculator.calculationFailed"));
     } finally {
       setIsCalculating(false);
@@ -182,7 +194,10 @@ export default function CalculatorScreen() {
               key={m.key}
               label={m.label}
               selected={madhab === m.key}
-              onPress={() => setMadhab(m.key)}
+              onPress={() => {
+                setMadhab(m.key);
+                logEvent("madhab_change", `Changed madhab to ${m.label}`);
+              }}
               size="sm"
             />
           ))}

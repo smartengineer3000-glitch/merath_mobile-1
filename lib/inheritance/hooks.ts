@@ -815,7 +815,7 @@ export function useResults() {
       </head>
       <body>
         <h1>مقارنة نتائج المذاهب الفقهية</h1>
-        <p>تاريخ التقرير: ${new Date().toLocaleDateString("ar-SA")}</p>
+        <p>تاريخ التقرير: ${new Date().toLocaleDateString("en-US")}</p>
         
         <h2>المذهب الأساسي: ${baseline.madhhabName}</h2>
         <p>إجمالي التركة: ${baseline.shares.reduce((s, sh) => s + sh.amount, 0).toFixed(2)} ر.س</p>

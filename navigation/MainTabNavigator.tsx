@@ -9,6 +9,7 @@ import { CalculatorStack } from "./CalculatorStack";
 import { HistoryStack } from "./HistoryStack";
 import { ComparisonStack } from "./ComparisonStack";
 import { SettingsStack } from "./SettingsStack";
+import { useCalculationStore } from "../lib/context/CalculationContext";
 
 const Tab = createBottomTabNavigator();
 
@@ -19,10 +20,18 @@ const TAB_ICONS: Record<string, { focused: string; default: string }> = {
   Settings: { focused: "settings", default: "settings-outline" },
 };
 
+const TAB_EVENT_LABELS: Record<string, string> = {
+  Calculator: "calculator_tab",
+  History: "history_tab",
+  Compare: "comparison_tab",
+  Settings: "settings_tab",
+};
+
 export function MainTabNavigator() {
   const { theme } = useAppTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  const { logEvent } = useCalculationStore();
 
   return (
     <Tab.Navigator
@@ -49,6 +58,11 @@ export function MainTabNavigator() {
           paddingTop: 8,
           paddingBottom: insets.bottom,
           ...theme.shadows.sm,
+        },
+      })}
+      screenListeners={({ route }) => ({
+        focus: () => {
+          logEvent("screen_view", `Navigated to ${route.name}`);
         },
       })}
     >

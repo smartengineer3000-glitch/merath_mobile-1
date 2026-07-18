@@ -22,7 +22,7 @@ export const HEIR_GROUPS: Record<
   HeirGroup,
   { icon: string; labelKey: string }
 > = {
-  spouses: { icon: "heart", labelKey: "heirs.group.spouses" },
+  spouses: { icon: "account-multiple", labelKey: "heirs.group.spouses" },
   descendants: { icon: "account-group", labelKey: "heirs.group.descendants" },
   ascendants: {
     icon: "account-multiple-plus",
@@ -31,7 +31,7 @@ export const HEIR_GROUPS: Record<
   siblings: { icon: "account-multiple", labelKey: "heirs.group.siblings" },
   extended: { icon: "account-network", labelKey: "heirs.group.nephews" },
   blood_relatives: {
-    icon: "account-heart",
+    icon: "account-group",
     labelKey: "heirs.group.bloodRelatives",
   },
 };

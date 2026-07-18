@@ -366,5 +366,25 @@
     "noResults": "No results found",
     "noNetwork": "No internet connection - some features may not work",
     "ms": "ms"
+  },
+
+  "events": {
+    "title": "Activity Log",
+    "totalEvents": "events",
+    "noEvents": "No events logged yet. Use the calculator to generate activity.",
+    "appOpen": "App Open",
+    "screenView": "Screen View",
+    "calcStart": "Calculation Start",
+    "calcComplete": "Calculation Complete",
+    "calcError": "Calculation Error",
+    "heirUpdate": "Heir Update",
+    "estateUpdate": "Estate Update",
+    "madhabChange": "Madhab Change",
+    "settingsChange": "Settings Change",
+    "dataClear": "Data Clear",
+    "comparisonStart": "Comparison Start",
+    "comparisonComplete": "Comparison Complete",
+    "export": "Export",
+    "info": "Info"
   }
 }

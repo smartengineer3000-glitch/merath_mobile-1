@@ -348,5 +348,25 @@
     "computed": "berechnet",
     "expected": "erwartet",
     "na": "k.A."
+  },
+
+  "events": {
+    "title": "Aktivitätsprotokoll",
+    "totalEvents": "Ereignisse",
+    "noEvents": "Noch keine Ereignisse protokolliert. Verwenden Sie den Rechner, um Aktivitäten zu generieren.",
+    "appOpen": "App-Start",
+    "screenView": "Bildschirmansicht",
+    "calcStart": "Berechnung gestartet",
+    "calcComplete": "Berechnung abgeschlossen",
+    "calcError": "Berechnungsfehler",
+    "heirUpdate": "Erbe aktualisiert",
+    "estateUpdate": "Nachlass aktualisiert",
+    "madhabChange": "Madhhab geändert",
+    "settingsChange": "Einstellungen geändert",
+    "dataClear": "Daten gelöscht",
+    "comparisonStart": "Vergleich gestartet",
+    "comparisonComplete": "Vergleich abgeschlossen",
+    "export": "Export",
+    "info": "Info"
   }
 }

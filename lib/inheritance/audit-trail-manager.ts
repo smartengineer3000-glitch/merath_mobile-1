@@ -225,12 +225,12 @@ export class AuditTrailManager {
     confidence: string;
   } {
     const date = new Date(entry.timestamp);
-    const dateStr = date.toLocaleDateString("ar-SA", {
+    const dateStr = date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
     });
-    const timeStr = date.toLocaleTimeString("ar-SA", {
+    const timeStr = date.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
     });
