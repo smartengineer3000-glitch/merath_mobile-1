@@ -7,12 +7,12 @@
 import { I18nManager } from "react-native";
 import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
-import * as en from "./locales/en.json";
-import * as ur from "./locales/ur.json";
-import * as tr from "./locales/tr.json";
-import * as fr from "./locales/fr.json";
-import * as de from "./locales/de.json";
-import * as ar from "./locales/ar.json";
+import en from "./locales/en.json";
+import ur from "./locales/ur.json";
+import tr from "./locales/tr.json";
+import fr from "./locales/fr.json";
+import de from "./locales/de.json";
+import ar from "./locales/ar.json";
 
 // Language resources
 const resources = {
@@ -31,12 +31,7 @@ i18next.use(initReactI18next).init({
   fallbackLng: "en",
 
   interpolation: {
-    escapeValue: false, // React already escapes values
-  },
-
-  detection: {
-    order: ["localStorage", "navigator"],
-    caches: ["localStorage"],
+    escapeValue: false,
   },
 });
 
