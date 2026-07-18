@@ -4,6 +4,7 @@ import { useAppTheme } from "../lib/context/ThemeProvider";
 import { Ionicons } from "../lib/icons";
 import { useTranslation } from "react-i18next";
 import { Platform, View, StyleSheet } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CalculatorStack } from "./CalculatorStack";
 import { HistoryStack } from "./HistoryStack";
 import { ComparisonStack } from "./ComparisonStack";
@@ -21,6 +22,7 @@ const TAB_ICONS: Record<string, { focused: string; default: string }> = {
 export function MainTabNavigator() {
   const { theme } = useAppTheme();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
 
   return (
     <Tab.Navigator
@@ -42,8 +44,10 @@ export function MainTabNavigator() {
         tabBarStyle: {
           backgroundColor: theme.colors.background.light,
           borderTopColor: theme.colors.neutral.light200,
-          height: Platform.OS === "ios" ? 88 : 64,
+          height:
+            (Platform.OS === "ios" ? 88 : 64) + insets.bottom,
           paddingTop: 8,
+          paddingBottom: insets.bottom,
           ...theme.shadows.sm,
         },
       })}

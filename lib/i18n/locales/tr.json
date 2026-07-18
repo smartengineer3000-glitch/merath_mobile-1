@@ -36,7 +36,8 @@
     "noRecentCalculations": "Son hesaplama yok",
     "quickAddScenarios": "Hızlı Senaryo Ekleme",
     "selected": "seçildi",
-    "selectedHeirs": "Seçilen Mirasçılar"
+    "selectedHeirs": "Seçilen Mirasçılar",
+    "willExceedsOneThird": "Vasiyetname toplam mirasın 1/3'ünü aşamaz"
   },
   "estate": {
     "title": "Miras Bilgileri",

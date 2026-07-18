@@ -38,7 +38,8 @@
     "noRecentCalculations": "کوئی حالیہ حسابات نہیں",
     "quickAddScenarios": "فوری اضافہ منظرنے",
     "selected": "منتخب",
-    "selectedHeirs": "منتخب وارثین"
+    "selectedHeirs": "منتخب وارثین",
+    "willExceedsOneThird": "وصیت کل ملکیت کے تہائی سے زیادہ نہیں ہو سکتی"
   },
 
   "estate": {

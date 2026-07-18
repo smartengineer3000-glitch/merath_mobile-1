@@ -36,7 +36,8 @@
     "noRecentCalculations": "Keine letzten Berechnungen",
     "quickAddScenarios": "Schnelle Szenarien hinzufügen",
     "selected": "ausgewählt",
-    "selectedHeirs": "Ausgewählte Erben"
+    "selectedHeirs": "Ausgewählte Erben",
+    "willExceedsOneThird": "Das Testament darf 1/3 des Gesamtvermögens nicht überschreiten"
   },
   "estate": {
     "title": "Erbschaftsinformationen",

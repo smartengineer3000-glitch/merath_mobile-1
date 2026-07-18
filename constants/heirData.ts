@@ -14,6 +14,7 @@ export interface HeirConfig {
   gender: "male" | "female";
   group: HeirGroup;
   labelKey: string;
+  maxCount: number;
 }
 
 export const HEIR_GROUPS: Record<
@@ -38,6 +39,7 @@ export const HEIRS: HeirConfig[] = [
     gender: "male",
     group: "spouses",
     labelKey: "heirs.husband",
+    maxCount: 1,
   },
   {
     key: "wife",
@@ -46,6 +48,7 @@ export const HEIRS: HeirConfig[] = [
     gender: "female",
     group: "spouses",
     labelKey: "heirs.wife",
+    maxCount: 3,
   },
   {
     key: "son",
@@ -54,6 +57,7 @@ export const HEIRS: HeirConfig[] = [
     gender: "male",
     group: "descendants",
     labelKey: "heirs.son",
+    maxCount: 20,
   },
   {
     key: "daughter",
@@ -62,6 +66,7 @@ export const HEIRS: HeirConfig[] = [
     gender: "female",
     group: "descendants",
     labelKey: "heirs.daughter",
+    maxCount: 20,
   },
   {
     key: "grandson",
@@ -70,6 +75,7 @@ export const HEIRS: HeirConfig[] = [
     gender: "male",
     group: "descendants",
     labelKey: "heirs.son",
+    maxCount: 20,
   },
   {
     key: "granddaughter",
@@ -78,6 +84,7 @@ export const HEIRS: HeirConfig[] = [
     gender: "female",
     group: "descendants",
     labelKey: "heirs.daughter",
+    maxCount: 20,
   },
   {
     key: "father",
@@ -86,6 +93,7 @@ export const HEIRS: HeirConfig[] = [
     gender: "male",
     group: "ascendants",
     labelKey: "heirs.father",
+    maxCount: 1,
   },
   {
     key: "mother",
@@ -94,6 +102,7 @@ export const HEIRS: HeirConfig[] = [
     gender: "female",
     group: "ascendants",
     labelKey: "heirs.mother",
+    maxCount: 1,
   },
   {
     key: "grandfather",
@@ -102,6 +111,7 @@ export const HEIRS: HeirConfig[] = [
     gender: "male",
     group: "ascendants",
     labelKey: "heirs.grandfather",
+    maxCount: 1,
   },
   {
     key: "grandmother",
@@ -110,6 +120,7 @@ export const HEIRS: HeirConfig[] = [
     gender: "female",
     group: "ascendants",
     labelKey: "heirs.grandmother",
+    maxCount: 2,
   },
   {
     key: "full_brother",
@@ -118,6 +129,7 @@ export const HEIRS: HeirConfig[] = [
     gender: "male",
     group: "siblings",
     labelKey: "heirs.brother",
+    maxCount: 20,
   },
   {
     key: "full_sister",
@@ -126,6 +138,7 @@ export const HEIRS: HeirConfig[] = [
     gender: "female",
     group: "siblings",
     labelKey: "heirs.sister",
+    maxCount: 20,
   },
   {
     key: "paternal_brother",
@@ -134,6 +147,7 @@ export const HEIRS: HeirConfig[] = [
     gender: "male",
     group: "siblings",
     labelKey: "heirs.paternalBrother",
+    maxCount: 20,
   },
   {
     key: "paternal_sister",
@@ -142,6 +156,7 @@ export const HEIRS: HeirConfig[] = [
     gender: "female",
     group: "siblings",
     labelKey: "heirs.paternalSister",
+    maxCount: 20,
   },
   {
     key: "maternal_brother",
@@ -150,6 +165,7 @@ export const HEIRS: HeirConfig[] = [
     gender: "male",
     group: "siblings",
     labelKey: "heirs.maternalBrother",
+    maxCount: 20,
   },
   {
     key: "maternal_sister",
@@ -158,6 +174,7 @@ export const HEIRS: HeirConfig[] = [
     gender: "female",
     group: "siblings",
     labelKey: "heirs.maternalSister",
+    maxCount: 20,
   },
   {
     key: "full_nephew",
@@ -166,6 +183,7 @@ export const HEIRS: HeirConfig[] = [
     gender: "male",
     group: "extended",
     labelKey: "heirs.nephew",
+    maxCount: 20,
   },
   {
     key: "full_uncle",
@@ -174,6 +192,7 @@ export const HEIRS: HeirConfig[] = [
     gender: "male",
     group: "extended",
     labelKey: "heirs.uncle",
+    maxCount: 20,
   },
   {
     key: "full_cousin",
@@ -182,6 +201,7 @@ export const HEIRS: HeirConfig[] = [
     gender: "male",
     group: "extended",
     labelKey: "heirs.cousin",
+    maxCount: 20,
   },
 ];
 

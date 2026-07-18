@@ -19,8 +19,13 @@ import {
   EmptyState,
 } from "../../components/ui";
 import { HEIR_GROUPS } from "../../constants/heirData";
+import { HEIRS } from "../../constants/heirData";
 import type { HeirGroup } from "../../constants/heirData";
 import type { MadhhabType } from "../../lib/inheritance/types";
+
+const HEIR_MAX_COUNTS: Record<string, number> = Object.fromEntries(
+  HEIRS.map((h) => [h.key, h.maxCount]),
+);
 
 export default function CalculatorScreen() {
   const { theme } = useAppTheme();
@@ -33,7 +38,15 @@ export default function CalculatorScreen() {
   const [estateTotal, setEstateTotal] = useState(0);
   const [funeral, setFuneral] = useState(0);
   const [debts, setDebts] = useState(0);
-  const [will, setWill] = useState(0);
+  const [will, setWillRaw] = useState(0);
+
+  const setWill = useCallback(
+    (val: number) => {
+      const maxWill = estateTotal > 0 ? estateTotal / 3 : 0;
+      setWillRaw(Math.min(val, maxWill));
+    },
+    [estateTotal],
+  );
   const [selectedHeirs, setSelectedHeirs] = useState<Record<string, number>>(
     {},
   );
@@ -58,10 +71,12 @@ export default function CalculatorScreen() {
   const handleHeirCountChange = useCallback((key: string, count: number) => {
     setSelectedHeirs((prev) => {
       const next = { ...prev };
-      if (count <= 0) {
+      const max = HEIR_MAX_COUNTS[key] ?? 20;
+      const clamped = Math.min(count, max);
+      if (clamped <= 0) {
         delete next[key];
       } else {
-        next[key] = count;
+        next[key] = clamped;
       }
       return next;
     });
@@ -71,7 +86,9 @@ export default function CalculatorScreen() {
     setSelectedHeirs((prev) => {
       const next = { ...prev };
       for (const [key, count] of Object.entries(data)) {
-        next[key] = (next[key] || 0) + count;
+        const max = HEIR_MAX_COUNTS[key] ?? 20;
+        const current = next[key] || 0;
+        next[key] = Math.min(current + count, max);
       }
       return next;
     });
@@ -80,6 +97,10 @@ export default function CalculatorScreen() {
   const handleCalculate = useCallback(async () => {
     if (estateTotal <= 0) {
       Alert.alert(t("common.error"), t("results.invalidEstate"));
+      return;
+    }
+    if (will > estateTotal / 3) {
+      Alert.alert(t("common.error"), t("calculator.willExceedsOneThird"));
       return;
     }
     if (heirCount === 0) {

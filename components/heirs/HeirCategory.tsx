@@ -82,6 +82,7 @@ export function HeirCategory({
               heir={heir}
               count={selectedHeirs[heir.key] || 0}
               onCountChange={(count) => onHeirCountChange(heir.key, count)}
+              maxCount={heir.maxCount}
               theme={theme}
               t={t}
             />
@@ -96,12 +97,14 @@ function HeirRow({
   heir,
   count,
   onCountChange,
+  maxCount,
   theme,
   t,
 }: {
   heir: HeirConfig;
   count: number;
   onCountChange: (count: number) => void;
+  maxCount: number;
   theme: any;
   t: any;
 }) {
@@ -126,7 +129,7 @@ function HeirRow({
         onIncrement={() => onCountChange(count + 1)}
         onDecrement={() => onCountChange(Math.max(0, count - 1))}
         min={0}
-        max={20}
+        max={maxCount}
       />
     </View>
   );

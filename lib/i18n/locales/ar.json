@@ -38,7 +38,8 @@
     "noRecentCalculations": "لا توجد حسابات حديثة",
     "quickAddScenarios": "سيناريوهات إضافة سريعة",
     "selected": "محدد",
-    "selectedHeirs": "الورثة المحددون"
+    "selectedHeirs": "الورثة المحددون",
+    "willExceedsOneThird": "لا يمكن أن تتجاوز الوصية ثلث إجمالي التركة"
   },
 
   "estate": {

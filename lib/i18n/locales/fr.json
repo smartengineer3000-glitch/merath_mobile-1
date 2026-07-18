@@ -36,7 +36,8 @@
     "noRecentCalculations": "Aucun calcul récent",
     "quickAddScenarios": "Scénarios d'ajout rapide",
     "selected": "sélectionné",
-    "selectedHeirs": "Héritiers sélectionnés"
+    "selectedHeirs": "Héritiers sélectionnés",
+    "willExceedsOneThird": "Le testament ne peut pas dépasser 1/3 de la succession totale"
   },
   "estate": {
     "title": "Informations sur la succession",
