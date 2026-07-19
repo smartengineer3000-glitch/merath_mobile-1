@@ -127,7 +127,9 @@ export default function ResultsScreen() {
         <StepsTab result={result} scenario={latestScenario} />
       )}
       {activeTab === "explanation" && <ExplanationTab result={result} />}
-      {activeTab === "export" && <ExportTab result={result} />}
+      {activeTab === "export" && (
+        <ExportTab result={result} scenario={latestScenario} />
+      )}
     </View>
   );
 }
