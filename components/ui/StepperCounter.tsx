@@ -17,6 +17,7 @@ interface StepperCounterProps {
   min?: number;
   max?: number;
   label?: string;
+  disabled?: boolean;
   testID?: string;
 }
 
@@ -27,6 +28,7 @@ export function StepperCounter({
   min = 0,
   max = 20,
   label,
+  disabled = false,
   testID,
 }: StepperCounterProps) {
   const { theme } = useAppTheme();
@@ -43,7 +45,7 @@ export function StepperCounter({
   }));
 
   const handleIncrement = () => {
-    if (value >= max) return;
+    if (disabled || value >= max) return;
     incScale.value = withSpring(0.85, { damping: 15, stiffness: 400 }, () => {
       incScale.value = withSpring(1, { damping: 15, stiffness: 400 });
     });
@@ -52,7 +54,7 @@ export function StepperCounter({
   };
 
   const handleDecrement = () => {
-    if (value <= min) return;
+    if (disabled || value <= min) return;
     decScale.value = withSpring(0.85, { damping: 15, stiffness: 400 }, () => {
       decScale.value = withSpring(1, { damping: 15, stiffness: 400 });
     });
@@ -85,20 +87,21 @@ export function StepperCounter({
         <Animated.View style={decAnimated}>
           <TouchableOpacity
             onPress={handleDecrement}
-            disabled={value <= min}
+            disabled={disabled || value <= min}
             activeOpacity={0.7}
             accessible
             accessibilityRole="button"
             accessibilityLabel={`${t("stepper.decrease")} ${label || t("stepper.counter")}`}
-            accessibilityState={{ disabled: value <= min }}
+            accessibilityState={{ disabled: disabled || value <= min }}
             style={[
               styles.button,
               {
                 backgroundColor:
-                  value <= min
+                  disabled || value <= min
                     ? theme.colors.neutral.light100
                     : theme.colors.primary.lighter,
                 borderRadius: theme.borderRadius.sm,
+                opacity: disabled ? 0.4 : 1,
               },
             ]}
           >
@@ -106,7 +109,7 @@ export function StepperCounter({
               name="remove"
               size={18}
               color={
-                value <= min
+                disabled || value <= min
                   ? theme.colors.neutral.light400
                   : theme.colors.primary.main
               }
@@ -129,20 +132,21 @@ export function StepperCounter({
         <Animated.View style={incAnimated}>
           <TouchableOpacity
             onPress={handleIncrement}
-            disabled={value >= max}
+            disabled={disabled || value >= max}
             activeOpacity={0.7}
             accessible
             accessibilityRole="button"
             accessibilityLabel={`${t("stepper.increase")} ${label || t("stepper.counter")}`}
-            accessibilityState={{ disabled: value >= max }}
+            accessibilityState={{ disabled: disabled || value >= max }}
             style={[
               styles.button,
               {
                 backgroundColor:
-                  value >= max
+                  disabled || value >= max
                     ? theme.colors.neutral.light100
                     : theme.colors.primary.lighter,
                 borderRadius: theme.borderRadius.sm,
+                opacity: disabled ? 0.4 : 1,
               },
             ]}
           >
@@ -150,7 +154,7 @@ export function StepperCounter({
               name="add"
               size={18}
               color={
-                value >= max
+                disabled || value >= max
                   ? theme.colors.neutral.light400
                   : theme.colors.primary.main
               }

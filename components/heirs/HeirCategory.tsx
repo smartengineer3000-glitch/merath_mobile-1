@@ -35,6 +35,13 @@ export function HeirCategory({
     0,
   );
 
+  const impossibleSpouse =
+    deceasedGender === "male"
+      ? "husband"
+      : deceasedGender === "female"
+        ? "wife"
+        : null;
+
   return (
     <Card variant="outlined" style={styles.card}>
       <TouchableOpacity
@@ -85,6 +92,7 @@ export function HeirCategory({
               count={selectedHeirs[heir.key] || 0}
               onCountChange={(count) => onHeirCountChange(heir.key, count)}
               maxCount={heir.maxCount}
+              disabled={heir.key === impossibleSpouse}
               theme={theme}
               t={t}
             />
@@ -100,6 +108,7 @@ function HeirRow({
   count,
   onCountChange,
   maxCount,
+  disabled,
   theme,
   t,
 }: {
@@ -107,24 +116,42 @@ function HeirRow({
   count: number;
   onCountChange: (count: number) => void;
   maxCount: number;
+  disabled?: boolean;
   theme: any;
   t: any;
 }) {
   return (
-    <View style={rowStyles.container}>
+    <View style={[rowStyles.container, disabled && rowStyles.disabled]}>
       <View style={rowStyles.info}>
         <Avatar icon={heir.icon} color={heir.color} size={32} />
-        <Text
-          style={[
-            rowStyles.name,
-            {
-              color: theme.colors.neutral.dark200,
-              fontFamily: theme.fontFamily.english,
-            },
-          ]}
-        >
-          {t(heir.labelKey)}
-        </Text>
+        <View style={rowStyles.nameGroup}>
+          <Text
+            style={[
+              rowStyles.name,
+              {
+                color: disabled
+                  ? theme.colors.neutral.light400
+                  : theme.colors.neutral.dark200,
+                fontFamily: theme.fontFamily.english,
+              },
+            ]}
+          >
+            {t(heir.labelKey)}
+          </Text>
+          {disabled && (
+            <Text
+              style={[
+                rowStyles.frozenLabel,
+                {
+                  color: theme.colors.neutral.light400,
+                  fontFamily: theme.fontFamily.english,
+                },
+              ]}
+            >
+              {t("calculator.impossibleSpouse")}
+            </Text>
+          )}
+        </View>
       </View>
       <StepperCounter
         value={count}
@@ -132,6 +159,7 @@ function HeirRow({
         onDecrement={() => onCountChange(Math.max(0, count - 1))}
         min={0}
         max={maxCount}
+        disabled={disabled}
       />
     </View>
   );
@@ -159,6 +187,11 @@ const rowStyles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 4,
   },
+  disabled: {
+    opacity: 0.5,
+  },
   info: { flexDirection: "row", alignItems: "center", gap: 10, flex: 1 },
+  nameGroup: { flex: 1 },
   name: { fontSize: 13, fontWeight: "500" },
+  frozenLabel: { fontSize: 10, fontStyle: "italic", marginTop: 1 },
 });

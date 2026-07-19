@@ -46,7 +46,8 @@
       "atLeastOneHeir": "En az bir mirasçı seçilmelidir",
       "calculationTimeout": "Hesaplama zaman aşımına uğradı. Lütfen tekrar deneyin.",
       "unknownError": "Hesaplama sırasında bilinmeyen bir hata oluştu"
-    }
+    },
+    "impossibleSpouse": "Uygulanamaz"
   },
   "estate": {
     "title": "Miras Bilgileri",

@@ -40,9 +40,9 @@ export default function CalculatorScreen() {
     setSelectedHeirs((prev) => {
       const next = { ...prev };
       if (gender === "male") {
-        delete next.husband;
+        next.husband = 0;
       } else {
-        delete next.wife;
+        next.wife = 0;
       }
       return next;
     });

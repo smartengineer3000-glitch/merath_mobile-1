@@ -46,7 +46,8 @@
       "atLeastOneHeir": "Au moins un héritier doit être sélectionné",
       "calculationTimeout": "Le calcul a expiré. Veuillez réessayer.",
       "unknownError": "Une erreur inconnue s'est produite lors du calcul"
-    }
+    },
+    "impossibleSpouse": "Non applicable"
   },
   "estate": {
     "title": "Informations sur la succession",

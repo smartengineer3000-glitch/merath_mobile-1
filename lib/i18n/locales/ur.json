@@ -46,7 +46,8 @@
       "atLeastOneHeir": "کم از کم ایک وارث منتخب ہونا چاہیے",
       "calculationTimeout": "حساب کا وقت ختم ہو گیا۔ براہ کرم دوبارہ کوشش کریں۔",
       "unknownError": "حساب لگاتے وقت ایک نامعلوم خرابی پیش آئی"
-    }
+    },
+    "impossibleSpouse": "لا applicable"
   },
   "estate": {
     "title": "ملکیت کی معلومات",

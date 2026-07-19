@@ -46,7 +46,8 @@
       "atLeastOneHeir": "Es muss mindestens ein Erbe ausgewählt werden",
       "calculationTimeout": "Berechnung hat das Zeitlimit überschritten. Bitte versuchen Sie es erneut.",
       "unknownError": "Ein unbekannter Fehler ist bei der Berechnung aufgetreten"
-    }
+    },
+    "impossibleSpouse": "Nicht anwendbar"
   },
   "estate": {
     "title": "Erbschaftsinformationen",

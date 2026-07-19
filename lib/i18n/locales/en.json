@@ -46,7 +46,8 @@
       "atLeastOneHeir": "At least one heir must be selected",
       "calculationTimeout": "Calculation timed out. Please try again.",
       "unknownError": "An unknown error occurred during calculation"
-    }
+    },
+    "impossibleSpouse": "Not applicable"
   },
   "estate": {
     "title": "Estate Information",
