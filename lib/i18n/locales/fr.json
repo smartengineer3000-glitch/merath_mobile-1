@@ -116,6 +116,7 @@
     "shares": "Parts de succession",
     "amount": "Montant",
     "fraction": "Fraction",
+    "percentage": "Pourcentage",
     "total": "Total",
     "perPerson": "Par personne",
     "success": "Calcul réussi",
@@ -310,7 +311,8 @@
     "title": "Une erreur s'est produite",
     "description": "Une erreur inattendue s'est produite. Veuillez réessayer.",
     "details": "Détails de l'erreur :",
-    "tryAgain": "Réessayer"
+    "tryAgain": "Réessayer",
+    "componentStack": "Pile de Composants"
   },
   "disclaimer": {
     "title": "Conditions et avertissements",
@@ -414,5 +416,25 @@
     "awlDescription": "Les parts fixes dépassent la succession. Toutes les parts ont été réduites proportionnellement pour correspondre au montant disponible.",
     "raddApplied": "Radd (Retour aux héritiers)",
     "raddDescription": "L'excédent de la succession a été redistribué aux héritiers éligibles proportionnellement à leurs parts fixes."
+  },
+  "export": {
+    "reportTitle": "Rapport de Distribution d'Héritage",
+    "appName": "Merath Calculatrice d'Héritage Islamique",
+    "totalDistribution": "Distribution Totale",
+    "awlApplied": "Awl Appliqué",
+    "raddApplied": "Radd Appliqué",
+    "confidence": "Confiance",
+    "heir": "Héritier",
+    "fraction": "Fraction",
+    "percentage": "Pourcentage",
+    "amount": "Montant",
+    "generatedBy": "Généré par Merath - Calculatrice d'Héritage Islamique",
+    "dialogTitle": "Exporter le Rapport d'Héritage",
+    "shareTitle": "Distribution d'Héritage",
+    "date": "Date",
+    "shares": "Parts",
+    "total": "Total",
+    "csvTitle": "Héritage CSV",
+    "csvHeader": "Héritier,Fraction,Pourcentage,Montant"
   }
 }

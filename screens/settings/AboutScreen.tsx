@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
 import { Card, SectionHeader } from "../../components/ui";
 import { Ionicons } from "../../lib/icons";
+import { APP_VERSION } from "../../lib/config";
 
 export default function AboutScreen() {
   const { theme } = useAppTheme();
@@ -85,7 +86,7 @@ export default function AboutScreen() {
               },
             ]}
           >
-            {t("about.version")} 1.1.3
+            {t("about.version")} {APP_VERSION}
           </Text>
         </View>
 

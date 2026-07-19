@@ -3,6 +3,7 @@ import { View, Text, FlatList, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { useTranslation } from "react-i18next";
+import i18n from "../../lib/i18n";
 import { useCalculationStore } from "../../lib/context/CalculationContext";
 import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
 import { Card, EmptyState } from "../../components/ui";
@@ -86,13 +87,13 @@ export default function HistoryScreen() {
   const renderItem = ({ item }: { item: AuditEvent }) => {
     const config = EVENT_TYPE_CONFIG[item.type] || EVENT_TYPE_CONFIG.info;
     const date = new Date(item.timestamp);
-    const timeStr = date.toLocaleTimeString("en-US", {
+    const timeStr = date.toLocaleTimeString(i18n.language, {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
       hour12: false,
     });
-    const dateStr = date.toLocaleDateString("en-US", {
+    const dateStr = date.toLocaleDateString(i18n.language, {
       month: "short",
       day: "numeric",
     });

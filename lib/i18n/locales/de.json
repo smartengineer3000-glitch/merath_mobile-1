@@ -116,6 +116,7 @@
     "shares": "Erbschaftsanteile",
     "amount": "Betrag",
     "fraction": "Bruch",
+    "percentage": "Prozentsatz",
     "total": "Gesamt",
     "perPerson": "Pro Person",
     "success": "Berechnung erfolgreich",
@@ -310,7 +311,8 @@
     "title": "Etwas ist schiefgelaufen",
     "description": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
     "details": "Fehlerdetails:",
-    "tryAgain": "Erneut versuchen"
+    "tryAgain": "Erneut versuchen",
+    "componentStack": "Komponentenstapel"
   },
   "disclaimer": {
     "title": "Bedingungen & Haftungsausschluss",
@@ -414,5 +416,25 @@
     "awlDescription": "Die festen Anteile übersteigen den Nachlass. Alle Anteile wurden proportional reduziert, um zum verfügbaren Betrag zu passen.",
     "raddApplied": "Radd (Rückkehr an Erben)",
     "raddDescription": "Der verbleibende Nachlass wurde an die berechtigten Erben proportional zu ihren festen Anteilen zurückgegeben."
+  },
+  "export": {
+    "reportTitle": "Erbschaftsverteilungsbericht",
+    "appName": "Merath Islamischer Erbschaftsrechner",
+    "totalDistribution": "Gesamtverteilung",
+    "awlApplied": "Awl angewendet",
+    "raddApplied": "Radd angewendet",
+    "confidence": "Vertrauen",
+    "heir": "Erbe",
+    "fraction": "Bruch",
+    "percentage": "Prozentsatz",
+    "amount": "Betrag",
+    "generatedBy": "Erstellt von Merath - Islamischer Erbschaftsrechner",
+    "dialogTitle": "Erbschaftsbericht exportieren",
+    "shareTitle": "Erbschaftsverteilung",
+    "date": "Datum",
+    "shares": "Anteile",
+    "total": "Gesamt",
+    "csvTitle": "Erbschaft CSV",
+    "csvHeader": "Erbe,Bruch,Prozentsatz,Betrag"
   }
 }

@@ -9,6 +9,7 @@ import {
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import type { Theme } from "../../lib/design/theme";
 import { useTranslation } from "react-i18next";
+import { useSettings } from "../../lib/context/SettingsContext";
 import { Ionicons } from "../../lib/icons";
 import { Card, SectionHeader } from "../ui";
 import { formatCurrency } from "../../lib/utils/formatters";
@@ -40,6 +41,7 @@ export function EstateCard({
 }: EstateCardProps) {
   const { theme } = useAppTheme();
   const { t } = useTranslation();
+  const { state } = useSettings();
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   return (
@@ -92,7 +94,7 @@ export function EstateCard({
               },
             ]}
           >
-            SAR
+            {state.currency}
           </Text>
         </View>
       </View>

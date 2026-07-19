@@ -42,5 +42,5 @@ export function formatNumber(value: number, decimals: number = 2): string {
  * @returns Formatted percentage string (e.g., "25.00%")
  */
 export function formatPercentage(value: number, decimals: number = 2): string {
-  return `${formatNumber(value, decimals)}٪`;
+  return `${formatNumber(value, decimals)}%`;
 }

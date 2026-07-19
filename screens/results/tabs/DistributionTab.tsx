@@ -168,7 +168,7 @@ export function DistributionTab({ result }: DistributionTabProps) {
               { fontFamily: theme.fontFamily.english },
             ]}
           >
-            %
+            {t("results.percentage")}
           </Text>
           <Text
             style={[

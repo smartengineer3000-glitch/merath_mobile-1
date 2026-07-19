@@ -114,7 +114,7 @@ export class ErrorBoundary extends Component<
                     { color: theme.colors.neutral.dark200 },
                   ]}
                 >
-                  Component Stack
+                  {i18next.t("error.componentStack")}
                 </Text>
                 <Text
                   selectable

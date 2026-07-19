@@ -116,6 +116,7 @@
     "shares": "Miras Payları",
     "amount": "Miktar",
     "fraction": "Pay",
+    "percentage": "Yüzde",
     "total": "Toplam",
     "perPerson": "Kişi Başına",
     "success": "Hesaplama başarılı",
@@ -272,7 +273,7 @@
     "feature4": "Detaylı hesaplama analizi",
     "feature5": "Sonuçları dışa aktar ve paylaş",
     "copyright": "© 2026 Merath. Tüm hakları saklıdır.",
-    "website": "Website",
+    "website": "Web Sitesi",
     "contact": "İletişim",
     "privacy": "Gizlilik Politikası",
     "terms": "Hizmet Şartları"
@@ -281,7 +282,7 @@
     "title": "Hesaplama Geçmişi",
     "noHistory": "Hesaplama geçmişi mevcut değil",
     "subtitle": "Geçmiş hesaplamalarınızı görüntüleyin",
-    "awl": "Awl",
+    "awl": "Avl",
     "radd": "Radd",
     "shares": "pay",
     "calculations": "hesaplama",
@@ -310,7 +311,8 @@
     "title": "Bir şeyler yanlış gitti",
     "description": "Beklenmedik bir hata oluştu. Lütfen tekrar deneyin.",
     "details": "Hata Detayları:",
-    "tryAgain": "Tekrar Dene"
+    "tryAgain": "Tekrar Dene",
+    "componentStack": "Bileşen Yığını"
   },
   "disclaimer": {
     "title": "Şartlar ve Sorumluluk Reddi",
@@ -414,5 +416,25 @@
     "awlDescription": "Sabit payların toplamı terekeyi aşıyor. Tüm paylar mevcut miktara göre oransal olarak azaltıldı.",
     "raddApplied": "Radd (Varislere Geri Dönüş)",
     "raddDescription": "Kalan tereke, sabit paylarına oransal olarak hak sahibi varislere iade edildi."
+  },
+  "export": {
+    "reportTitle": "Miras Dağıtım Raporu",
+    "appName": "Merath İslam Miras Hesaplayıcı",
+    "totalDistribution": "Toplam Dağıtım",
+    "awlApplied": "Avl Uygulandı",
+    "raddApplied": "Radd Uygulandı",
+    "confidence": "Güven",
+    "heir": "Varis",
+    "fraction": "Kesir",
+    "percentage": "Yüzde",
+    "amount": "Tutar",
+    "generatedBy": "Merath tarafından oluşturuldu - İslam Miras Hesaplayıcı",
+    "dialogTitle": "Miras Raporunu Dışa Aktar",
+    "shareTitle": "Miras Dağıtımı",
+    "date": "Tarih",
+    "shares": "Paylar",
+    "total": "Toplam",
+    "csvTitle": "Miras CSV",
+    "csvHeader": "Varis,Kesir,Yüzde,Tutar"
   }
 }

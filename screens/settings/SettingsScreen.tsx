@@ -16,6 +16,7 @@ import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
 import { Card, AppSwitch, Divider, Badge, Button } from "../../components/ui";
 import { Ionicons } from "../../lib/icons";
 import { languages, type Language } from "../../lib/i18n";
+import { APP_VERSION } from "../../lib/config";
 
 export default function SettingsScreen() {
   const { theme, toggleTheme, mode } = useAppTheme();
@@ -406,7 +407,7 @@ export default function SettingsScreen() {
                     },
                   ]}
                 >
-                  v1.1.3
+                  v{APP_VERSION}
                 </Text>
               </View>
             </View>

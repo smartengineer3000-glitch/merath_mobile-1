@@ -17,7 +17,7 @@ import React, {
   useState,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Language, applyRTLOfLanguage } from "../i18n";
+import i18n, { Language, applyRTLOfLanguage } from "../i18n";
 
 export interface SettingsState {
   language: Language;
@@ -466,6 +466,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
    */
   useEffect(() => {
     if (state.language) {
+      i18n.changeLanguage(state.language);
       applyRTLOfLanguage(state.language);
     }
   }, [state.language]);

@@ -144,7 +144,7 @@ export default function ComparisonResultsScreen() {
                   { fontFamily: theme.fontFamily.english },
                 ]}
               >
-                {t("results.fraction")} / %
+                {t("results.fraction")} / {t("results.percentage")}
               </Text>
             ))}
           </View>

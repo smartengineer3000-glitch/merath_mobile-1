@@ -78,30 +78,30 @@ describe("formatPercentage", () => {
   it("formats percentage with default decimals", () => {
     const result = formatPercentage(25);
     expect(typeof result).toBe("string");
-    expect(result).toContain("٪");
+    expect(result).toContain("%");
   });
 
   it("formats percentage with custom decimals", () => {
     const result = formatPercentage(33.333, 1);
     expect(typeof result).toBe("string");
-    expect(result).toContain("٪");
+    expect(result).toContain("%");
   });
 
   it("formats zero percent", () => {
     const result = formatPercentage(0);
     expect(typeof result).toBe("string");
-    expect(result).toContain("٪");
+    expect(result).toContain("%");
   });
 
   it("formats 100 percent", () => {
     const result = formatPercentage(100);
     expect(typeof result).toBe("string");
-    expect(result).toContain("٪");
+    expect(result).toContain("%");
   });
 
   it("negative percentages are handled", () => {
     const result = formatPercentage(-10);
     expect(typeof result).toBe("string");
-    expect(result).toContain("٪");
+    expect(result).toContain("%");
   });
 });
