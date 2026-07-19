@@ -40,7 +40,13 @@
     "willExceedsOneThird": "Le testament ne peut pas dépasser 1/3 de la succession totale",
     "deceasedGender": "Genre du défunt",
     "deceasedGenderMale": "Masculin",
-    "deceasedGenderFemale": "Féminin"
+    "deceasedGenderFemale": "Féminin",
+    "errors": {
+      "estateMustBePositive": "Le montant total de la succession doit être supérieur à zéro",
+      "atLeastOneHeir": "Au moins un héritier doit être sélectionné",
+      "calculationTimeout": "Le calcul a expiré. Veuillez réessayer.",
+      "unknownError": "Une erreur inconnue s'est produite lors du calcul"
+    }
   },
   "estate": {
     "title": "Informations sur la succession",
@@ -247,7 +253,22 @@
     "recentComparisonResults": "Résultats de comparaison récents",
     "comparisonResults": "Résultats de la comparaison",
     "shareComparison": "Partager la comparaison",
-    "heir": "Héritier"
+    "heir": "Héritier",
+    "explanations": {
+      "blockedInMadhab": "Bloqué dans l'école {{madhab}}",
+      "onlyInMadhab": "N'hérite que dans l'école {{madhab}}",
+      "grandfather": "Grand-père avec frères - diffère entre les écoles",
+      "mother": "Mère avec père et mari - règle Umariyyah",
+      "granddaughter": "Fille du fils avec les filles",
+      "full_sister": "Sœur consanguine avec frères",
+      "paternal_sister": "Demi-sœur paternelle avec sœurs",
+      "defaultMadhabDifference": "Différence dans les règles de l'école"
+    },
+    "recommendations": {
+      "identical": "Les résultats sont identiques dans les deux écoles",
+      "majorDifferences": "Différences majeures trouvées pour {{count}} héritier(s). Une consultation avec un spécialiste est recommandée.",
+      "minorDifferences": "Différences mineures entre les écoles - les deux peuvent être choisies"
+    }
   },
   "about": {
     "title": "À propos de Merath",
@@ -332,7 +353,6 @@
     "noNetwork": "Pas de connexion Internet – certaines fonctionnalités peuvent ne pas être disponibles",
     "ms": "ms"
   },
-
   "engineTest": {
     "title": "Résultats des tests du moteur",
     "info": "Exécuter plus de 40 cas de test réels dans les 4 madhhabs",
@@ -355,7 +375,6 @@
     "expected": "attendu",
     "na": "N/D"
   },
-
   "events": {
     "title": "Journal d'activité",
     "totalEvents": "événements",
@@ -374,5 +393,8 @@
     "comparisonComplete": "Comparaison terminée",
     "export": "Exportation",
     "info": "Info"
+  },
+  "audit": {
+    "normalCalculation": "Calcul normal"
   }
 }

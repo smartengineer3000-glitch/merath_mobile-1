@@ -67,6 +67,7 @@ interface CalculationContextValue extends StoredCalculationState {
 
 const STORAGE_KEY = "@merath_calculation_state_v1";
 const MAX_PREVIOUS_RESULTS = 10;
+const MAX_EVENTS = 100;
 
 const initialState: StoredCalculationState = {
   latestScenario: null,
@@ -192,16 +193,19 @@ export function CalculationProvider({
       message: string,
       details?: Record<string, any>,
     ) => {
-      setEvents((prev) => [
-        {
-          id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-          timestamp: Date.now(),
-          type,
-          message,
-          details,
-        },
-        ...prev,
-      ]);
+      setEvents((prev) => {
+        const next = [
+          {
+            id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            timestamp: Date.now(),
+            type,
+            message,
+            details,
+          },
+          ...prev,
+        ];
+        return next.length > MAX_EVENTS ? next.slice(0, MAX_EVENTS) : next;
+      });
     },
     [],
   );

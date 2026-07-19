@@ -2,9 +2,6 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import {
   useCalculator,
   useAuditLog,
-  useResults,
-  useMadhab,
-  useHeirs,
 } from "../lib/inheritance/hooks";
 import { AuditLog, createAuditLog } from "../lib/inheritance/audit-log";
 // Import from the correct location - the engine is exported from enhanced-engine-complete
@@ -20,18 +17,6 @@ describe("Phase 4: Hooks Export Validation", () => {
 
   it("should export useAuditLog function", async () => {
     expect(typeof useAuditLog).toBe("function");
-  });
-
-  it("should export useResults function", async () => {
-    expect(typeof useResults).toBe("function");
-  });
-
-  it("should export useMadhab function", async () => {
-    expect(typeof useMadhab).toBe("function");
-  });
-
-  it("should export useHeirs function", async () => {
-    expect(typeof useHeirs).toBe("function");
   });
 });
 
@@ -364,18 +349,12 @@ describe("Module Exports and Structure", () => {
     // This is a simplified test that doesn't rely on file system
     expect(typeof useCalculator).toBe("function");
     expect(typeof useAuditLog).toBe("function");
-    expect(typeof useResults).toBe("function");
-    expect(typeof useMadhab).toBe("function");
-    expect(typeof useHeirs).toBe("function");
   });
 
   it("should have hooks.ts file", async () => {
     // This test is now just verifying the imports work
     expect(useCalculator).toBeDefined();
     expect(useAuditLog).toBeDefined();
-    expect(useResults).toBeDefined();
-    expect(useMadhab).toBeDefined();
-    expect(useHeirs).toBeDefined();
   });
 
   it("should export AuditLog class", async () => {

@@ -1,9 +1,16 @@
 /**
  * @file lib/context/MadhabContext.tsx
- * @description Context for managing the currently selected madhab
+ * @description Context for managing the currently selected madhab with AsyncStorage persistence
  */
 
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { MadhhabType } from "../inheritance/types";
 
 interface MadhabContextValue {
@@ -13,13 +20,29 @@ interface MadhabContextValue {
 
 const MadhabContext = createContext<MadhabContextValue | undefined>(undefined);
 
+const MADHAB_STORAGE_KEY = "@merath_selected_madhab";
+
 export const MadhabProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [madhab, setMadhabState] = useState<MadhhabType>("hanafi");
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const saved = await AsyncStorage.getItem(MADHAB_STORAGE_KEY);
+        if (saved) {
+          setMadhabState(saved as MadhhabType);
+        }
+      } catch {
+        // ignore read errors, keep default
+      }
+    })();
+  }, []);
+
   const setMadhab = useCallback((m: MadhhabType) => {
     setMadhabState(m);
+    AsyncStorage.setItem(MADHAB_STORAGE_KEY, m).catch(() => {});
   }, []);
 
   return (

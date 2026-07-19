@@ -147,6 +147,7 @@ export interface MadhhabRules {
   mother_with_father_only: "third" | "sixth";
   spouse_radd: boolean;
   umariyyah_rule: "first" | "second";
+  musharraka: boolean;
 }
 
 // ====== حالات الاختبار ======

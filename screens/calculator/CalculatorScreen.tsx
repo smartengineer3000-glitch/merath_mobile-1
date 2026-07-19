@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import { useMadhab } from "../../lib/context/MadhabContext";
-import { useCalculator } from "../../lib/hooks/useCalculator";
+import { useCalculator } from "../../lib/inheritance/hooks";
 import { useCalculationStore } from "../../lib/context/CalculationContext";
 import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
 import { EstateCard } from "../../components/estate/EstateCard";
@@ -25,10 +25,9 @@ export default function CalculatorScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const { madhab, setMadhab } = useMadhab();
-  const { calculateWithEstate } = useCalculator();
+  const { calculateWithMethod, updateEstateData, estateData } = useCalculator();
   const { saveScenario, logEvent } = useCalculationStore();
 
-  const [estateTotal, setEstateTotal] = useState(0);
   const [funeral, setFuneral] = useState(0);
   const [debts, setDebts] = useState(0);
   const [will, setWillRaw] = useState(0);
@@ -36,12 +35,25 @@ export default function CalculatorScreen() {
     "male",
   );
 
+  const handleGenderChange = useCallback((gender: "male" | "female") => {
+    setDeceasedGender(gender);
+    setSelectedHeirs((prev) => {
+      const next = { ...prev };
+      if (gender === "male") {
+        delete next.husband;
+      } else {
+        delete next.wife;
+      }
+      return next;
+    });
+  }, []);
+
   const setWill = useCallback(
     (val: number) => {
-      const maxWill = estateTotal > 0 ? estateTotal / 3 : 0;
+      const maxWill = estateData.total > 0 ? estateData.total / 3 : 0;
       setWillRaw(Math.min(val, maxWill));
     },
-    [estateTotal],
+    [estateData.total],
   );
   const [selectedHeirs, setSelectedHeirs] = useState<Record<string, number>>(
     {},
@@ -49,19 +61,28 @@ export default function CalculatorScreen() {
   const [isCalculating, setIsCalculating] = useState(false);
 
   const netEstate = useMemo(
-    () => Math.max(0, estateTotal - funeral - debts - will),
-    [estateTotal, funeral, debts, will],
+    () => Math.max(0, estateData.total - funeral - debts - will),
+    [estateData.total, funeral, debts, will],
   );
 
   const deductionsPercent = useMemo(
     () =>
-      estateTotal > 0 ? ((funeral + debts + will) / estateTotal) * 100 : 0,
-    [estateTotal, funeral, debts, will],
+      estateData.total > 0
+        ? ((funeral + debts + will) / estateData.total) * 100
+        : 0,
+    [estateData.total, funeral, debts, will],
   );
 
   const heirCount = useMemo(
     () => Object.values(selectedHeirs).reduce((sum, c) => sum + (c || 0), 0),
     [selectedHeirs],
+  );
+
+  const handleEstateTotalChange = useCallback(
+    (val: number) => {
+      updateEstateData({ total: val });
+    },
+    [updateEstateData],
   );
 
   const handleHeirCountChange = useCallback((key: string, count: number) => {
@@ -91,11 +112,11 @@ export default function CalculatorScreen() {
   }, []);
 
   const handleCalculate = useCallback(async () => {
-    if (estateTotal <= 0) {
+    if (estateData.total <= 0) {
       Alert.alert(t("common.error"), t("results.invalidEstate"));
       return;
     }
-    if (will > estateTotal / 3) {
+    if (will > estateData.total / 3) {
       Alert.alert(t("common.error"), t("calculator.willExceedsOneThird"));
       return;
     }
@@ -110,21 +131,21 @@ export default function CalculatorScreen() {
       `Calculating ${madhab} inheritance for ${heirCount} heirs`,
       {
         madhab,
-        estate: estateTotal,
+        estate: estateData.total,
         heirCount,
       },
     );
     try {
-      const estate = { total: estateTotal, funeral, debts, will };
-      const result = await calculateWithEstate(
+      updateEstateData({ total: estateData.total, funeral, debts, will });
+
+      const result = await calculateWithMethod(
         madhab as MadhhabType,
-        estate,
         selectedHeirs,
       );
 
       if (result && result.success) {
         saveScenario({
-          estate,
+          estate: { total: estateData.total, funeral, debts, will },
           heirs: selectedHeirs,
           madhab: madhab as MadhhabType,
           result,
@@ -138,7 +159,7 @@ export default function CalculatorScreen() {
             confidence: result.confidence,
           },
         );
-        navigation.navigate("Results", { result });
+        navigation.navigate("Results");
       } else {
         logEvent("calculation_error", result?.error || "Calculation failed");
         Alert.alert(
@@ -156,17 +177,19 @@ export default function CalculatorScreen() {
       setIsCalculating(false);
     }
   }, [
-    estateTotal,
+    estateData.total,
     funeral,
     debts,
     will,
     selectedHeirs,
     madhab,
     heirCount,
-    calculateWithEstate,
+    calculateWithMethod,
+    updateEstateData,
     saveScenario,
     navigation,
     t,
+    logEvent,
   ]);
 
   const madhabOptions: { key: MadhhabType; label: string }[] = [
@@ -214,13 +237,13 @@ export default function CalculatorScreen() {
             <Chip
               label={t("calculator.deceasedGenderMale")}
               selected={deceasedGender === "male"}
-              onPress={() => setDeceasedGender("male")}
+              onPress={() => handleGenderChange("male")}
               size="sm"
             />
             <Chip
               label={t("calculator.deceasedGenderFemale")}
               selected={deceasedGender === "female"}
-              onPress={() => setDeceasedGender("female")}
+              onPress={() => handleGenderChange("female")}
               size="sm"
             />
           </View>
@@ -228,11 +251,11 @@ export default function CalculatorScreen() {
 
         {/* Estate Card */}
         <EstateCard
-          total={estateTotal}
+          total={estateData.total}
           funeral={funeral}
           debts={debts}
           will={will}
-          onTotalChange={setEstateTotal}
+          onTotalChange={handleEstateTotalChange}
           onFuneralChange={setFuneral}
           onDebtsChange={setDebts}
           onWillChange={setWill}
@@ -258,6 +281,7 @@ export default function CalculatorScreen() {
               group={group}
               selectedHeirs={selectedHeirs}
               onHeirCountChange={handleHeirCountChange}
+              deceasedGender={deceasedGender}
             />
           ))}
         </Card>
@@ -290,7 +314,7 @@ export default function CalculatorScreen() {
           variant="primary"
           fullWidth
           loading={isCalculating}
-          disabled={estateTotal <= 0 || heirCount === 0}
+          disabled={estateData.total <= 0 || heirCount === 0}
         />
       </View>
     </View>

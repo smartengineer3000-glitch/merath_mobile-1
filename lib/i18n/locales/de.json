@@ -40,7 +40,13 @@
     "willExceedsOneThird": "Das Testament darf 1/3 des Gesamtvermögens nicht überschreiten",
     "deceasedGender": "Geschlecht des Verstorbenen",
     "deceasedGenderMale": "Männlich",
-    "deceasedGenderFemale": "Weiblich"
+    "deceasedGenderFemale": "Weiblich",
+    "errors": {
+      "estateMustBePositive": "Der Gesamtbetrag der Erbschaft muss größer als null sein",
+      "atLeastOneHeir": "Es muss mindestens ein Erbe ausgewählt werden",
+      "calculationTimeout": "Berechnung hat das Zeitlimit überschritten. Bitte versuchen Sie es erneut.",
+      "unknownError": "Ein unbekannter Fehler ist bei der Berechnung aufgetreten"
+    }
   },
   "estate": {
     "title": "Erbschaftsinformationen",
@@ -247,7 +253,22 @@
     "recentComparisonResults": "Letzte Vergleichsergebnisse",
     "comparisonResults": "Vergleichsergebnisse",
     "shareComparison": "Vergleich teilen",
-    "heir": "Erbe"
+    "heir": "Erbe",
+    "explanations": {
+      "blockedInMadhab": "Blockiert in der {{madhab}}-Rechtsschule",
+      "onlyInMadhab": "Erbt nur in der {{madhab}}-Rechtsschule",
+      "grandfather": "Großvater mit Geschwistern - unterscheidet sich zwischen Rechtsschulen",
+      "mother": "Mutter mit Vater und Ehemann - Umariyyah-Regel",
+      "granddaughter": "Tochter des Sohnes mit Töchtern",
+      "full_sister": "Vollschwester mit Brüdern",
+      "paternal_sister": "Halbschwester (väterlich) mit Schwestern",
+      "defaultMadhabDifference": "Unterschied in den Regeln der Rechtsschule"
+    },
+    "recommendations": {
+      "identical": "Die Ergebnisse sind in beiden Rechtsschulen identisch",
+      "majorDifferences": "Erhebliche Unterschiede bei {{count}} Erben gefunden. Eine Beratung mit einem Spezialisten wird empfohlen.",
+      "minorDifferences": "Geringe Unterschiede zwischen den Rechtsschulen - beide können gewählt werden"
+    }
   },
   "about": {
     "title": "Über Merath",
@@ -332,7 +353,6 @@
     "noNetwork": "Keine Internetverbindung – einige Funktionen sind möglicherweise nicht verfügbar",
     "ms": "ms"
   },
-
   "engineTest": {
     "title": "Motor-Testergebnisse",
     "info": "Über 40 reale Erbschaftstestszenarien in allen 4 Madhabs ausführen",
@@ -355,7 +375,6 @@
     "expected": "erwartet",
     "na": "k.A."
   },
-
   "events": {
     "title": "Aktivitätsprotokoll",
     "totalEvents": "Ereignisse",
@@ -374,5 +393,8 @@
     "comparisonComplete": "Vergleich abgeschlossen",
     "export": "Export",
     "info": "Info"
+  },
+  "audit": {
+    "normalCalculation": "Normale Berechnung"
   }
 }

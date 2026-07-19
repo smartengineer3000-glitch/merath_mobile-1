@@ -4,7 +4,6 @@
     "subtitle": "Islamic Inheritance Calculator",
     "description": "Calculate Islamic inheritance shares according to Shari'ah and different madhabs"
   },
-
   "navigation": {
     "calculator": "Calculator",
     "results": "Results",
@@ -13,7 +12,6 @@
     "settings": "Settings",
     "about": "About"
   },
-
   "calculator": {
     "title": "Inheritance Calculator",
     "subtitle": "Calculate Islamic inheritance shares accurately and easily",
@@ -42,9 +40,14 @@
     "willExceedsOneThird": "Will cannot exceed 1/3 of the total estate",
     "deceasedGender": "Deceased Gender",
     "deceasedGenderMale": "Male",
-    "deceasedGenderFemale": "Female"
+    "deceasedGenderFemale": "Female",
+    "errors": {
+      "estateMustBePositive": "Estate total must be greater than zero",
+      "atLeastOneHeir": "At least one heir must be selected",
+      "calculationTimeout": "Calculation timed out. Please try again.",
+      "unknownError": "An unknown error occurred during calculation"
+    }
   },
-
   "estate": {
     "title": "Estate Information",
     "total": "Total Estate",
@@ -57,7 +60,6 @@
     "deductionsWill": "Deductions & Will",
     "maxOneThird": "Max 1/3 of total"
   },
-
   "heirs": {
     "title": "Add Heirs",
     "addHeir": "Add Heir",
@@ -100,7 +102,6 @@
     "paternalAunt": "Paternal Aunt",
     "sisterChildren": "Sister's Children"
   },
-
   "madhab": {
     "title": "School of Law (Madhab)",
     "selection": "Madhab Selection",
@@ -110,7 +111,6 @@
     "shafii": "Shafi'i",
     "hanbali": "Hanbali"
   },
-
   "results": {
     "shares": "Inheritance Shares",
     "amount": "Amount",
@@ -184,7 +184,6 @@
     "noResultsTitle": "No Results",
     "noResultsDescription": "Please perform a calculation first to see results"
   },
-
   "settings": {
     "title": "Settings",
     "subtitle": "Customize your app experience",
@@ -219,12 +218,10 @@
     "testEngine": "Test Engine",
     "testEngineDesc": "Run 40+ test cases"
   },
-
   "language": {
     "title": "Language",
     "rtl": "RTL"
   },
-
   "history": {
     "title": "Calculation History",
     "noHistory": "No calculation history available",
@@ -237,7 +234,6 @@
     "filterAll": "All",
     "detail": "Detail"
   },
-
   "comparison": {
     "title": "Madhhab Comparison",
     "subtitle": "Compare inheritance calculations across Islamic schools",
@@ -257,9 +253,23 @@
     "recentComparisonResults": "Recent Comparison Results",
     "comparisonResults": "Comparison Results",
     "shareComparison": "Share Comparison",
-    "heir": "Heir"
+    "heir": "Heir",
+    "explanations": {
+      "blockedInMadhab": "Blocked in {{madhab}} madhab",
+      "onlyInMadhab": "Inherits only in {{madhab}} madhab",
+      "grandfather": "Grandfather with siblings - differs between madhabs",
+      "mother": "Mother with father and husband - Umariyyah rule",
+      "granddaughter": "Son's daughter with daughters",
+      "full_sister": "Full sister with brothers",
+      "paternal_sister": "Paternal sister with sisters",
+      "defaultMadhabDifference": "Difference in madhab rules"
+    },
+    "recommendations": {
+      "identical": "Results are identical across both madhabs",
+      "majorDifferences": "Major differences found in {{count}} heir(s). Consultation with a specialist is recommended.",
+      "minorDifferences": "Minor differences between madhabs - either can be chosen"
+    }
   },
-
   "about": {
     "title": "About Merath",
     "version": "Version",
@@ -276,7 +286,6 @@
     "privacy": "Privacy Policy",
     "terms": "Terms of Service"
   },
-
   "onboarding": {
     "welcome": "Welcome to Merath",
     "welcomeDescription": "The comprehensive app for calculating Islamic inheritance shares according to the four schools of law",
@@ -289,11 +298,9 @@
     "next": "Next",
     "mustAcceptTerms": "You must accept the terms to use the app"
   },
-
   "loading": {
     "appLoading": "Loading app..."
   },
-
   "error": {
     "somethingWentWrong": "Something went wrong. Please try again.",
     "retry": "Retry",
@@ -302,7 +309,6 @@
     "details": "Error Details:",
     "tryAgain": "Try Again"
   },
-
   "disclaimer": {
     "title": "Terms & Disclaimers",
     "calculationDisclaimer": "Calculation Disclaimer",
@@ -314,7 +320,6 @@
     "decline": "Decline",
     "accept": "Accept"
   },
-
   "quickAdd": {
     "wife2Daughters": "Wife + 2 Daughters",
     "husbandSonDaughter": "Husband + Son + Daughter",
@@ -323,13 +328,11 @@
     "twoSonsWife": "2 Sons + Wife",
     "daughterGrandfather": "Daughter + Grandfather"
   },
-
   "stepper": {
     "counter": "Counter",
     "decrease": "Decrease",
     "increase": "Increase"
   },
-
   "engineTest": {
     "title": "Engine Test Results",
     "info": "Run 40+ real-world inheritance test cases across all 4 madhhabs",
@@ -352,7 +355,6 @@
     "expected": "expected",
     "na": "N/A"
   },
-
   "common": {
     "ok": "OK",
     "cancel": "Cancel",
@@ -373,7 +375,6 @@
     "noNetwork": "No internet connection - some features may not work",
     "ms": "ms"
   },
-
   "events": {
     "title": "Activity Log",
     "totalEvents": "events",
@@ -392,5 +393,8 @@
     "comparisonComplete": "Comparison Complete",
     "export": "Export",
     "info": "Info"
+  },
+  "audit": {
+    "normalCalculation": "Normal calculation"
   }
 }

@@ -15,12 +15,14 @@ interface HeirCategoryProps {
   group: HeirGroup;
   selectedHeirs: Record<string, number>;
   onHeirCountChange: (key: string, count: number) => void;
+  deceasedGender?: "male" | "female";
 }
 
 export function HeirCategory({
   group,
   selectedHeirs,
   onHeirCountChange,
+  deceasedGender,
 }: HeirCategoryProps) {
   const { theme } = useAppTheme();
   const { t } = useTranslation();

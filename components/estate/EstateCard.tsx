@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
+import type { Theme } from "../../lib/design/theme";
 import { useTranslation } from "react-i18next";
 import { Ionicons } from "../../lib/icons";
 import { Card, SectionHeader } from "../ui";
@@ -235,7 +236,7 @@ function DeductionField({
   label: string;
   value: number;
   onChange: (v: number) => void;
-  theme: any;
+  theme: Theme;
   hint?: string;
 }) {
   return (

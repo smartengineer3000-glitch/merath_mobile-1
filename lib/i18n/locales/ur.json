@@ -4,7 +4,6 @@
     "subtitle": "اسلامی وراثت کیلکولیٹر",
     "description": "شریعت اور مختلف مذاہب کے مطابق اسلامی وراثت کے حصے کا حساب لگائیں"
   },
-
   "navigation": {
     "calculator": "کیلکولیٹر",
     "results": "نتائج",
@@ -13,7 +12,6 @@
     "settings": "ترتیبات",
     "about": "بارے میں"
   },
-
   "calculator": {
     "title": "وراثت کیلکولیٹر",
     "estate": "ملکیت",
@@ -42,9 +40,14 @@
     "willExceedsOneThird": "وصیت کل ملکیت کے تہائی سے زیادہ نہیں ہو سکتی",
     "deceasedGender": "مرتحل کی جنس",
     "deceasedGenderMale": "مرد",
-    "deceasedGenderFemale": "عورت"
+    "deceasedGenderFemale": "عورت",
+    "errors": {
+      "estateMustBePositive": "کل ملکیت صفر سے زیادہ ہونی چاہیے",
+      "atLeastOneHeir": "کم از کم ایک وارث منتخب ہونا چاہیے",
+      "calculationTimeout": "حساب کا وقت ختم ہو گیا۔ براہ کرم دوبارہ کوشش کریں۔",
+      "unknownError": "حساب لگاتے وقت ایک نامعلوم خرابی پیش آئی"
+    }
   },
-
   "estate": {
     "title": "ملکیت کی معلومات",
     "total": "کل ملکیت",
@@ -57,7 +60,6 @@
     "deductionsWill": "کٹوتیاں اور وصیت",
     "maxOneThird": "زیادہ سے زیادہ تہائی کل"
   },
-
   "heirs": {
     "title": "وارثین شامل کریں",
     "addHeir": "وارث شامل کریں",
@@ -100,7 +102,6 @@
     "paternalAunt": "چچی",
     "sisterChildren": "بہن کے بچے"
   },
-
   "madhab": {
     "title": "فقہی مذہب",
     "selection": "مذہب کا انتخاب",
@@ -110,7 +111,6 @@
     "shafii": "شافعی",
     "hanbali": "حنبلی"
   },
-
   "results": {
     "shares": "وراثت کے حصے",
     "amount": "رقم",
@@ -184,7 +184,6 @@
     "noResultsTitle": "کوئی نتائج نہیں",
     "noResultsDescription": "نتائج دیکھنے کے لیے براہ کرم پہلے حساب کریں"
   },
-
   "settings": {
     "title": "ترتیبات",
     "subtitle": "اپنی ایپ کا تجربہ انفرادی بنائیں",
@@ -219,12 +218,10 @@
     "testEngine": "انجن کا ٹیسٹ",
     "testEngineDesc": "40 سے زیادہ ٹیسٹ کیس چلائیں"
   },
-
   "language": {
     "title": "زبان",
     "rtl": "دائیں سے بائیں"
   },
-
   "history": {
     "title": "حساب کی تاریخ",
     "noHistory": "کوئی حساب کی تاریخ دستیاب نہیں",
@@ -237,7 +234,6 @@
     "filterAll": "سب",
     "detail": "تفصیل"
   },
-
   "comparison": {
     "title": "مذاہب کا موازنہ",
     "subtitle": "اسلامی مکاتب فکر میں وراثت کے حسابات کا موازنہ کریں",
@@ -257,9 +253,23 @@
     "recentComparisonResults": "حالیہ موازنے کے نتائج",
     "comparisonResults": "موازنے کے نتائج",
     "shareComparison": "موازنہ شیئر کریں",
-    "heir": "وارث"
+    "heir": "وارث",
+    "explanations": {
+      "blockedInMadhab": "{{madhab}} مذہب میں ممنوع",
+      "onlyInMadhab": "صرف {{madhab}} مذہب میں وراثت لیتا ہے",
+      "grandfather": "دادا بھائیوں کے ساتھ - مذاہب کے درمیان مختلف",
+      "mother": "ماں باپ اور خاوند کے ساتھ - عمریہ قاعدہ",
+      "granddaughter": "بیٹے کی بیٹی بیٹیوں کے ساتھ",
+      "full_sister": "بہن بھائیوں کے ساتھ",
+      "paternal_sister": "باپ کی طرف سے بہن بہنوں کے ساتھ",
+      "defaultMadhabDifference": "مذہب کے قواعد میں فرق"
+    },
+    "recommendations": {
+      "identical": "دونوں مذاہب میں نتائج یکساں ہیں",
+      "majorDifferences": "{{count}} وارث میں بڑے فرق دریافت ہوئے۔ کسی ماہر سے مشورہ کیا جاتا ہے۔",
+      "minorDifferences": "مذاہب کے درمیان معمولی فرق - کوئی بھی منتخب کیا جا سکتا ہے"
+    }
   },
-
   "about": {
     "title": "میراث کے بارے میں",
     "version": "ورژن",
@@ -276,7 +286,6 @@
     "privacy": "رازداری کی پالیسی",
     "terms": "شرائط و ضوابط"
   },
-
   "onboarding": {
     "welcome": "میراث میں خوش آمدید",
     "welcomeDescription": "چاروں فقہی مذاہب کے مطابق اسلامی وراثت کے حصص کے حساب کے لیے جامع ایپ",
@@ -289,11 +298,9 @@
     "next": "اگلا",
     "mustAcceptTerms": "ایپ استعمال کرنے کے لیے آپ کو شرائط قبول کرنا ضروری ہے"
   },
-
   "loading": {
     "appLoading": "ایپ لوڈ ہو رہی ہے..."
   },
-
   "error": {
     "somethingWentWrong": "کچھ غلط ہو گیا۔ براہ کرم دوبارہ کوشش کریں۔",
     "retry": "دوبارہ کوشش کریں",
@@ -302,7 +309,6 @@
     "details": "خرابی کی تفصیلات:",
     "tryAgain": "دوبارہ کوشش کریں"
   },
-
   "disclaimer": {
     "title": "شرائط و تnar",
     "calculationDisclaimer": "حساب کی تnar",
@@ -314,7 +320,6 @@
     "decline": "رد کریں",
     "accept": "قبول کریں"
   },
-
   "quickAdd": {
     "wife2Daughters": "بیوی + 2 بیٹیاں",
     "husbandSonDaughter": "خاوند + بیٹا + بیٹی",
@@ -323,13 +328,11 @@
     "twoSonsWife": "2 بیٹے + بیوی",
     "daughterGrandfather": "بیٹی + دادا"
   },
-
   "stepper": {
     "counter": "گنتا",
     "decrease": "کمی",
     "increase": "اضافہ"
   },
-
   "common": {
     "ok": "ٹھیک ہے",
     "cancel": "منسوخ کریں",
@@ -350,7 +353,6 @@
     "noNetwork": "انٹرنیٹ کنکشن نہیں ہے – کچھ خصوصیات کام نہیں کر سکتیں",
     "ms": "ملی سیکنڈ"
   },
-
   "engineTest": {
     "title": "انجن ٹیسٹ کے نتائج",
     "info": "4 مذاہب میں 40 سے زیادہ حقیقی وراثت ٹیسٹ کیس چلائیں",
@@ -373,7 +375,6 @@
     "expected": "متوقع",
     "na": "غ/م"
   },
-
   "events": {
     "title": "سرگرمی لاگ",
     "totalEvents": "واقعات",
@@ -392,5 +393,8 @@
     "comparisonComplete": "موازنہ مکمل",
     "export": "برآمد",
     "info": "معلومات"
+  },
+  "audit": {
+    "normalCalculation": "نارمل حساب"
   }
 }

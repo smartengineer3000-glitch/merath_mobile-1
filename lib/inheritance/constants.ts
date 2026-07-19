@@ -29,6 +29,7 @@ export const FIQH_DATABASE = {
         mother_with_father_only: "third" as const,
         spouse_radd: false,
         umariyyah_rule: "first" as const,
+        musharraka: true,
       } as MadhhabRules,
     },
     hanafi: {
@@ -43,6 +44,7 @@ export const FIQH_DATABASE = {
         mother_with_father_only: "third" as const,
         spouse_radd: true,
         umariyyah_rule: "first" as const,
+        musharraka: false,
       } as MadhhabRules,
     },
     maliki: {
@@ -57,6 +59,7 @@ export const FIQH_DATABASE = {
         mother_with_father_only: "third" as const,
         spouse_radd: false,
         umariyyah_rule: "first" as const,
+        musharraka: true,
       } as MadhhabRules,
     },
     hanbali: {
@@ -71,6 +74,7 @@ export const FIQH_DATABASE = {
         mother_with_father_only: "third" as const,
         spouse_radd: true,
         umariyyah_rule: "first" as const,
+        musharraka: false,
       } as MadhhabRules,
     },
   } as Record<string, MadhhabConfig>,

@@ -4,7 +4,6 @@
     "subtitle": "آلة حاسبة الميراث الإسلامية",
     "description": "احسب حصص الميراث الإسلامية وفقاً للشريعة والمذاهب المختلفة"
   },
-
   "navigation": {
     "calculator": "آلة الحساب",
     "results": "النتائج",
@@ -13,7 +12,6 @@
     "settings": "الإعدادات",
     "about": "حول"
   },
-
   "calculator": {
     "title": "آلة حاسبة الميراث",
     "estate": "التركة",
@@ -42,9 +40,14 @@
     "willExceedsOneThird": "لا يمكن أن تتجاوز الوصية ثلث إجمالي التركة",
     "deceasedGender": "جنس المتوفى",
     "deceasedGenderMale": "ذكر",
-    "deceasedGenderFemale": "أنثى"
+    "deceasedGenderFemale": "أنثى",
+    "errors": {
+      "estateMustBePositive": "يجب أن يكون إجمالي التركة أكبر من الصفر",
+      "atLeastOneHeir": "يجب تحديد وارث واحد على الأقل",
+      "calculationTimeout": "انتهت مهلة الحساب. يرجى المحاولة مرة أخرى.",
+      "unknownError": "حدث خطأ غير معروف أثناء الحساب"
+    }
   },
-
   "estate": {
     "title": "معلومات التركة",
     "total": "إجمالي التركة",
@@ -57,7 +60,6 @@
     "deductionsWill": "الخصومات والوصية",
     "maxOneThird": "الحد الأقصى ثلث الإجمالي"
   },
-
   "heirs": {
     "title": "إضافة الورثة",
     "addHeir": "أضف وارثاً",
@@ -100,7 +102,6 @@
     "paternalAunt": "العمة",
     "sisterChildren": "أولاد الأخت"
   },
-
   "madhab": {
     "title": "المذهب الفقهي",
     "selection": "اختيار المذهب",
@@ -110,7 +111,6 @@
     "shafii": "الشافعي",
     "hanbali": "الحنبلي"
   },
-
   "results": {
     "shares": "حصص الميراث",
     "amount": "المبلغ",
@@ -184,7 +184,6 @@
     "noResultsTitle": "لا توجد نتائج",
     "noResultsDescription": "يرجى إجراء حساب أولاً لرؤية النتائج"
   },
-
   "settings": {
     "title": "الإعدادات",
     "subtitle": "خصص تجربة التطبيق",
@@ -219,12 +218,10 @@
     "testEngine": "اختبار المحرك",
     "testEngineDesc": "تشغيل أكثر من 40 حالة اختبار"
   },
-
   "language": {
     "title": "اللغة",
     "rtl": "من اليمين لليسار"
   },
-
   "history": {
     "title": "سجل الحسابات",
     "noHistory": "لا يوجد سجل حسابات",
@@ -237,7 +234,6 @@
     "filterAll": "الكل",
     "detail": "التفاصيل"
   },
-
   "comparison": {
     "title": "مقارنة المذاهب",
     "subtitle": "قارن حسابات الميراث عبر المذاهب الإسلامية",
@@ -257,9 +253,23 @@
     "recentComparisonResults": "نتائج المقارنة الأخيرة",
     "comparisonResults": "نتائج المقارنة",
     "shareComparison": "مشاركة المقارنة",
-    "heir": "الوارث"
+    "heir": "الوارث",
+    "explanations": {
+      "blockedInMadhab": "محجوب في مذهب {{madhab}}",
+      "onlyInMadhab": "يرث فقط في مذهب {{madhab}}",
+      "grandfather": "الجد مع الإخوة - يختلف بين المذاهب",
+      "mother": "الأم مع الأب والزوج - قاعدة العومرية",
+      "granddaughter": "بنت الابن مع البنات",
+      "full_sister": "الأخت الشقيقة مع الإخوة",
+      "paternal_sister": "الأخت لأب مع الأخوات",
+      "defaultMadhabDifference": "اختلاف في أحكام المذهب"
+    },
+    "recommendations": {
+      "identical": "النتائج متماثلة في المذهبين",
+      "majorDifferences": "تم العثور على اختلافات جوهرية في {{count}} وارث(ين). يُنصح بالتشاور مع متخصص.",
+      "minorDifferences": "اختلافات طفيفة بين المذاهب - يمكن اختيار أي منها"
+    }
   },
-
   "about": {
     "title": "حول ميراث",
     "version": "الإصدار",
@@ -276,7 +286,6 @@
     "privacy": "سياسة الخصوصية",
     "terms": "شروط الخدمة"
   },
-
   "onboarding": {
     "welcome": "مرحباً بك في ميراث",
     "welcomeDescription": "التطبيق الشامل لحساب المواريث الشرعية وفق المذاهب الأربعة",
@@ -289,11 +298,9 @@
     "next": "التالي",
     "mustAcceptTerms": "يجب قبول الشروط لاستخدام التطبيق"
   },
-
   "loading": {
     "appLoading": "جاري تحميل التطبيق..."
   },
-
   "error": {
     "somethingWentWrong": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
     "retry": "إعادة المحاولة",
@@ -302,7 +309,6 @@
     "details": "تفاصيل الخطأ:",
     "tryAgain": "حاول مرة أخرى"
   },
-
   "disclaimer": {
     "title": "الشروط والتنويهات",
     "calculationDisclaimer": "تنويه الحساب",
@@ -314,7 +320,6 @@
     "decline": "رفض",
     "accept": "قبول"
   },
-
   "quickAdd": {
     "wife2Daughters": "زوجة + بنتان",
     "husbandSonDaughter": "زوج + ابن + بنت",
@@ -323,13 +328,11 @@
     "twoSonsWife": "ابنان + زوجة",
     "daughterGrandfather": "بنت + جد"
   },
-
   "stepper": {
     "counter": "عداد",
     "decrease": "نقصان",
     "increase": "زيادة"
   },
-
   "common": {
     "ok": "حسناً",
     "cancel": "إلغاء",
@@ -350,7 +353,6 @@
     "noNetwork": "لا يوجد اتصال بالإنترنت - بعض الميزات قد لا تعمل",
     "ms": "مللي ثانية"
   },
-
   "engineTest": {
     "title": "نتائج اختبار المحرك",
     "info": "تشغيل أكثر من 40 حالة اختبار حقيقية عبر 4 مذاهب",
@@ -373,7 +375,6 @@
     "expected": "متوقع",
     "na": "غ/م"
   },
-
   "events": {
     "title": "سجل النشاط",
     "totalEvents": "أحداث",
@@ -392,5 +393,8 @@
     "comparisonComplete": "اكتمال المقارنة",
     "export": "تصدير",
     "info": "معلومات"
+  },
+  "audit": {
+    "normalCalculation": "حساب عادي"
   }
 }

@@ -40,7 +40,13 @@
     "willExceedsOneThird": "Vasiyetname toplam mirasın 1/3'ünü aşamaz",
     "deceasedGender": "Merhum Cinsiyeti",
     "deceasedGenderMale": "Erkek",
-    "deceasedGenderFemale": "Kadın"
+    "deceasedGenderFemale": "Kadın",
+    "errors": {
+      "estateMustBePositive": "Toplam miras miktarı sıfırdan büyük olmalıdır",
+      "atLeastOneHeir": "En az bir mirasçı seçilmelidir",
+      "calculationTimeout": "Hesaplama zaman aşımına uğradı. Lütfen tekrar deneyin.",
+      "unknownError": "Hesaplama sırasında bilinmeyen bir hata oluştu"
+    }
   },
   "estate": {
     "title": "Miras Bilgileri",
@@ -235,7 +241,22 @@
     "recentComparisonResults": "Son Karşılaştırma Sonuçları",
     "comparisonResults": "Karşılaştırma Sonuçları",
     "shareComparison": "Karşılaştırmayı Paylaş",
-    "heir": "Mirasçı"
+    "heir": "Mirasçı",
+    "explanations": {
+      "blockedInMadhab": "{{madhab}} mezhebinde engellendi",
+      "onlyInMadhab": "Sadece {{madhab}} mezhebinde miras alır",
+      "grandfather": "Dede ve kardeşlerle - mezheplere göre farklılık gösterir",
+      "mother": "Anne, baba ve koca ile - Umariyyah kuralı",
+      "granddaughter": "Oğul kızı ve kızlarla",
+      "full_sister": "Kız kardeş ve erkek kardeşlerle",
+      "paternal_sister": "Baba tarafından kız kardeş ve kız kardeşlerle",
+      "defaultMadhabDifference": "Mezhep kurallarında fark"
+    },
+    "recommendations": {
+      "identical": "Sonuçlar her iki mezhepte de özdeştir",
+      "majorDifferences": "{{count}} mirasçıda büyük farklılıklar bulundu. Bir uzmana danışmanız önerilir.",
+      "minorDifferences": "Mezhepler arasında küçük farklılıklar - ikisi de seçilebilir"
+    }
   },
   "about": {
     "title": "Merath Hakkında",
@@ -332,7 +353,6 @@
     "noNetwork": "İnternet bağlantısı yok – bazı özellikler çalışmayabilir",
     "ms": "ms"
   },
-
   "engineTest": {
     "title": "Motor Test Sonuçları",
     "info": "4 mezhepte 40'tan fazla gerçek dünya miras test senaryosu çalıştırın",
@@ -355,7 +375,6 @@
     "expected": "beklenen",
     "na": "YOK"
   },
-
   "events": {
     "title": "Etkinlik Günlüğü",
     "totalEvents": "etkinlik",
@@ -374,5 +393,8 @@
     "comparisonComplete": "Karşılaştırma Tamamlandı",
     "export": "Dışa Aktarım",
     "info": "Bilgi"
+  },
+  "audit": {
+    "normalCalculation": "Normal hesaplama"
   }
 }
