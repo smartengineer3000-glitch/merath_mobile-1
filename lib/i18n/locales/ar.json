@@ -183,7 +183,9 @@
     "copied": "تم النسخ",
     "copiedMessage": "تم نسخ النتائج إلى الحافظة",
     "noResultsTitle": "لا توجد نتائج",
-    "noResultsDescription": "يرجى إجراء حساب أولاً لرؤية النتائج"
+    "noResultsDescription": "يرجى إجراء حساب أولاً لرؤية النتائج",
+    "fiqhNotes": "ملاحظات الفقه",
+    "hijab": "الحجب (قواعد الحجب)"
   },
   "settings": {
     "title": "الإعدادات",
@@ -397,5 +399,20 @@
   },
   "audit": {
     "normalCalculation": "حساب عادي"
+  },
+  "steps": {
+    "estateSummary": "ملخص التركة",
+    "deductions": "الخصومات",
+    "heirSummary": "ملخص الورثة",
+    "blockedHeirs": "الورثة المحجوبون",
+    "noBlockedHeirs": "لا يوجد ورثة محجوبون في هذه الحالة",
+    "fixedShares": "الحصص الثابتة (الفرض)",
+    "noShares": "لم تُحسب حصص",
+    "typeFard": "فرض",
+    "typeAsaba": "عصب",
+    "awlApplied": "العول (التخفيض التناسبي)",
+    "awlDescription": "الحصص الثابتة تتجاوز التركة. تم تخفيض جميع الحصص تناسبياً لتتناسب مع المبلغ المتاح.",
+    "raddApplied": "الرد (إعادة للمستحقين)",
+    "raddDescription": "تم إعادة التركة المتبقية إلى الورثة المستحقين بنسبة حصصهم الثابتة."
   }
 }

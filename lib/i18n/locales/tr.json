@@ -183,7 +183,9 @@
     "copied": "Kopyalandı",
     "copiedMessage": "Sonuçlar panoya kopyalandı",
     "noResultsTitle": "Sonuç Yok",
-    "noResultsDescription": "Sonuçları görmek için lütfen önce hesaplama yapın"
+    "noResultsDescription": "Sonuçları görmek için lütfen önce hesaplama yapın",
+    "fiqhNotes": "Fıkıh Notları",
+    "hijab": "Hijab (Engelleme Kuralları)"
   },
   "settings": {
     "title": "Ayarlar",
@@ -397,5 +399,20 @@
   },
   "audit": {
     "normalCalculation": "Normal hesaplama"
+  },
+  "steps": {
+    "estateSummary": "Tereke Özeti",
+    "deductions": "İndirimler",
+    "heirSummary": "Varis Özeti",
+    "blockedHeirs": "Engelli Varisler",
+    "noBlockedHeirs": "Bu senaryoda engelli varis yok",
+    "fixedShares": "Sabit Paylar (Fer'd)",
+    "noShares": "Hesaplanan pay yok",
+    "typeFard": "Fer'd",
+    "typeAsaba": "Asaba",
+    "awlApplied": "Avl (Oransal Azaltma)",
+    "awlDescription": "Sabit payların toplamı terekeyi aşıyor. Tüm paylar mevcut miktara göre oransal olarak azaltıldı.",
+    "raddApplied": "Radd (Varislere Geri Dönüş)",
+    "raddDescription": "Kalan tereke, sabit paylarına oransal olarak hak sahibi varislere iade edildi."
   }
 }

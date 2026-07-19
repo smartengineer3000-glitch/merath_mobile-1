@@ -17,7 +17,7 @@ export default function ResultsScreen() {
   const { theme } = useAppTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<any>();
-  const { currentResult } = useCalculationStore();
+  const { currentResult, latestScenario } = useCalculationStore();
 
   const result = currentResult;
   const [activeTab, setActiveTab] = useState<TabKey>("distribution");
@@ -123,7 +123,9 @@ export default function ResultsScreen() {
 
       {/* Tab Content */}
       {activeTab === "distribution" && <DistributionTab result={result} />}
-      {activeTab === "steps" && <StepsTab result={result} />}
+      {activeTab === "steps" && (
+        <StepsTab result={result} scenario={latestScenario} />
+      )}
       {activeTab === "explanation" && <ExplanationTab result={result} />}
       {activeTab === "export" && <ExportTab result={result} />}
     </View>

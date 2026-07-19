@@ -183,7 +183,9 @@
     "copied": "Copied",
     "copiedMessage": "Results copied to clipboard",
     "noResultsTitle": "No Results",
-    "noResultsDescription": "Please perform a calculation first to see results"
+    "noResultsDescription": "Please perform a calculation first to see results",
+    "fiqhNotes": "Fiqh Notes",
+    "hijab": "Hijab (Blocking Rules)"
   },
   "settings": {
     "title": "Settings",
@@ -397,5 +399,20 @@
   },
   "audit": {
     "normalCalculation": "Normal calculation"
+  },
+  "steps": {
+    "estateSummary": "Estate Summary",
+    "deductions": "Deductions",
+    "heirSummary": "Heir Summary",
+    "blockedHeirs": "Blocked Heirs",
+    "noBlockedHeirs": "No heirs blocked in this scenario",
+    "fixedShares": "Fixed Shares (Fard)",
+    "noShares": "No shares calculated",
+    "typeFard": "Fard",
+    "typeAsaba": "Asaba",
+    "awlApplied": "Awl (Proportional Reduction)",
+    "awlDescription": "The total fixed shares exceed the estate. All shares have been proportionally reduced to fit the available amount.",
+    "raddApplied": "Radd (Return to Heirs)",
+    "raddDescription": "Remaining estate has been returned to the eligible heirs in proportion to their fixed shares."
   }
 }

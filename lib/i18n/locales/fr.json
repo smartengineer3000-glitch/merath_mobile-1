@@ -183,7 +183,9 @@
     "copied": "Copié",
     "copiedMessage": "Résultats copiés dans le presse-papiers",
     "noResultsTitle": "Aucun résultat",
-    "noResultsDescription": "Veuillez d'abord effectuer un calcul pour voir les résultats"
+    "noResultsDescription": "Veuillez d'abord effectuer un calcul pour voir les résultats",
+    "fiqhNotes": "Notes de fiqh",
+    "hijab": "Hijab (Règles de blocage)"
   },
   "settings": {
     "title": "Paramètres",
@@ -397,5 +399,20 @@
   },
   "audit": {
     "normalCalculation": "Calcul normal"
+  },
+  "steps": {
+    "estateSummary": "Résumé de l'héritage",
+    "deductions": "Déductions",
+    "heirSummary": "Résumé des héritiers",
+    "blockedHeirs": "Héritiers bloqués",
+    "noBlockedHeirs": "Aucun héritier bloqué dans ce scénario",
+    "fixedShares": "Parts fixes (Fard)",
+    "noShares": "Aucune part calculée",
+    "typeFard": "Fard",
+    "typeAsaba": "Asaba",
+    "awlApplied": "Awl (Réduction proportionnelle)",
+    "awlDescription": "Les parts fixes dépassent la succession. Toutes les parts ont été réduites proportionnellement pour correspondre au montant disponible.",
+    "raddApplied": "Radd (Retour aux héritiers)",
+    "raddDescription": "L'excédent de la succession a été redistribué aux héritiers éligibles proportionnellement à leurs parts fixes."
   }
 }
