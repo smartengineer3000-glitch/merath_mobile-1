@@ -22,16 +22,13 @@ export const HEIR_GROUPS: Record<
   HeirGroup,
   { icon: string; labelKey: string }
 > = {
-  spouses: { icon: "account-multiple", labelKey: "heirs.group.spouses" },
-  descendants: { icon: "account-group", labelKey: "heirs.group.descendants" },
-  ascendants: {
-    icon: "account-multiple-plus",
-    labelKey: "heirs.group.ascendants",
-  },
-  siblings: { icon: "account-multiple", labelKey: "heirs.group.siblings" },
-  extended: { icon: "account-network", labelKey: "heirs.group.nephews" },
+  spouses: { icon: "heart", labelKey: "heirs.group.spouses" },
+  descendants: { icon: "people", labelKey: "heirs.group.descendants" },
+  ascendants: { icon: "people-circle", labelKey: "heirs.group.ascendants" },
+  siblings: { icon: "people", labelKey: "heirs.group.siblings" },
+  extended: { icon: "link", labelKey: "heirs.group.nephews" },
   blood_relatives: {
-    icon: "account-group",
+    icon: "git-branch",
     labelKey: "heirs.group.bloodRelatives",
   },
 };
@@ -39,7 +36,7 @@ export const HEIR_GROUPS: Record<
 export const HEIRS: HeirConfig[] = [
   {
     key: "husband",
-    icon: "account",
+    icon: "man",
     color: "#4f9eff",
     gender: "male",
     group: "spouses",
@@ -48,7 +45,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "wife",
-    icon: "account",
+    icon: "woman",
     color: "#e91e8a",
     gender: "female",
     group: "spouses",
@@ -57,7 +54,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "son",
-    icon: "baby-face",
+    icon: "man",
     color: "#4CAF50",
     gender: "male",
     group: "descendants",
@@ -66,7 +63,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "daughter",
-    icon: "baby-face",
+    icon: "woman",
     color: "#e91e63",
     gender: "female",
     group: "descendants",
@@ -75,7 +72,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "grandson",
-    icon: "baby-face-outline",
+    icon: "person-outline",
     color: "#66BB6A",
     gender: "male",
     group: "descendants",
@@ -84,7 +81,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "granddaughter",
-    icon: "baby-face-outline",
+    icon: "person-outline",
     color: "#f06292",
     gender: "female",
     group: "descendants",
@@ -93,7 +90,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "father",
-    icon: "account",
+    icon: "man",
     color: "#2196F3",
     gender: "male",
     group: "ascendants",
@@ -102,7 +99,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "mother",
-    icon: "account",
+    icon: "woman",
     color: "#9C27B0",
     gender: "female",
     group: "ascendants",
@@ -111,7 +108,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "grandfather",
-    icon: "account",
+    icon: "man-outline",
     color: "#1565C0",
     gender: "male",
     group: "ascendants",
@@ -120,7 +117,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "grandmother_mother",
-    icon: "account",
+    icon: "woman-outline",
     color: "#7B1FA2",
     gender: "female",
     group: "ascendants",
@@ -129,7 +126,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "grandmother_father",
-    icon: "account",
+    icon: "woman-outline",
     color: "#6A1B9A",
     gender: "female",
     group: "ascendants",
@@ -138,7 +135,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "full_brother",
-    icon: "account-multiple",
+    icon: "man",
     color: "#00897B",
     gender: "male",
     group: "siblings",
@@ -147,7 +144,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "full_sister",
-    icon: "account-multiple",
+    icon: "woman",
     color: "#F44336",
     gender: "female",
     group: "siblings",
@@ -156,7 +153,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "paternal_brother",
-    icon: "account-multiple",
+    icon: "male",
     color: "#26A69A",
     gender: "male",
     group: "siblings",
@@ -165,7 +162,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "paternal_sister",
-    icon: "account-multiple",
+    icon: "female",
     color: "#EF5350",
     gender: "female",
     group: "siblings",
@@ -174,7 +171,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "maternal_brother",
-    icon: "account-multiple",
+    icon: "man-outline",
     color: "#4DB6AC",
     gender: "male",
     group: "siblings",
@@ -183,7 +180,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "maternal_sister",
-    icon: "account-multiple",
+    icon: "woman-outline",
     color: "#E57373",
     gender: "female",
     group: "siblings",
@@ -192,7 +189,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "full_nephew",
-    icon: "account-child",
+    icon: "person",
     color: "#FFA726",
     gender: "male",
     group: "extended",
@@ -201,7 +198,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "paternal_nephew",
-    icon: "account-child",
+    icon: "person-outline",
     color: "#FB8C00",
     gender: "male",
     group: "extended",
@@ -210,7 +207,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "full_uncle",
-    icon: "account-tie",
+    icon: "man",
     color: "#AB47BC",
     gender: "male",
     group: "extended",
@@ -219,7 +216,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "paternal_uncle",
-    icon: "account-tie",
+    icon: "man-outline",
     color: "#8E24AA",
     gender: "male",
     group: "extended",
@@ -228,7 +225,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "full_cousin",
-    icon: "account-group",
+    icon: "male",
     color: "#5C6BC0",
     gender: "male",
     group: "extended",
@@ -237,7 +234,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "paternal_cousin",
-    icon: "account-group",
+    icon: "male",
     color: "#3949AB",
     gender: "male",
     group: "extended",
@@ -246,7 +243,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "daughter_son",
-    icon: "baby-face-outline",
+    icon: "man",
     color: "#FF7043",
     gender: "male",
     group: "blood_relatives",
@@ -255,7 +252,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "daughter_daughter",
-    icon: "baby-face-outline",
+    icon: "woman",
     color: "#EC407A",
     gender: "female",
     group: "blood_relatives",
@@ -264,7 +261,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "maternal_uncle",
-    icon: "account-tie",
+    icon: "man",
     color: "#26A69A",
     gender: "male",
     group: "blood_relatives",
@@ -273,7 +270,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "maternal_aunt",
-    icon: "account",
+    icon: "woman",
     color: "#EF5350",
     gender: "female",
     group: "blood_relatives",
@@ -282,7 +279,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "paternal_aunt",
-    icon: "account",
+    icon: "woman",
     color: "#8E24AA",
     gender: "female",
     group: "blood_relatives",
@@ -291,7 +288,7 @@ export const HEIRS: HeirConfig[] = [
   },
   {
     key: "sister_children",
-    icon: "account-child",
+    icon: "person",
     color: "#66BB6A",
     gender: "male",
     group: "blood_relatives",

@@ -45,7 +45,7 @@ const EVENT_TYPE_CONFIG: Record<
   },
   madhab_change: {
     color: "#ff5722",
-    icon: "school",
+    icon: "book",
     labelKey: "events.madhabChange",
   },
   settings_change: {

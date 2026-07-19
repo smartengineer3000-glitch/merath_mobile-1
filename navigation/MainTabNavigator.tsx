@@ -15,7 +15,7 @@ const Tab = createBottomTabNavigator();
 
 const TAB_ICONS: Record<string, { focused: string; default: string }> = {
   Calculator: { focused: "calculator", default: "calculator-outline" },
-  History: { focused: "time", default: "time-outline" },
+  History: { focused: "list", default: "list-outline" },
   Compare: { focused: "git-compare", default: "git-compare-outline" },
   Settings: { focused: "settings", default: "settings-outline" },
 };

@@ -474,7 +474,7 @@ function runSingleTest(tc: TestCase): TestResult {
 
 const CATEGORY_ICONS: Record<string, { icon: string; colorKey: string }> = {
   simple: { icon: "checkmark-circle", colorKey: "success" },
-  moderate: { icon: "settings", colorKey: "warning" },
+  moderate: { icon: "alert-circle", colorKey: "warning" },
   complex: { icon: "analytics", colorKey: "primary" },
   special: { icon: "star", colorKey: "tertiary" },
 };

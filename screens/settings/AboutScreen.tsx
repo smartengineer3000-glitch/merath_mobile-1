@@ -20,7 +20,7 @@ export default function AboutScreen() {
   const navigation = useNavigation<any>();
 
   const features = [
-    { icon: "school", title: t("about.feature1") },
+    { icon: "book", title: t("about.feature1") },
     { icon: "calculator", title: t("about.feature2") },
     { icon: "language", title: t("about.feature3") },
     { icon: "document-text", title: t("about.feature4") },

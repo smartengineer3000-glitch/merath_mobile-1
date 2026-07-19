@@ -163,7 +163,7 @@ export default function SettingsScreen() {
           <TouchableOpacity style={styles.row} activeOpacity={0.7}>
             <View style={styles.rowLeft}>
               <Ionicons
-                name="school"
+                name="book"
                 size={20}
                 color={theme.colors.tertiary.main}
               />
