@@ -71,7 +71,7 @@ function buildTestCases(): TestCase[] {
 
   // ── SIMPLE ──
   for (const m of ALL_MADHHABS) {
-    const isRadd = m === "hanafi" || m === "maliki";
+    const isRadd = m === "hanafi" || m === "hanbali";
     add(
       `S1 [${m}]: Wife only`,
       "simple",
@@ -303,7 +303,7 @@ function buildTestCases(): TestCase[] {
     "complex",
     "maliki",
     { grandfather: 1, full_brother: 1 },
-    { grandfather: 40000 },
+    { grandfather: 60000 },
     100,
   );
   add(
