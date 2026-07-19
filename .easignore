@@ -1,7 +1,15 @@
-# Root .easignore — files to exclude from EAS Build upload
+# Root .easignore — exclude non-build files from EAS upload
 
-# Documentation
+# Git & EAS metadata
+.git/
+.gitignore
+.easignore
+.eas/
+.expo-shared/
+
+# Documentation & reference
 *.md
+*.html
 docs/
 scripts/
 
@@ -17,9 +25,11 @@ coverage/
 .nyc_output/
 vitest.config.ts
 
-# Linting
+# Linting & formatting
 .eslintrc.js
 eslint.config.js
+.prettierrc*
+prettier.config.*
 
 # IDE & OS
 .idea/
@@ -29,14 +39,17 @@ Thumbs.db
 
 # Dev configs not needed at build time
 eas.json
-.expo-shared/
 package-lock.json
 
 # Logs
 npm-debug.log*
 *.log
 
-# Temp
+# Temp & cache
 *.tmp
 .cache/
-.eas/
+
+# Build outputs (local only)
+*.apk
+*.aab
+*.ipa
