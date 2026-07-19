@@ -245,6 +245,8 @@ function DeductionField({
     <View style={deductionStyles.row}>
       <View style={deductionStyles.labelContainer}>
         <Text
+          numberOfLines={1}
+          ellipsizeMode="tail"
           style={[
             deductionStyles.label,
             {

@@ -36,15 +36,16 @@ export function DistributionTab({ result }: DistributionTabProps) {
         <View style={styles.heroRow}>
           <View style={styles.heroLeft}>
             <Text
+              numberOfLines={1}
               style={[
-                styles.heroLabel,
+                styles.blockedHeir,
                 {
                   color: theme.colors.neutral.light400,
                   fontFamily: theme.fontFamily.english,
                 },
               ]}
             >
-              {t("results.totalDistribution")}
+              {heir}
             </Text>
             <Text
               style={[
@@ -146,6 +147,7 @@ export function DistributionTab({ result }: DistributionTabProps) {
           ]}
         >
           <Text
+            numberOfLines={1}
             style={[
               styles.headerCell,
               styles.headerCellName,
@@ -155,6 +157,7 @@ export function DistributionTab({ result }: DistributionTabProps) {
             {t("results.heir")}
           </Text>
           <Text
+            numberOfLines={1}
             style={[
               styles.headerCell,
               { fontFamily: theme.fontFamily.english },
@@ -163,6 +166,7 @@ export function DistributionTab({ result }: DistributionTabProps) {
             {t("results.fraction")}
           </Text>
           <Text
+            numberOfLines={1}
             style={[
               styles.headerCell,
               { fontFamily: theme.fontFamily.english },
@@ -171,6 +175,7 @@ export function DistributionTab({ result }: DistributionTabProps) {
             {t("results.percentage")}
           </Text>
           <Text
+            numberOfLines={1}
             style={[
               styles.headerCell,
               { fontFamily: theme.fontFamily.english },
@@ -328,5 +333,5 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: "left",
   },
-  blockedHeir: { fontSize: 13, paddingVertical: 4 },
+  blockedHeir: { fontSize: 13, paddingVertical: 4, flexShrink: 1 },
 });

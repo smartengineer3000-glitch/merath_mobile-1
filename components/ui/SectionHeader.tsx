@@ -18,9 +18,12 @@ export function SectionHeader({
   return (
     <View style={styles.row}>
       <Text
+        numberOfLines={1}
+        ellipsizeMode="tail"
         style={[
           styles.title,
           {
+            flex: actionLabel ? 1 : undefined,
             color: theme.colors.neutral.dark300,
             fontFamily: theme.fontFamily.english,
           },

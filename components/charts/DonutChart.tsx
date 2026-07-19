@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: "500",
     color: "#333",
-    maxWidth: 80,
+    maxWidth: 120,
   },
   legendPercent: {
     fontSize: 11,

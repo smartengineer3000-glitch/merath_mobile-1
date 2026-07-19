@@ -622,6 +622,8 @@ export function ExportTab({ result, scenario }: ExportTabProps) {
             </View>
             <View style={styles.optionInfo}>
               <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
                 style={[
                   styles.optionLabel,
                   {

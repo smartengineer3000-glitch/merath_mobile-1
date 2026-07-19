@@ -32,6 +32,8 @@ export function HeirList({ selectedHeirs }: HeirListProps) {
             <View style={styles.left}>
               <Avatar icon={heir.icon} color={heir.color} size={28} />
               <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
                 style={[
                   styles.name,
                   {
@@ -60,6 +62,6 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderBottomWidth: 1,
   },
-  left: { flexDirection: "row", alignItems: "center", gap: 8 },
-  name: { fontSize: 13, fontWeight: "500", textTransform: "capitalize" },
+  left: { flexDirection: "row", alignItems: "center", gap: 8, flex: 1 },
+  name: { fontSize: 13, fontWeight: "500", textTransform: "capitalize", flexShrink: 1 },
 });

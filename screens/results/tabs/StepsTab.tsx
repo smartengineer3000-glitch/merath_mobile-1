@@ -106,6 +106,8 @@ export function StepsTab({ result, scenario }: StepsTabProps) {
               return (
                 <View key={key} style={styles.heirRow}>
                   <Text
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
                     style={[
                       styles.heirName,
                       {
@@ -198,6 +200,8 @@ export function StepsTab({ result, scenario }: StepsTabProps) {
             >
               <View style={styles.shareInfo}>
                 <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
                   style={[
                     styles.shareName,
                     {
@@ -580,7 +584,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 4,
   },
-  heirName: { fontSize: 13 },
+  heirName: { fontSize: 13, flexShrink: 1 },
 
   infoRow: {
     padding: 12,
@@ -598,7 +602,7 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 4,
   },
-  shareName: { fontSize: 13, fontWeight: "600", flex: 1 },
+  shareName: { fontSize: 13, fontWeight: "600", flex: 1, flexShrink: 1 },
   shareAmounts: {
     flexDirection: "row",
     justifyContent: "space-between",

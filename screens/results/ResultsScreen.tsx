@@ -103,6 +103,7 @@ export default function ResultsScreen() {
               ]}
             >
               <Text
+                numberOfLines={1}
                 style={[
                   styles.tabLabel,
                   {

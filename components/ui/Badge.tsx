@@ -33,6 +33,8 @@ export function Badge({ count, label, color, size = "md", style }: BadgeProps) {
       ]}
     >
       <Text
+        numberOfLines={1}
+        ellipsizeMode="tail"
         style={[
           styles.text,
           size === "sm" && styles.textSm,
