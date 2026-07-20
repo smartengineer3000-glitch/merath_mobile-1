@@ -76,13 +76,13 @@ export interface HeirShare {
   heir?: string;
   key?: HeirType;
   name: string;
+  reason?: string;
   count?: number;
   fraction?: FractionData;
   share?: number;
   percentage?: number;
   amount: number;
   shareType?: string;
-  madhab?: MadhhabType;
   type?: string;
   shares?: {
     person: number;

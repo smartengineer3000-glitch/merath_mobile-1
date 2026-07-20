@@ -669,6 +669,7 @@ export class EnhancedInheritanceCalculationEngine {
       key: share.key as HeirType,
       name: share.name,
       type: share.type,
+      reason: share.reason,
       count: share.count,
       amount: Math.round(share.fraction.toDecimal() * netEstate * 100) / 100,
       percentage: Math.round(share.fraction.toDecimal() * 10000) / 100,
