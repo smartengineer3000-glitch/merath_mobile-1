@@ -8,7 +8,7 @@ import { Card, Button } from "../../components/ui";
 import { useCalculationStore } from "../../lib/context/CalculationContext";
 import { DistributionTab } from "./tabs/DistributionTab";
 import { StepsTab } from "./tabs/StepsTab";
-import { ExplanationTab } from "./tabs/ExplanationTab";
+import { FiqhRulesTab } from "./tabs/FiqhRulesTab";
 import { ExportTab } from "./tabs/ExportTab";
 
 type TabKey = "distribution" | "steps" | "explanation" | "export";
@@ -127,7 +127,7 @@ export default function ResultsScreen() {
       {activeTab === "steps" && (
         <StepsTab result={result} scenario={latestScenario} />
       )}
-      {activeTab === "explanation" && <ExplanationTab result={result} />}
+      {activeTab === "explanation" && <FiqhRulesTab result={result} />}
       {activeTab === "export" && (
         <ExportTab result={result} scenario={latestScenario} />
       )}

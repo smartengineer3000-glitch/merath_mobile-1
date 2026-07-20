@@ -11,7 +11,7 @@ import { Card, SectionHeader } from "../../../components/ui";
 import { Ionicons } from "../../../lib/icons";
 import type { CalculationResult, MadhhabType } from "../../../lib/inheritance/types";
 
-interface ExplanationTabProps {
+interface FiqhRulesTabProps {
   result: CalculationResult;
 }
 
@@ -24,7 +24,7 @@ const MADHAB_COLORS: Record<MadhhabType, string> = {
   hanbali: "#e65100",
 };
 
-export function ExplanationTab({ result }: ExplanationTabProps) {
+export function FiqhRulesTab({ result }: FiqhRulesTabProps) {
   const { theme } = useAppTheme();
   const { t } = useTranslation();
   const activeMadhab = result.madhab;
