@@ -22,8 +22,7 @@ export default function SettingsScreen() {
   const { theme, toggleTheme, mode } = useAppTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<any>();
-  const { state, setNotifications, setAutoSave } =
-    useSettings();
+  const { state, setNotifications, setAutoSave } = useSettings();
   const { madhab } = useMadhab();
 
   const currentLang = languages[state.language as Language];

@@ -4,11 +4,7 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
-import {
-  Card,
-  SectionHeader,
-  Badge,
-} from "../../components/ui";
+import { Card, SectionHeader, Badge } from "../../components/ui";
 import { formatCurrency, formatPercentage } from "../../lib/utils/formatters";
 import type { CalculationResult } from "../../lib/inheritance/types";
 import { getHeirI18nKey } from "../../lib/inheritance/utils";
@@ -149,7 +145,9 @@ export default function HistoryDetailScreen() {
                       },
                     ]}
                   >
-                    {share.key ? t(`heirs.${getHeirI18nKey(share.key)}`) : share.name}
+                    {share.key
+                      ? t(`heirs.${getHeirI18nKey(share.key)}`)
+                      : share.name}
                   </Text>
                   <Text
                     style={[

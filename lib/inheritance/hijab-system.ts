@@ -52,9 +52,7 @@ export class HijabSystem {
       if (hijabber && hijabber > 0) {
         for (const hijabbed of rule.hijabbed) {
           if (heirs[hijabbed] && heirs[hijabbed]! > 0) {
-            this.hijabLog.push(
-              `${rule.hijabber} blocks ${hijabbed}`,
-            );
+            this.hijabLog.push(`${rule.hijabber} blocks ${hijabbed}`);
             heirs[hijabbed] = 0;
           }
         }
@@ -72,9 +70,7 @@ export class HijabSystem {
     if (hasGrandfather && hasSiblings) {
       // Shafii & Hanafi: Grandfather BLOCKS siblings
       if (this.madhab === "shafii" || this.madhab === "hanafi") {
-        this.hijabLog.push(
-          `Grandfather blocks siblings (${this.madhab})`,
-        );
+        this.hijabLog.push(`Grandfather blocks siblings (${this.madhab})`);
 
         // Block all siblings
         heirs.full_brother = 0;
@@ -99,9 +95,7 @@ export class HijabSystem {
 
       if (!hasGrandson) {
         // No grandson, so granddaughters are blocked
-        this.hijabLog.push(
-          `Two or more daughters block granddaughters`,
-        );
+        this.hijabLog.push(`Two or more daughters block granddaughters`);
         heirs.granddaughter = 0;
       } else {
         // With grandson, granddaughters are not blocked, but will inherit as asaba
@@ -135,9 +129,7 @@ export class HijabSystem {
           heirs["mother"] &&
           heirs["mother"]! > 0
         ) {
-          this.hijabLog.push(
-            `Father reduces mother's share from 1/3 to 1/6`,
-          );
+          this.hijabLog.push(`Father reduces mother's share from 1/3 to 1/6`);
         }
       }
     }

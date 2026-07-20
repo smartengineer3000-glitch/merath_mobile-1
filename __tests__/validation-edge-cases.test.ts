@@ -8,7 +8,10 @@ import {
   normalizeHeirsInput,
   validateEngineInput,
 } from "../lib/inheritance/engine-input";
-import { validateEstateData, validateHeirsData } from "../lib/inheritance/utils";
+import {
+  validateEstateData,
+  validateHeirsData,
+} from "../lib/inheritance/utils";
 import { FractionClass } from "../lib/inheritance/fraction";
 import {
   formatCurrency,
@@ -22,7 +25,12 @@ import type { EstateData, HeirsData } from "../lib/inheritance/types";
 // ---------------------------------------------------------------------------
 // Helper: a valid baseline estate + single heir
 // ---------------------------------------------------------------------------
-const VALID_ESTATE: EstateData = { total: 120000, funeral: 0, debts: 0, will: 0 };
+const VALID_ESTATE: EstateData = {
+  total: 120000,
+  funeral: 0,
+  debts: 0,
+  will: 0,
+};
 const VALID_HEIRS: HeirsData = { wife: 1 };
 
 // ============================================================================
@@ -67,9 +75,9 @@ describe("Edge cases: normalizeEstateInput (clamp layer)", () => {
   });
 
   it("Infinity funeral becomes 0 (now guarded)", () => {
-    expect(normalizeEstateInput({ total: 100, funeral: Infinity }).funeral).toBe(
-      0,
-    );
+    expect(
+      normalizeEstateInput({ total: 100, funeral: Infinity }).funeral,
+    ).toBe(0);
   });
 
   it("handles null fields as 0", () => {
@@ -95,7 +103,10 @@ describe("Edge cases: normalizeEstateInput (clamp layer)", () => {
   });
 
   it("handles boolean inputs", () => {
-    const r = normalizeEstateInput({ total: true as any, funeral: false as any });
+    const r = normalizeEstateInput({
+      total: true as any,
+      funeral: false as any,
+    });
     expect(r.total).toBe(1);
     expect(r.funeral).toBe(0);
   });
@@ -321,9 +332,7 @@ describe("Edge cases: validateEstateData", () => {
   });
 
   it("very large values", () => {
-    expect(
-      validateEstateData(Number.MAX_SAFE_INTEGER, 0, 0, 0),
-    ).toBeNull();
+    expect(validateEstateData(Number.MAX_SAFE_INTEGER, 0, 0, 0)).toBeNull();
   });
 
   it("all zeros → error (total = 0)", () => {
@@ -652,11 +661,9 @@ describe("Edge cases: Full engine calculation", () => {
   };
 
   it("valid wife-only → success", () => {
-    const engine = new EnhancedInheritanceCalculationEngine(
-      "shafii",
-      estate,
-      { wife: 1 },
-    );
+    const engine = new EnhancedInheritanceCalculationEngine("shafii", estate, {
+      wife: 1,
+    });
     const r = engine.calculate();
     expect(r.success).toBe(true);
   });
@@ -712,42 +719,35 @@ describe("Edge cases: Full engine calculation", () => {
   });
 
   it("all heirs zero → fails gracefully", () => {
-    const engine = new EnhancedInheritanceCalculationEngine(
-      "shafii",
-      estate,
-      { wife: 0, son: 0 } as HeirsData,
-    );
+    const engine = new EnhancedInheritanceCalculationEngine("shafii", estate, {
+      wife: 0,
+      son: 0,
+    } as HeirsData);
     const r = engine.calculate();
     expect(r.success).toBe(false);
   });
 
   it("heir counts = NaN → normalized to 0 → fails", () => {
-    const engine = new EnhancedInheritanceCalculationEngine(
-      "shafii",
-      estate,
-      { wife: NaN } as HeirsData,
-    );
+    const engine = new EnhancedInheritanceCalculationEngine("shafii", estate, {
+      wife: NaN,
+    } as HeirsData);
     const r = engine.calculate();
     expect(r.success).toBe(false);
   });
 
   it("heir counts = Infinity → normalized to 0 → fails", () => {
-    const engine = new EnhancedInheritanceCalculationEngine(
-      "shafii",
-      estate,
-      { wife: Infinity } as HeirsData,
-    );
+    const engine = new EnhancedInheritanceCalculationEngine("shafii", estate, {
+      wife: Infinity,
+    } as HeirsData);
     const r = engine.calculate();
     // Infinity wife clamped to 0 by Number.isFinite guard
     expect(r.success).toBe(false);
   });
 
   it("negative heir counts → normalized to 0 → fails", () => {
-    const engine = new EnhancedInheritanceCalculationEngine(
-      "shafii",
-      estate,
-      { wife: -5 } as HeirsData,
-    );
+    const engine = new EnhancedInheritanceCalculationEngine("shafii", estate, {
+      wife: -5,
+    } as HeirsData);
     const r = engine.calculate();
     expect(r.success).toBe(false);
   });
@@ -803,11 +803,9 @@ describe("Edge cases: Full engine calculation", () => {
 
   it("all 4 madhhabs produce valid results for simple case", () => {
     for (const madhab of ["shafii", "hanafi", "maliki", "hanbali"] as const) {
-      const engine = new EnhancedInheritanceCalculationEngine(
-        madhab,
-        estate,
-        { wife: 1 },
-      );
+      const engine = new EnhancedInheritanceCalculationEngine(madhab, estate, {
+        wife: 1,
+      });
       const r = engine.calculate();
       expect(r.success).toBe(true);
       expect(r.shares.length).toBeGreaterThan(0);

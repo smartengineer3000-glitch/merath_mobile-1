@@ -11,11 +11,7 @@ interface EmptyStateProps {
   onAction?: () => void;
 }
 
-export function EmptyState({
-  icon,
-  title,
-  message,
-}: EmptyStateProps) {
+export function EmptyState({ icon, title, message }: EmptyStateProps) {
   const { theme } = useAppTheme();
 
   return (

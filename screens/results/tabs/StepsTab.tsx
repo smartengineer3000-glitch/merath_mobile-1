@@ -210,7 +210,9 @@ export function StepsTab({ result, scenario }: StepsTabProps) {
                     },
                   ]}
                 >
-                  {share.key ? t(`heirs.${getHeirI18nKey(share.key)}`) : share.name}
+                  {share.key
+                    ? t(`heirs.${getHeirI18nKey(share.key)}`)
+                    : share.name}
                   {share.count && share.count > 1 ? ` (×${share.count})` : ""}
                 </Text>
                 {share.shareType && (

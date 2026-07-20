@@ -55,7 +55,7 @@ export function HeirCategory({
             size={20}
             color={theme.colors.primary.main}
           />
-           <Text
+          <Text
             numberOfLines={1}
             ellipsizeMode="tail"
             style={[
@@ -127,7 +127,7 @@ function HeirRow({
       <View style={rowStyles.info}>
         <Avatar icon={heir.icon} color={heir.color} size={32} />
         <View style={rowStyles.nameGroup}>
-           <Text
+          <Text
             numberOfLines={1}
             ellipsizeMode="tail"
             style={[
@@ -196,7 +196,13 @@ const rowStyles = StyleSheet.create({
   disabled: {
     opacity: 0.5,
   },
-  info: { flexDirection: "row", alignItems: "center", gap: 10, flex: 1, minWidth: 0 },
+  info: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    flex: 1,
+    minWidth: 0,
+  },
   nameGroup: { flex: 1, minWidth: 0, overflow: "hidden" },
   name: { fontSize: 13, fontWeight: "500" },
   frozenLabel: { fontSize: 10, fontStyle: "italic", marginTop: 1 },

@@ -249,23 +249,83 @@
         }
       },
       "fixedSharesList": [
-        { "share": "Half (1/2)", "key": "half", "heirs": "Daughters (1 daughter), Husband (no children)" },
-        { "share": "Quarter (1/4)", "key": "quarter", "heirs": "Wife (no children), Husband (no children)" },
-        { "share": "Eighth (1/8)", "key": "eighth", "heirs": "Wife (with children)" },
-        { "share": "Two-Thirds (2/3)", "key": "twoThirds", "heirs": "Daughters (2+), Son's daughters" },
-        { "share": "Third (1/3)", "key": "third", "heirs": "Mother (with children), Father (Umariyyatan)" },
-        { "share": "Sixth (1/6)", "key": "sixth", "heirs": "Mother (no children), Father, Grandmother, Grandfather, Siblings (Umariyyatan)" }
+        {
+          "share": "Half (1/2)",
+          "key": "half",
+          "heirs": "Daughters (1 daughter), Husband (no children)"
+        },
+        {
+          "share": "Quarter (1/4)",
+          "key": "quarter",
+          "heirs": "Wife (no children), Husband (no children)"
+        },
+        {
+          "share": "Eighth (1/8)",
+          "key": "eighth",
+          "heirs": "Wife (with children)"
+        },
+        {
+          "share": "Two-Thirds (2/3)",
+          "key": "twoThirds",
+          "heirs": "Daughters (2+), Son's daughters"
+        },
+        {
+          "share": "Third (1/3)",
+          "key": "third",
+          "heirs": "Mother (with children), Father (Umariyyatan)"
+        },
+        {
+          "share": "Sixth (1/6)",
+          "key": "sixth",
+          "heirs": "Mother (no children), Father, Grandmother, Grandfather, Siblings (Umariyyatan)"
+        }
       ],
       "hijabTable": [
-        { "blocked": "Wife", "blocker": "Daughter", "type": "Daughter blocks Wife" },
-        { "blocked": "Wife", "blocker": "Daughter of Son", "type": "Daughter of Son blocks Wife" },
-        { "blocked": "Wife", "blocker": "Father", "type": "Father blocks Wife" },
-        { "blocked": "Wife", "blocker": "Mother", "type": "Mother blocks Wife" },
-        { "blocked": "Mother", "blocker": "Father", "type": "Father blocks Mother" },
-        { "blocked": "Mother", "blocker": "Son of Son", "type": "Son of Son blocks Mother" },
-        { "blocked": "Paternal Sister", "blocker": "Father", "type": "Father blocks Paternal Sister" },
-        { "blocked": "Maternal Sister", "blocker": "Father", "type": "Father blocks Maternal Sister" },
-        { "blocked": "Maternal Sister", "blocker": "Son of Son", "type": "Son of Son blocks Maternal Sister" }
+        {
+          "blocked": "Wife",
+          "blocker": "Daughter",
+          "type": "Daughter blocks Wife"
+        },
+        {
+          "blocked": "Wife",
+          "blocker": "Daughter of Son",
+          "type": "Daughter of Son blocks Wife"
+        },
+        {
+          "blocked": "Wife",
+          "blocker": "Father",
+          "type": "Father blocks Wife"
+        },
+        {
+          "blocked": "Wife",
+          "blocker": "Mother",
+          "type": "Mother blocks Wife"
+        },
+        {
+          "blocked": "Mother",
+          "blocker": "Father",
+          "type": "Father blocks Mother"
+        },
+        {
+          "blocked": "Mother",
+          "blocker": "Son of Son",
+          "type": "Son of Son blocks Mother"
+        },
+        {
+          "blocked": "Paternal Sister",
+          "blocker": "Father",
+          "type": "Father blocks Paternal Sister"
+        },
+        {
+          "blocked": "Maternal Sister",
+          "blocker": "Father",
+          "type": "Father blocks Maternal Sister"
+        },
+        {
+          "blocked": "Maternal Sister",
+          "blocker": "Son of Son",
+          "type": "Son of Son blocks Maternal Sister"
+        }
       ]
     },
     "warnings": "Warnings",

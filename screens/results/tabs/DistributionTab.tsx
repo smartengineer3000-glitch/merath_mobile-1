@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
+import { View, Text, ScrollView, StyleSheet, Dimensions } from "react-native";
 import { useAppTheme } from "../../../lib/context/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import { Card, SectionHeader, Badge } from "../../../components/ui";
@@ -142,9 +136,7 @@ export function DistributionTab({ result }: DistributionTabProps) {
           segments={result.shares
             .filter((s) => s.amount > 0)
             .map((s) => ({
-              name: s.key
-                ? t(`heirs.${getHeirI18nKey(s.key)}`)
-                : s.name,
+              name: s.key ? t(`heirs.${getHeirI18nKey(s.key)}`) : s.name,
               value: s.amount,
               fraction: s.fraction
                 ? `${s.fraction.numerator}/${s.fraction.denominator}`
@@ -239,8 +231,7 @@ export function DistributionTab({ result }: DistributionTabProps) {
 
             {/* Data Rows */}
             {result.shares.map((share, index) => {
-              const percentage =
-                total > 0 ? (share.amount / total) * 100 : 0;
+              const percentage = total > 0 ? (share.amount / total) * 100 : 0;
               const fractionStr = share.fraction
                 ? `${share.fraction.numerator}/${share.fraction.denominator}`
                 : "-";
@@ -395,8 +386,7 @@ export function DistributionTab({ result }: DistributionTabProps) {
                       style={[
                         styles.perPersonRow,
                         {
-                          backgroundColor:
-                            theme.colors.neutral.light50 + "80",
+                          backgroundColor: theme.colors.neutral.light50 + "80",
                           borderBottomColor: theme.colors.neutral.light100,
                         },
                       ]}
@@ -542,7 +532,11 @@ const styles = StyleSheet.create({
   colType: { width: 68 },
   colFraction: { width: 60 },
   colPercent: { width: 64 },
-  colAmount: { width: 120, alignItems: "flex-end", textAlign: "right" as const },
+  colAmount: {
+    width: 120,
+    alignItems: "flex-end",
+    textAlign: "right" as const,
+  },
 
   // Data rows
   dataRow: {

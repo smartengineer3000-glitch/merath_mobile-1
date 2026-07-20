@@ -1,17 +1,11 @@
 import React from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
+import { View, Text, ScrollView, StyleSheet, Dimensions } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
 import { Card, SectionHeader, Badge } from "../../components/ui";
-import { formatCurrency, formatPercentage } from "../../lib/utils/formatters";
+import { formatCurrency } from "../../lib/utils/formatters";
 import type { CalculationResult } from "../../lib/inheritance/types";
 import { MADHAB_COLORS, getHeirI18nKey } from "../../lib/inheritance/utils";
 
@@ -88,8 +82,7 @@ export default function ComparisonResultsScreen() {
                       styles.overviewDot,
                       {
                         backgroundColor:
-                          MADHAB_COLORS[r.madhab] ||
-                          theme.colors.primary.main,
+                          MADHAB_COLORS[r.madhab] || theme.colors.primary.main,
                       },
                     ]}
                   />
@@ -184,7 +177,10 @@ export default function ComparisonResultsScreen() {
                         numberOfLines={1}
                         style={[
                           styles.headerText,
-                          { color: textColor, fontFamily: theme.fontFamily.english },
+                          {
+                            color: textColor,
+                            fontFamily: theme.fontFamily.english,
+                          },
                         ]}
                       >
                         {r.madhhabName}
@@ -257,9 +253,7 @@ export default function ComparisonResultsScreen() {
 
                     {/* Madhab cells */}
                     {results.map((r, j) => {
-                      const share = r.shares.find(
-                        (s) => s.key === heirKey,
-                      );
+                      const share = r.shares.find((s) => s.key === heirKey);
                       const bgColor =
                         MADHAB_COLUMN_BG[r.madhab] ||
                         theme.colors.neutral.light50;
@@ -367,10 +361,7 @@ export default function ComparisonResultsScreen() {
                   </Text>
                 </View>
                 {results.map((r, i) => {
-                  const total = r.shares.reduce(
-                    (sum, s) => sum + s.amount,
-                    0,
-                  );
+                  const total = r.shares.reduce((sum, s) => sum + s.amount, 0);
                   const bgColor =
                     MADHAB_COLUMN_BG[r.madhab] || theme.colors.neutral.light50;
                   return (
@@ -414,10 +405,9 @@ export default function ComparisonResultsScreen() {
                 style={[
                   styles.diffRow,
                   {
-                    backgroundColor:
-                      diff.isSignificant
-                        ? theme.colors.warning.light + "30"
-                        : theme.colors.neutral.light50,
+                    backgroundColor: diff.isSignificant
+                      ? theme.colors.warning.light + "30"
+                      : theme.colors.neutral.light50,
                     borderLeftColor: diff.isSignificant
                       ? theme.colors.warning.main
                       : theme.colors.neutral.light200,
@@ -479,9 +469,7 @@ export default function ComparisonResultsScreen() {
         )}
 
         {/* Madhab notes */}
-        {results.some(
-          (r) => r.madhhabNotes && r.madhhabNotes.length > 0,
-        ) && (
+        {results.some((r) => r.madhhabNotes && r.madhhabNotes.length > 0) && (
           <Card variant="elevated" style={styles.card}>
             <SectionHeader title={t("results.fiqhNotes")} />
             {results.map(
@@ -497,16 +485,14 @@ export default function ComparisonResultsScreen() {
                         backgroundColor:
                           (MADHAB_COLUMN_BG[r.madhab] || "#f8f8f8") + "60",
                         borderLeftColor:
-                          MADHAB_COLORS[r.madhab] ||
-                          theme.colors.primary.main,
+                          MADHAB_COLORS[r.madhab] || theme.colors.primary.main,
                       },
                     ]}
                   >
                     <Badge
                       label={r.madhhabName}
                       color={
-                        MADHAB_COLORS[r.madhab] ||
-                        theme.colors.primary.main
+                        MADHAB_COLORS[r.madhab] || theme.colors.primary.main
                       }
                       size="sm"
                     />

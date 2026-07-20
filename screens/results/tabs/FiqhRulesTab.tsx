@@ -1,15 +1,13 @@
 import React from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { useAppTheme } from "../../../lib/context/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import { Card, SectionHeader } from "../../../components/ui";
 import { Ionicons } from "../../../lib/icons";
-import type { CalculationResult, MadhhabType } from "../../../lib/inheritance/types";
+import type {
+  CalculationResult,
+  MadhhabType,
+} from "../../../lib/inheritance/types";
 
 interface FiqhRulesTabProps {
   result: CalculationResult;
@@ -28,14 +26,28 @@ export function FiqhRulesTab({ result }: FiqhRulesTabProps) {
   const { theme } = useAppTheme();
   const { t } = useTranslation();
   const activeMadhab = result.madhab;
-  const fiqhRules = t("results.fiqhRules", { returnObjects: true }) as Record<string, any>;
+  const fiqhRules = t("results.fiqhRules", { returnObjects: true }) as Record<
+    string,
+    any
+  >;
 
   if (!fiqhRules || !fiqhRules.madhabs) {
     return (
-      <ScrollView contentContainerStyle={styles.tabContent} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.tabContent}
+        showsVerticalScrollIndicator={false}
+      >
         <Card variant="elevated">
           <SectionHeader title={t("results.fiqhExplanation")} />
-          <Text style={[styles.fallback, { color: theme.colors.neutral.light400, fontFamily: theme.fontFamily.english }]}>
+          <Text
+            style={[
+              styles.fallback,
+              {
+                color: theme.colors.neutral.light400,
+                fontFamily: theme.fontFamily.english,
+              },
+            ]}
+          >
             {t("results.fiqhExplanationFallback")}
           </Text>
         </Card>
@@ -44,7 +56,10 @@ export function FiqhRulesTab({ result }: FiqhRulesTabProps) {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.tabContent} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      contentContainerStyle={styles.tabContent}
+      showsVerticalScrollIndicator={false}
+    >
       <Card variant="elevated">
         <SectionHeader title={fiqhRules.title} />
 
@@ -57,7 +72,11 @@ export function FiqhRulesTab({ result }: FiqhRulesTabProps) {
             },
           ]}
         >
-          <Ionicons name="checkmark-circle" size={18} color={MADHAB_COLORS[activeMadhab]} />
+          <Ionicons
+            name="checkmark-circle"
+            size={18}
+            color={MADHAB_COLORS[activeMadhab]}
+          />
           <Text
             style={[
               styles.activeBannerText,
@@ -83,7 +102,9 @@ export function FiqhRulesTab({ result }: FiqhRulesTabProps) {
                 styles.madhabCard,
                 {
                   borderLeftColor: color,
-                  backgroundColor: isActive ? color + "10" : theme.colors.background.lightVariant,
+                  backgroundColor: isActive
+                    ? color + "10"
+                    : theme.colors.background.lightVariant,
                   opacity: isActive ? 1 : 0.75,
                 },
               ]}
@@ -99,8 +120,15 @@ export function FiqhRulesTab({ result }: FiqhRulesTabProps) {
                   {madhab.name}
                 </Text>
                 {isActive && (
-                  <View style={[styles.activeBadge, { backgroundColor: color + "20" }]}>
-                    <Text style={[styles.activeBadgeText, { color }]}>ACTIVE</Text>
+                  <View
+                    style={[
+                      styles.activeBadge,
+                      { backgroundColor: color + "20" },
+                    ]}
+                  >
+                    <Text style={[styles.activeBadgeText, { color }]}>
+                      ACTIVE
+                    </Text>
                   </View>
                 )}
               </View>
@@ -128,41 +156,47 @@ export function FiqhRulesTab({ result }: FiqhRulesTabProps) {
       {fiqhRules.specialCasesList && (
         <Card variant="elevated" style={styles.section}>
           <SectionHeader title={fiqhRules.specialCases} />
-          {Object.entries(fiqhRules.specialCasesList).map(([key, item]: [string, any]) => (
-            <View
-              key={key}
-              style={[
-                styles.specialCaseCard,
-                {
-                  backgroundColor: theme.colors.background.lightVariant,
-                  borderColor: theme.colors.neutral.light200,
-                },
-              ]}
-            >
-              <View style={styles.specialCaseHeader}>
-                <Ionicons name="information-circle" size={18} color={theme.colors.primary.main} />
-                <Text
-                  style={[
-                    styles.specialCaseTitle,
-                    { color: theme.colors.neutral.dark200 },
-                  ]}
-                >
-                  {item.title}
-                </Text>
-              </View>
-              <Text
+          {Object.entries(fiqhRules.specialCasesList).map(
+            ([key, item]: [string, any]) => (
+              <View
+                key={key}
                 style={[
-                  styles.specialCaseDescription,
+                  styles.specialCaseCard,
                   {
-                    color: theme.colors.neutral.light400,
-                    fontFamily: theme.fontFamily.english,
+                    backgroundColor: theme.colors.background.lightVariant,
+                    borderColor: theme.colors.neutral.light200,
                   },
                 ]}
               >
-                {item.description}
-              </Text>
-            </View>
-          ))}
+                <View style={styles.specialCaseHeader}>
+                  <Ionicons
+                    name="information-circle"
+                    size={18}
+                    color={theme.colors.primary.main}
+                  />
+                  <Text
+                    style={[
+                      styles.specialCaseTitle,
+                      { color: theme.colors.neutral.dark200 },
+                    ]}
+                  >
+                    {item.title}
+                  </Text>
+                </View>
+                <Text
+                  style={[
+                    styles.specialCaseDescription,
+                    {
+                      color: theme.colors.neutral.light400,
+                      fontFamily: theme.fontFamily.english,
+                    },
+                  ]}
+                >
+                  {item.description}
+                </Text>
+              </View>
+            ),
+          )}
         </Card>
       )}
 
@@ -171,11 +205,29 @@ export function FiqhRulesTab({ result }: FiqhRulesTabProps) {
           <SectionHeader title={fiqhRules.fixedShares} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.tableWrapper}>
-              <View style={[styles.tableRow, styles.tableHeader, { backgroundColor: theme.colors.primary.main + "15" }]}>
-                <Text style={[styles.tableCell, styles.tableCellHeader, { color: theme.colors.primary.dark, width: 120 }]}>
+              <View
+                style={[
+                  styles.tableRow,
+                  styles.tableHeader,
+                  { backgroundColor: theme.colors.primary.main + "15" },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.tableCell,
+                    styles.tableCellHeader,
+                    { color: theme.colors.primary.dark, width: 120 },
+                  ]}
+                >
                   Share (Fard)
                 </Text>
-                <Text style={[styles.tableCell, styles.tableCellHeader, { color: theme.colors.primary.dark, width: 220 }]}>
+                <Text
+                  style={[
+                    styles.tableCell,
+                    styles.tableCellHeader,
+                    { color: theme.colors.primary.dark, width: 220 },
+                  ]}
+                >
                   Who Receives It
                 </Text>
               </View>
@@ -185,15 +237,32 @@ export function FiqhRulesTab({ result }: FiqhRulesTabProps) {
                   style={[
                     styles.tableRow,
                     {
-                      backgroundColor: i % 2 === 0 ? theme.colors.background.lightVariant : theme.colors.background.light,
+                      backgroundColor:
+                        i % 2 === 0
+                          ? theme.colors.background.lightVariant
+                          : theme.colors.background.light,
                       borderBottomColor: theme.colors.neutral.light200,
                     },
                   ]}
                 >
-                  <Text style={[styles.tableCell, { width: 120, color: theme.colors.neutral.dark200 }]}>
+                  <Text
+                    style={[
+                      styles.tableCell,
+                      { width: 120, color: theme.colors.neutral.dark200 },
+                    ]}
+                  >
                     {item.share}
                   </Text>
-                  <Text style={[styles.tableCell, { width: 220, fontFamily: theme.fontFamily.english, color: theme.colors.neutral.light400 }]}>
+                  <Text
+                    style={[
+                      styles.tableCell,
+                      {
+                        width: 220,
+                        fontFamily: theme.fontFamily.english,
+                        color: theme.colors.neutral.light400,
+                      },
+                    ]}
+                  >
                     {item.heirs}
                   </Text>
                 </View>
@@ -208,14 +277,38 @@ export function FiqhRulesTab({ result }: FiqhRulesTabProps) {
           <SectionHeader title={fiqhRules.hijabRules} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.tableWrapper}>
-              <View style={[styles.tableRow, styles.tableHeader, { backgroundColor: theme.colors.primary.main + "15" }]}>
-                <Text style={[styles.tableCell, styles.tableCellHeader, { color: theme.colors.primary.dark, width: 120 }]}>
+              <View
+                style={[
+                  styles.tableRow,
+                  styles.tableHeader,
+                  { backgroundColor: theme.colors.primary.main + "15" },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.tableCell,
+                    styles.tableCellHeader,
+                    { color: theme.colors.primary.dark, width: 120 },
+                  ]}
+                >
                   Blocked
                 </Text>
-                <Text style={[styles.tableCell, styles.tableCellHeader, { color: theme.colors.primary.dark, width: 120 }]}>
+                <Text
+                  style={[
+                    styles.tableCell,
+                    styles.tableCellHeader,
+                    { color: theme.colors.primary.dark, width: 120 },
+                  ]}
+                >
                   Blocker
                 </Text>
-                <Text style={[styles.tableCell, styles.tableCellHeader, { color: theme.colors.primary.dark, width: 180 }]}>
+                <Text
+                  style={[
+                    styles.tableCell,
+                    styles.tableCellHeader,
+                    { color: theme.colors.primary.dark, width: 180 },
+                  ]}
+                >
                   Description
                 </Text>
               </View>
@@ -225,18 +318,40 @@ export function FiqhRulesTab({ result }: FiqhRulesTabProps) {
                   style={[
                     styles.tableRow,
                     {
-                      backgroundColor: i % 2 === 0 ? theme.colors.background.lightVariant : theme.colors.background.light,
+                      backgroundColor:
+                        i % 2 === 0
+                          ? theme.colors.background.lightVariant
+                          : theme.colors.background.light,
                       borderBottomColor: theme.colors.neutral.light200,
                     },
                   ]}
                 >
-                  <Text style={[styles.tableCell, { width: 120, color: theme.colors.neutral.dark200 }]}>
+                  <Text
+                    style={[
+                      styles.tableCell,
+                      { width: 120, color: theme.colors.neutral.dark200 },
+                    ]}
+                  >
                     {item.blocked}
                   </Text>
-                  <Text style={[styles.tableCell, { width: 120, color: theme.colors.neutral.dark200 }]}>
+                  <Text
+                    style={[
+                      styles.tableCell,
+                      { width: 120, color: theme.colors.neutral.dark200 },
+                    ]}
+                  >
                     {item.blocker}
                   </Text>
-                  <Text style={[styles.tableCell, { width: 180, fontFamily: theme.fontFamily.english, color: theme.colors.neutral.light400 }]}>
+                  <Text
+                    style={[
+                      styles.tableCell,
+                      {
+                        width: 180,
+                        fontFamily: theme.fontFamily.english,
+                        color: theme.colors.neutral.light400,
+                      },
+                    ]}
+                  >
                     {item.type}
                   </Text>
                 </View>
@@ -260,7 +375,11 @@ export function FiqhRulesTab({ result }: FiqhRulesTabProps) {
                 },
               ]}
             >
-              <Ionicons name="warning" size={14} color={theme.colors.warning.main} />
+              <Ionicons
+                name="warning"
+                size={14}
+                color={theme.colors.warning.main}
+              />
               <Text
                 style={[
                   styles.warningText,
@@ -345,7 +464,11 @@ const styles = StyleSheet.create({
   },
   tableHeader: {},
   tableCell: { fontSize: 12, lineHeight: 18 },
-  tableCellHeader: { fontWeight: "700", fontSize: 11, textTransform: "uppercase" },
+  tableCellHeader: {
+    fontWeight: "700",
+    fontSize: 11,
+    textTransform: "uppercase",
+  },
   warning: {
     flexDirection: "row",
     alignItems: "center",
