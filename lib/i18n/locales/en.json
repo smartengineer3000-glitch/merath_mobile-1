@@ -162,7 +162,7 @@
     "tabs": {
       "distribution": "Distribution",
       "steps": "Steps",
-      "explanation": "Explanation",
+      "explanation": "Fiqh Rules",
       "export": "Export"
     },
     "totalDistribution": "Total Distribution",
@@ -172,6 +172,102 @@
     "visualDistribution": "Visual Distribution",
     "fiqhExplanation": "Fiqh Explanation",
     "fiqhExplanationFallback": "Detailed fiqh explanations for this calculation will be available in a future update.",
+    "fiqhRules": {
+      "title": "Islamic Inheritance Fiqh Rules",
+      "madhabRules": "Madhab-Specific Rules",
+      "specialCases": "Special Cases",
+      "fixedShares": "Fixed Shares (Fard)",
+      "hijabRules": "Blocking Rules (Hijab)",
+      "activeMadhab": "Active Madhab",
+      "madhabs": {
+        "shafii": {
+          "name": "Shafii",
+          "color": "#2e7d32",
+          "rules": [
+            "Radd (return) goes to non-spouse fixed-share heirs",
+            "Grandfather blocks paternal siblings",
+            "Paternal/blood relatives inherit (Qur'an 4:11)",
+            "Full & maternal siblings share in Musharraka",
+            "Sister's son inherits via Akdariyya"
+          ]
+        },
+        "hanafi": {
+          "name": "Hanafi",
+          "color": "#c62828",
+          "rules": [
+            "Radd goes to spouse fixed-share heirs",
+            "Grandfather blocks paternal siblings",
+            "Blood relatives inherit via Tanzeel (Qur'an 4:33)",
+            "Brothers excluded from Musharraka"
+          ]
+        },
+        "maliki": {
+          "name": "Maliki",
+          "color": "#6a1b9a",
+          "rules": [
+            "No Radd to spouse when other heirs exist",
+            "Grandfather shares with paternal siblings",
+            "No blood relatives (Dhawu al-Arham) inheritance",
+            "Full & maternal siblings share in Musharraka"
+          ]
+        },
+        "hanbali": {
+          "name": "Hanbali",
+          "color": "#e65100",
+          "rules": [
+            "Radd to spouse only when no residuary heirs",
+            "Grandfather shares with paternal siblings",
+            "Blood relatives inherit",
+            "Sister's son inherits when no paternal uncle"
+          ]
+        }
+      },
+      "specialCasesList": {
+        "umariyyatan": {
+          "title": "Umariyyatan (Umar's Rule)",
+          "description": "When only spouse, father, and mother remain with no descendant heirs, the father receives the remaining amount after the spouse gets 1/4 and the mother gets 1/3 of the net estate."
+        },
+        "awl": {
+          "title": "Al-Awl (Proportional Increase)",
+          "description": "Applied when the total fixed shares exceed the net estate. Each heir's share is reduced proportionally so that the total equals 100% of the estate."
+        },
+        "radd": {
+          "title": "Al-Radd (Return Surplus)",
+          "description": "When there is a surplus after all shares are calculated, it returns to fixed-share heirs (excluding spouse) in proportion to their shares. Spouse only gets Radd if there are no residuary heirs (Hanafi/Hanbali)."
+        },
+        "musharraka": {
+          "title": "Musharraka (Shared Inheritance)",
+          "description": "Full and maternal siblings share equally when a mother is present. Applicable to Shafii and Maliki madhhabs."
+        },
+        "akdariyya": {
+          "title": "Akdariyya (Sister's Son Rule)",
+          "description": "The sister's son (grandson of the deceased) can inherit through a special rule when the grandfather blocks the father's line but the sister's son is the closest male heir."
+        },
+        "asabaWithOthers": {
+          "title": "Asaba with Other Heirs",
+          "description": "When daughters exist, the sister becomes a residuary heir (Asaba) inheriting the remaining estate after the daughters receive their 2/3 shares."
+        }
+      },
+      "fixedSharesList": [
+        { "share": "Half (1/2)", "key": "half", "heirs": "Daughters (1 daughter), Husband (no children)" },
+        { "share": "Quarter (1/4)", "key": "quarter", "heirs": "Wife (no children), Husband (no children)" },
+        { "share": "Eighth (1/8)", "key": "eighth", "heirs": "Wife (with children)" },
+        { "share": "Two-Thirds (2/3)", "key": "twoThirds", "heirs": "Daughters (2+), Son's daughters" },
+        { "share": "Third (1/3)", "key": "third", "heirs": "Mother (with children), Father (Umariyyatan)" },
+        { "share": "Sixth (1/6)", "key": "sixth", "heirs": "Mother (no children), Father, Grandmother, Grandfather, Siblings (Umariyyatan)" }
+      ],
+      "hijabTable": [
+        { "blocked": "Wife", "blocker": "Daughter", "type": "Daughter blocks Wife" },
+        { "blocked": "Wife", "blocker": "Daughter of Son", "type": "Daughter of Son blocks Wife" },
+        { "blocked": "Wife", "blocker": "Father", "type": "Father blocks Wife" },
+        { "blocked": "Wife", "blocker": "Mother", "type": "Mother blocks Wife" },
+        { "blocked": "Mother", "blocker": "Father", "type": "Father blocks Mother" },
+        { "blocked": "Mother", "blocker": "Son of Son", "type": "Son of Son blocks Mother" },
+        { "blocked": "Paternal Sister", "blocker": "Father", "type": "Father blocks Paternal Sister" },
+        { "blocked": "Maternal Sister", "blocker": "Father", "type": "Father blocks Maternal Sister" },
+        { "blocked": "Maternal Sister", "blocker": "Son of Son", "type": "Son of Son blocks Maternal Sister" }
+      ]
+    },
     "warnings": "Warnings",
     "exportPdf": "Export as PDF",
     "exportPdfDesc": "Generate a professional report",

@@ -162,7 +162,7 @@
     "tabs": {
       "distribution": "Dağıtım",
       "steps": "Adımlar",
-      "explanation": "Açıklama",
+      "explanation": "Fıkıh Kuralları",
       "export": "Dışa Aktar"
     },
     "totalDistribution": "Toplam Dağıtım",
@@ -172,6 +172,47 @@
     "visualDistribution": "Görsel Dağılım",
     "fiqhExplanation": "Fıkıh Açıklaması",
     "fiqhExplanationFallback": "Bu hesaplama için detaylı fıkıh açıklamaları gelecek güncellemede mevcut olacaktır.",
+    "fiqhRules": {
+      "title": "İslami Miras Fıkıh Kuralları",
+      "madhabRules": "Mezhebe Özel Kurallar",
+      "specialCases": "Özel Durumlar",
+      "fixedShares": "Sabit Paylar (Ferz)",
+      "hijabRules": "Engelleme Kuralları (Hicap)",
+      "activeMadhab": "Aktif Mezhep",
+      "madhabs": {
+        "shafii": { "name": "Şafii", "color": "#2e7d32", "rules": ["Radd, sabit paylı olmayan mirasçılara gider", "Büyükbaba erkek kardeşleri engeller", "Kan bağı olanlar miras alır", "Büyük kardeşler Mirşaka'da paylaşır", "Kız kardeşin oğlu Akdariyya ile miras alır"] },
+        "hanafi": { "name": "Hanefi", "color": "#c62828", "rules": ["Rard eşlere gider", "Büyükbaba erkek kardeşleri engeller", "Kan bağı olanlar Tenzzil ile miras alır", "Kardeşler Mirşaka'dan hariç tutulur"] },
+        "maliki": { "name": "Maliki", "color": "#6a1b9a", "rules": ["Diğer mirasçılar varken eşe Radd yok", "Büyükbaba erkek kardeşlerle paylaşıyor", "Kan bağı olanlar miras almaz", "Büyük kardeşler Mirşaka'da paylaşır"] },
+        "hanbali": { "name": "Hanbeli", "color": "#e65100", "rules": ["Sadece kan mirasçı yokken eşe Radd", "Büyükbaba erkek kardeşlerle paylaşıyor", "Kan bağı olanlar miras alır", "Amca yokken kız kardeşin oğlu miras alır"] }
+      },
+      "specialCasesList": {
+        "umariyyatan": { "title": "Ummariyyatan (Umar Kuralı)", "description": "Sadece eş, baba ve anne varsa ve çocuk yoksa, kalan miktar babaya verilir." },
+        "awl": { "title": "Al-Awl (Orantılı Artış)", "description": "Sabit paylar net mirası aştığında uygulanır. Her mirasçının payı orantılı olarak azaltılır." },
+        "radd": { "title": "Al-Radd (Fazl Geri Dönüşü)", "description": "Tüm paylar hesaplandıktan sonra fazlalık sabit paylı mirasçılara geri verilir. Eş sadece kan mirasçı yokken Radd alır." },
+        "musharraka": { "title": "Musharraka (Ortak Miras)", "description": "Anne varken büyük kardeşler eşit paylaşır. Şafii ve Maliki mezheplerinde geçerlidir." },
+        "akdariyya": { "title": "Akdariyya (Kız Kardeşin Oğlu)", "description": "Büyükbaba baba çizgisini engellediğinde kız kardeşi oğlu özel kural ile miras alabilir." },
+        "asabaWithOthers": { "title": "Asaba Diğer Mirasçılarla", "description": "Kızlar varken kız kardeş miras kalan payı alır." }
+      },
+      "fixedSharesList": [
+        { "share": "Yarım (1/2)", "key": "half", "heirs": "Kızlar (1 kız), Koca (çocuksuz)" },
+        { "share": "Çeyrek (1/4)", "key": "quarter", "heirs": "Karı (çocuksuz), Koca (çocuksuz)" },
+        { "share": "Sekizde bir (1/8)", "key": "eighth", "heirs": "Karı (çocuklu)" },
+        { "share": "Üçte ikisi (2/3)", "key": "twoThirds", "heirs": "Kızlar (2+), Oğlan kızları" },
+        { "share": "Üçte biri (1/3)", "key": "third", "heirs": "Anne (çocuklu), Baba (Ummariyyatan)" },
+        { "share": "Altıda biri (1/6)", "key": "sixth", "heirs": "Anne (çocuksuz), Baba, Büyükanne, Büyükbaba, Kardeşler (Ummariyyatan)" }
+      ],
+      "hijabTable": [
+        { "blocked": "Karı", "blocker": "Kız", "type": "Kız Karıyı Engeller" },
+        { "blocked": "Karı", "blocker": "Oğlanın Kızı", "type": "Oğlanın Kızı Karıyı Engeller" },
+        { "blocked": "Karı", "blocker": "Baba", "type": "Baba Karıyı Engeller" },
+        { "blocked": "Karı", "blocker": "Anne", "type": "Anne Karıyı Engeller" },
+        { "blocked": "Anne", "blocker": "Baba", "type": "Baba Anneyi Engeller" },
+        { "blocked": "Anne", "blocker": "Oğlanın Oğlu", "type": "Oğlanın Oğlu Anneyi Engeller" },
+        { "blocked": "Kız Kardeş", "blocker": "Baba", "type": "Baba Kız Kardeşi Engeller" },
+        { "blocked": "Anne Kardeş", "blocker": "Baba", "type": "Baba Anne Kardeşi Engeller" },
+        { "blocked": "Anne Kardeş", "blocker": "Oğlanın Oğlu", "type": "Oğlanın Oğlu Anne Kardeşi Engeller" }
+      ]
+    },
     "warnings": "Uyarılar",
     "exportPdf": "PDF olarak dışa aktar",
     "exportPdfDesc": "Profesyonel rapor oluşturun",

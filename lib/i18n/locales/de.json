@@ -162,7 +162,7 @@
     "tabs": {
       "distribution": "Verteilung",
       "steps": "Schritte",
-      "explanation": "Erklärung",
+      "explanation": "Fiqh-Regeln",
       "export": "Exportieren"
     },
     "totalDistribution": "Gesamtverteilung",
@@ -172,6 +172,47 @@
     "visualDistribution": "Visuelle Verteilung",
     "fiqhExplanation": "Rechtsgelehrte Erklärung",
     "fiqhExplanationFallback": "Detaillierte rechtsgelehrte Erklärungen zu dieser Berechnung werden in einem zukünftigen Update verfügbar sein.",
+    "fiqhRules": {
+      "title": "Islamische Erbrecht Fiqh-Regeln",
+      "madhabRules": "Madhab-spezifische Regeln",
+      "specialCases": "Besondere Fälle",
+      "fixedShares": "Feste Anteile (Fard)",
+      "hijabRules": "Blockierungsregeln (Hijab)",
+      "activeMadhab": "Aktives Madhab",
+      "madhabs": {
+        "shafii": { "name": "Shafii", "color": "#2e7d32", "rules": ["Radd geht an Nicht-Ehepartner-Erben mit festem Anteil", "Großvater blockiert Brüder", "Blutsverwandte erben", "Brüder teilen in Musharraka", "Schwestersohn erbt über Akdariyya"] },
+        "hanafi": { "name": "Hanafi", "color": "#c62828", "rules": ["Rard geht an Ehepartner", "Großvater blockiert Brüder", "Blutsverwandte erben über Tanzeel", "Brüder von Musharraka ausgeschlossen"] },
+        "maliki": { "name": "Maliki", "color": "#6a1b9a", "rules": ["Kein Rard an Ehepartner bei anderen Erben", "Großvater teilt mit Brüdern", "Keine Blutsverwandten erben", "Brüder teilen in Musharraka"] },
+        "hanbali": { "name": "Hanbali", "color": "#e65100", "rules": ["Rard an Ehepartner nur ohne Nachlass-Erben", "Großvater teilt mit Brüdern", "Blutsverwandte erben", "Schwestersohn erbt ohne Onkel"] }
+      },
+      "specialCasesList": {
+        "umariyyatan": { "title": "Umariyyatans (Umars Regel)", "description": "Nur Ehepartner, Vater und Mutter vorhanden ohne Nachkommen, erhält der Vater den verbleibenden Betrag." },
+        "awl": { "title": "Al-Awl (Proportionale Erhöhung)", "description": "Angewendet wenn feste Anteile den Nettobetrag überschreiten. Jeder Anteil wird proportional reduziert." },
+        "radd": { "title": "Al-Radd (Rückkehr des Überschusses)", "description": "Überschuss nach Berechnung wird an Erben mit festen Anteilen zurückgegeben. Ehepartner erhält Rard nur ohne Nachlass-Erben." },
+        "musharraka": { "title": "Musharraka (Gemeinsame Erbschaft)", "description": "Brüder teilen gleichmäßig bei Anwesenheit der Mutter. Gilt für Shafii und Maliki." },
+        "akdariyya": { "title": "Akdariyya (Schwestersohn-Regel)", "description": "Schwestersohn kann über spezielle Regel erben wenn Großvater die väterliche Linie blockiert." },
+        "asabaWithOthers": { "title": "Asaba mit anderen Erben", "description": "Wenn Töchter vorhanden sind, wird die Schwester zur Nachlass-Erbin." }
+      },
+      "fixedSharesList": [
+        { "share": "Hälfte (1/2)", "key": "half", "heirs": "Töchter (1 Tochter), Ehemann (ohne Kinder)" },
+        { "share": "Viertel (1/4)", "key": "quarter", "heirs": "Ehefrau (ohne Kinder), Ehemann (ohne Kinder)" },
+        { "share": "Achtel (1/8)", "key": "eighth", "heirs": "Ehefrau (mit Kindern)" },
+        { "share": "Zweidrittel (2/3)", "key": "twoThirds", "heirs": "Töchter (2+), Enkelkinder" },
+        { "share": "Drittel (1/3)", "key": "third", "heirs": "Mutter (mit Kindern), Vater (Umariyyatan)" },
+        { "share": "Sechstel (1/6)", "key": "sixth", "heirs": "Mutter (ohne Kinder), Vater, Großmutter, Großvater, Geschwister (Umariyyatan)" }
+      ],
+      "hijabTable": [
+        { "blocked": "Ehefrau", "blocker": "Tochter", "type": "Tochter blockiert Ehefrau" },
+        { "blocked": "Ehefrau", "blocker": "Enkelin", "type": "Enkelin blockiert Ehefrau" },
+        { "blocked": "Ehefrau", "blocker": "Vater", "type": "Vater blockiert Ehefrau" },
+        { "blocked": "Ehefrau", "blocker": "Mutter", "type": "Mutter blockiert Ehefrau" },
+        { "blocked": "Mutter", "blocker": "Vater", "type": "Vater blockiert Mutter" },
+        { "blocked": "Mutter", "blocker": "Enkel", "type": "Enkel blockiert Mutter" },
+        { "blocked": "Schwester", "blocker": "Vater", "type": "Vater blockiert Schwester" },
+        { "blocked": "Halbschwester", "blocker": "Vater", "type": "Vater blockiert Halbschwester" },
+        { "blocked": "Halbschwester", "blocker": "Enkel", "type": "Enkel blockiert Halbschwester" }
+      ]
+    },
     "warnings": "Warnungen",
     "exportPdf": "Als PDF exportieren",
     "exportPdfDesc": "Professionellen Bericht erstellen",

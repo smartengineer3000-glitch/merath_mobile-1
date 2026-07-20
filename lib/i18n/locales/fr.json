@@ -162,7 +162,7 @@
     "tabs": {
       "distribution": "Distribution",
       "steps": "Étapes",
-      "explanation": "Explication",
+      "explanation": "Règles Fiqh",
       "export": "Exporter"
     },
     "totalDistribution": "Distribution totale",
@@ -172,6 +172,47 @@
     "visualDistribution": "Distribution visuelle",
     "fiqhExplanation": "Explication jurisprudentielle",
     "fiqhExplanationFallback": "Les explications jurisprudentielles détaillées pour ce calcul seront disponibles dans une prochaine mise à jour.",
+    "fiqhRules": {
+      "title": "Règles Fiqh de la Succession Islamique",
+      "madhabRules": "Règles Spécifiques au Madhab",
+      "specialCases": "Cas Spéciaux",
+      "fixedShares": "Parts Fixes (Fard)",
+      "hijabRules": "Règles de Blocage (Hijab)",
+      "activeMadhab": "Madhab Actif",
+      "madhabs": {
+        "shafii": { "name": "Shafii", "color": "#2e7d32", "rules": ["Le Radd va aux héritiers à parts fixes non-conjoints", "Le grand-père bloque les frères", "Les parents par le sang héritent", "Les frères partagent en Musharraka", "Le fils de la sœur hérite par Akdariyya"] },
+        "hanafi": { "name": "Hanafi", "color": "#c62828", "rules": ["Le Radd va aux conjoints", "Le grand-père bloque les frères", "Les parents par le sang héritent par Tanzeel", "Les frères exclus de Musharraka"] },
+        "maliki": { "name": "Maliki", "color": "#6a1b9a", "rules": ["Pas de Radd au conjoint avec d'autres héritiers", "Le grand-père partage avec les frères", "Pas d'héritiers par le sang", "Les frères partagent en Musharraka"] },
+        "hanbali": { "name": "Hanbali", "color": "#e65100", "rules": ["Radd au conjoint seulement sans héritiers résiduels", "Le grand-père partage avec les frères", "Les parents par le sang héritent", "Le fils de la sœur hérite sans oncle paternel"] }
+      },
+      "specialCasesList": {
+        "umariyyatan": { "title": "Umariyyatan (Règle d'Omar)", "description": "Lorsqu'il n'y a que le conjoint, le père et la mère sans descendant, le père reçoit le montant restant." },
+        "awl": { "title": "Al-Awl (Augmentation Proportionnelle)", "description": "Appliqué lorsque les parts fixes dépassent le net successoral. Chaque part est réduite proportionnellement." },
+        "radd": { "title": "Al-Radd (Retour du Surplus)", "description": "L'excédent après calcul est redistribué aux héritiers à parts fixes. Le conjoint ne reçoit le Radd que s'il n'y a pas d'héritiers résiduels." },
+        "musharraka": { "title": "Musharraka (Succession Partagée)", "description": "Les frères partagent également en présence de la mère. Applicable aux madhhabs Shafii et Maliki." },
+        "akdariyya": { "title": "Akdariyya (Règle du Fils de la Sœur)", "description": "Le fils de la sœur peut hériter par une règle spéciale lorsque le grand-père bloque la lignée paternelle." },
+        "asabaWithOthers": { "title": "Asaba avec Autres Héritiers", "description": "Lorsqu'il y a des filles, la sœur devient héritière résiduelle." }
+      },
+      "fixedSharesList": [
+        { "share": "Moitié (1/2)", "key": "half", "heirs": "Filles (1 fille), Marié (sans enfant)" },
+        { "share": "Quart (1/4)", "key": "quarter", "heirs": "Épouse (sans enfant), Marié (sans enfant)" },
+        { "share": "Huitième (1/8)", "key": "eighth", "heirs": "Épouse (avec enfant)" },
+        { "share": "Deux tiers (2/3)", "key": "twoThirds", "heirs": "Filles (2+), Filles du fils" },
+        { "share": "Tiers (1/3)", "key": "third", "heirs": "Mère (avec enfant), Père (Umariyyatan)" },
+        { "share": "Sixième (1/6)", "key": "sixth", "heirs": "Mère (sans enfant), Père, Grand-mère, Grand-père, Frères (Umariyyatan)" }
+      ],
+      "hijabTable": [
+        { "blocked": "Épouse", "blocker": "Fille", "type": "Fille bloque Épouse" },
+        { "blocked": "Épouse", "blocker": "Fille du Fils", "type": "Fille du Fils bloque Épouse" },
+        { "blocked": "Épouse", "blocker": "Père", "type": "Père bloque Épouse" },
+        { "blocked": "Épouse", "blocker": "Mère", "type": "Mère bloque Épouse" },
+        { "blocked": "Mère", "blocker": "Père", "type": "Père bloque Mère" },
+        { "blocked": "Mère", "blocker": "Fils du Fils", "type": "Fils du Fils bloque Mère" },
+        { "blocked": "Sœur", "blocker": "Père", "type": "Père bloque Sœur" },
+        { "blocked": "Sœur de Mère", "blocker": "Père", "type": "Père bloque Sœur de Mère" },
+        { "blocked": "Sœur de Mère", "blocker": "Fils du Fils", "type": "Fils du Fils bloque Sœur de Mère" }
+      ]
+    },
     "warnings": "Avertissements",
     "exportPdf": "Exporter en PDF",
     "exportPdfDesc": "Générer un rapport professionnel",
