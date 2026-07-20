@@ -53,7 +53,6 @@ export class HijabSystem {
         for (const hijabbed of rule.hijabbed) {
           if (heirs[hijabbed] && heirs[hijabbed]! > 0) {
             this.hijabLog.push(
-              `${rule.hijabber} يحجب ${hijabbed}`,
               `${rule.hijabber} blocks ${hijabbed}`,
             );
             heirs[hijabbed] = 0;
@@ -74,8 +73,7 @@ export class HijabSystem {
       // Shafii & Hanafi: Grandfather BLOCKS siblings
       if (this.madhab === "shafii" || this.madhab === "hanafi") {
         this.hijabLog.push(
-          `في المذهب ${this.madhab === "shafii" ? "الشافعي" : "الحنفي"}: الجد يحجب الإخوة`,
-          `In ${this.madhab} madhab: Grandfather blocks siblings`,
+          `Grandfather blocks siblings (${this.madhab})`,
         );
 
         // Block all siblings
@@ -88,8 +86,7 @@ export class HijabSystem {
       // Maliki & Hanbali: Grandfather SHARES with siblings (handled in computeAsaba, not hijab)
       else if (this.madhab === "maliki" || this.madhab === "hanbali") {
         this.hijabLog.push(
-          `في المذهب ${this.madhab === "maliki" ? "المالكي" : "الحنبلي"}: الجد يقاسم الإخوة (يعالج في العصبات)`,
-          `In ${this.madhab} madhab: Grandfather shares with siblings (handled in asaba)`,
+          `Grandfather shares with siblings (${this.madhab}, handled in asaba)`,
         );
         // No blocking - shares will be calculated in computeAsaba
       }
@@ -103,14 +100,12 @@ export class HijabSystem {
       if (!hasGrandson) {
         // No grandson, so granddaughters are blocked
         this.hijabLog.push(
-          `بنتان فأكثر تحجبان بنت الابن`,
           `Two or more daughters block granddaughters`,
         );
         heirs.granddaughter = 0;
       } else {
         // With grandson, granddaughters are not blocked, but will inherit as asaba
         this.hijabLog.push(
-          `بنتان مع ابن الابن - بنات الابن يرثن كعصبة`,
           `Daughters with grandson - granddaughters inherit as asaba`,
         );
         // No change - granddaughters will inherit with grandson in asaba
@@ -141,7 +136,6 @@ export class HijabSystem {
           heirs["mother"]! > 0
         ) {
           this.hijabLog.push(
-            `الأب يخفض نصيب الأم من الثلث إلى السدس`,
             `Father reduces mother's share from 1/3 to 1/6`,
           );
         }

@@ -6,7 +6,7 @@ import { Card, SectionHeader, Badge } from "../../../components/ui";
 import { formatCurrency } from "../../../lib/utils/formatters";
 import type { CalculationResult } from "../../../lib/inheritance/types";
 import type { CalculationScenario } from "../../../lib/context/CalculationContext";
-import { HEIR_NAMES } from "../../../lib/inheritance/utils";
+import { getHeirI18nKey } from "../../../lib/inheritance/utils";
 
 interface StepsTabProps {
   result: CalculationResult;
@@ -102,7 +102,7 @@ export function StepsTab({ result, scenario }: StepsTabProps) {
           <View style={styles.heirList}>
             {Object.entries(scenario.heirs).map(([key, count]) => {
               if (!count || count === 0) return null;
-              const name = HEIR_NAMES[key as keyof typeof HEIR_NAMES] || key;
+              const name = t(`heirs.${getHeirI18nKey(key)}`);
               return (
                 <View key={key} style={styles.heirRow}>
                   <Text
@@ -210,7 +210,7 @@ export function StepsTab({ result, scenario }: StepsTabProps) {
                     },
                   ]}
                 >
-                  {share.name}
+                  {share.key ? t(`heirs.${getHeirI18nKey(share.key)}`) : share.name}
                   {share.count && share.count > 1 ? ` (×${share.count})` : ""}
                 </Text>
                 {share.shareType && (

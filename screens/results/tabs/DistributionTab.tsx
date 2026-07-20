@@ -9,6 +9,7 @@ import {
   formatPercentage,
 } from "../../../lib/utils/formatters";
 import type { CalculationResult } from "../../../lib/inheritance/types";
+import { getHeirI18nKey } from "../../../lib/inheritance/utils";
 
 interface DistributionTabProps {
   result: CalculationResult;
@@ -215,7 +216,7 @@ export function DistributionTab({ result }: DistributionTabProps) {
                 ]}
                 numberOfLines={1}
               >
-                {share.name}
+                {share.key ? t(`heirs.${getHeirI18nKey(share.key)}`) : share.name}
               </Text>
               <Text
                 style={[

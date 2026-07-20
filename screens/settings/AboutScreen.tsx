@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  I18nManager,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
@@ -25,17 +24,6 @@ export default function AboutScreen() {
     { icon: "language", title: t("about.feature3") },
     { icon: "document-text", title: t("about.feature4") },
     { icon: "share-social", title: t("about.feature5") },
-  ];
-
-  const links = [
-    { icon: "globe", label: t("about.website"), url: "https://merath.app" },
-    {
-      icon: "mail",
-      label: t("about.contact"),
-      url: "mailto:smartengineer3000@gmail.com",
-    },
-    { icon: "shield-checkmark", label: t("about.privacy") },
-    { icon: "document-text", label: t("about.terms") },
   ];
 
   return (
@@ -142,41 +130,6 @@ export default function AboutScreen() {
           ))}
         </Card>
 
-        {/* Links */}
-        <Card variant="elevated" style={styles.card}>
-          {links.map((link, i) => (
-            <View
-              key={i}
-              style={[
-                styles.linkRow,
-                { borderBottomColor: theme.colors.neutral.light100 },
-              ]}
-            >
-              <Ionicons
-                name={link.icon as any}
-                size={18}
-                color={theme.colors.primary.main}
-              />
-              <Text
-                style={[
-                  styles.linkLabel,
-                  {
-                    color: theme.colors.neutral.dark200,
-                    fontFamily: theme.fontFamily.english,
-                  },
-                ]}
-              >
-                {link.label}
-              </Text>
-              <Ionicons
-                name={I18nManager.isRTL ? "chevron-back" : "chevron-forward"}
-                size={16}
-                color={theme.colors.neutral.light400}
-              />
-            </View>
-          ))}
-        </Card>
-
         {/* Copyright */}
         <Text
           style={[
@@ -225,13 +178,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   featureTitle: { fontSize: 13, fontWeight: "500", flex: 1 },
-  linkRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    gap: 10,
-  },
-  linkLabel: { fontSize: 14, fontWeight: "500", flex: 1 },
   copyright: { fontSize: 11, textAlign: "center", marginTop: 8 },
 });

@@ -7,7 +7,7 @@ import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
 import { Card, SectionHeader, Badge } from "../../components/ui";
 import { formatCurrency, formatPercentage } from "../../lib/utils/formatters";
 import type { CalculationResult } from "../../lib/inheritance/types";
-import { MADHAB_COLORS } from "../../lib/inheritance/utils";
+import { MADHAB_COLORS, getHeirI18nKey } from "../../lib/inheritance/utils";
 
 export default function ComparisonResultsScreen() {
   const { theme } = useAppTheme();
@@ -71,6 +71,8 @@ export default function ComparisonResultsScreen() {
                       fontFamily: theme.fontFamily.english,
                     },
                   ]}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
                 >
                   {formatCurrency(total)}
                 </Text>
@@ -150,7 +152,7 @@ export default function ComparisonResultsScreen() {
           </View>
 
           {/* Heir rows */}
-          {allHeirs.map((heirName, i) => (
+          {allHeirs.map((heirKey, i) => (
             <View
               key={i}
               style={[
@@ -175,10 +177,10 @@ export default function ComparisonResultsScreen() {
                 ]}
                 numberOfLines={1}
               >
-                {heirName}
+                {t(`heirs.${getHeirI18nKey(heirKey)}`)}
               </Text>
               {results.map((r, j) => {
-                const share = r.shares.find((s) => s.name === heirName);
+                const share = r.shares.find((s) => s.key === heirKey);
                 if (!share) {
                   return (
                     <Text
@@ -249,7 +251,11 @@ export default function ComparisonResultsScreen() {
 
 function getAllHeirs(results: CalculationResult[]): string[] {
   const set = new Set<string>();
-  results.forEach((r) => r.shares.forEach((s) => set.add(s.name)));
+  results.forEach((r) =>
+    r.shares.forEach((s) => {
+      if (s.key) set.add(s.key);
+    }),
+  );
   return Array.from(set);
 }
 

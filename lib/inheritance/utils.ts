@@ -299,6 +299,50 @@ export function getHeirName(heir: HeirType): string {
 }
 
 /**
+ * Mapping from engine snake_case keys to i18n camelCase keys
+ */
+const HEIR_I18N_KEY_MAP: Record<string, string> = {
+  full_brother: "brother",
+  full_sister: "sister",
+  paternal_brother: "paternalBrother",
+  paternal_sister: "paternalSister",
+  maternal_brother: "maternalBrother",
+  maternal_sister: "maternalSister",
+  half_brother_paternal: "paternalBrother",
+  half_sister_paternal: "paternalSister",
+  full_nephew: "nephew",
+  paternal_nephew: "paternalNephew",
+  nephew_from_brother: "nephew",
+  niece_from_brother: "sisterChildren",
+  full_uncle: "uncle",
+  paternal_uncle: "paternalUncle",
+  uncle_paternal: "uncle",
+  uncle_maternal: "maternalUncle",
+  full_cousin: "cousin",
+  paternal_cousin: "paternalCousin",
+  aunt_paternal: "paternalAunt",
+  aunt_maternal: "maternalAunt",
+  maternal_uncle: "maternalUncle",
+  maternal_aunt: "maternalAunt",
+  paternal_aunt: "paternalAunt",
+  grandmother_mother: "grandmotherMother",
+  grandmother_father: "grandmotherFather",
+  daughter_son: "daughterSon",
+  daughter_daughter: "daughterDaughter",
+  sister_children: "sisterChildren",
+  shared_siblings: "brother",
+  treasury: "treasury",
+};
+
+/**
+ * Get the i18n translation key for a given engine heir key.
+ * Usage: t(getHeirI18nKey("full_brother")) → t("heirs.brother")
+ */
+export function getHeirI18nKey(engineKey: string): string {
+  return HEIR_I18N_KEY_MAP[engineKey] || engineKey;
+}
+
+/**
  * الحصول على لون المذهب
  */
 export function getMadhhabColor(madhab: MadhhabType): string {

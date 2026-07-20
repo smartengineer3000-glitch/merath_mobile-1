@@ -11,6 +11,7 @@ import {
 } from "../../components/ui";
 import { formatCurrency, formatPercentage } from "../../lib/utils/formatters";
 import type { CalculationResult } from "../../lib/inheritance/types";
+import { getHeirI18nKey } from "../../lib/inheritance/utils";
 
 export default function HistoryDetailScreen() {
   const { theme } = useAppTheme();
@@ -148,7 +149,7 @@ export default function HistoryDetailScreen() {
                       },
                     ]}
                   >
-                    {share.name}
+                    {share.key ? t(`heirs.${getHeirI18nKey(share.key)}`) : share.name}
                   </Text>
                   <Text
                     style={[

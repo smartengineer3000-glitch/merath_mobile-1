@@ -129,12 +129,13 @@ export function useCalculator() {
       async (
         madhab: MadhhabType,
         heirs: HeirsData,
+        estateOverride: EstateData,
         resolve: (value: any) => void,
       ) => {
         try {
           const engine = new InheritanceCalculationEngine(
             madhab,
-            estateData,
+            estateOverride,
             heirs,
           );
           const calcResult = engine.calculate();
@@ -154,7 +155,7 @@ export function useCalculator() {
       },
       DEBOUNCE_DELAY_MS,
     ),
-    [estateData],
+    [],
   );
 
   // ===== FIX C2 & H7: Complete rewrite of calculateWithMethod =====
@@ -162,7 +163,9 @@ export function useCalculator() {
     async (
       madhab: MadhhabType,
       heirs: HeirsData,
+      estateOverride?: EstateData,
     ): Promise<CalculationResult | null> => {
+      const effectiveEstate = estateOverride || estateData;
       // ===== FIX C2: Prevent multiple simultaneous calculations =====
       if (isCalculating) {
         return null;
@@ -186,7 +189,7 @@ export function useCalculator() {
 
       try {
         // Validate estate data
-        if (estateData.total <= 0) {
+        if (effectiveEstate.total <= 0) {
           throw new Error(i18next.t("calculator.errors.estateMustBePositive"));
         }
 
@@ -204,7 +207,7 @@ export function useCalculator() {
         // ===== FIX C2: Check cache first (synchronous) =====
         const cachedResult = CalculationCache.getCalculation(
           madhab,
-          estateData,
+          effectiveEstate,
           heirs,
         );
         if (cachedResult && !signal.aborted) {
@@ -227,7 +230,7 @@ export function useCalculator() {
         });
         // ===== FIX C2: Create calculation promise with debouncing =====
         const calculationPromise = new Promise<CalculationResult>((resolve) => {
-          debouncedCalculate(madhab, heirs, resolve);
+          debouncedCalculate(madhab, heirs, effectiveEstate, resolve);
         });
 
         // ===== FIX H7: Race between calculation and timeout =====
@@ -252,7 +255,7 @@ export function useCalculator() {
         // Cache the result for future use
         CalculationCache.cacheCalculation(
           madhab,
-          estateData,
+          effectiveEstate,
           heirs,
           calculationResult,
           duration,

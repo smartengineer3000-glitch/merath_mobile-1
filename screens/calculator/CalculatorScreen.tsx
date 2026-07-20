@@ -136,16 +136,18 @@ export default function CalculatorScreen() {
       },
     );
     try {
-      updateEstateData({ total: estateData.total, funeral, debts, will });
+      const currentEstate = { total: estateData.total, funeral, debts, will };
+      updateEstateData(currentEstate);
 
       const result = await calculateWithMethod(
         madhab as MadhhabType,
         selectedHeirs,
+        currentEstate,
       );
 
       if (result && result.success) {
         saveScenario({
-          estate: { total: estateData.total, funeral, debts, will },
+          estate: currentEstate,
           heirs: selectedHeirs,
           madhab: madhab as MadhhabType,
           result,
