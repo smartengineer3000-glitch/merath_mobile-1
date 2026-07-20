@@ -263,6 +263,8 @@
     "comparisonResults": "Résultats de la comparaison",
     "shareComparison": "Partager la comparaison",
     "heir": "Héritier",
+    "differences": "Differences",
+    "significant": "Significatif",
     "explanations": {
       "blockedInMadhab": "Bloqué dans l'école {{madhab}}",
       "onlyInMadhab": "N'hérite que dans l'école {{madhab}}",

@@ -263,6 +263,8 @@
     "comparisonResults": "Comparison Results",
     "shareComparison": "Share Comparison",
     "heir": "Heir",
+    "differences": "Differences",
+    "significant": "Significant",
     "explanations": {
       "blockedInMadhab": "Blocked in {{madhab}} madhab",
       "onlyInMadhab": "Inherits only in {{madhab}} madhab",

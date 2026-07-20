@@ -263,6 +263,8 @@
     "comparisonResults": "Vergleichsergebnisse",
     "shareComparison": "Vergleich teilen",
     "heir": "Erbe",
+    "differences": "Unterschiede",
+    "significant": "Wesentlich",
     "explanations": {
       "blockedInMadhab": "Blockiert in der {{madhab}}-Rechtsschule",
       "onlyInMadhab": "Erbt nur in der {{madhab}}-Rechtsschule",

@@ -263,6 +263,8 @@
     "comparisonResults": "نتائج المقارنة",
     "shareComparison": "مشاركة المقارنة",
     "heir": "الوارث",
+    "differences": "الفرق",
+    "significant": "جوهري",
     "explanations": {
       "blockedInMadhab": "محجوب في مذهب {{madhab}}",
       "onlyInMadhab": "يرث فقط في مذهب {{madhab}}",

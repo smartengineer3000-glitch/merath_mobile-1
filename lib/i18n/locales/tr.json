@@ -251,6 +251,8 @@
     "comparisonResults": "Karşılaştırma Sonuçları",
     "shareComparison": "Karşılaştırmayı Paylaş",
     "heir": "Mirasçı",
+    "differences": "Farklilikler",
+    "significant": "Onemli",
     "explanations": {
       "blockedInMadhab": "{{madhab}} mezhebinde engellendi",
       "onlyInMadhab": "Sadece {{madhab}} mezhebinde miras alır",

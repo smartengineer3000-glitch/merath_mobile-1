@@ -263,6 +263,8 @@
     "comparisonResults": "موازنے کے نتائج",
     "shareComparison": "موازنہ شیئر کریں",
     "heir": "وارث",
+    "differences": "فواصل",
+    "significant": "اہم",
     "explanations": {
       "blockedInMadhab": "{{madhab}} مذہب میں ممنوع",
       "onlyInMadhab": "صرف {{madhab}} مذہب میں وراثت لیتا ہے",
