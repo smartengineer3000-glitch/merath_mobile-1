@@ -62,6 +62,6 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderBottomWidth: 1,
   },
-  left: { flexDirection: "row", alignItems: "center", gap: 8, flex: 1 },
+  left: { flexDirection: "row", alignItems: "center", gap: 8, flex: 1, minWidth: 0 },
   name: { fontSize: 13, fontWeight: "500", textTransform: "capitalize", flexShrink: 1 },
 });

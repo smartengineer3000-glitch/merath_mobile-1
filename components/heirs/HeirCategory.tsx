@@ -157,14 +157,16 @@ function HeirRow({
           )}
         </View>
       </View>
-      <StepperCounter
-        value={count}
-        onIncrement={() => onCountChange(count + 1)}
-        onDecrement={() => onCountChange(Math.max(0, count - 1))}
-        min={0}
-        max={maxCount}
-        disabled={disabled}
-      />
+      <View style={rowStyles.stepperWrap}>
+        <StepperCounter
+          value={count}
+          onIncrement={() => onCountChange(count + 1)}
+          onDecrement={() => onCountChange(Math.max(0, count - 1))}
+          min={0}
+          max={maxCount}
+          disabled={disabled}
+        />
+      </View>
     </View>
   );
 }
@@ -194,8 +196,9 @@ const rowStyles = StyleSheet.create({
   disabled: {
     opacity: 0.5,
   },
-  info: { flexDirection: "row", alignItems: "center", gap: 10, flex: 1 },
-  nameGroup: { flex: 1 },
+  info: { flexDirection: "row", alignItems: "center", gap: 10, flex: 1, minWidth: 0 },
+  nameGroup: { flex: 1, minWidth: 0, overflow: "hidden" },
   name: { fontSize: 13, fontWeight: "500" },
   frozenLabel: { fontSize: 10, fontStyle: "italic", marginTop: 1 },
+  stepperWrap: { flexShrink: 0 },
 });
