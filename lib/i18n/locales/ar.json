@@ -47,7 +47,8 @@
       "calculationTimeout": "انتهت مهلة الحساب. يرجى المحاولة مرة أخرى.",
       "unknownError": "حدث خطأ غير معروف أثناء الحساب"
     },
-    "impossibleSpouse": "غير قابل للتطبيق"
+    "impossibleSpouse": "غير قابل للتطبيق",
+    "blockedBy": "محجوب بواسطة {{heir}}"
   },
   "estate": {
     "title": "معلومات التركة",

@@ -15,6 +15,7 @@ import { Button, Card, Chip, SectionHeader } from "../../components/ui";
 import { HEIR_GROUPS, HEIRS } from "../../constants/heirData";
 import type { HeirGroup } from "../../constants/heirData";
 import type { MadhhabType } from "../../lib/inheritance/types";
+import { getBlockedHeirs } from "../../lib/inheritance/hijab-system";
 
 const HEIR_MAX_COUNTS: Record<string, number> = Object.fromEntries(
   HEIRS.map((h) => [h.key, h.maxCount]),
@@ -76,6 +77,11 @@ export default function CalculatorScreen() {
   const heirCount = useMemo(
     () => Object.values(selectedHeirs).reduce((sum, c) => sum + (c || 0), 0),
     [selectedHeirs],
+  );
+
+  const blockedHeirs = useMemo(
+    () => getBlockedHeirs(madhab as MadhhabType, selectedHeirs),
+    [madhab, selectedHeirs],
   );
 
   const handleEstateTotalChange = useCallback(
@@ -284,6 +290,7 @@ export default function CalculatorScreen() {
               selectedHeirs={selectedHeirs}
               onHeirCountChange={handleHeirCountChange}
               deceasedGender={deceasedGender}
+              blockedHeirs={blockedHeirs}
             />
           ))}
         </Card>

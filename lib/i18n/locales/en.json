@@ -47,7 +47,8 @@
       "calculationTimeout": "Calculation timed out. Please try again.",
       "unknownError": "An unknown error occurred during calculation"
     },
-    "impossibleSpouse": "Not applicable"
+    "impossibleSpouse": "Not applicable",
+    "blockedBy": "Blocked by {{heir}}"
   },
   "estate": {
     "title": "Estate Information",

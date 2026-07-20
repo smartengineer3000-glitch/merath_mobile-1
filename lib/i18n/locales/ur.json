@@ -47,7 +47,8 @@
       "calculationTimeout": "حساب کا وقت ختم ہو گیا۔ براہ کرم دوبارہ کوشش کریں۔",
       "unknownError": "حساب لگاتے وقت ایک نامعلوم خرابی پیش آئی"
     },
-    "impossibleSpouse": "لاگو نہیں ہوتا"
+    "impossibleSpouse": "لاگو نہیں ہوتا",
+    "blockedBy": "{{heir}} سے ممنوع"
   },
   "estate": {
     "title": "ملکیت کی معلومات",

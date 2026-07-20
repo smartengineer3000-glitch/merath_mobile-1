@@ -273,3 +273,74 @@ export class HijabSystem {
     return this.madhab;
   }
 }
+
+// ============================================================================
+// DYNAMIC BLOCKING: Real-time hijab enforcement for heir selection UI
+// ============================================================================
+
+export interface BlockedHeirInfo {
+  blocker: string;
+  reason: string;
+}
+
+/**
+ * Compute which heirs should be blocked in real-time based on currently
+ * selected heirs and the active madhab. Reuses the same hijab rules from
+ * constants.ts that the engine applies at calculation time.
+ */
+export function getBlockedHeirs(
+  madhab: MadhhabType,
+  selectedHeirs: Record<string, number>,
+): Record<string, BlockedHeirInfo> {
+  const blocked: Record<string, BlockedHeirInfo> = {};
+  const rules = getHijabRules(madhab);
+
+  // 1. Standard complete hijab rules from constants
+  for (const rule of rules) {
+    if (rule.type !== "complete") continue;
+    if ((selectedHeirs[rule.hijabber] || 0) <= 0) continue;
+
+    for (const hijabbed of rule.hijabbed) {
+      if (!blocked[hijabbed]) {
+        blocked[hijabbed] = {
+          blocker: rule.hijabber,
+          reason: `${rule.hijabber} blocks ${hijabbed}`,
+        };
+      }
+    }
+  }
+
+  // 2. Madhab-specific: Grandfather blocks siblings (Shafii & Hanafi only)
+  if (madhab === "shafii" || madhab === "hanafi") {
+    if ((selectedHeirs["grandfather"] || 0) > 0) {
+      const siblingKeys = [
+        "full_brother",
+        "full_sister",
+        "half_brother_paternal",
+        "half_sister_paternal",
+      ];
+      for (const sib of siblingKeys) {
+        if (!blocked[sib]) {
+          blocked[sib] = {
+            blocker: "grandfather",
+            reason: "grandfather blocks siblings (Shafii/Hanafi)",
+          };
+        }
+      }
+    }
+  }
+
+  // 3. Daughter count rules: 2+ daughters block granddaughters
+  if ((selectedHeirs["daughter"] || 0) >= 2) {
+    if ((selectedHeirs["grandson"] || 0) <= 0) {
+      if (!blocked["granddaughter"]) {
+        blocked["granddaughter"] = {
+          blocker: "daughter",
+          reason: "2+ daughters block granddaughters",
+        };
+      }
+    }
+  }
+
+  return blocked;
+}

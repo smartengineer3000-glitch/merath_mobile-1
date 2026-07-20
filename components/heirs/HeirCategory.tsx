@@ -10,12 +10,15 @@ import {
   type HeirConfig,
 } from "../../constants/heirData";
 import { StepperCounter, Badge, Avatar, Card } from "../ui";
+import type { BlockedHeirInfo } from "../../lib/inheritance/hijab-system";
+import { getHeirI18nKey } from "../../lib/inheritance/utils";
 
 interface HeirCategoryProps {
   group: HeirGroup;
   selectedHeirs: Record<string, number>;
   onHeirCountChange: (key: string, count: number) => void;
   deceasedGender?: "male" | "female";
+  blockedHeirs?: Record<string, BlockedHeirInfo>;
 }
 
 export function HeirCategory({
@@ -23,6 +26,7 @@ export function HeirCategory({
   selectedHeirs,
   onHeirCountChange,
   deceasedGender,
+  blockedHeirs,
 }: HeirCategoryProps) {
   const { theme } = useAppTheme();
   const { t } = useTranslation();
@@ -87,18 +91,23 @@ export function HeirCategory({
 
       {expanded && (
         <View style={styles.heirsList}>
-          {heirs.map((heir) => (
-            <HeirRow
-              key={heir.key}
-              heir={heir}
-              count={selectedHeirs[heir.key] || 0}
-              onCountChange={(count) => onHeirCountChange(heir.key, count)}
-              maxCount={heir.maxCount}
-              disabled={heir.key === impossibleSpouse}
-              theme={theme}
-              t={t}
-            />
-          ))}
+          {heirs.map((heir) => {
+            const isFrozen = heir.key === impossibleSpouse;
+            const blocked = blockedHeirs?.[heir.key] ?? null;
+            return (
+              <HeirRow
+                key={heir.key}
+                heir={heir}
+                count={selectedHeirs[heir.key] || 0}
+                onCountChange={(count) => onHeirCountChange(heir.key, count)}
+                maxCount={heir.maxCount}
+                disabled={isFrozen || !!blocked}
+                blockedBy={blocked?.blocker ?? null}
+                theme={theme}
+                t={t}
+              />
+            );
+          })}
         </View>
       )}
     </Card>
@@ -111,6 +120,7 @@ function HeirRow({
   onCountChange,
   maxCount,
   disabled,
+  blockedBy,
   theme,
   t,
 }: {
@@ -119,13 +129,29 @@ function HeirRow({
   onCountChange: (count: number) => void;
   maxCount: number;
   disabled?: boolean;
+  blockedBy?: string | null;
   theme: any;
   t: any;
 }) {
+  const isBlocked = !!blockedBy;
+  const blockerLabel = isBlocked
+    ? t(`heirs.${getHeirI18nKey(blockedBy!)}`, blockedBy!)
+    : "";
+
   return (
-    <View style={[rowStyles.container, disabled && rowStyles.disabled]}>
+    <View
+      style={[
+        rowStyles.container,
+        disabled && !isBlocked && rowStyles.frozen,
+        isBlocked && rowStyles.blocked,
+      ]}
+    >
       <View style={rowStyles.info}>
-        <Avatar icon={heir.icon} color={heir.color} size={32} />
+        <Avatar
+          icon={heir.icon}
+          color={isBlocked ? "#e65100" : heir.color}
+          size={32}
+        />
         <View style={rowStyles.nameGroup}>
           <Text
             numberOfLines={1}
@@ -142,7 +168,18 @@ function HeirRow({
           >
             {t(heir.labelKey)}
           </Text>
-          {disabled && (
+          {isBlocked && (
+            <Text
+              numberOfLines={1}
+              style={[
+                rowStyles.blockedLabel,
+                { fontFamily: theme.fontFamily.english },
+              ]}
+            >
+              {t("calculator.blockedBy", { heir: blockerLabel })}
+            </Text>
+          )}
+          {!isBlocked && disabled && (
             <Text
               style={[
                 rowStyles.frozenLabel,
@@ -192,9 +229,14 @@ const rowStyles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 8,
     paddingHorizontal: 4,
+    borderRadius: 6,
   },
-  disabled: {
+  frozen: {
     opacity: 0.5,
+  },
+  blocked: {
+    backgroundColor: "#fff3e0",
+    opacity: 0.7,
   },
   info: {
     flexDirection: "row",
@@ -206,5 +248,11 @@ const rowStyles = StyleSheet.create({
   nameGroup: { flex: 1, minWidth: 0, overflow: "hidden" },
   name: { fontSize: 13, fontWeight: "500" },
   frozenLabel: { fontSize: 10, fontStyle: "italic", marginTop: 1 },
+  blockedLabel: {
+    fontSize: 10,
+    fontWeight: "600",
+    color: "#e65100",
+    marginTop: 1,
+  },
   stepperWrap: { flexShrink: 0 },
 });

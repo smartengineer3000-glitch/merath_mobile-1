@@ -47,7 +47,8 @@
       "calculationTimeout": "Le calcul a expiré. Veuillez réessayer.",
       "unknownError": "Une erreur inconnue s'est produite lors du calcul"
     },
-    "impossibleSpouse": "Non applicable"
+    "impossibleSpouse": "Non applicable",
+    "blockedBy": "Bloqué par {{heir}}"
   },
   "estate": {
     "title": "Informations sur la succession",

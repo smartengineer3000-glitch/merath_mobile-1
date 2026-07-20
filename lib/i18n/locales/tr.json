@@ -47,7 +47,8 @@
       "calculationTimeout": "Hesaplama zaman aşımına uğradı. Lütfen tekrar deneyin.",
       "unknownError": "Hesaplama sırasında bilinmeyen bir hata oluştu"
     },
-    "impossibleSpouse": "Uygulanamaz"
+    "impossibleSpouse": "Uygulanamaz",
+    "blockedBy": "{{heir}} tarafından engellendi"
   },
   "estate": {
     "title": "Miras Bilgileri",
