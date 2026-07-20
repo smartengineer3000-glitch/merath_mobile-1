@@ -3,7 +3,6 @@ import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { useTranslation } from "react-i18next";
-import { useMadhab } from "../../lib/context/MadhabContext";
 import { useCalculator } from "../../lib/hooks/useCalculator";
 import { useCalculationStore } from "../../lib/context/CalculationContext";
 import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
@@ -12,10 +11,8 @@ import {
   SectionHeader,
   Button,
   Badge,
-  Chip,
   EmptyState,
 } from "../../components/ui";
-import { Ionicons } from "../../lib/icons";
 import { formatCurrency } from "../../lib/utils/formatters";
 import type {
   CalculationResult,

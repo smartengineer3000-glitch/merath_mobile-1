@@ -30,7 +30,7 @@ function expectShare(
   result: ReturnType<typeof calc>,
   key: string,
   expectedAmount: number,
-  tolerance = 1.0,
+  _tolerance = 1.0,
 ) {
   const share = getShare(result, key);
   expect(share, `Expected heir "${key}" to exist`).toBeDefined();

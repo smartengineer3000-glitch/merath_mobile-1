@@ -8,10 +8,7 @@ import {
   Card,
   SectionHeader,
   Badge,
-  Avatar,
-  ProgressBar,
 } from "../../components/ui";
-import { Ionicons } from "../../lib/icons";
 import { formatCurrency, formatPercentage } from "../../lib/utils/formatters";
 import type { CalculationResult } from "../../lib/inheritance/types";
 

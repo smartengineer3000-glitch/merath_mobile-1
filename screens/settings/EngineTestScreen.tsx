@@ -11,7 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
-import { Card, SectionHeader, Badge, Button } from "../../components/ui";
+import { Card, Badge, Button } from "../../components/ui";
 import { Ionicons } from "../../lib/icons";
 import { EnhancedInheritanceCalculationEngine } from "../../lib/inheritance/enhanced-engine-complete";
 import type {

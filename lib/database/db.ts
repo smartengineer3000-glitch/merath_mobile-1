@@ -56,7 +56,7 @@ export class MerathDatabase extends Dexie {
         auditLogs:
           "id, timestamp, madhab, operation, success, year, month, day, duration, [year+month], [madhab+success], [operation+success]",
       })
-      .upgrade((tx) => {
+      .upgrade((_tx) => {
         // Data migration if needed
         if (typeof __DEV__ !== "undefined" && __DEV__)
           console.log("Upgrading database to version 2");

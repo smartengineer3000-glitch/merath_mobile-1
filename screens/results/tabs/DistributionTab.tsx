@@ -36,16 +36,15 @@ export function DistributionTab({ result }: DistributionTabProps) {
         <View style={styles.heroRow}>
           <View style={styles.heroLeft}>
             <Text
-              numberOfLines={1}
               style={[
-                styles.blockedHeir,
+                styles.heroLabel,
                 {
                   color: theme.colors.neutral.light400,
                   fontFamily: theme.fontFamily.english,
                 },
               ]}
             >
-              {heir}
+              {t("results.totalDistribution")}
             </Text>
             <Text
               style={[

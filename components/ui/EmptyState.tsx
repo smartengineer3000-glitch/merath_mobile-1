@@ -15,8 +15,6 @@ export function EmptyState({
   icon,
   title,
   message,
-  actionLabel,
-  onAction,
 }: EmptyStateProps) {
   const { theme } = useAppTheme();
 

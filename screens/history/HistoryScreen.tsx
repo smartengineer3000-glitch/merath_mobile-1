@@ -1,12 +1,11 @@
 import React, { useMemo } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import i18n from "../../lib/i18n";
 import { useCalculationStore } from "../../lib/context/CalculationContext";
 import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
-import { Card, EmptyState } from "../../components/ui";
+import { EmptyState } from "../../components/ui";
 import type { AuditEvent } from "../../lib/context/CalculationContext";
 
 const EVENT_TYPE_CONFIG: Record<
@@ -76,7 +75,6 @@ const EVENT_TYPE_CONFIG: Record<
 export default function HistoryScreen() {
   const { theme } = useAppTheme();
   const { t } = useTranslation();
-  const navigation = useNavigation<any>();
   const { events } = useCalculationStore();
 
   const sortedEvents = useMemo(

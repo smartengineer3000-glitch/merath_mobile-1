@@ -64,7 +64,7 @@ describe("i18n locale content quality", () => {
 
   it("all locales have the same top-level sections", () => {
     const enSections = Object.keys(en).sort();
-    for (const [lang, localeData] of Object.entries(locales)) {
+    for (const [_lang, localeData] of Object.entries(locales)) {
       const langSections = Object.keys(localeData).sort();
       expect(langSections).toEqual(enSections);
     }

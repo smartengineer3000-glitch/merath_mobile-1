@@ -15,7 +15,6 @@ export class FractionClass {
   private denominator: number;
 
   private static readonly MAX_SAFE_DENOMINATOR = 1_000_000_000;
-  private static readonly SIMPLIFY_THRESHOLD = 1_000_000;
   private static readonly TOLERANCE = 1e-10;
 
   constructor(numerator: number, denominator: number = 1) {
@@ -226,19 +225,6 @@ export class FractionClass {
     return 0;
   }
 
-  private assertValidState(): void {
-    if (
-      !Number.isFinite(this.numerator) ||
-      !Number.isFinite(this.denominator)
-    ) {
-      throw new Error("Invalid fraction state");
-    }
-
-    if (this.denominator === 0) {
-      throw new Error("Zero denominator not allowed");
-    }
-  }
-
   toString(): string {
     if (this.denominator === 1) {
       return `${this.numerator}`;
@@ -257,7 +243,7 @@ export class FractionClass {
     return new FractionClass(data.numerator, data.denominator);
   }
 
-  static fromDecimal(decimal: number, precision: number = 12): FractionClass {
+  static fromDecimal(decimal: number, _precision: number = 12): FractionClass {
     if (decimal === 0) return new FractionClass(0);
 
     const sign = decimal < 0 ? -1 : 1;

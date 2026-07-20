@@ -12,7 +12,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import i18next from "i18next";
 import { EnhancedInheritanceCalculationEngine as InheritanceCalculationEngine } from "./enhanced-engine-complete";
-import { AuditLog, createAuditLog } from "./audit-log";
+import { createAuditLog } from "./audit-log";
 import type { AuditLogEntry } from "./audit-log";
 import { CalculationCache } from "../performance/optimization";
 import { debounce } from "../utils/debounce";
@@ -20,7 +20,6 @@ import type {
   EstateData,
   CalculationResult,
   MadhhabType,
-  HeirType,
   HeirsData,
   HeirShare,
 } from "./types";
@@ -631,9 +630,9 @@ export function useAuditLog() {
 // Helper function to generate explanations for differences
 function generateDifferenceExplanation(
   heirKey: string,
-  madhab1: MadhhabType,
-  madhab2: MadhhabType,
-  amountDiff: number,
+  _madhab1: MadhhabType,
+  _madhab2: MadhhabType,
+  _amountDiff: number,
 ): string {
   const explanationKey = `comparison.explanations.${heirKey}`;
   const translated = i18next.t(explanationKey);

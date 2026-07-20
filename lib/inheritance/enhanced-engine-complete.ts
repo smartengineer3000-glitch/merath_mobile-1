@@ -299,11 +299,6 @@ export class EnhancedInheritanceCalculationEngine {
     return Math.max(0, net);
   }
 
-  private applyHijab(heirs: HeirsData): HeirsData {
-    const result = this.hijabSystem.applyHijab(heirs);
-    return result.heirs;
-  }
-
   private isMusharraka(filteredHeirs?: HeirsData): boolean {
     // Musharraka is only recognized in madhabs that support it
     const madhabConfig = FIQH_DATABASE.madhabs[this.madhab];

@@ -15,7 +15,7 @@ interface AsabaDeps {
 }
 
 export function computeAsaba(
-  fixedShares: HeirShareObject[],
+  _fixedShares: HeirShareObject[],
   remainder: FractionClass,
   heirs: HeirsData,
   deps: AsabaDeps,

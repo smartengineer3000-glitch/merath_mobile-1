@@ -1,4 +1,3 @@
-import { FractionClass } from "../fraction";
 import type { HeirsData, HeirShare } from "../types";
 import type { EngineState } from "./types";
 

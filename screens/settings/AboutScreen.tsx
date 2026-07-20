@@ -3,7 +3,6 @@ import {
   View,
   Text,
   ScrollView,
-  Linking,
   StyleSheet,
   I18nManager,
 } from "react-native";

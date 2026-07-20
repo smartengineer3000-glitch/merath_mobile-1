@@ -13,16 +13,16 @@ import { useTranslation } from "react-i18next";
 import { useSettings } from "../../lib/context/SettingsContext";
 import { useMadhab } from "../../lib/context/MadhabContext";
 import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
-import { Card, AppSwitch, Divider, Badge, Button } from "../../components/ui";
+import { Card, AppSwitch, Divider, Badge } from "../../components/ui";
 import { Ionicons } from "../../lib/icons";
 import { languages, type Language } from "../../lib/i18n";
 import { APP_VERSION } from "../../lib/config";
 
 export default function SettingsScreen() {
   const { theme, toggleTheme, mode } = useAppTheme();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
-  const { state, setLanguage, setNotifications, setAutoSave, resetSettings } =
+  const { state, setNotifications, setAutoSave } =
     useSettings();
   const { madhab } = useMadhab();
 
