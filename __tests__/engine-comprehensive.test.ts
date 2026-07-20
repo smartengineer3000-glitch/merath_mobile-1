@@ -428,14 +428,17 @@ describe("Engine input: advanced normalization", () => {
     expect(estate.will).toBe(0);
   });
 
-  it("Infinity passes through (Math.max(0, Infinity) = Infinity)", () => {
+  it("Infinity normalized to 0 (Number.isFinite guard)", () => {
     const estate = normalizeEstateInput({
       total: Infinity,
       funeral: Infinity,
       debts: Infinity,
       will: Infinity,
     });
-    expect(estate.total).toBe(Infinity);
+    expect(estate.total).toBe(0);
+    expect(estate.funeral).toBe(0);
+    expect(estate.debts).toBe(0);
+    expect(estate.will).toBe(0);
   });
 
   it("wife clamped to max 4", () => {

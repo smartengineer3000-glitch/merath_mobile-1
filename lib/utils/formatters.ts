@@ -14,11 +14,12 @@ export function formatCurrency(
   value: number,
   options: Intl.NumberFormatOptions = {},
 ): string {
-  const num = Math.max(0, value || 0);
+  const num = Number(value);
+  const safe = Number.isFinite(num) ? Math.max(0, num) : 0;
   return new Intl.NumberFormat("en-US", {
     maximumFractionDigits: 0,
     ...options,
-  }).format(num);
+  }).format(safe);
 }
 
 /**
@@ -28,11 +29,12 @@ export function formatCurrency(
  * @returns Formatted number string with English numerals
  */
 export function formatNumber(value: number, decimals: number = 2): string {
-  const num = value || 0;
+  const num = Number(value);
+  const safe = Number.isFinite(num) ? num : 0;
   return new Intl.NumberFormat("en-US", {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
-  }).format(num);
+  }).format(safe);
 }
 
 /**

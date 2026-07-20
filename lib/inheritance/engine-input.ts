@@ -6,7 +6,8 @@ export interface EngineValidationResult {
 }
 
 const clamp = (value: number | undefined, max?: number) => {
-  const normalized = Math.max(0, value || 0);
+  const num = Number(value);
+  const normalized = Math.max(0, Number.isFinite(num) ? num : 0);
   return max === undefined ? normalized : Math.min(normalized, max);
 };
 
