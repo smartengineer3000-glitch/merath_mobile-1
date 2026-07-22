@@ -248,15 +248,15 @@ describe("Mother's share — Quran 4:11", () => {
     expect(totalShares(r)).toBeCloseTo(E, -2);
   });
 
-  it("Case 20: Mother alone with father (Umariyyah) — mother 1/3, father remainder", () => {
+  it("Case 20: Wife + father + mother (NOT Umariyyah — no husband) — mother 1/3, father asaba", () => {
     const r = run("hanafi", { mother: 1, father: 1, wife: 1 });
-    // Wife: 1/4 = 60000
-    // Mother: 1/3 of remainder = 1/3 × 180000 = 60000
-    // Father: remainder = 120000
+    // Wife: 1/4 = 60000 (no descendants)
+    // Mother: 1/3 = 80000 (no descendants, no siblings — NOT Umariyyah)
+    // Father: asaba = 240000 - 60000 - 80000 = 100000
     expect(r.success).toBe(true);
     expect(shareAmount(r, "wife")).toBeCloseTo(60000, -2);
-    expect(shareAmount(r, "mother")).toBeCloseTo(60000, -2);
-    expect(shareAmount(r, "father")).toBeCloseTo(120000, -2);
+    expect(shareAmount(r, "mother")).toBeCloseTo(80000, -2);
+    expect(shareAmount(r, "father")).toBeCloseTo(100000, -2);
     expect(totalShares(r)).toBeCloseTo(E, -2);
   });
 });
@@ -608,10 +608,10 @@ describe("Complex multi-heir scenarios", () => {
     expect(totalShares(r)).toBeCloseTo(E, -2);
   });
 
-  it("Case 51: Wife + father + mother (Shafii) — Umariyyah variant", () => {
+  it("Case 51: Wife + father + mother (Shafii) — NOT Umariyyah (no husband)", () => {
     // Wife=1/4=60000
-    // Mother=1/3 of remainder=1/3×180000=60000
-    // Father=remainder=120000
+    // Mother=1/3=80000 (no descendants, no siblings)
+    // Father=asaba=100000
     const r = run("shafii", {
       wife: 1,
       father: 1,
@@ -619,8 +619,8 @@ describe("Complex multi-heir scenarios", () => {
     });
     expect(r.success).toBe(true);
     expect(shareAmount(r, "wife")).toBeCloseTo(60000, -2);
-    expect(shareAmount(r, "mother")).toBeCloseTo(60000, -2);
-    expect(shareAmount(r, "father")).toBeCloseTo(120000, -2);
+    expect(shareAmount(r, "mother")).toBeCloseTo(80000, -2);
+    expect(shareAmount(r, "father")).toBeCloseTo(100000, -2);
     expect(totalShares(r)).toBeCloseTo(E, -2);
   });
 

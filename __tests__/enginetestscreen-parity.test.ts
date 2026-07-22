@@ -118,10 +118,10 @@ describe("EngineTestScreen parity (40 cases)", () => {
     100,
   );
   run(
-    "M4: Wife + father + mother (Umariyyah)",
+    "M4: Wife + father + mother (NOT Umariyyah — no husband)",
     "shafii",
     { wife: 1, father: 1, mother: 1 },
-    { wife: 30000, mother: 30000, father: 60000 },
+    { wife: 30000, mother: 40000, father: 50000 },
   );
   run(
     "M5: 4 wives + son",
@@ -170,16 +170,16 @@ describe("EngineTestScreen parity (40 cases)", () => {
 
   // ── COMPLEX ──
   run(
-    "C1 [shafii]: Umariyyah",
+    "C1 [shafii]: Wife + mother + father (NOT Umariyyah)",
     "shafii",
     { wife: 1, mother: 1, father: 1 },
-    { wife: 30000, mother: 30000, father: 60000 },
+    { wife: 30000, mother: 40000, father: 50000 },
   );
   run(
-    "C1 [maliki]: Umariyyah",
+    "C1 [maliki]: Wife + mother + father (NOT Umariyyah)",
     "maliki",
     { wife: 1, mother: 1, father: 1 },
-    { wife: 30000, mother: 20000, father: 70000 },
+    { wife: 30000, mother: 40000, father: 50000 },
   );
   run("C2 [hanafi]: Wife radd", "hanafi", { wife: 1 }, { wife: 120000 });
   run("C2 [shafii]: Wife no radd", "shafii", { wife: 1 }, { wife: 30000 });
@@ -518,16 +518,16 @@ describe("EngineTestScreen parity (40 cases)", () => {
     { husband: 60000, mother: 20000 },
   );
   run(
-    "FQ20: Wife + father + mother (Hanafi Umariyyah)",
+    "FQ20: Wife + father + mother (Hanafi — NOT Umariyyah)",
     "hanafi",
     { wife: 1, father: 1, mother: 1 },
-    { wife: 30000, mother: 30000, father: 60000 },
+    { wife: 30000, mother: 40000, father: 50000 },
   );
   run(
-    "FQ21: Wife + father + mother (Maliki Umariyyah)",
+    "FQ21: Wife + father + mother (Maliki — NOT Umariyyah)",
     "maliki",
     { wife: 1, father: 1, mother: 1 },
-    { wife: 30000, mother: 20000, father: 70000 },
+    { wife: 30000, mother: 40000, father: 50000 },
   );
   run(
     "FQ22: Husband + mother + maternal brother (Hanafi radd to spouse)",

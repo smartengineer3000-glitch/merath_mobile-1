@@ -234,13 +234,13 @@ describe("Moderate Cases — Multiple Heirs & Rule Interactions", () => {
     expectTotal(r);
   });
 
-  // M4: Wife + father + mother (Umariyyah case) — W 1/4, M 1/4 (1/3 of remainder), Father asaba
-  it("M4: Wife + father + mother — W 30k, M 30k, F 60k", () => {
+  // M4: Wife + father + mother (NOT Umariyyah — no husband) — W 1/4, M 1/3, Father asaba
+  it("M4: Wife + father + mother — W 30k, M 40k, F 50k", () => {
     const r = calc("shafii", { wife: 1, father: 1, mother: 1 });
     expect(r.success).toBe(true);
     expectShare(r, "wife", 30000); // 1/4
-    expectShare(r, "mother", 30000); // 1/3 × (1 - 1/4) = 1/4 (Umariyyah)
-    expectShare(r, "father", 60000); // asaba
+    expectShare(r, "mother", 40000); // 1/3 (no descendants, no siblings)
+    expectShare(r, "father", 50000); // asaba
     expectTotal(r);
   });
 
@@ -330,28 +330,27 @@ describe("Moderate Cases — Multiple Heirs & Rule Interactions", () => {
 // COMPLEX CASES — Awl, Radd, Musharak, Umariyyah
 // ============================================================
 describe("Complex Cases — Awl, Radd, and Special Rules", () => {
-  // C1: Umariyyah case — Wife + mother + father (no descendants)
-  // Mother gets 1/3 of remainder after spouse (Shafii/Hanafi/Hanbali)
-  // Maliki: mother always gets 1/6
-  it("C1 [shafii]: Umariyyah — Wife + mother + father (no descendants)", () => {
+  // C1: Wife + mother + father (NOT Umariyyah — no husband)
+  // Mother gets 1/3 (no descendants, no siblings) for all madhabs
+  it("C1 [shafii]: Wife + mother + father (NOT Umariyyah)", () => {
     const r = calc("shafii", { wife: 1, mother: 1, father: 1 });
     expect(r.success).toBe(true);
     expectShare(r, "wife", 30000); // 1/4
-    // Mother: 1/3 × (1 - 1/4) = 1/3 × 3/4 = 1/4 = 30,000
-    expectShare(r, "mother", 30000);
-    // Father: asaba = 120,000 - 30,000 - 30,000 = 60,000
-    expectShare(r, "father", 60000);
+    // Mother: 1/3 = 40,000 (no descendants, no siblings)
+    expectShare(r, "mother", 40000);
+    // Father: asaba = 120,000 - 30,000 - 40,000 = 50,000
+    expectShare(r, "father", 50000);
     expectTotal(r);
   });
 
-  it("C1 [maliki]: Umariyyah — Wife + mother + father [maliki]", () => {
+  it("C1 [maliki]: Wife + mother + father (NOT Umariyyah)", () => {
     const r = calc("maliki", { wife: 1, mother: 1, father: 1 });
     expect(r.success).toBe(true);
     expectShare(r, "wife", 30000); // 1/4
-    // Maliki: mother always gets 1/6 = 20,000
-    expectShare(r, "mother", 20000);
-    // Father: asaba = 70,000
-    expectShare(r, "father", 70000);
+    // Mother: 1/3 = 40,000 (no descendants, no siblings)
+    expectShare(r, "mother", 40000);
+    // Father: asaba = 50,000
+    expectShare(r, "father", 50000);
     expectTotal(r);
   });
 

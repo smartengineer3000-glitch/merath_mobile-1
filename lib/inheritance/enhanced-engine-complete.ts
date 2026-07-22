@@ -753,11 +753,11 @@ export class EnhancedInheritanceCalculationEngine {
   }
 
   private isUmariyyah(heirs: HeirsData): boolean {
-    const hasSpouse = (heirs.husband || 0) > 0 || (heirs.wife || 0) > 0;
+    const hasHusband = (heirs.husband || 0) > 0;
     const hasParents = (heirs.father || 0) > 0 && (heirs.mother || 0) > 0;
     const hasDescendants = this.hasDescendants();
 
-    return hasSpouse && hasParents && !hasDescendants;
+    return hasHusband && hasParents && !hasDescendants;
   }
 
   private getSiblingsCount(heirs: HeirsData): number {
