@@ -13,7 +13,11 @@ import type { EstateData, HeirsData } from "../lib/inheritance/types";
 
 const MADHABS = ["hanafi", "shafii", "maliki", "hanbali"] as const;
 
-function runEngine(madhab: (typeof MADHABS)[number], estate: EstateData, heirs: HeirsData) {
+function runEngine(
+  madhab: (typeof MADHABS)[number],
+  estate: EstateData,
+  heirs: HeirsData,
+) {
   const engine = new InheritanceCalculationEngine(madhab, estate, heirs);
   return engine.calculate();
 }
@@ -535,7 +539,12 @@ describe("Engine: Son blocks extended family", () => {
 
 describe("Engine: Grandson blocks full siblings (no son)", () => {
   const estate: EstateData = { total: 600000, funeral: 0, debts: 0, will: 0 };
-  const heirs: HeirsData = { grandson: 1, full_brother: 1, full_sister: 1, wife: 1 };
+  const heirs: HeirsData = {
+    grandson: 1,
+    full_brother: 1,
+    full_sister: 1,
+    wife: 1,
+  };
 
   it("hijab: grandson blocks full siblings", () => {
     for (const madhab of MADHABS) {

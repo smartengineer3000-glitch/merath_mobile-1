@@ -403,10 +403,7 @@ export function getBlockedHeirs(
       (selectedHeirs[rule.hijabber] || 0) > 0
     ) {
       for (const splitKey of ["grandmother_mother", "grandmother_father"]) {
-        if (
-          (selectedHeirs[splitKey] || 0) > 0 &&
-          !blocked[splitKey]
-        ) {
+        if ((selectedHeirs[splitKey] || 0) > 0 && !blocked[splitKey]) {
           blocked[splitKey] = {
             blocker: rule.hijabber,
             reason: `${rule.hijabber} blocks ${splitKey}`,

@@ -52,7 +52,12 @@ const TOL = 1;
 // SECTION 1: FOUNDATIONAL RULES — Deductions
 // ============================================================================
 describe("1.1 Deductions: Funeral, Debts, Will", () => {
-  const estate: EstateData = { total: 120000, funeral: 12000, debts: 24000, will: 12000 };
+  const estate: EstateData = {
+    total: 120000,
+    funeral: 12000,
+    debts: 24000,
+    will: 12000,
+  };
   const heirs: HeirsData = { wife: 1, son: 1 };
 
   it("all madhabs: will capped at 1/3 of post-deduction estate", () => {
@@ -76,7 +81,12 @@ describe("1.1 Deductions: Funeral, Debts, Will", () => {
   });
 
   it("funeral and debts deducted fully before will cap", () => {
-    const e: EstateData = { total: 120000, funeral: 10000, debts: 20000, will: 10000 };
+    const e: EstateData = {
+      total: 120000,
+      funeral: 10000,
+      debts: 20000,
+      will: 10000,
+    };
     // Post-funeral-debts: 90000; 1/3 = 30000; will=10000 accepted
     // Net = 90000 - 10000 = 80000
     for (const m of ALL_MADHABS) {
@@ -409,7 +419,12 @@ describe("4.1 'Awl: Husband + Mother + Daughter + Granddaughter", () => {
   // 1/4 + 1/6 + 1/2 + 1/6 = 3/12 + 2/12 + 6/12 + 2/12 = 13/12 > 1 ✓
   // Note: 2+ daughters would block granddaughter (no grandson), so we use 1 daughter
 
-  const heirs: HeirsData = { husband: 1, mother: 1, daughter: 1, granddaughter: 1 };
+  const heirs: HeirsData = {
+    husband: 1,
+    mother: 1,
+    daughter: 1,
+    granddaughter: 1,
+  };
 
   it("all madhabs: awl applied, shares reduced proportionally", () => {
     for (const m of ALL_MADHABS) {
@@ -579,7 +594,11 @@ describe("6.1 Hajb: Son excludes all siblings", () => {
   it("Shafii: son blocks full_sister (Shafii includes sisters in son's hijab)", () => {
     const sys = new HijabSystem("shafii");
     const { heirs: h } = sys.applyHijab({
-      son: 1, full_brother: 1, full_sister: 1, maternal_brother: 1, wife: 1,
+      son: 1,
+      full_brother: 1,
+      full_sister: 1,
+      maternal_brother: 1,
+      wife: 1,
     });
     expect(h.full_brother).toBe(0);
     expect(h.full_sister).toBe(0);
@@ -589,7 +608,11 @@ describe("6.1 Hajb: Son excludes all siblings", () => {
   it("Hanafi: son blocks brothers but NOT full_sister (classical Hanafi position)", () => {
     const sys = new HijabSystem("hanafi");
     const { heirs: h } = sys.applyHijab({
-      son: 1, full_brother: 1, full_sister: 1, maternal_brother: 1, wife: 1,
+      son: 1,
+      full_brother: 1,
+      full_sister: 1,
+      maternal_brother: 1,
+      wife: 1,
     });
     expect(h.full_brother).toBe(0);
     // Hanafi: full_sister retains her Quranic fard share even with son
@@ -600,7 +623,11 @@ describe("6.1 Hajb: Son excludes all siblings", () => {
   it("Maliki: son blocks brothers but NOT full_sister (same as Hanafi)", () => {
     const sys = new HijabSystem("maliki");
     const { heirs: h } = sys.applyHijab({
-      son: 1, full_brother: 1, full_sister: 1, maternal_brother: 1, wife: 1,
+      son: 1,
+      full_brother: 1,
+      full_sister: 1,
+      maternal_brother: 1,
+      wife: 1,
     });
     expect(h.full_brother).toBe(0);
     expect(h.full_sister).toBe(1);
@@ -610,7 +637,11 @@ describe("6.1 Hajb: Son excludes all siblings", () => {
   it("Hanbali: son blocks brothers but NOT full_sister (same as Hanafi)", () => {
     const sys = new HijabSystem("hanbali");
     const { heirs: h } = sys.applyHijab({
-      son: 1, full_brother: 1, full_sister: 1, maternal_brother: 1, wife: 1,
+      son: 1,
+      full_brother: 1,
+      full_sister: 1,
+      maternal_brother: 1,
+      wife: 1,
     });
     expect(h.full_brother).toBe(0);
     expect(h.full_sister).toBe(1);
@@ -634,7 +665,10 @@ describe("6.3 Hajb: Mother excludes grandmother (IJMA)", () => {
     for (const m of ALL_MADHABS) {
       const sys = new HijabSystem(m);
       const { heirs: h } = sys.applyHijab({
-        mother: 1, grandmother: 1, grandmother_mother: 1, grandmother_father: 1,
+        mother: 1,
+        grandmother: 1,
+        grandmother_mother: 1,
+        grandmother_father: 1,
       });
       expect(h.mother).toBe(1);
       expect(h.grandmother).toBe(0);
@@ -658,7 +692,9 @@ describe("6.5 Hajb: Full brother blocks paternal siblings", () => {
   it("all madhabs", () => {
     for (const m of ALL_MADHABS) {
       const blocked = getBlockedHeirs(m, {
-        full_brother: 1, paternal_brother: 1, paternal_sister: 1,
+        full_brother: 1,
+        paternal_brother: 1,
+        paternal_sister: 1,
       });
       expect(blocked.paternal_brother).toBeDefined();
       expect(blocked.paternal_sister).toBeDefined();
@@ -671,7 +707,9 @@ describe("6.6 Hajb: Grandson blocks full siblings when no son", () => {
     for (const m of ALL_MADHABS) {
       const sys = new HijabSystem(m);
       const { heirs: h } = sys.applyHijab({
-        grandson: 1, full_brother: 1, full_sister: 1,
+        grandson: 1,
+        full_brother: 1,
+        full_sister: 1,
       });
       expect(h.full_brother).toBe(0);
       expect(h.full_sister).toBe(0);
@@ -786,7 +824,9 @@ describe("8.4 Grandfather + Siblings: Hanbali (musharak)", () => {
 // ============================================================================
 describe("9.1 Musharraka: Husband + Mother + Full Sister + 2 Maternal Siblings", () => {
   const heirs: HeirsData = {
-    husband: 1, mother: 1, full_sister: 1,
+    husband: 1,
+    mother: 1,
+    full_sister: 1,
     maternal_brother: 2,
   };
 
@@ -799,7 +839,12 @@ describe("9.1 Musharraka: Husband + Mother + Full Sister + 2 Maternal Siblings",
     expect(amount(r, "mother")).toBeCloseTo(20000, TOL);
     // The shared_siblings or individual shares should total 40000
     const totalSiblings = r.shares
-      .filter(s => s.key === "shared_siblings" || s.key === "full_sister" || s.key === "maternal_siblings")
+      .filter(
+        (s) =>
+          s.key === "shared_siblings" ||
+          s.key === "full_sister" ||
+          (s.key as string) === "maternal_siblings",
+      )
       .reduce((a, s) => a + s.amount, 0);
     expect(totalSiblings).toBeCloseTo(40000, TOL);
     expect(totalDistributed(r)).toBeCloseTo(120000, -1);
@@ -811,7 +856,10 @@ describe("9.1 Musharraka: Husband + Mother + Full Sister + 2 Maternal Siblings",
 // ============================================================================
 describe("10.1 Akdariyya: Husband + Mother + Grandfather + 1 Full Sister", () => {
   const heirs: HeirsData = {
-    husband: 1, mother: 1, grandfather: 1, full_sister: 1,
+    husband: 1,
+    mother: 1,
+    grandfather: 1,
+    full_sister: 1,
   };
 
   it("Shafii: Akdariyya case with pre-computed fractions", () => {
@@ -840,7 +888,7 @@ describe("11.1 Multiple Wives with Descendants", () => {
       const r = calc(m, heirs);
       // Total wife share: 1/8 = 15000; each wife = 7500
       const totalWives = r.shares
-        .filter(s => s.key === "wife")
+        .filter((s) => s.key === "wife")
         .reduce((a, s) => a + s.amount, 0);
       expect(totalWives).toBeCloseTo(15000, TOL);
     }
@@ -853,7 +901,7 @@ describe("11.2 Multiple Wives without Descendants — sole heirs (Hanafi/Hanbali
     for (const m of RADD_MADHABS) {
       const r = calc(m, heirs);
       const totalWives = r.shares
-        .filter(s => s.key === "wife")
+        .filter((s) => s.key === "wife")
         .reduce((a, s) => a + s.amount, 0);
       expect(totalWives).toBeCloseTo(120000, TOL);
     }
@@ -864,7 +912,7 @@ describe("11.2 Multiple Wives without Descendants — sole heirs (Hanafi/Hanbali
     for (const m of NO_RADD_MADHABS) {
       const r = calc(m, heirs);
       const totalWives = r.shares
-        .filter(s => s.key === "wife")
+        .filter((s) => s.key === "wife")
         .reduce((a, s) => a + s.amount, 0);
       // 3 wives share 1/4 = 30000 (each gets 10000)
       expect(totalWives).toBeCloseTo(30000, TOL);
@@ -878,7 +926,7 @@ describe("11.3 Maximum 4 Wives", () => {
     for (const m of RADD_MADHABS) {
       const r = calc(m, heirs);
       const totalWives = r.shares
-        .filter(s => s.key === "wife")
+        .filter((s) => s.key === "wife")
         .reduce((a, s) => a + s.amount, 0);
       expect(totalWives).toBeCloseTo(120000, TOL);
     }
@@ -889,7 +937,7 @@ describe("11.3 Maximum 4 Wives", () => {
     for (const m of NO_RADD_MADHABS) {
       const r = calc(m, heirs);
       const totalWives = r.shares
-        .filter(s => s.key === "wife")
+        .filter((s) => s.key === "wife")
         .reduce((a, s) => a + s.amount, 0);
       // Should be treated as 4 wives: 1/4 = 30000
       expect(totalWives).toBeCloseTo(30000, TOL);
@@ -902,7 +950,11 @@ describe("11.3 Maximum 4 Wives", () => {
 // ============================================================================
 describe("12.1 Complex: Husband + Mother + Father + Son + 2 Daughters", () => {
   const heirs: HeirsData = {
-    husband: 1, mother: 1, father: 1, son: 1, daughter: 2,
+    husband: 1,
+    mother: 1,
+    father: 1,
+    son: 1,
+    daughter: 2,
   };
 
   it("all madhabs: total distributed = net estate", () => {
@@ -950,7 +1002,10 @@ describe("12.1 Complex: Husband + Mother + Father + Son + 2 Daughters", () => {
 
 describe("12.2 Complex: Husband + Father + Grandfather + Full Brother", () => {
   const heirs: HeirsData = {
-    husband: 1, father: 1, grandfather: 1, full_brother: 1,
+    husband: 1,
+    father: 1,
+    grandfather: 1,
+    full_brother: 1,
   };
 
   it("all madhabs: father blocks grandfather, full_brother gets asaba", () => {
@@ -1047,7 +1102,11 @@ describe("15.1 Grandmother: Single grandmother gets 1/6 when no mother", () => {
 
 describe("15.2 Grandmother: Both grandmothers share equally (same degree)", () => {
   it("Shafii/Maliki: each gets 1/12, no radd", () => {
-    const heirs: HeirsData = { grandmother_mother: 1, grandmother_father: 1, husband: 1 };
+    const heirs: HeirsData = {
+      grandmother_mother: 1,
+      grandmother_father: 1,
+      husband: 1,
+    };
     for (const m of NO_RADD_MADHABS) {
       const r = calc(m, heirs);
       // Husband: 1/2 = 60000; each grandmother: 1/12 = 10000
@@ -1057,7 +1116,11 @@ describe("15.2 Grandmother: Both grandmothers share equally (same degree)", () =
   });
 
   it("Hanafi/Hanbali: each gets 1/12 + radd (blood relatives)", () => {
-    const heirs: HeirsData = { grandmother_mother: 1, grandmother_father: 1, husband: 1 };
+    const heirs: HeirsData = {
+      grandmother_mother: 1,
+      grandmother_father: 1,
+      husband: 1,
+    };
     for (const m of RADD_MADHABS) {
       const r = calc(m, heirs);
       // Husband: 1/2 = 60000; each grandmother: 1/12 + proportional radd = 30000
@@ -1190,7 +1253,7 @@ describe("18.1 Dhawu al-Arham: Husband + full_nephew (no other heirs)", () => {
       // Husband: 1/2 = 60000; Remainder = 60000 → to nephew via dhawu al-arham
       expect(amount(r, "husband")).toBeCloseTo(60000, TOL);
       const totalNephew = r.shares
-        .filter(s => s.key === "full_nephew")
+        .filter((s) => s.key === "full_nephew")
         .reduce((a, s) => a + s.amount, 0);
       expect(totalNephew).toBeCloseTo(60000, TOL);
     }
@@ -1214,7 +1277,7 @@ describe("18.2 Dhawu al-Arham: Husband + maternal_uncle", () => {
       const r = calc(m, heirs);
       expect(amount(r, "husband")).toBeCloseTo(60000, TOL);
       const totalUncle = r.shares
-        .filter(s => s.key === "maternal_uncle")
+        .filter((s) => s.key === "maternal_uncle")
         .reduce((a, s) => a + s.amount, 0);
       expect(totalUncle).toBeCloseTo(60000, TOL);
     }
@@ -1265,7 +1328,13 @@ describe("19.3 Estate = 100 with complex heirs (precision test)", () => {
 describe("19.4 Very large estate (numeric precision)", () => {
   it("no overflow or precision loss", () => {
     const e: EstateData = { total: 1000000000, funeral: 0, debts: 0, will: 0 }; // 1 billion
-    const heirs: HeirsData = { wife: 1, son: 2, daughter: 3, father: 1, mother: 1 };
+    const heirs: HeirsData = {
+      wife: 1,
+      son: 2,
+      daughter: 3,
+      father: 1,
+      mother: 1,
+    };
     for (const m of ALL_MADHABS) {
       const r = calc(m, heirs, e);
       expect(totalDistributed(r)).toBeCloseTo(1000000000, -1);

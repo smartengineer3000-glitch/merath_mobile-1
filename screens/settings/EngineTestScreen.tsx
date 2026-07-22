@@ -918,171 +918,167 @@ export default function EngineTestScreen() {
             </Card>
 
             {/* Results by category */}
-            {(["simple", "moderate", "complex", "special", "fiqh"] as const).map(
-              (cat) => {
-                const catResults = byCategory[cat];
-                if (!catResults) return null;
-                const catMeta = CATEGORY_ICONS[cat];
-                const catPassed = catResults.filter((r) => r.passed).length;
-                const catLabel = t(`engineTest.category.${cat}`);
-                const catColor =
-                  (theme.colors as any)[catMeta.colorKey]?.main ??
-                  theme.colors.primary.main;
+            {(
+              ["simple", "moderate", "complex", "special", "fiqh"] as const
+            ).map((cat) => {
+              const catResults = byCategory[cat];
+              if (!catResults) return null;
+              const catMeta = CATEGORY_ICONS[cat];
+              const catPassed = catResults.filter((r) => r.passed).length;
+              const catLabel = t(`engineTest.category.${cat}`);
+              const catColor =
+                (theme.colors as any)[catMeta.colorKey]?.main ??
+                theme.colors.primary.main;
 
-                return (
-                  <Card key={cat} variant="elevated" style={styles.card}>
-                    <View
+              return (
+                <Card key={cat} variant="elevated" style={styles.card}>
+                  <View
+                    style={[
+                      styles.categoryHeader,
+                      { borderBottomColor: theme.colors.neutral.light100 },
+                    ]}
+                  >
+                    <View style={styles.categoryTitleRow}>
+                      <Ionicons
+                        name={catMeta.icon as any}
+                        size={18}
+                        color={catColor}
+                      />
+                      <Text
+                        style={[
+                          styles.categoryTitle,
+                          {
+                            color: theme.colors.neutral.dark200,
+                            fontFamily: theme.fontFamily.english,
+                          },
+                        ]}
+                      >
+                        {catLabel} {t("engineTest.cases")}
+                      </Text>
+                    </View>
+                    <Badge
+                      label={`${catPassed}/${catResults.length}`}
+                      color={
+                        catPassed === catResults.length
+                          ? theme.colors.success.main
+                          : theme.colors.error.main
+                      }
+                      size="sm"
+                    />
+                  </View>
+
+                  {catResults.map((r) => (
+                    <TouchableOpacity
+                      key={r.id}
                       style={[
-                        styles.categoryHeader,
-                        { borderBottomColor: theme.colors.neutral.light100 },
+                        styles.testRow,
+                        {
+                          borderBottomColor: "#E0E0E0",
+                        },
                       ]}
+                      onPress={() =>
+                        setExpandedId(expandedId === r.id ? null : r.id)
+                      }
+                      activeOpacity={0.7}
                     >
-                      <View style={styles.categoryTitleRow}>
+                      <View style={styles.testRowLeft}>
                         <Ionicons
-                          name={catMeta.icon as any}
+                          name={r.passed ? "checkmark-circle" : "close-circle"}
                           size={18}
-                          color={catColor}
+                          color={
+                            r.passed
+                              ? theme.colors.success.main
+                              : theme.colors.error.main
+                          }
                         />
                         <Text
                           style={[
-                            styles.categoryTitle,
+                            styles.testName,
                             {
                               color: theme.colors.neutral.dark200,
                               fontFamily: theme.fontFamily.english,
                             },
                           ]}
+                          numberOfLines={1}
                         >
-                          {catLabel} {t("engineTest.cases")}
+                          {r.name}
                         </Text>
                       </View>
-                      <Badge
-                        label={`${catPassed}/${catResults.length}`}
-                        color={
-                          catPassed === catResults.length
-                            ? theme.colors.success.main
-                            : theme.colors.error.main
-                        }
-                        size="sm"
-                      />
-                    </View>
+                      <View style={styles.testRowRight}>
+                        {r.awlApplied && (
+                          <Badge
+                            label={t("engineTest.awl")}
+                            color={theme.colors.tertiary.main}
+                            size="sm"
+                          />
+                        )}
+                        {r.raddApplied && (
+                          <Badge
+                            label={t("engineTest.radd")}
+                            color={theme.colors.tertiary.dark}
+                            size="sm"
+                          />
+                        )}
+                        <Ionicons
+                          name={
+                            expandedId === r.id ? "chevron-up" : "chevron-down"
+                          }
+                          size={14}
+                          color={theme.colors.neutral.light400}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  ))}
 
-                    {catResults.map((r) => (
-                      <TouchableOpacity
-                        key={r.id}
+                  {/* Expanded details for failed tests */}
+                  {catResults
+                    .filter((r) => !r.passed && expandedId === r.id)
+                    .map((r) => (
+                      <View
+                        key={`detail-${r.id}`}
                         style={[
-                          styles.testRow,
+                          styles.testDetail,
                           {
-                            borderBottomColor: "#E0E0E0",
+                            backgroundColor: theme.colors.background.light,
                           },
                         ]}
-                        onPress={() =>
-                          setExpandedId(expandedId === r.id ? null : r.id)
-                        }
-                        activeOpacity={0.7}
                       >
-                        <View style={styles.testRowLeft}>
-                          <Ionicons
-                            name={
-                              r.passed ? "checkmark-circle" : "close-circle"
-                            }
-                            size={18}
-                            color={
-                              r.passed
-                                ? theme.colors.success.main
-                                : theme.colors.error.main
-                            }
-                          />
-                          <Text
-                            style={[
-                              styles.testName,
-                              {
-                                color: theme.colors.neutral.dark200,
-                                fontFamily: theme.fontFamily.english,
-                              },
-                            ]}
-                            numberOfLines={1}
-                          >
-                            {r.name}
-                          </Text>
-                        </View>
-                        <View style={styles.testRowRight}>
-                          {r.awlApplied && (
-                            <Badge
-                              label={t("engineTest.awl")}
-                              color={theme.colors.tertiary.main}
-                              size="sm"
-                            />
-                          )}
-                          {r.raddApplied && (
-                            <Badge
-                              label={t("engineTest.radd")}
-                              color={theme.colors.tertiary.dark}
-                              size="sm"
-                            />
-                          )}
-                          <Ionicons
-                            name={
-                              expandedId === r.id
-                                ? "chevron-up"
-                                : "chevron-down"
-                            }
-                            size={14}
-                            color={theme.colors.neutral.light400}
-                          />
-                        </View>
-                      </TouchableOpacity>
-                    ))}
-
-                    {/* Expanded details for failed tests */}
-                    {catResults
-                      .filter((r) => !r.passed && expandedId === r.id)
-                      .map((r) => (
-                        <View
-                          key={`detail-${r.id}`}
+                        <Text
                           style={[
-                            styles.testDetail,
+                            styles.detailError,
                             {
-                              backgroundColor: theme.colors.background.light,
+                              color: theme.colors.error.main,
+                              fontFamily: theme.fontFamily.english,
                             },
                           ]}
                         >
-                          <Text
-                            style={[
-                              styles.detailError,
-                              {
-                                color: theme.colors.error.main,
-                                fontFamily: theme.fontFamily.english,
-                              },
-                            ]}
-                          >
-                            {r.error}
-                          </Text>
-                          {Object.keys(r.expected).length > 0 && (
-                            <View style={styles.detailGrid}>
-                              {Object.entries(r.expected).map(([key, exp]) => (
-                                <Text
-                                  key={key}
-                                  style={[
-                                    styles.detailLine,
-                                    {
-                                      color: theme.colors.neutral.dark300,
-                                      fontFamily: theme.fontFamily.english,
-                                    },
-                                  ]}
-                                >
-                                  {key}: {t("engineTest.computed")}{" "}
-                                  {r.computed[key] ?? t("engineTest.na")} /{" "}
-                                  {t("engineTest.expected")} {exp}
-                                </Text>
-                              ))}
-                            </View>
-                          )}
-                        </View>
-                      ))}
-                  </Card>
-                );
-              },
-            )}
+                          {r.error}
+                        </Text>
+                        {Object.keys(r.expected).length > 0 && (
+                          <View style={styles.detailGrid}>
+                            {Object.entries(r.expected).map(([key, exp]) => (
+                              <Text
+                                key={key}
+                                style={[
+                                  styles.detailLine,
+                                  {
+                                    color: theme.colors.neutral.dark300,
+                                    fontFamily: theme.fontFamily.english,
+                                  },
+                                ]}
+                              >
+                                {key}: {t("engineTest.computed")}{" "}
+                                {r.computed[key] ?? t("engineTest.na")} /{" "}
+                                {t("engineTest.expected")} {exp}
+                              </Text>
+                            ))}
+                          </View>
+                        )}
+                      </View>
+                    ))}
+                </Card>
+              );
+            })}
           </>
         )}
       </ScrollView>

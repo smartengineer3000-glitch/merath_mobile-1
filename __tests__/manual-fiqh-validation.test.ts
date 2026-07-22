@@ -18,11 +18,7 @@ import type { MadhhabType } from "../lib/inheritance/types";
 const E = 240000; // Estate (clean number for all fractions)
 const TOLERANCE = 2; // Allow rounding tolerance
 
-function run(
-  madhab: MadhhabType,
-  heirs: Record<string, number>,
-  estate = E,
-) {
+function run(madhab: MadhhabType, heirs: Record<string, number>, estate = E) {
   const engine = new EnhancedInheritanceCalculationEngine(
     madhab,
     { total: estate, funeral: 0, debts: 0, will: 0 },
@@ -33,7 +29,8 @@ function run(
 
 function shareAmount(result: any, key: string): number {
   const s = result.shares.find(
-    (h: any) => h.key === key || h.heir === key || h.heirType === key || h.name === key,
+    (h: any) =>
+      h.key === key || h.heir === key || h.heirType === key || h.name === key,
   );
   return s ? s.amount : 0;
 }
@@ -51,7 +48,12 @@ function totalShares(result: any): number {
 // ============================================================================
 describe("Quran 4:11 — Son gets 2x daughter's share", () => {
   it("Case 1: 1 son + 1 daughter — son gets 2x (all madhabs)", () => {
-    for (const m of ["shafii", "hanafi", "maliki", "hanbali"] as MadhhabType[]) {
+    for (const m of [
+      "shafii",
+      "hanafi",
+      "maliki",
+      "hanbali",
+    ] as MadhhabType[]) {
       const r = run(m, { son: 1, daughter: 1 });
       const sonAmt = shareAmount(r, "son");
       const daugAmt = shareAmount(r, "daughter");
@@ -102,7 +104,10 @@ describe("Quran 4:11 — Son gets 2x daughter's share", () => {
     const daughterEntry = r.shares.find((h: any) => h.key === "daughter");
     const sonCount = sonEntry?.count || 1;
     const daughterCount = daughterEntry?.count || 1;
-    expect(sonShare / sonCount).toBeCloseTo((daughterShare / daughterCount) * 2, -2);
+    expect(sonShare / sonCount).toBeCloseTo(
+      (daughterShare / daughterCount) * 2,
+      -2,
+    );
     expect(totalShares(r)).toBeCloseTo(E, -2);
   });
 });
@@ -455,7 +460,9 @@ describe("Maternal siblings — Quran 4:12", () => {
     expect(r.success).toBe(true);
     // Engine groups maternal siblings under "maternal_siblings" key
     // With no other heirs, radd fills remainder → full estate
-    const maternalEntry = r.shares.find((h: any) => h.key === "maternal_siblings");
+    const maternalEntry = r.shares.find(
+      (h: any) => h.key === "maternal_siblings",
+    );
     expect(maternalEntry).toBeDefined();
     expect(maternalEntry!.amount).toBeCloseTo(E, -2);
   });
@@ -466,7 +473,9 @@ describe("Maternal siblings — Quran 4:12", () => {
       maternal_sister: 1,
     });
     expect(r.success).toBe(true);
-    const maternalEntry = r.shares.find((h: any) => h.key === "maternal_siblings");
+    const maternalEntry = r.shares.find(
+      (h: any) => h.key === "maternal_siblings",
+    );
     expect(maternalEntry).toBeDefined();
     // 1/3 initial + radd fills remainder → full estate
     expect(maternalEntry!.amount).toBeCloseTo(E, -2);
@@ -474,7 +483,12 @@ describe("Maternal siblings — Quran 4:12", () => {
   });
 
   it("Case 41: Maternal siblings blocked by father (all madhabs)", () => {
-    for (const m of ["shafii", "hanafi", "maliki", "hanbali"] as MadhhabType[]) {
+    for (const m of [
+      "shafii",
+      "hanafi",
+      "maliki",
+      "hanbali",
+    ] as MadhhabType[]) {
       const r = run(m, {
         maternal_brother: 2,
         father: 1,
@@ -485,7 +499,12 @@ describe("Maternal siblings — Quran 4:12", () => {
   });
 
   it("Case 42: Maternal siblings blocked by son (all madhabs)", () => {
-    for (const m of ["shafii", "hanafi", "maliki", "hanbali"] as MadhhabType[]) {
+    for (const m of [
+      "shafii",
+      "hanafi",
+      "maliki",
+      "hanbali",
+    ] as MadhhabType[]) {
       const r = run(m, {
         maternal_brother: 2,
         son: 1,
@@ -508,7 +527,12 @@ describe("Grandmother rules — madhab differences", () => {
   });
 
   it("Case 44: Grandmother gets 1/6 when no mother (all madhabs)", () => {
-    for (const m of ["shafii", "hanafi", "maliki", "hanbali"] as MadhhabType[]) {
+    for (const m of [
+      "shafii",
+      "hanafi",
+      "maliki",
+      "hanbali",
+    ] as MadhhabType[]) {
       const r = run(m, { grandmother_mother: 1, son: 1 });
       expect(r.success).toBe(true);
       expect(hasShare(r, "grandmother_mother")).toBe(true);
@@ -938,7 +962,12 @@ describe("Mathematical invariants", () => {
   });
 
   it("Case 73: Son share always >= daughter share (same estate)", () => {
-    for (const m of ["shafii", "hanafi", "maliki", "hanbali"] as MadhhabType[]) {
+    for (const m of [
+      "shafii",
+      "hanafi",
+      "maliki",
+      "hanbali",
+    ] as MadhhabType[]) {
       const r = run(m, { son: 1, daughter: 1 });
       expect(shareAmount(r, "son")).toBeGreaterThanOrEqual(
         shareAmount(r, "daughter"),
@@ -947,7 +976,12 @@ describe("Mathematical invariants", () => {
   });
 
   it("Case 74: Husband share always >= wife share (same estate)", () => {
-    for (const m of ["shafii", "hanafi", "maliki", "hanbali"] as MadhhabType[]) {
+    for (const m of [
+      "shafii",
+      "hanafi",
+      "maliki",
+      "hanbali",
+    ] as MadhhabType[]) {
       const r = run(m, { husband: 1, wife: 1 });
       expect(shareAmount(r, "husband")).toBeGreaterThanOrEqual(
         shareAmount(r, "wife"),

@@ -57,7 +57,12 @@ describe("EngineTestScreen parity (40 cases)", () => {
       { husband: isRadd ? 120000 : 60000 },
     );
     run(`S3 [${m}]: Son only`, m, { son: 1 }, { son: 120000 });
-    run(`S4 [${m}]: Daughter only`, m, { daughter: 1 }, { daughter: isRadd ? 120000 : 60000 });
+    run(
+      `S4 [${m}]: Daughter only`,
+      m,
+      { daughter: 1 },
+      { daughter: isRadd ? 120000 : 60000 },
+    );
     run(
       `S5 [${m}]: Mother + father`,
       m,
