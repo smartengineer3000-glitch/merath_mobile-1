@@ -331,9 +331,9 @@ describe("AuditLog System", () => {
       });
 
       const summary = await getAuditLogStats(auditLog);
-      expect(summary).toContain("📊");
-      expect(summary).toContain("إجمالي السجلات");
-      expect(summary).toContain("معدل النجاح");
+      expect(summary).toContain("Total entries");
+      expect(summary).toContain("Success rate");
+      expect(summary).toContain("100.0%");
     });
   });
 

@@ -1,15 +1,13 @@
 /**
- * دوال مساعدة وثوابت نظام المواريث
  * Helper Functions and Inheritance System Constants
  */
 
 import { MadhhabType, HeirType } from "./types";
 
 /**
- * قائمة أسماء الورثة بالعربية
- * Matches original HTML (Merath_Cluade_Pro7.html) exactly
+ * Arabic heir names (used internally by isValidHeirType)
  */
-export const HEIR_NAMES: Record<HeirType, string> = {
+const HEIR_NAMES: Record<HeirType, string> = {
   husband: "الزوج",
   wife: "الزوجة",
   father: "الأب",
@@ -49,12 +47,11 @@ export const HEIR_NAMES: Record<HeirType, string> = {
   daughter_daughter: "بنت البنت",
   sister_children: "أولاد الأخت",
   treasury: "بيت المال",
-  // Added for Musharraka special case
   shared_siblings: "الإخوة لأم والأشقاء",
 };
 
 /**
- * ألوان المذاهب
+ * Madhab display colors (shared across app)
  */
 export const MADHAB_COLORS: Record<MadhhabType, string> = {
   shafii: "#FF6B6B",
@@ -64,101 +61,21 @@ export const MADHAB_COLORS: Record<MadhhabType, string> = {
 };
 
 /**
- * أيقونات المذاهب
- */
-export const MADHAB_ICONS: Record<MadhhabType, string> = {
-  shafii: "🕌",
-  hanafi: "📖",
-  maliki: "⚖️",
-  hanbali: "📜",
-};
-
-/**
- * أسماء المذاهب
- */
-export const MADHAB_NAMES: Record<MadhhabType, string> = {
-  shafii: "المذهب الشافعي",
-  hanafi: "المذهب الحنفي",
-  maliki: "المذهب المالكي",
-  hanbali: "المذهب الحنبلي",
-};
-
-/**
- * التحقق من صحة المذهب
- */
-export function isValidMadhab(madhab: any): madhab is MadhhabType {
-  return ["shafii", "hanafi", "maliki", "hanbali"].includes(madhab);
-}
-
-/**
- * التحقق من صحة نوع الوارث
+ * Validate heir type against known types
  */
 export function isValidHeirType(heir: any): heir is HeirType {
   return Object.keys(HEIR_NAMES).includes(heir);
 }
 
 /**
- * تنسيق المبلغ كعملة
- */
-export function formatCurrency(amount: number, currency = "SAR"): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(amount);
-}
-
-/**
- * تنسيق النسبة المئوية
- */
-export function formatPercentage(decimal: number): string {
-  return `${(decimal * 100).toFixed(2)}%`;
-}
-
-/**
- * حساب LCM (أقل مضاعف مشترك)
- */
-export function lcm(a: number, b: number): number {
-  return Math.abs(a * b) / gcd(a, b);
-}
-
-/**
- * حساب GCD (أكبر عامل مشترك)
- */
-export function gcd(a: number, b: number): number {
-  return b === 0 ? a : gcd(b, a % b);
-}
-
-/**
- * توليد معرف فريد
+ * Generate a unique ID
  */
 export function generateId(): string {
   return `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 }
 
 /**
- * قياس وقت التنفيذ
- */
-export function measureTime<T>(fn: () => T): { result: T; time: number } {
-  const start = performance.now();
-  const result = fn();
-  const time = performance.now() - start;
-  return { result, time };
-}
-
-/**
- * تنسيق الوقت بصيغة قابلة للقراءة
- */
-export function formatTime(milliseconds: number): string {
-  if (milliseconds < 1000) {
-    return `${milliseconds.toFixed(2)}ms`;
-  }
-  return `${(milliseconds / 1000).toFixed(2)}s`;
-}
-
-/**
- * التحقق من صحة بيانات التركة
+ * Validate estate data
  */
 export function validateEstateData(
   total: number,
@@ -167,28 +84,28 @@ export function validateEstateData(
   will: number = 0,
 ): string | null {
   if (total <= 0) {
-    return "إجمالي التركة يجب أن يكون أكبر من صفر";
+    return "Total estate must be greater than zero";
   }
   if (funeral < 0) {
-    return "تكاليف التجهيز لا يمكن أن تكون سالبة";
+    return "Funeral costs cannot be negative";
   }
   if (debts < 0) {
-    return "الديون لا يمكن أن تكون سالبة";
+    return "Debts cannot be negative";
   }
   if (will < 0) {
-    return "الوصية لا يمكن أن تكون سالبة";
+    return "Will cannot be negative";
   }
   if (will > (total - funeral - debts) / 3) {
-    return "الوصية لا يمكن أن تتجاوز ثلث التركة الصافية (بعد الخصم والديون)";
+    return "Will cannot exceed one-third of the net estate";
   }
   if (funeral + debts + will > total) {
-    return "التكاليف والديون والوصية تتجاوز إجمالي التركة";
+    return "Costs, debts, and will exceed total estate";
   }
   return null;
 }
 
 /**
- * التحقق من صحة بيانات الورثة
+ * Validate heirs data
  */
 export function validateHeirsData(
   heirs: Record<string, number | undefined>,
@@ -198,10 +115,10 @@ export function validateHeirsData(
   for (const [key, count] of Object.entries(heirs)) {
     if (count !== undefined) {
       if (!isValidHeirType(key)) {
-        return `نوع وارث غير صحيح: ${key}`;
+        return `Invalid heir type: ${key}`;
       }
       if (count < 0) {
-        return `عدد الورثة لا يمكن أن يكون سالباً: ${key}`;
+        return `Heir count cannot be negative: ${key}`;
       }
       if (count > 0) {
         hasHeirs = true;
@@ -210,14 +127,14 @@ export function validateHeirsData(
   }
 
   if (!hasHeirs) {
-    return "يجب تحديد ورثة واحد على الأقل";
+    return "At least one heir must be specified";
   }
 
   return null;
 }
 
 /**
- * حساب عدد الورثة الإجمالي
+ * Count total number of heirs
  */
 export function countTotalHeirs(
   heirs: Record<string, number | undefined>,
@@ -229,73 +146,6 @@ export function countTotalHeirs(
     }
   }
   return sum;
-}
-
-/**
- * حساب عدد أنواع الورثة
- */
-export function countHeirTypes(
-  heirs: Record<string, number | undefined>,
-): number {
-  return Object.values(heirs).filter((count) => count && count > 0).length;
-}
-
-/**
- * ترتيب الورثة حسب الأولوية الفقهية
- */
-export function sortHeirsByPriority(heirs: HeirType[]): HeirType[] {
-  const priority: Record<HeirType, number> = {
-    husband: 1,
-    wife: 2,
-    son: 3,
-    daughter: 4,
-    grandson: 3,
-    granddaughter: 4,
-    father: 5,
-    mother: 6,
-    grandfather: 7,
-    grandmother: 8,
-    grandmother_mother: 8,
-    grandmother_father: 7,
-    full_brother: 9,
-    full_sister: 10,
-    paternal_brother: 9,
-    paternal_sister: 10,
-    maternal_brother: 9,
-    maternal_sister: 10,
-    half_brother_paternal: 11,
-    half_sister_paternal: 12,
-    full_nephew: 15,
-    paternal_nephew: 15,
-    nephew_from_brother: 15,
-    niece_from_brother: 16,
-    full_uncle: 17,
-    paternal_uncle: 17,
-    uncle_paternal: 17,
-    uncle_maternal: 19,
-    full_cousin: 21,
-    paternal_cousin: 21,
-    aunt_paternal: 18,
-    paternal_aunt: 18,
-    aunt_maternal: 20,
-    maternal_aunt: 20,
-    maternal_uncle: 19,
-    daughter_son: 3,
-    daughter_daughter: 4,
-    sister_children: 11,
-    treasury: 100,
-    // Added for Musharraka
-    shared_siblings: 9, // Between full_brother and others
-  };
-
-  return [...heirs].sort((a, b) => priority[a] - priority[b]);
-}
-
-/**
- * الحصول على اسم الوارث العربي
- */
-export function getHeirName(heir: HeirType): string {
-  return HEIR_NAMES[heir] || heir;
 }
 
 /**
@@ -336,29 +186,8 @@ const HEIR_I18N_KEY_MAP: Record<string, string> = {
 
 /**
  * Get the i18n translation key for a given engine heir key.
- * Usage: t(getHeirI18nKey("full_brother")) → t("heirs.brother")
+ * Usage: t(getHeirI18nKey("full_brother")) -> t("heirs.brother")
  */
 export function getHeirI18nKey(engineKey: string): string {
   return HEIR_I18N_KEY_MAP[engineKey] || engineKey;
-}
-
-/**
- * الحصول على لون المذهب
- */
-export function getMadhhabColor(madhab: MadhhabType): string {
-  return MADHAB_COLORS[madhab];
-}
-
-/**
- * الحصول على أيقونة المذهب
- */
-export function getMadhhabIcon(madhab: MadhhabType): string {
-  return MADHAB_ICONS[madhab];
-}
-
-/**
- * الحصول على اسم المذهب
- */
-export function getMadhhabName(madhab: MadhhabType): string {
-  return MADHAB_NAMES[madhab];
 }

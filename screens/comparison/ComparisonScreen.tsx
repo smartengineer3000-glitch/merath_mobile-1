@@ -3,7 +3,7 @@ import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { useTranslation } from "react-i18next";
-import { useCalculator } from "../../lib/hooks/useCalculator";
+import { EnhancedInheritanceCalculationEngine } from "../../lib/inheritance/enhanced-engine-complete";
 import { useCalculationStore } from "../../lib/context/CalculationContext";
 import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
 import {
@@ -24,7 +24,6 @@ export default function ComparisonScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const { latestScenario } = useCalculationStore();
-  const { calculateWithEstate } = useCalculator();
 
   const [isComparing, setIsComparing] = useState(false);
   const [comparisonResults, setComparisonResults] = useState<
@@ -41,11 +40,12 @@ export default function ComparisonScreen() {
 
       for (const madhab of madhabs) {
         try {
-          const result = await calculateWithEstate(
+          const engine = new EnhancedInheritanceCalculationEngine(
             madhab,
             latestScenario.estate,
             latestScenario.heirs,
           );
+          const result = engine.calculate();
           if (result && result.success) {
             results.push(result);
           }
@@ -61,7 +61,7 @@ export default function ComparisonScreen() {
     } finally {
       setIsComparing(false);
     }
-  }, [latestScenario, calculateWithEstate, navigation]);
+  }, [latestScenario, navigation]);
 
   const hasData = latestScenario !== null;
 

@@ -8,19 +8,13 @@ import type {
   CalculationResult,
   MadhhabType,
 } from "../../../lib/inheritance/types";
+import { MADHAB_COLORS } from "../../../lib/inheritance/utils";
 
 interface FiqhRulesTabProps {
   result: CalculationResult;
 }
 
 const MADHAB_KEYS: MadhhabType[] = ["shafii", "hanafi", "maliki", "hanbali"];
-
-const MADHAB_COLORS: Record<MadhhabType, string> = {
-  shafii: "#2e7d32",
-  hanafi: "#c62828",
-  maliki: "#6a1b9a",
-  hanbali: "#e65100",
-};
 
 export function FiqhRulesTab({ result }: FiqhRulesTabProps) {
   const { theme } = useAppTheme();

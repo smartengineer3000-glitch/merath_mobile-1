@@ -6,7 +6,6 @@ export { StepperCounter } from "./StepperCounter";
 export { Badge } from "./Badge";
 export { SectionHeader } from "./SectionHeader";
 export { EmptyState } from "./EmptyState";
-export { ProgressBar } from "./ProgressBar";
 export { Divider } from "./Divider";
 export { Avatar } from "./Avatar";
 export { IconButton } from "./IconButton";
