@@ -494,7 +494,7 @@ describe("Real-World Islamic Inheritance Scenarios", () => {
         full_sister: 1,
       };
 
-      // Shafii: grandfather blocks siblings
+      // Shafii: grandfather shares with siblings (muqasamah)
       const shafiiEngine = new InheritanceCalculationEngine(
         "shafii",
         estate,
@@ -513,7 +513,7 @@ describe("Real-World Islamic Inheritance Scenarios", () => {
       expect(shafiiResult.success).toBe(true);
       expect(malikiResult.success).toBe(true);
 
-      // In Shafii, grandfather gets all, siblings blocked
+      // In Shafii, both grandfather and siblings get shares (muqasamah)
       const shafiiGrandfather = shafiiResult.shares.find(
         (s) => s.key === "grandfather",
       );
@@ -522,7 +522,7 @@ describe("Real-World Islamic Inheritance Scenarios", () => {
       );
 
       expect(shafiiGrandfather).toBeDefined();
-      expect(shafiiBrother).toBeUndefined();
+      expect(shafiiBrother).toBeDefined();
 
       // In Maliki, both get shares
       const malikiGrandfather = malikiResult.shares.find(

@@ -146,6 +146,7 @@ export interface MadhhabRules {
   mother_with_father_children: "third_of_remainder" | "sixth";
   mother_with_father_only: "third" | "sixth";
   spouse_radd: boolean;
+  radd_allowed: boolean;
   umariyyah_rule: "first" | "second";
   musharraka: boolean;
 }

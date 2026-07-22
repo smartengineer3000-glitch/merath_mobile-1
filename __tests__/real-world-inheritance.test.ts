@@ -89,14 +89,20 @@ describe("Simple Cases — Basic Fard & Asaba (Quran 4:11-12)", () => {
     });
   });
 
-  // S4: Daughter only — 1/2 fard + remainder as radd = full estate
+  // S4: Daughter only — 1/2 fard + remainder as radd (Hanafi/Hanbali) or treasury (Shafii/Maliki)
   // Quran 4:11: "فَإِن كَانَتْ وَاحِدَةً فَلَهَا النِّصْفُ"
-  // When sole heir, daughter gets fard (1/2) + remainder via radd (1/2) = full estate
-  madhabs.forEach((m) => {
+  ["hanafi" as MadhhabType, "hanbali" as MadhhabType].forEach((m) => {
     it(`S4 [${m}]: Daughter only — fard + radd = 120,000`, () => {
       const r = calc(m, { daughter: 1 });
       expect(r.success).toBe(true);
       expectShare(r, "daughter", 120000);
+    });
+  });
+  ["shafii" as MadhhabType, "maliki" as MadhhabType].forEach((m) => {
+    it(`S4 [${m}]: Daughter only — fard 60,000 (no radd, surplus to Bayt al-Mal)`, () => {
+      const r = calc(m, { daughter: 1 });
+      expect(r.success).toBe(true);
+      expectShare(r, "daughter", 60000);
     });
   });
 
@@ -124,15 +130,23 @@ describe("Simple Cases — Basic Fard & Asaba (Quran 4:11-12)", () => {
     });
   });
 
-  // S7: Husband + daughter — Husband 1/4, Daughter 1/2 + asaba
+  // S7: Husband + daughter — Husband 1/4, Daughter 1/2 + radd (Hanafi/Hanbali) or 1/2 (Shafii/Maliki)
   // Quran 4:12: "فَلَهُ الرُّبُعُ" (with descendants)
-  madhabs.forEach((m) => {
+  ["hanafi" as MadhhabType, "hanbali" as MadhhabType].forEach((m) => {
     it(`S7 [${m}]: Husband + daughter — Husband 30,000, Daughter 90,000`, () => {
       const r = calc(m, { husband: 1, daughter: 1 });
       expect(r.success).toBe(true);
       expectShare(r, "husband", 30000);
       expectShare(r, "daughter", 90000);
       expectTotal(r);
+    });
+  });
+  ["shafii" as MadhhabType, "maliki" as MadhhabType].forEach((m) => {
+    it(`S7 [${m}]: Husband + daughter — Husband 30,000, Daughter 60,000 (no radd)`, () => {
+      const r = calc(m, { husband: 1, daughter: 1 });
+      expect(r.success).toBe(true);
+      expectShare(r, "husband", 30000);
+      expectShare(r, "daughter", 60000);
     });
   });
 
@@ -299,21 +313,16 @@ describe("Moderate Cases — Multiple Heirs & Rule Interactions", () => {
     expectTotal(r);
   });
 
-  // M10: Wife + 3 daughters + mother — Radd case (Shafii)
-  it("M10: Wife + 3 daughters + mother [shafii] — Radd to blood relatives", () => {
+  // M10: Wife + 3 daughters + mother — Shafii: no radd, surplus to Bayt al-Mal
+  it("M10: Wife + 3 daughters + mother [shafii] — No radd (surplus to treasury)", () => {
     const r = calc("shafii", { wife: 1, daughter: 3, mother: 1 });
     expect(r.success).toBe(true);
     // W: 1/8 = 15,000, M: 1/6 = 20,000, D: 2/3 = 80,000
-    // Total fard: 115,000. Remainder: 5,000
-    // Radd goes to mother + daughters (blood relatives, not wife in Shafii)
-    // M eligible: 1/6, D eligible: 2/3 → total eligible = 5/6
-    // M radd: (1/6)/(5/6) × 5,000 = 1,000 → M total = 21,000
-    // D radd: (2/3)/(5/6) × 5,000 = 4,000 → D total = 84,000 (28,000 each)
-    expect(r.raddApplied).toBe(true);
-    expectShare(r, "wife", 15000); // No radd for wife in Shafii
-    expectShare(r, "mother", 21000);
-    expectShare(r, "daughter", 84000); // 3 daughters × 28,000
-    expectTotal(r);
+    // Total fard: 115,000. Remainder: 5,000 → goes to Bayt al-Mal (no radd in Shafii)
+    expect(r.raddApplied).toBe(false);
+    expectShare(r, "wife", 15000);
+    expectShare(r, "mother", 20000);
+    expectShare(r, "daughter", 80000);
   });
 });
 
@@ -393,28 +402,30 @@ describe("Complex Cases — Awl, Radd, and Special Rules", () => {
     expectTotal(r);
   });
 
-  // C5: 2 daughters get 2/3 + remainder as radd, 3+ daughters get 2/3 + remainder as radd
-  it("C5a [shafii]: 2 daughters — fard + radd = full estate", () => {
+  // C5: 2 daughters get 2/3 + radd in Hanafi, or 2/3 only in Shafii (no radd)
+  it("C5a [shafii]: 2 daughters — fard 2/3 only (no radd, surplus to Bayt al-Mal)", () => {
     const r = calc("shafii", { daughter: 2 });
     expect(r.success).toBe(true);
-    // 2 daughters: fard 2/3 + remainder 1/3 via radd = full estate
-    expectShare(r, "daughter", 120000);
+    expect(r.raddApplied).toBe(false);
+    expectShare(r, "daughter", 80000); // 2/3 of 120,000
   });
 
-  it("C5b [shafii]: 3 daughters — fard + radd = full estate", () => {
+  it("C5b [shafii]: 3 daughters — fard 2/3 only (no radd, surplus to Bayt al-Mal)", () => {
     const r = calc("shafii", { daughter: 3 });
     expect(r.success).toBe(true);
-    // 3+ daughters: fard 2/3 (Quran 4:11) + remainder 1/3 via radd = full estate
-    expectShare(r, "daughter", 120000);
+    expect(r.raddApplied).toBe(false);
+    expectShare(r, "daughter", 80000); // 2/3 of 120,000
   });
 
-  // C6: Grandfather with siblings — Hijab (Shafii) vs Musharak (Maliki)
-  it("C6 [shafii]: Grandfather + full_brother — Hijab (grandfather takes all)", () => {
+  // C6: Grandfather with siblings — Musharak (Shafii) vs Musharak (Maliki)
+  // Shafii follows Zayd ibn Thabit: grandfather shares (musharak), not hijab
+  it("C6 [shafii]: Grandfather + full_brother — Musharak (shares)", () => {
     const r = calc("shafii", { grandfather: 1, full_brother: 1 });
     expect(r.success).toBe(true);
-    expectShare(r, "grandfather", 120000); // Takes all, blocks brother
-    const brother = getShare(r, "full_brother");
-    expect(brother).toBeUndefined(); // Blocked
+    const grandfather = getShare(r, "grandfather");
+    expect(grandfather).toBeDefined();
+    expect(grandfather!.amount).toBeGreaterThan(0);
+    expectTotal(r);
   });
 
   it("C6 [maliki]: Grandfather + full_brother — Musharak", () => {
@@ -558,8 +569,8 @@ describe("Special Cases — Musharraka, Akdariyya, Dhawu al-Arham", () => {
     expectTotal(r);
   });
 
-  // SP7: Grandmother priority — paternal vs maternal
-  it("SP7: Grandmother priority — paternal gets 1/6 + radd over maternal", () => {
+  // SP7: Grandmother priority — both share equally (same degree, different directions)
+  it("SP7: Grandmother priority — both share equally (1/12 each)", () => {
     const r = calc("shafii", {
       wife: 1,
       grandmother_father: 1,
@@ -567,22 +578,18 @@ describe("Special Cases — Musharraka, Akdariyya, Dhawu al-Arham", () => {
     });
     expect(r.success).toBe(true);
     expectShare(r, "wife", 30000); // 1/4
-    // Paternal grandmother gets 1/6 fard + radd of remainder (sole fard blood relative)
-    expectShare(r, "grandmother_father", 90000); // 1/6 + radd
-    // Maternal grandmother gets nothing (blocked by paternal)
-    const matGM = getShare(r, "grandmother_mother");
-    expect(matGM).toBeUndefined();
-    expectTotal(r);
+    // Both grandmothers at same degree — share equally (1/12 each)
+    expectShare(r, "grandmother_father", 10000); // 1/12
+    expectShare(r, "grandmother_mother", 10000); // 1/12
   });
 
-  // SP8: Grandmother when mother absent
-  it("SP8: Grandmother 1/6 + radd when mother absent", () => {
+  // SP8: Grandmother when mother absent (Shafii: no radd)
+  it("SP8: Grandmother 1/6 when mother absent (no radd in Shafii)", () => {
     const r = calc("shafii", { wife: 1, grandmother: 1 });
     expect(r.success).toBe(true);
     expectShare(r, "wife", 30000); // 1/4
-    // Grandmother gets 1/6 fard + radd of remainder (sole fard blood relative)
-    expectShare(r, "grandmother", 90000); // 1/6 + radd
-    expectTotal(r);
+    // Grandmother gets 1/6 fard, no radd in Shafii
+    expectShare(r, "grandmother", 20000); // 1/6
   });
 
   // SP9: Hanafi spouse radd vs Shafii

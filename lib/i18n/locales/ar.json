@@ -520,7 +520,8 @@
       "simple": "بسيط",
       "moderate": "متوسط",
       "complex": "معقد",
-      "special": "خاص"
+      "special": "خاص",
+      "fiqh": "فقهي"
     },
     "awl": "عول",
     "radd": "رد",

@@ -24,10 +24,11 @@ export const FIQH_DATABASE = {
       color: "#FF6B6B",
       icon: "🕌",
       rules: {
-        grandfather_with_siblings: "hijab" as const,
+        grandfather_with_siblings: "musharak" as const,
         mother_with_father_children: "sixth" as const,
         mother_with_father_only: "third" as const,
         spouse_radd: false,
+        radd_allowed: false,
         umariyyah_rule: "first" as const,
         musharraka: true,
       } as MadhhabRules,
@@ -43,6 +44,7 @@ export const FIQH_DATABASE = {
         mother_with_father_children: "sixth" as const,
         mother_with_father_only: "third" as const,
         spouse_radd: true,
+        radd_allowed: true,
         umariyyah_rule: "first" as const,
         musharraka: false,
       } as MadhhabRules,
@@ -58,6 +60,7 @@ export const FIQH_DATABASE = {
         mother_with_father_children: "sixth" as const,
         mother_with_father_only: "third" as const,
         spouse_radd: false,
+        radd_allowed: false,
         umariyyah_rule: "first" as const,
         musharraka: true,
       } as MadhhabRules,
@@ -73,6 +76,7 @@ export const FIQH_DATABASE = {
         mother_with_father_children: "sixth" as const,
         mother_with_father_only: "third" as const,
         spouse_radd: true,
+        radd_allowed: true,
         umariyyah_rule: "first" as const,
         musharraka: false,
       } as MadhhabRules,
@@ -95,6 +99,26 @@ export const FIQH_DATABASE = {
         type: "complete" as const,
       },
       {
+        hijabber: "son",
+        hijabbed: ["paternal_brother", "paternal_sister"],
+        type: "complete" as const,
+      },
+      {
+        hijabber: "son",
+        hijabbed: ["maternal_brother", "maternal_sister"],
+        type: "complete" as const,
+      },
+      {
+        hijabber: "son",
+        hijabbed: ["full_uncle", "paternal_uncle", "paternal_aunt"],
+        type: "complete" as const,
+      },
+      {
+        hijabber: "son",
+        hijabbed: ["full_nephew", "paternal_nephew"],
+        type: "complete" as const,
+      },
+      {
         hijabber: "father",
         hijabbed: ["grandfather"],
         type: "complete" as const,
@@ -110,6 +134,16 @@ export const FIQH_DATABASE = {
         type: "partial" as const,
         reason: "from_third_to_sixth",
       },
+      {
+        hijabber: "daughter",
+        hijabbed: ["maternal_sister"],
+        type: "complete" as const,
+      },
+      {
+        hijabber: "full_brother",
+        hijabbed: ["paternal_brother", "paternal_sister"],
+        type: "complete" as const,
+      },
     ],
     hanafi: [
       {
@@ -118,8 +152,33 @@ export const FIQH_DATABASE = {
         type: "complete" as const,
       },
       {
+        hijabber: "son",
+        hijabbed: ["paternal_brother", "paternal_sister"],
+        type: "complete" as const,
+      },
+      {
+        hijabber: "son",
+        hijabbed: ["maternal_brother", "maternal_sister"],
+        type: "complete" as const,
+      },
+      {
+        hijabber: "son",
+        hijabbed: ["full_uncle", "paternal_uncle", "paternal_aunt"],
+        type: "complete" as const,
+      },
+      {
+        hijabber: "son",
+        hijabbed: ["full_nephew", "paternal_nephew"],
+        type: "complete" as const,
+      },
+      {
         hijabber: "father",
         hijabbed: ["grandfather"],
+        type: "complete" as const,
+      },
+      {
+        hijabber: "mother",
+        hijabbed: ["grandmother"],
         type: "complete" as const,
       },
       {
@@ -127,6 +186,16 @@ export const FIQH_DATABASE = {
         hijabbed: ["mother"],
         type: "partial" as const,
         reason: "from_third_to_sixth",
+      },
+      {
+        hijabber: "daughter",
+        hijabbed: ["maternal_sister"],
+        type: "complete" as const,
+      },
+      {
+        hijabber: "full_brother",
+        hijabbed: ["paternal_brother", "paternal_sister"],
+        type: "complete" as const,
       },
     ],
     maliki: [
@@ -136,8 +205,33 @@ export const FIQH_DATABASE = {
         type: "complete" as const,
       },
       {
+        hijabber: "son",
+        hijabbed: ["paternal_brother", "paternal_sister"],
+        type: "complete" as const,
+      },
+      {
+        hijabber: "son",
+        hijabbed: ["maternal_brother", "maternal_sister"],
+        type: "complete" as const,
+      },
+      {
+        hijabber: "son",
+        hijabbed: ["full_uncle", "paternal_uncle", "paternal_aunt"],
+        type: "complete" as const,
+      },
+      {
+        hijabber: "son",
+        hijabbed: ["full_nephew", "paternal_nephew"],
+        type: "complete" as const,
+      },
+      {
         hijabber: "father",
         hijabbed: ["grandfather"],
+        type: "complete" as const,
+      },
+      {
+        hijabber: "mother",
+        hijabbed: ["grandmother"],
         type: "complete" as const,
       },
       {
@@ -145,6 +239,16 @@ export const FIQH_DATABASE = {
         hijabbed: ["mother"],
         type: "partial" as const,
         reason: "from_third_to_sixth",
+      },
+      {
+        hijabber: "daughter",
+        hijabbed: ["maternal_sister"],
+        type: "complete" as const,
+      },
+      {
+        hijabber: "full_brother",
+        hijabbed: ["paternal_brother", "paternal_sister"],
+        type: "complete" as const,
       },
     ],
     hanbali: [
@@ -154,8 +258,33 @@ export const FIQH_DATABASE = {
         type: "complete" as const,
       },
       {
+        hijabber: "son",
+        hijabbed: ["paternal_brother", "paternal_sister"],
+        type: "complete" as const,
+      },
+      {
+        hijabber: "son",
+        hijabbed: ["maternal_brother", "maternal_sister"],
+        type: "complete" as const,
+      },
+      {
+        hijabber: "son",
+        hijabbed: ["full_uncle", "paternal_uncle", "paternal_aunt"],
+        type: "complete" as const,
+      },
+      {
+        hijabber: "son",
+        hijabbed: ["full_nephew", "paternal_nephew"],
+        type: "complete" as const,
+      },
+      {
         hijabber: "father",
         hijabbed: ["grandfather"],
+        type: "complete" as const,
+      },
+      {
+        hijabber: "mother",
+        hijabbed: ["grandmother"],
         type: "complete" as const,
       },
       {
@@ -163,6 +292,16 @@ export const FIQH_DATABASE = {
         hijabbed: ["mother"],
         type: "partial" as const,
         reason: "from_third_to_sixth",
+      },
+      {
+        hijabber: "daughter",
+        hijabbed: ["maternal_sister"],
+        type: "complete" as const,
+      },
+      {
+        hijabber: "full_brother",
+        hijabbed: ["paternal_brother", "paternal_sister"],
+        type: "complete" as const,
       },
     ],
   },

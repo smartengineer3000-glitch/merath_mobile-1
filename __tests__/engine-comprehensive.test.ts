@@ -214,24 +214,25 @@ describe("HijabSystem across madhabs", () => {
     });
   });
 
-  describe("Hanafi: mother does NOT block grandmother", () => {
-    it("grandmother survives in hanafi", () => {
+  describe("Hanafi: mother blocks grandmother (IJMA)", () => {
+    it("grandmother is blocked by mother in hanafi", () => {
       const sys = new HijabSystem("hanafi");
       const { heirs } = sys.applyHijab({ mother: 1, grandmother: 1 });
-      expect(heirs.grandmother).toBe(1);
+      expect(heirs.grandmother).toBe(0);
     });
   });
 
   describe("Grandfather with siblings: madhab-specific", () => {
-    it("shafii: grandfather blocks siblings", () => {
+    it("shafii: grandfather shares with siblings (muqasamah)", () => {
       const sys = new HijabSystem("shafii");
       const { heirs } = sys.applyHijab({
         grandfather: 1,
         full_brother: 1,
         full_sister: 1,
       });
-      expect(heirs.full_brother).toBe(0);
-      expect(heirs.full_sister).toBe(0);
+      // Shafii: siblings NOT blocked (muqasamah sharing)
+      expect(heirs.full_brother).toBe(1);
+      expect(heirs.full_sister).toBe(1);
     });
 
     it("hanafi: grandfather blocks siblings", () => {
@@ -584,9 +585,10 @@ describe("FIQH_DATABASE integrity", () => {
     expect(FIQH_DATABASE.madhabs.maliki.rules.spouse_radd).toBe(false);
   });
 
-  it("grandfather_with_siblings: shafii/hanafi=hijab, maliki/hanbali=musharak", () => {
+  it("grandfather_with_siblings: shafii/maliki/hanbali=musharak, hanafi=hijab", () => {
+    // Shafii: musharak (follows Zayd ibn Thabit's position — sharing, not blocking)
     expect(FIQH_DATABASE.madhabs.shafii.rules.grandfather_with_siblings).toBe(
-      "hijab",
+      "musharak",
     );
     expect(FIQH_DATABASE.madhabs.hanafi.rules.grandfather_with_siblings).toBe(
       "hijab",
@@ -785,7 +787,7 @@ describe("Engine: Grandfather with siblings (Maliki/Hanbali musharak)", () => {
     expect(brotherShare!.amount).toBeGreaterThan(0);
   });
 
-  it("shafii: grandfather alone inherits (siblings blocked)", () => {
+  it("shafii: grandfather shares with siblings (muqasamah)", () => {
     const result = calc("shafii", estate(120000), {
       grandfather: 1,
       full_brother: 1,
@@ -794,8 +796,13 @@ describe("Engine: Grandfather with siblings (Maliki/Hanbali musharak)", () => {
     const grandfatherShare = result.shares.find(
       (s) => s.key === "grandfather" || s.name?.includes("جد"),
     );
+    const brotherShare = result.shares.find(
+      (s) => s.key === "full_brother" || s.name?.includes("أخ"),
+    );
     expect(grandfatherShare).toBeDefined();
-    expect(grandfatherShare!.amount).toBe(120000);
+    expect(brotherShare).toBeDefined();
+    expect(grandfatherShare!.amount).toBeGreaterThan(0);
+    expect(brotherShare!.amount).toBeGreaterThan(0);
   });
 });
 

@@ -200,6 +200,33 @@ export class EnhancedInheritanceCalculationEngine {
         }
       }
 
+      // If still remainder after blood relatives (and radd was not applied), route to Bayt al-Mal
+      const totalAfterAll = this.sumFractions(
+        finalShares.map((s) => s.fraction),
+      );
+      const remainderFinal = new FractionClass(1, 1).subtract(totalAfterAll);
+      if (remainderFinal.toDecimal() > 0.0001 && asabaShares.length === 0) {
+        const raddAllowed =
+          FIQH_DATABASE.madhabs[this.madhab]?.rules.radd_allowed ?? true;
+        if (!raddAllowed) {
+          // Classical Shafii/Maliki: remaining surplus goes to Bayt al-Mal
+          finalShares.push({
+            key: "treasury",
+            name: "بيت المال",
+            type: "بيت المال",
+            fraction: remainderFinal,
+            count: 1,
+            reason: "فائض بيت المال",
+          });
+          this.specialCases.push({
+            type: "treasury",
+            name: "بيت المال",
+            description: "الباقي يذهب لبيت المال",
+          });
+          steps.push("بيت المال: treasury");
+        }
+      }
+
       const results = this.calculateFinalAmounts(finalShares, netEstate);
       steps.push("تحويل للمبالغ: amounts");
 
@@ -498,6 +525,16 @@ export class EnhancedInheritanceCalculationEngine {
     remainder: FractionClass,
   ): { shares: HeirShareObject[]; applied: boolean } {
     if (remainder.toDecimal() <= 0.0001) {
+      return { shares, applied: false };
+    }
+
+    // Check if radd is allowed for this madhab (Shafii/Maliki: no radd)
+    const raddAllowed =
+      FIQH_DATABASE.madhabs[this.madhab]?.rules.radd_allowed ?? true;
+
+    if (!raddAllowed) {
+      // Radd not allowed in this madhab — surplus goes to blood relatives or Bayt al-Mal
+      // Return shares unchanged; the main flow will handle remainder via blood relatives
       return { shares, applied: false };
     }
 

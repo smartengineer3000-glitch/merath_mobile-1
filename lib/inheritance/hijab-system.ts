@@ -59,6 +59,24 @@ export class HijabSystem {
       }
     }
 
+    // When a rule blocks generic "grandmother" key, also block split keys
+    // (grandmother_mother, grandmother_father) that the user may have entered
+    for (const rule of completeHijabRules) {
+      if (
+        rule.hijabbed.includes("grandmother") &&
+        (heirs[rule.hijabber] || 0) > 0
+      ) {
+        if ((heirs.grandmother_mother || 0) > 0) {
+          this.hijabLog.push(`${rule.hijabber} blocks grandmother_mother`);
+          heirs.grandmother_mother = 0;
+        }
+        if ((heirs.grandmother_father || 0) > 0) {
+          this.hijabLog.push(`${rule.hijabber} blocks grandmother_father`);
+          heirs.grandmother_father = 0;
+        }
+      }
+    }
+
     // ===== MADHAB-SPECIFIC RULE: Grandfather with siblings =====
     const hasGrandfather = (heirs.grandfather || 0) > 0;
     const hasSiblings =
@@ -68,8 +86,8 @@ export class HijabSystem {
       (heirs.half_sister_paternal || 0) > 0;
 
     if (hasGrandfather && hasSiblings) {
-      // Shafii & Hanafi: Grandfather BLOCKS siblings
-      if (this.madhab === "shafii" || this.madhab === "hanafi") {
+      // Hanafi: Grandfather BLOCKS siblings (hijab)
+      if (this.madhab === "hanafi") {
         this.hijabLog.push(`Grandfather blocks siblings (${this.madhab})`);
 
         // Block all siblings
@@ -79,8 +97,8 @@ export class HijabSystem {
         heirs.half_sister_paternal = 0;
       }
 
-      // Maliki & Hanbali: Grandfather SHARES with siblings (handled in computeAsaba, not hijab)
-      else if (this.madhab === "maliki" || this.madhab === "hanbali") {
+      // Shafii, Maliki & Hanbali: Grandfather SHARES with siblings (muqasamah, handled in computeAsaba)
+      else {
         this.hijabLog.push(
           `Grandfather shares with siblings (${this.madhab}, handled in asaba)`,
         );
@@ -103,6 +121,72 @@ export class HijabSystem {
           `Daughters with grandson - granddaughters inherit as asaba`,
         );
         // No change - granddaughters will inherit with grandson in asaba
+      }
+    }
+
+    // ===== Son blocks maternal siblings =====
+    if ((heirs.son || 0) > 0) {
+      for (const key of ["maternal_brother", "maternal_sister"]) {
+        if ((heirs[key] || 0) > 0) {
+          this.hijabLog.push(`Son blocks ${key}`);
+          heirs[key] = 0;
+        }
+      }
+    }
+
+    // ===== Son blocks paternal aunts and uncles =====
+    if ((heirs.son || 0) > 0) {
+      for (const key of ["full_uncle", "paternal_uncle", "paternal_aunt"]) {
+        if ((heirs[key] || 0) > 0) {
+          this.hijabLog.push(`Son blocks ${key}`);
+          heirs[key] = 0;
+        }
+      }
+    }
+
+    // ===== Son blocks nephews =====
+    if ((heirs.son || 0) > 0) {
+      for (const key of ["full_nephew", "paternal_nephew"]) {
+        if ((heirs[key] || 0) > 0) {
+          this.hijabLog.push(`Son blocks ${key}`);
+          heirs[key] = 0;
+        }
+      }
+    }
+
+    // ===== Grandson blocks siblings (when no son) =====
+    if ((heirs.grandson || 0) > 0 && (heirs.son || 0) <= 0) {
+      for (const key of ["full_brother", "full_sister"]) {
+        if ((heirs[key] || 0) > 0) {
+          this.hijabLog.push(`Grandson blocks ${key}`);
+          heirs[key] = 0;
+        }
+      }
+    }
+
+    // ===== Full brother blocks paternal brother/sister =====
+    if ((heirs.full_brother || 0) > 0) {
+      for (const key of ["paternal_brother", "paternal_sister"]) {
+        if ((heirs[key] || 0) > 0) {
+          this.hijabLog.push(`Full brother blocks ${key}`);
+          heirs[key] = 0;
+        }
+      }
+    }
+
+    // ===== Daughter blocks maternal sister =====
+    if ((heirs.daughter || 0) > 0) {
+      if ((heirs.maternal_sister || 0) > 0) {
+        this.hijabLog.push(`Daughter blocks maternal_sister`);
+        heirs.maternal_sister = 0;
+      }
+    }
+
+    // ===== 2+ granddaughters block paternal aunt =====
+    if ((heirs.granddaughter || 0) >= 2) {
+      if ((heirs.paternal_aunt || 0) > 0) {
+        this.hijabLog.push(`2+ granddaughters block paternal_aunt`);
+        heirs.paternal_aunt = 0;
       }
     }
 
@@ -310,8 +394,30 @@ export function getBlockedHeirs(
     }
   }
 
-  // 2. Madhab-specific: Grandfather blocks siblings (Shafii & Hanafi only)
-  if (madhab === "shafii" || madhab === "hanafi") {
+  // Expand generic "grandmother" blocking to split keys
+  // When a rule blocks "grandmother", also block grandmother_mother/grandmother_father
+  for (const rule of rules) {
+    if (
+      rule.type === "complete" &&
+      rule.hijabbed.includes("grandmother") &&
+      (selectedHeirs[rule.hijabber] || 0) > 0
+    ) {
+      for (const splitKey of ["grandmother_mother", "grandmother_father"]) {
+        if (
+          (selectedHeirs[splitKey] || 0) > 0 &&
+          !blocked[splitKey]
+        ) {
+          blocked[splitKey] = {
+            blocker: rule.hijabber,
+            reason: `${rule.hijabber} blocks ${splitKey}`,
+          };
+        }
+      }
+    }
+  }
+
+  // 2. Madhab-specific: Grandfather blocks siblings (Hanafi only — Shafii/Maliki/Hanbali use muqasamah)
+  if (madhab === "hanafi") {
     if ((selectedHeirs["grandfather"] || 0) > 0) {
       const siblingKeys = [
         "full_brother",
@@ -323,7 +429,7 @@ export function getBlockedHeirs(
         if (!blocked[sib]) {
           blocked[sib] = {
             blocker: "grandfather",
-            reason: "grandfather blocks siblings (Shafii/Hanafi)",
+            reason: "grandfather blocks siblings (Hanafi)",
           };
         }
       }
@@ -341,6 +447,101 @@ export function getBlockedHeirs(
       }
     }
   }
+
+  // 4. Son blocks maternal siblings (all madhabs)
+  if ((selectedHeirs["son"] || 0) > 0) {
+    const maternalSiblingKeys = ["maternal_brother", "maternal_sister"];
+    for (const sib of maternalSiblingKeys) {
+      if (!blocked[sib]) {
+        blocked[sib] = {
+          blocker: "son",
+          reason: "الابن يحجب الأخ لأم",
+        };
+      }
+    }
+  }
+
+  // 5. Son blocks paternal aunts and uncles (all madhabs)
+  if ((selectedHeirs["son"] || 0) > 0) {
+    const uncleAuntKeys = ["full_uncle", "paternal_uncle", "paternal_aunt"];
+    for (const key of uncleAuntKeys) {
+      if (!blocked[key]) {
+        blocked[key] = {
+          blocker: "son",
+          reason: "الابن يحجب العم والعمّة",
+        };
+      }
+    }
+  }
+
+  // 6. Son blocks nephews (all madhabs)
+  if ((selectedHeirs["son"] || 0) > 0) {
+    const nephewKeys = ["full_nephew", "paternal_nephew"];
+    for (const key of nephewKeys) {
+      if (!blocked[key]) {
+        blocked[key] = {
+          blocker: "son",
+          reason: "الابن يحجب ابن الأخ",
+        };
+      }
+    }
+  }
+
+  // 7. Grandson blocks full brothers and sisters (all madhabs)
+  if (
+    (selectedHeirs["grandson"] || 0) > 0 &&
+    (selectedHeirs["son"] || 0) <= 0
+  ) {
+    const siblingKeys = ["full_brother", "full_sister"];
+    for (const sib of siblingKeys) {
+      if (!blocked[sib]) {
+        blocked[sib] = {
+          blocker: "grandson",
+          reason: "ابن الابن يحجب الأخ الشقيق",
+        };
+      }
+    }
+  }
+
+  // 8. Full brother blocks paternal brother/sister (all madhabs)
+  if ((selectedHeirs["full_brother"] || 0) > 0) {
+    const paternalSiblingKeys = ["paternal_brother", "paternal_sister"];
+    for (const sib of paternalSiblingKeys) {
+      if (!blocked[sib]) {
+        blocked[sib] = {
+          blocker: "full_brother",
+          reason: "الأخ الشقيق يحجب الأخ لأب",
+        };
+      }
+    }
+  }
+
+  // 9. Daughter blocks maternal sister (all madhabs)
+  if ((selectedHeirs["daughter"] || 0) > 0) {
+    if (!blocked["maternal_sister"]) {
+      blocked["maternal_sister"] = {
+        blocker: "daughter",
+        reason: "البنت تحجب الأخت لأم",
+      };
+    }
+  }
+
+  // 10. 2+ granddaughters block paternal aunt (all madhabs)
+  if ((selectedHeirs["granddaughter"] || 0) >= 2) {
+    if (!blocked["paternal_aunt"]) {
+      blocked["paternal_aunt"] = {
+        blocker: "granddaughter",
+        reason: "بنتا الابن تحجبان العمة",
+      };
+    }
+  }
+
+  // 11. Grandmother priority when both maternal and paternal grandmothers exist
+  // When both are at same degree (which they are in our system),
+  // ALL madhabs share equally — no blocking (IJMA for same-degree different-direction)
+  // Madhab differences only apply when grandmothers are at different degrees,
+  // which is not possible with our current heir keys.
+  // No blocking needed here — computeFixedShares handles equal sharing.
 
   return blocked;
 }

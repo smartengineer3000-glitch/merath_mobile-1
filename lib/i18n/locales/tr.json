@@ -532,7 +532,8 @@
       "simple": "Basit",
       "moderate": "Orta",
       "complex": "Karmaşık",
-      "special": "Özel"
+      "special": "Özel",
+      "fiqh": "Fıkıh"
     },
     "awl": "AWL",
     "radd": "RADD",

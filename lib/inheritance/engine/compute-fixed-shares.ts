@@ -98,13 +98,23 @@ export function computeFixedShares(
     const hasGenericGM = (heirs.grandmother || 0) > 0;
 
     if (hasPaternalGM && hasMaternalGM) {
+      // Both grandmothers at same degree — share equally (IJMA for same-degree different-direction)
+      // Each gets 1/12 (half of the 1/6 grandmother share)
       shares.push({
         key: "grandmother_father",
         name: "الجدة لأب",
         type: "فرض",
-        fraction: new FractionClass(1, 6),
+        fraction: new FractionClass(1, 12),
         count: 1,
-        reason: "⅙ الجدة لأب (أولوية على الجدة لأم)",
+        reason: "1/12 الجدة لأب (تشارك الجدة لأم بالتساوي)",
+      });
+      shares.push({
+        key: "grandmother_mother",
+        name: "الجدة لأم",
+        type: "فرض",
+        fraction: new FractionClass(1, 12),
+        count: 1,
+        reason: "1/12 الجدة لأم (تشارك الجدة لأب بالتساوي)",
       });
     } else if (hasPaternalGM) {
       shares.push({

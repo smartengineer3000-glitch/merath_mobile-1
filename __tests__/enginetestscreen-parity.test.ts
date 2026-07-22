@@ -57,7 +57,7 @@ describe("EngineTestScreen parity (40 cases)", () => {
       { husband: isRadd ? 120000 : 60000 },
     );
     run(`S3 [${m}]: Son only`, m, { son: 1 }, { son: 120000 });
-    run(`S4 [${m}]: Daughter only`, m, { daughter: 1 }, { daughter: 120000 });
+    run(`S4 [${m}]: Daughter only`, m, { daughter: 1 }, { daughter: isRadd ? 120000 : 60000 });
     run(
       `S5 [${m}]: Mother + father`,
       m,
@@ -74,7 +74,7 @@ describe("EngineTestScreen parity (40 cases)", () => {
       `S7 [${m}]: Husband + daughter`,
       m,
       { husband: 1, daughter: 1 },
-      { husband: 30000, daughter: 90000 },
+      { husband: 30000, daughter: isRadd ? 90000 : 60000 },
     );
     run(
       `S8 [${m}]: Wife + husband + son`,
@@ -83,10 +83,10 @@ describe("EngineTestScreen parity (40 cases)", () => {
       { wife: 15000, husband: 30000, son: 75000 },
     );
     run(
-      `S9 [${m}]: Son + 2 daughters`,
+      `S4 [${m}]: Daughter only`,
       m,
-      { son: 1, daughter: 2 },
-      { son: 60000, daughter: 60000 },
+      { daughter: 1 },
+      { daughter: isRadd ? 120000 : 60000 },
     );
     run(
       `S10 [${m}]: Wife + mother + father + son`,
@@ -162,10 +162,10 @@ describe("EngineTestScreen parity (40 cases)", () => {
     100,
   );
   run(
-    "M10: Wife + 3 daughters + mother (Radd)",
+    "M10: Wife + 3 daughters + mother (Shafii - no radd)",
     "shafii",
     { wife: 1, daughter: 3, mother: 1 },
-    { wife: 15000, mother: 21000, daughter: 84000 },
+    { wife: 15000, mother: 20000, daughter: 80000 },
   );
 
   // ── COMPLEX ──
@@ -208,22 +208,23 @@ describe("EngineTestScreen parity (40 cases)", () => {
     { mother: 20000, full_brother: 100000 },
   );
   run(
-    "C5a [shafii]: 2 daughters radd",
+    "C5a [shafii]: 2 daughters no radd",
     "shafii",
     { daughter: 2 },
-    { daughter: 120000 },
+    { daughter: 80000 },
   );
   run(
-    "C5b [shafii]: 3 daughters radd",
+    "C5b [shafii]: 3 daughters no radd",
     "shafii",
     { daughter: 3 },
-    { daughter: 120000 },
+    { daughter: 80000 },
   );
   run(
-    "C6 [shafii]: Grandfather hijab",
+    "C6 [shafii]: Grandfather musharak (shares with brother)",
     "shafii",
     { grandfather: 1, full_brother: 1 },
-    { grandfather: 120000 },
+    { grandfather: 60000 },
+    100,
   );
   run(
     "C6 [maliki]: Grandfather musharak",
@@ -298,16 +299,16 @@ describe("EngineTestScreen parity (40 cases)", () => {
     { wife: 30000, daughter_daughter: 90000 },
   );
   run(
-    "SP7: Grandmother priority",
+    "SP7: Grandmother priority (Shafii - no radd, both share equally)",
     "shafii",
     { wife: 1, grandmother_father: 1, grandmother_mother: 1 },
-    { wife: 30000, grandmother_father: 90000 },
+    { wife: 30000, grandmother_father: 10000, grandmother_mother: 10000 },
   );
   run(
-    "SP8: Grandmother radd",
+    "SP8: Grandmother (Shafii - no radd)",
     "shafii",
     { wife: 1, grandmother: 1 },
-    { wife: 30000, grandmother: 90000 },
+    { wife: 30000, grandmother: 20000 },
   );
   run(
     "SP9 [hanafi]: Husband radd",
@@ -326,5 +327,213 @@ describe("EngineTestScreen parity (40 cases)", () => {
     "maliki",
     { husband: 1, grandfather: 1, full_brother: 3 },
     { husband: 60000, grandfather: 40000, full_brother: 20000 },
+  );
+
+  // ── FIQH VALIDATION: Radd madhab differences ──
+  run(
+    "FQ1 [hanafi]: Daughter alone — radd fills",
+    "hanafi",
+    { daughter: 1 },
+    { daughter: 120000 },
+  );
+  run(
+    "FQ1 [shafii]: Daughter alone — no radd",
+    "shafii",
+    { daughter: 1 },
+    { daughter: 60000 },
+  );
+  run(
+    "FQ2 [hanafi]: Husband alone — radd fills",
+    "hanafi",
+    { husband: 1 },
+    { husband: 120000 },
+  );
+  run(
+    "FQ2 [shafii]: Husband alone — no radd",
+    "shafii",
+    { husband: 1 },
+    { husband: 60000 },
+  );
+  run(
+    "FQ3 [hanafi]: Wife + daughter — radd to daughter",
+    "hanafi",
+    { wife: 1, daughter: 1 },
+    { wife: 15000, daughter: 105000 },
+  );
+  run(
+    "FQ3 [shafii]: Wife + daughter — no radd",
+    "shafii",
+    { wife: 1, daughter: 1 },
+    { wife: 15000, daughter: 60000 },
+  );
+  run(
+    "FQ4 [hanafi]: Daughter + mother — radd to both",
+    "hanafi",
+    { daughter: 1, mother: 1 },
+    { mother: 30000, daughter: 90000 },
+    100,
+  );
+  run(
+    "FQ4 [shafii]: Daughter + mother — no radd",
+    "shafii",
+    { daughter: 1, mother: 1 },
+    { mother: 20000, daughter: 60000 },
+  );
+  run(
+    "FQ5 [hanbali]: Wife alone — radd fills",
+    "hanbali",
+    { wife: 1 },
+    { wife: 120000 },
+  );
+  run(
+    "FQ5 [maliki]: Wife alone — no radd",
+    "maliki",
+    { wife: 1 },
+    { wife: 30000 },
+  );
+
+  // ── FIQH VALIDATION: Grandfather musharak vs hijab ──
+  run(
+    "FQ6 [hanafi]: Grandfather + brother — hijab",
+    "hanafi",
+    { grandfather: 1, full_brother: 1 },
+    { grandfather: 120000 },
+  );
+  run(
+    "FQ6 [shafii]: Grandfather + brother — musharak",
+    "shafii",
+    { grandfather: 1, full_brother: 1 },
+    { grandfather: 60000 },
+    100,
+  );
+  run(
+    "FQ6 [maliki]: Grandfather + brother — musharak",
+    "maliki",
+    { grandfather: 1, full_brother: 1 },
+    { grandfather: 60000 },
+    100,
+  );
+  run(
+    "FQ6 [hanbali]: Grandfather + brother — musharak",
+    "hanbali",
+    { grandfather: 1, full_brother: 1 },
+    { grandfather: 60000 },
+    100,
+  );
+  run(
+    "FQ7 [hanafi]: Grandfather + sister — hijab",
+    "hanafi",
+    { grandfather: 1, full_sister: 1 },
+    { grandfather: 120000 },
+  );
+  run(
+    "FQ7 [maliki]: Grandfather + sister — musharak",
+    "maliki",
+    { grandfather: 1, full_sister: 1 },
+    { grandfather: 80000, full_sister: 40000 },
+    100,
+  );
+
+  // ── FIQH VALIDATION: Blood relatives ──
+  run(
+    "FQ8: Wife + daughter_son — blood relative",
+    "shafii",
+    { wife: 1, daughter_son: 1 },
+    { wife: 30000, daughter_son: 90000 },
+  );
+  run(
+    "FQ9: Wife + maternal_uncle — radd fills wife (Hanafi)",
+    "hanafi",
+    { wife: 1, maternal_uncle: 1 },
+    { wife: 120000 },
+  );
+  run(
+    "FQ10: Wife + full_nephew — blood relative",
+    "shafii",
+    { wife: 1, full_nephew: 1 },
+    { wife: 30000, full_nephew: 90000 },
+  );
+  run(
+    "FQ11: Blood relative blocked by asaba",
+    "shafii",
+    { son: 1, daughter_son: 1 },
+    { son: 120000 },
+  );
+  run(
+    "FQ12: Blood relative blocked by class 1",
+    "shafii",
+    { daughter_son: 1, maternal_uncle: 1 },
+    { daughter_son: 120000 },
+  );
+
+  // ── FIQH VALIDATION: Grandmother rules ──
+  run(
+    "FQ13: Mother blocks grandmother",
+    "shafii",
+    { mother: 1, grandmother: 1 },
+    { mother: 40000 },
+  );
+  run(
+    "FQ14: Grandmother gets 1/6 when no mother",
+    "shafii",
+    { grandmother: 1 },
+    { grandmother: 20000 },
+  );
+
+  // ── FIQH VALIDATION: Complex real-world ──
+  run(
+    "FQ15: Wife + son + daughter + father + mother",
+    "shafii",
+    { wife: 1, son: 1, daughter: 1, father: 1, mother: 1 },
+    { wife: 15000, mother: 20000, father: 20000, son: 43333, daughter: 21667 },
+    200,
+  );
+  run(
+    "FQ16: Husband + mother + brother + sister (Awl)",
+    "shafii",
+    { husband: 1, mother: 1, full_brother: 1, full_sister: 1 },
+    { husband: 60000, mother: 20000, full_brother: 26667, full_sister: 13333 },
+    100,
+  );
+  run(
+    "FQ17: Husband + 2 daughters + mother (Awl)",
+    "shafii",
+    { husband: 1, daughter: 2, mother: 1 },
+    { husband: 27692, daughter: 73846, mother: 18462 },
+    100,
+  );
+  run(
+    "FQ18: Grandson as asaba with daughters (Maliki)",
+    "maliki",
+    { daughter: 2, grandson: 1 },
+    { daughter: 80000, grandson: 40000 },
+    100,
+  );
+
+  // ── FIQH VALIDATION: Cross-madhab ──
+  run(
+    "FQ19: Husband + mother + maternal brother + full brother",
+    "shafii",
+    { husband: 1, mother: 1, maternal_brother: 2, full_brother: 1 },
+    { husband: 60000, mother: 20000 },
+  );
+  run(
+    "FQ20: Wife + father + mother (Hanafi Umariyyah)",
+    "hanafi",
+    { wife: 1, father: 1, mother: 1 },
+    { wife: 30000, mother: 30000, father: 60000 },
+  );
+  run(
+    "FQ21: Wife + father + mother (Maliki Umariyyah)",
+    "maliki",
+    { wife: 1, father: 1, mother: 1 },
+    { wife: 30000, mother: 20000, father: 70000 },
+  );
+  run(
+    "FQ22: Husband + mother + maternal brother (Hanafi radd to spouse)",
+    "hanafi",
+    { husband: 1, mother: 1, maternal_brother: 1 },
+    { husband: 60000, mother: 40000, maternal_siblings: 20000 },
+    100,
   );
 });

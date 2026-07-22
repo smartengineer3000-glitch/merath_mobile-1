@@ -111,13 +111,17 @@ describe("Quran 4:11 — Son gets 2x daughter's share", () => {
 // QURAN 4:12 — DAUGHTER ALONE GETS 1/2, 2+ DAUGHTERS GET 2/3
 // ============================================================================
 describe("Quran 4:12 — Daughter shares", () => {
-  it("Case 5: 1 daughter alone — gets 1/2, radd fills remainder (shafii/maliki)", () => {
-    const r = run("shafii", { daughter: 1 });
-    expect(r.success).toBe(true);
-    // Daughter fard = 1/2, radd fills remaining 1/2 → full estate
-    expect(r.raddApplied).toBe(true);
-    expect(shareAmount(r, "daughter")).toBeCloseTo(E, -2);
-    expect(totalShares(r)).toBeCloseTo(E, -2);
+  it("Case 5: 1 daughter alone — gets 1/2 (radd in Hanafi/Hanbali, treasury in Shafii/Maliki)", () => {
+    // Hanafi: daughter gets 1/2 + radd fills to full estate
+    const rH = run("hanafi", { daughter: 1 });
+    expect(rH.success).toBe(true);
+    expect(rH.raddApplied).toBe(true);
+    expect(shareAmount(rH, "daughter")).toBeCloseTo(E, -2);
+    // Shafii: daughter gets only 1/2, surplus to Bayt al-Mal
+    const rS = run("shafii", { daughter: 1 });
+    expect(rS.success).toBe(true);
+    expect(rS.raddApplied).toBe(false);
+    expect(shareAmount(rS, "daughter")).toBeCloseTo(E / 2, -2);
   });
 
   it("Case 6: 1 daughter alone — Hanafi: radd gives full estate", () => {
@@ -127,18 +131,30 @@ describe("Quran 4:12 — Daughter shares", () => {
     expect(totalShares(r)).toBeCloseTo(E, -2);
   });
 
-  it("Case 7: 2 daughters alone — get 2/3 (radd fills in shafii)", () => {
-    const r = run("shafii", { daughter: 2 });
-    expect(r.success).toBe(true);
-    expect(r.raddApplied).toBe(true);
-    expect(totalShares(r)).toBeCloseTo(E, -2);
+  it("Case 7: 2 daughters alone — get 2/3 (no radd in Shafii, radd in Hanafi)", () => {
+    const rShafii = run("shafii", { daughter: 2 });
+    expect(rShafii.success).toBe(true);
+    expect(rShafii.raddApplied).toBe(false);
+    // 2 daughters = 2/3, remainder to treasury
+    expect(shareAmount(rShafii, "daughter")).toBeCloseTo((E * 2) / 3, -2);
+
+    const rHanafi = run("hanafi", { daughter: 2 });
+    expect(rHanafi.success).toBe(true);
+    expect(rHanafi.raddApplied).toBe(true);
+    expect(totalShares(rHanafi)).toBeCloseTo(E, -2);
   });
 
-  it("Case 8: 3 daughters alone — get 2/3 (radd fills in shafii)", () => {
-    const r = run("shafii", { daughter: 3 });
-    expect(r.success).toBe(true);
-    expect(r.raddApplied).toBe(true);
-    expect(totalShares(r)).toBeCloseTo(E, -2);
+  it("Case 8: 3 daughters alone — get 2/3 (no radd in Shafii, radd in Hanafi)", () => {
+    const rShafii = run("shafii", { daughter: 3 });
+    expect(rShafii.success).toBe(true);
+    expect(rShafii.raddApplied).toBe(false);
+    // 3 daughters = 2/3, remainder to treasury
+    expect(shareAmount(rShafii, "daughter")).toBeCloseTo((E * 2) / 3, -2);
+
+    const rHanafi = run("hanafi", { daughter: 3 });
+    expect(rHanafi.success).toBe(true);
+    expect(rHanafi.raddApplied).toBe(true);
+    expect(totalShares(rHanafi)).toBeCloseTo(E, -2);
   });
 });
 
@@ -275,11 +291,13 @@ describe("Father's share", () => {
 // GRANDFATHER + SIBLINGS — MADHAB DIFFERENCES
 // ============================================================================
 describe("Grandfather + siblings — madhab differences", () => {
-  it("Case 24: Grandfather blocks siblings in Shafii", () => {
+  it("Case 24: Grandfather shares with siblings in Shafii (muqasamah)", () => {
     const r = run("shafii", { grandfather: 1, full_brother: 2 });
     expect(r.success).toBe(true);
-    expect(shareAmount(r, "grandfather")).toBeCloseTo(E, -2);
-    expect(hasShare(r, "full_brother")).toBe(false);
+    // Shafii: muqasamah (sharing) — grandfather takes best of 1/3, 1/6, or muqasamah
+    expect(hasShare(r, "grandfather")).toBe(true);
+    expect(hasShare(r, "full_brother")).toBe(true);
+    expect(totalShares(r)).toBeCloseTo(E, -2);
   });
 
   it("Case 25: Grandfather blocks siblings in Hanafi", () => {
@@ -305,11 +323,11 @@ describe("Grandfather + siblings — madhab differences", () => {
     expect(totalShares(r)).toBeCloseTo(E, -2);
   });
 
-  it("Case 28: Grandfather + sister (Shafii) — grandfather takes all (blocks)", () => {
+  it("Case 28: Grandfather + sister (Shafii) — muqasamah (both share)", () => {
     const r = run("shafii", { grandfather: 1, full_sister: 1 });
     expect(r.success).toBe(true);
-    expect(shareAmount(r, "grandfather")).toBeCloseTo(E, -2);
-    expect(hasShare(r, "full_sister")).toBe(false);
+    expect(hasShare(r, "grandfather")).toBe(true);
+    expect(hasShare(r, "full_sister")).toBe(true);
   });
 
   it("Case 29: Grandfather + sister (Maliki) — both share", () => {
@@ -374,10 +392,13 @@ describe("Radd cases — surplus redistribution", () => {
     expect(shareAmount(r, "daughter")).toBeCloseTo(E, -2);
   });
 
-  it("Case 34: Daughter alone (Shafii) — radd gives her full estate", () => {
+  it("Case 34: Daughter alone (Shafii) — no radd, surplus to Bayt al-Mal", () => {
     const r = run("shafii", { daughter: 1 });
-    expect(r.raddApplied).toBe(true);
-    expect(shareAmount(r, "daughter")).toBeCloseTo(E, -2);
+    expect(r.success).toBe(true);
+    expect(r.raddApplied).toBe(false);
+    expect(shareAmount(r, "daughter")).toBeCloseTo(E / 2, -2);
+    // Daughter gets 1/2, treasury (Bayt al-Mal) gets the other 1/2
+    expect(hasShare(r, "treasury")).toBe(true);
   });
 
   it("Case 35: Daughter + mother (no spouse) — radd to both (Hanafi)", () => {
@@ -404,15 +425,15 @@ describe("Radd cases — surplus redistribution", () => {
     expect(totalShares(r)).toBeCloseTo(E, -2);
   });
 
-  it("Case 37: Wife + daughter (Shafii) — radd to daughter (minority Shafii opinion)", () => {
+  it("Case 37: Wife + daughter (Shafii) — no radd, surplus to Bayt al-Mal", () => {
     // Wife = 1/8 = 30000, daughter = 1/2 = 120000
-    // Total = 150000, surplus = 90000
-    // Engine applies radd to non-spouse heirs (minority Shafii position)
+    // Total = 150000, surplus = 90000 → treasury (Shafii: no radd)
     const r = run("shafii", { wife: 1, daughter: 1 });
-    expect(r.raddApplied).toBe(true);
+    expect(r.raddApplied).toBe(false);
     expect(shareAmount(r, "wife")).toBeCloseTo(E / 8, -2);
-    expect(shareAmount(r, "daughter")).toBeCloseTo(210000, -2);
-    expect(totalShares(r)).toBeCloseTo(E, -2);
+    expect(shareAmount(r, "daughter")).toBeCloseTo(E / 2, -2);
+    // Treasury gets the surplus
+    expect(hasShare(r, "treasury")).toBe(true);
   });
 
   it("Case 38: Husband + 2 daughters (Hanafi) — radd to daughters", () => {
@@ -813,9 +834,10 @@ describe("Cross-madhab comparison — same scenario different outcomes", () => {
     expect(shareAmount(rH, "grandfather")).toBeCloseTo(E, -2);
     expect(hasShare(rH, "full_brother")).toBe(false);
 
-    // Shafii: grandfather blocks brother
-    expect(shareAmount(rS, "grandfather")).toBeCloseTo(E, -2);
-    expect(hasShare(rS, "full_brother")).toBe(false);
+    // Shafii: grandfather shares with brother (muqasamah)
+    expect(hasShare(rS, "grandfather")).toBe(true);
+    expect(hasShare(rS, "full_brother")).toBe(true);
+    expect(totalShares(rS)).toBeCloseTo(E, -2);
 
     // Maliki: both share
     expect(hasShare(rM, "grandfather")).toBe(true);
@@ -837,20 +859,24 @@ describe("Cross-madhab comparison — same scenario different outcomes", () => {
     expect(shareAmount(rS, "husband")).toBeCloseTo(E / 2, -2);
   });
 
-  it("Case 69: Daughter + mother (no spouse) — Hanafi radd to both", () => {
+  it("Case 69: Daughter + mother (no spouse) — Hanafi radd, Shafii no radd", () => {
     const rH = run("hanafi", { daughter: 1, mother: 1 });
     const rS = run("shafii", { daughter: 1, mother: 1 });
 
     expect(rH.raddApplied).toBe(true);
-    expect(rS.raddApplied).toBe(true); // Both apply radd when no spouse
+    expect(rS.raddApplied).toBe(false); // Shafii: no radd, surplus to Bayt al-Mal
 
-    // Daughter=1/2, mother=1/6 → total=2/3, radd fills remaining 1/3
+    // Hanafi radd: Daughter=1/2, mother=1/6 → total=2/3, radd fills remaining 1/3
     // Proportional: daughter=3/4, mother=1/4
     // Daughter = 120000 + 3/4×80000 = 180000
     // Mother = 40000 + 1/4×80000 = 60000
     expect(shareAmount(rH, "daughter")).toBeCloseTo(180000, -2);
     expect(shareAmount(rH, "mother")).toBeCloseTo(60000, -2);
     expect(totalShares(rH)).toBeCloseTo(E, -2);
+
+    // Shafii: no radd — daughter=1/2=120000, mother=1/6=40000
+    expect(shareAmount(rS, "daughter")).toBeCloseTo(E / 2, -2);
+    expect(shareAmount(rS, "mother")).toBeCloseTo(E / 6, -2);
   });
 });
 

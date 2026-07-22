@@ -516,7 +516,8 @@
       "simple": "Simple",
       "moderate": "Moderate",
       "complex": "Complex",
-      "special": "Special"
+      "special": "Special",
+      "fiqh": "Fiqh"
     },
     "awl": "AWL",
     "radd": "RADD",

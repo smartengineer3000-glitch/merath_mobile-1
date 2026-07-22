@@ -23,7 +23,7 @@ import type {
 interface TestCase {
   id: string;
   name: string;
-  category: "simple" | "moderate" | "complex" | "special";
+  category: "simple" | "moderate" | "complex" | "special" | "fiqh";
   madhab: MadhhabType;
   heirs: HeirsData;
   expected: Record<string, number>;
@@ -92,7 +92,7 @@ function buildTestCases(): TestCase[] {
       "simple",
       m,
       { daughter: 1 },
-      { daughter: 120000 },
+      { daughter: isRadd ? 120000 : 60000 },
     );
     add(
       `S5 [${m}]: Mother + father`,
@@ -113,7 +113,7 @@ function buildTestCases(): TestCase[] {
       "simple",
       m,
       { husband: 1, daughter: 1 },
-      { husband: 30000, daughter: 90000 },
+      { husband: 30000, daughter: isRadd ? 90000 : 60000 },
     );
     add(
       `S8 [${m}]: Wife + husband + son`,
@@ -213,11 +213,11 @@ function buildTestCases(): TestCase[] {
     100,
   );
   add(
-    "M10: Wife + 3 daughters + mother (Radd)",
+    "M10: Wife + 3 daughters + mother (Shafii — no radd)",
     "moderate",
     "shafii",
     { wife: 1, daughter: 3, mother: 1 },
-    { wife: 15000, mother: 21000, daughter: 84000 },
+    { wife: 15000, mother: 20000, daughter: 80000 },
   );
 
   // ── COMPLEX ──
@@ -278,25 +278,26 @@ function buildTestCases(): TestCase[] {
     { mother: 20000, full_brother: 100000 },
   );
   add(
-    "C5a [shafii]: 2 daughters radd",
+    "C5a [shafii]: 2 daughters (no radd)",
     "complex",
     "shafii",
     { daughter: 2 },
-    { daughter: 120000 },
+    { daughter: 80000 },
   );
   add(
-    "C5b [shafii]: 3 daughters radd",
+    "C5b [shafii]: 3 daughters (no radd)",
     "complex",
     "shafii",
     { daughter: 3 },
-    { daughter: 120000 },
+    { daughter: 80000 },
   );
   add(
-    "C6 [shafii]: Grandfather hijab",
+    "C6 [shafii]: Grandfather musharak (shares)",
     "complex",
     "shafii",
     { grandfather: 1, full_brother: 1 },
-    { grandfather: 120000 },
+    { grandfather: 60000, full_brother: 60000 },
+    100,
   );
   add(
     "C6 [maliki]: Grandfather musharak",
@@ -382,18 +383,18 @@ function buildTestCases(): TestCase[] {
     { wife: 30000, daughter_daughter: 90000 },
   );
   add(
-    "SP7: Grandmother priority",
+    "SP7: Grandmother priority (Shafii — no radd)",
     "special",
     "shafii",
     { wife: 1, grandmother_father: 1, grandmother_mother: 1 },
-    { wife: 30000, grandmother_father: 90000 },
+    { wife: 30000, grandmother_father: 20000 },
   );
   add(
-    "SP8: Grandmother radd",
+    "SP8: Grandmother (Shafii — no radd)",
     "special",
     "shafii",
     { wife: 1, grandmother: 1 },
-    { wife: 30000, grandmother: 90000 },
+    { wife: 30000, grandmother: 20000 },
   );
   add(
     "SP9 [hanafi]: Husband radd",
@@ -415,6 +416,252 @@ function buildTestCases(): TestCase[] {
     "maliki",
     { husband: 1, grandfather: 1, full_brother: 3 },
     { husband: 60000, grandfather: 40000, full_brother: 20000 },
+  );
+
+  // ── FIQH VALIDATION: Radd madhab differences ──
+  // Quran/Sunnah: Radd fills surplus when sole heir(s) exist
+  // Hanafi/Hanbali: radd applies (even to spouse)
+  // Shafii/Maliki: no radd — surplus goes to Bayt al-Mal
+  add(
+    "FQ1 [hanafi]: Daughter alone — radd fills to full estate",
+    "fiqh",
+    "hanafi",
+    { daughter: 1 },
+    { daughter: 120000 },
+  );
+  add(
+    "FQ1 [shafii]: Daughter alone — no radd (1/2 only)",
+    "fiqh",
+    "shafii",
+    { daughter: 1 },
+    { daughter: 60000 },
+  );
+  add(
+    "FQ2 [hanafi]: Husband alone — radd fills to full estate",
+    "fiqh",
+    "hanafi",
+    { husband: 1 },
+    { husband: 120000 },
+  );
+  add(
+    "FQ2 [shafii]: Husband alone — no radd (1/2 only)",
+    "fiqh",
+    "shafii",
+    { husband: 1 },
+    { husband: 60000 },
+  );
+  add(
+    "FQ3 [hanafi]: Wife + daughter — radd to daughter",
+    "fiqh",
+    "hanafi",
+    { wife: 1, daughter: 1 },
+    { wife: 15000, daughter: 105000 },
+  );
+  add(
+    "FQ3 [shafii]: Wife + daughter — no radd",
+    "fiqh",
+    "shafii",
+    { wife: 1, daughter: 1 },
+    { wife: 15000, daughter: 60000 },
+  );
+  add(
+    "FQ4 [hanafi]: Daughter + mother — radd to both",
+    "fiqh",
+    "hanafi",
+    { daughter: 1, mother: 1 },
+    { mother: 30000, daughter: 90000 },
+    100,
+  );
+  add(
+    "FQ4 [shafii]: Daughter + mother — no radd",
+    "fiqh",
+    "shafii",
+    { daughter: 1, mother: 1 },
+    { mother: 20000, daughter: 60000 },
+  );
+  add(
+    "FQ5 [hanbali]: Wife alone — radd fills",
+    "fiqh",
+    "hanbali",
+    { wife: 1 },
+    { wife: 120000 },
+  );
+  add(
+    "FQ5 [maliki]: Wife alone — no radd",
+    "fiqh",
+    "maliki",
+    { wife: 1 },
+    { wife: 30000 },
+  );
+
+  // ── FIQH VALIDATION: Grandfather musharak vs hijab ──
+  // Quran/Sunnah: Grandfather + siblings differ by madhab
+  // Hanafi: hijab (grandfather blocks siblings)
+  // Shafii/Maliki/Hanbali: musharak (grandfather shares)
+  add(
+    "FQ6 [hanafi]: Grandfather + brother — hijab (brother blocked)",
+    "fiqh",
+    "hanafi",
+    { grandfather: 1, full_brother: 1 },
+    { grandfather: 120000 },
+  );
+  add(
+    "FQ6 [shafii]: Grandfather + brother — musharak (share)",
+    "fiqh",
+    "shafii",
+    { grandfather: 1, full_brother: 1 },
+    { grandfather: 60000 },
+    100,
+  );
+  add(
+    "FQ6 [maliki]: Grandfather + brother — musharak (share)",
+    "fiqh",
+    "maliki",
+    { grandfather: 1, full_brother: 1 },
+    { grandfather: 60000 },
+    100,
+  );
+  add(
+    "FQ6 [hanbali]: Grandfather + brother — musharak (share)",
+    "fiqh",
+    "hanbali",
+    { grandfather: 1, full_brother: 1 },
+    { grandfather: 60000 },
+    100,
+  );
+  add(
+    "FQ7 [hanafi]: Grandfather + sister — hijab (sister blocked)",
+    "fiqh",
+    "hanafi",
+    { grandfather: 1, full_sister: 1 },
+    { grandfather: 120000 },
+  );
+  add(
+    "FQ7 [maliki]: Grandfather + sister — musharak (both share)",
+    "fiqh",
+    "maliki",
+    { grandfather: 1, full_sister: 1 },
+    { grandfather: 80000, full_sister: 40000 },
+    100,
+  );
+
+  // ── FIQH VALIDATION: Blood relatives (dhawu al-arham) ──
+  // Quran 4:33: distant kindred inherit when no asaba
+  add(
+    "FQ8: Wife + daughter_son — blood relative inherits (Shafii)",
+    "fiqh",
+    "shafii",
+    { wife: 1, daughter_son: 1 },
+    { wife: 30000, daughter_son: 90000 },
+  );
+  add(
+    "FQ9: Wife + maternal_uncle — radd fills wife (Hanafi)",
+    "fiqh",
+    "hanafi",
+    { wife: 1, maternal_uncle: 1 },
+    { wife: 120000 },
+  );
+  add(
+    "FQ10: Wife + full_nephew — blood relative inherits (Shafii)",
+    "fiqh",
+    "shafii",
+    { wife: 1, full_nephew: 1 },
+    { wife: 30000, full_nephew: 90000 },
+  );
+  add(
+    "FQ11: Blood relative blocked by asaba (son + daughter_son)",
+    "fiqh",
+    "shafii",
+    { son: 1, daughter_son: 1 },
+    { son: 120000 },
+  );
+  add(
+    "FQ12: Blood relative blocked by class 1 (daughter_son blocks maternal_uncle)",
+    "fiqh",
+    "shafii",
+    { daughter_son: 1, maternal_uncle: 1 },
+    { daughter_son: 120000 },
+  );
+
+  // ── FIQH VALIDATION: Grandmother rules ──
+  add(
+    "FQ13: Mother blocks grandmother",
+    "fiqh",
+    "shafii",
+    { mother: 1, grandmother: 1 },
+    { mother: 40000 },
+  );
+  add(
+    "FQ14: Grandmother gets 1/6 when no mother",
+    "fiqh",
+    "shafii",
+    { grandmother: 1 },
+    { grandmother: 20000 },
+  );
+
+  // ── FIQH VALIDATION: Complex real-world scenarios ──
+  add(
+    "FQ15: Wife + son + daughter + father + mother (Shafii)",
+    "fiqh",
+    "shafii",
+    { wife: 1, son: 1, daughter: 1, father: 1, mother: 1 },
+    { wife: 15000, mother: 20000, father: 20000, son: 43333, daughter: 21667 },
+    200,
+  );
+  add(
+    "FQ16: Husband + mother + full brother + full sister (Shafii — Awl)",
+    "fiqh",
+    "shafii",
+    { husband: 1, mother: 1, full_brother: 1, full_sister: 1 },
+    { husband: 60000, mother: 20000, full_brother: 26667, full_sister: 13333 },
+    100,
+  );
+  add(
+    "FQ17: Husband + 2 daughters + mother (Shafii — Awl)",
+    "fiqh",
+    "shafii",
+    { husband: 1, daughter: 2, mother: 1 },
+    { husband: 27692, daughter: 73846, mother: 18462 },
+    100,
+  );
+  add(
+    "FQ18: Grandson inheriting as asaba with daughters (Maliki)",
+    "fiqh",
+    "maliki",
+    { daughter: 2, grandson: 1 },
+    { daughter: 80000, grandson: 40000 },
+    100,
+  );
+
+  // ── FIQH VALIDATION: Cross-madhab comparison ──
+  add(
+    "FQ19: Husband + mother + maternal brother + full brother (Shafii)",
+    "fiqh",
+    "shafii",
+    { husband: 1, mother: 1, maternal_brother: 2, full_brother: 1 },
+    { husband: 60000, mother: 20000 },
+  );
+  add(
+    "FQ20: Wife + father + mother (Hanafi — Umariyyah)",
+    "fiqh",
+    "hanafi",
+    { wife: 1, father: 1, mother: 1 },
+    { wife: 30000, mother: 30000, father: 60000 },
+  );
+  add(
+    "FQ21: Wife + father + mother (Maliki — Umariyyah)",
+    "fiqh",
+    "maliki",
+    { wife: 1, father: 1, mother: 1 },
+    { wife: 30000, mother: 20000, father: 70000 },
+  );
+  add(
+    "FQ22: Husband + mother + maternal brother (Hanafi radd to spouse)",
+    "fiqh",
+    "hanafi",
+    { husband: 1, mother: 1, maternal_brother: 1 },
+    { husband: 60000, mother: 40000, maternal_siblings: 20000 },
+    100,
   );
 
   return cases;
@@ -477,6 +724,7 @@ const CATEGORY_ICONS: Record<string, { icon: string; colorKey: string }> = {
   moderate: { icon: "alert-circle", colorKey: "warning" },
   complex: { icon: "analytics", colorKey: "primary" },
   special: { icon: "star", colorKey: "tertiary" },
+  fiqh: { icon: "book", colorKey: "primary" },
 };
 
 export default function EngineTestScreen() {
@@ -670,7 +918,7 @@ export default function EngineTestScreen() {
             </Card>
 
             {/* Results by category */}
-            {(["simple", "moderate", "complex", "special"] as const).map(
+            {(["simple", "moderate", "complex", "special", "fiqh"] as const).map(
               (cat) => {
                 const catResults = byCategory[cat];
                 if (!catResults) return null;
