@@ -175,15 +175,83 @@
     "fiqhExplanationFallback": "Bu hesaplama için detaylı fıkıh açıklamaları gelecek güncellemede mevcut olacaktır.",
     "fiqhRules": {
       "title": "İslami Miras Fıkıh Kuralları",
+      "intro": "Dört Sünni mezhebi boyunca İslami miras kurallarının kapsamlı referansı. Bu bölüm karşılaştırmalı mezhep hükümlerini, özel durumları, sabit payları (Ferd) ve engelleme kurallarını (Hicap) kapsar.",
       "madhabRules": "Mezhebe Özel Kurallar",
+      "comparativeTitle": "Mezhepler Arası Karşılaştırmalı Farklar",
+      "comparativeIntro": "Dört mezhebin kritik miras senaryolarını ele alma konusundaki temel farklılıkları:",
+      "comparativeTableHeaders": {
+        "issue": "Konu",
+        "shafii": "Şafii",
+        "hanafi": "Hanefi",
+        "maliki": "Maliki",
+        "hanbali": "Hanbeli"
+      },
+      "comparativeTable": [
+        {
+          "issue": "Büyükbaba + Erkek Kardeşler",
+          "shafii": "Büyükbaba erkek kardeşleri engeller",
+          "hanafi": "Büyükbaba erkek kardeşleri engeller",
+          "maliki": "Büyükbaba erkek kardeşlerle paylaşır (1/6 büyükbabaya, geri kalanı erkek kardeşlere)",
+          "hanbali": "Büyükbaba erkek kardeşlerle paylaşır (1/6 büyükbabaya, geri kalanı erkek kardeşlere)"
+        },
+        {
+          "issue": "Eşlere Geri Dönüş (Radd)",
+          "shafii": "Eşlere geri dönüş yok",
+          "hanafi": "Kan mirasçı yoksa eşlere geri dönüş var",
+          "maliki": "Diğer mirasçılar varsa eşlere geri dönüş yok",
+          "hanbali": "Sadece kan mirasçı yoksa eşlere geri dönüş var"
+        },
+        {
+          "issue": "Radd (Genel)",
+          "shafii": "Eş dışındaki sabit paylı mirasçılara geri dönüş",
+          "hanafi": "Eş dahil tüm sabit paylı mirasçılara geri dönüş",
+          "maliki": "Diğer mirasçılar varsa eşlere geri dönüş yok",
+          "hanbali": "Sadece kan mirasçı yoksa eşlere geri dönüş var"
+        },
+        {
+          "issue": "Mushtarakah (Kardeşler ve Anne)",
+          "shafii": "Kardeşler ve anne eşit olarak paylaşır",
+          "hanafi": "Erkek kardeşler Mushtarakah'dan hariç tutulur",
+          "maliki": "Kardeşler ve anne eşit olarak paylaşır",
+          "hanbali": "Kardeşler ve anne eşit olarak paylaşır"
+        },
+        {
+          "issue": "Ummariyye'de Annenin Payı",
+          "shafii": "Anne net mirasın 1/3'ünü alır",
+          "hanafi": "Anne net mirasın 1/3'ünü alır",
+          "maliki": "Anne net mirasın 1/3'ünü alır",
+          "hanbali": "Anne net mirasın 1/3'ünü alır"
+        },
+        {
+          "issue": "Kan Yakınları (Dhawu al-Arham)",
+          "shafii": "Kur'an 4:11'e göre miras alır",
+          "hanafi": "Tenziel yoluyla miras alır (Kur'an 4:33)",
+          "maliki": "Kan yakınlarına miras yok",
+          "hanbali": "Amca yoksa miras alır"
+        },
+        {
+          "issue": "Kız Kardeşin Oğlu (Akdariyye)",
+          "shafii": "Büyükbaba baba hattını engellediğinde Akdariyye ile miras alır",
+          "hanafi": "Açıkça dahil edilmemiş",
+          "maliki": "Açıkça dahil edilmemiş",
+          "hanbali": "Amca yoksa miras alır"
+        }
+      ],
       "specialCases": "Özel Durumlar",
+      "specialCasesIntro": "İslami miras hukuku, standart dışı senaryolarda uygulanan birkaç özel kural içerir:",
       "fixedShares": "Sabit Paylar (Ferz)",
+      "fixedSharesIntro": "Kur'an'a göre her miras türü için sabit paylar (Ferd). Bunlar Şeriat tarafından belirlenen temli miras tutarlarıdır.",
       "hijabRules": "Engelleme Kuralları (Hicap)",
+      "hijabIntro": "Hicap (engelleme) kuralları, bir varisin varlığının başka bir varisin payını alma hakkını nasıl etkilediğini belirler:",
+      "hijabPartialTitle": "Kısmi Engelleme (Tahat al-Hicap)",
+      "hijabPartialIntro": "Kısmi engelleme kuralları, engellenen varisin tamamen hariç tutulması yerine azaltılmış bir pay alması durumları:",
       "activeMadhab": "Aktif Mezhep",
       "active": "AKTİF",
       "tableHeaders": {
-        "share": "Pay (Fard)",
+        "share": "Pay (Ferd)",
         "whoReceives": "Kim Alır",
+        "condition": "Koşul",
+        "notes": "Notlar",
         "blocked": "Engellenen",
         "blocker": "Engelleyen",
         "description": "Açıklama"
@@ -234,102 +302,182 @@
       "specialCasesList": {
         "umariyyatan": {
           "title": "Ummariyyatan (Umar Kuralı)",
-          "description": "Sadece eş, baba ve anne varsa ve çocuk yoksa, kalan miktar babaya verilir."
+          "description": "Sadece eş, baba ve anne varsa ve çocuk yoksa, kalan miktar babaya verilir.",
+          "conditions": "Torun mirasçı yok (çocuk, torun vb.)",
+          "applicable": "Dört mezhep"
         },
         "awl": {
           "title": "Al-Awl (Orantılı Artış)",
-          "description": "Sabit paylar net mirası aştığında uygulanır. Her mirasçının payı orantılı olarak azaltılır."
+          "description": "Sabit paylar net mirası aştığında uygulanır. Her mirasçının payı orantılı olarak azaltılır.",
+          "conditions": "Toplam sabit paylar net mirası aşıyor",
+          "applicable": "Dört mezhep"
         },
         "radd": {
           "title": "Al-Radd (Fazl Geri Dönüşü)",
-          "description": "Tüm paylar hesaplandıktan sonra fazlalık sabit paylı mirasçılara geri verilir. Eş sadece kan mirasçı yokken Radd alır."
+          "description": "Tüm paylar hesaplandıktan sonra fazlalık sabit paylı mirasçılara geri verilir. Eş sadece kan mirasçı yokken Radd alır.",
+          "conditions": "Tüm paylar dağıtıldıktan sonra fazla kalır",
+          "applicable": "Şafii: eş dışındaki mirasçılara; Hanefi/Hanbeli: kan mirasçı yoksa eş dahil; Maliki: diğer mirasçılar varsa eşlere geri dönüş yok"
         },
         "musharraka": {
           "title": "Musharraka (Ortak Miras)",
-          "description": "Anne varken büyük kardeşler eşit paylaşır. Şafii ve Maliki mezheplerinde geçerlidir."
+          "description": "Anne varken büyük kardeşler eşit paylaşır. Şafii ve Maliki mezheplerinde geçerlidir.",
+          "conditions": "Anne, kardeşlerle birlikte",
+          "applicable": "Şafii ve Maliki"
         },
         "akdariyya": {
           "title": "Akdariyya (Kız Kardeşin Oğlu)",
-          "description": "Büyükbaba baba çizgisini engellediğinde kız kardeşi oğlu özel kural ile miras alabilir."
+          "description": "Büyükbaba baba çizgisini engellediğinde kız kardeşi oğlu özel kural ile miras alabilir.",
+          "conditions": "Büyükbaba var, baba veya oğul yok, kız kardeşin oğlu en yakın erkek",
+          "applicable": "Şafii ve Hanbeli"
         },
-        "asabaWithOthers": {
-          "title": "Asaba Diğer Mirasçılarla",
-          "description": "Kızlar varken kız kardeş miras kalan payı alır."
+        "ta'seeb": {
+          "title": "Ta'sib (Mirascılık)",
+          "description": "Kızlar olduğunda kız kardeş varis mirascısı (Asaba) olur ve kızlar 2/3 paylarını aldıktan sonra kalan mirası alır.",
+          "conditions": "Kızlar, kız kardeşlerle birlikte ve oğul yok",
+          "applicable": "Dört mezhep"
+        },
+        "grandfatherSiblings": {
+          "title": "Büyükbaba ile Kardeşler",
+          "description": "Maliki ve Hanefi mezheplerine göre büyükbaba kardeşlerle paylaşır: büyükbabaya 1/6, geri kalanı kardeşlere. Şafii ve Hanefi mezheplerine göre büyükbaba kardeşleri tamamen engeller.",
+          "conditions": "Büyükbaba ve kardeşler birlikte",
+          "applicable": "Maliki ve Hanefi: paylaşım; Şafii ve Hanbeli: engelleme"
         }
       },
       "fixedSharesList": [
         {
           "share": "Yarım (1/2)",
           "key": "half",
-          "heirs": "Kızlar (1 kız), Koca (çocuksuz)"
+          "heirs": "Tek kız; Çocuksuz koca",
+          "condition": "Sadece bir kız (çocuksuz); veya çocuğu olmayan koca",
+          "notes": "Kızın yarısı: Kur'an 4:11. Kocanın yarısı: Kur'an 4:12."
         },
         {
           "share": "Çeyrek (1/4)",
           "key": "quarter",
-          "heirs": "Karı (çocuksuz), Koca (çocuksuz)"
+          "heirs": "Çocuksuz eş; Çocuksuz koca",
+          "condition": "Torun mirasçı yok (çocuk, torun vb.)",
+          "notes": "Eşin çeyreği: Kur'an 4:12. Kocanın çeyreği: Kur'an 4:12."
         },
         {
           "share": "Sekizde bir (1/8)",
           "key": "eighth",
-          "heirs": "Karı (çocuklu)"
+          "heirs": "Çocuklu eş",
+          "condition": "Merhumun torun mirasçıları var (çocuk, torun vb.)",
+          "notes": "Eşin sekizde biri: Kur'an 4:12. Çocuklar olduğunda çeyrekten düşer."
         },
         {
           "share": "Üçte ikisi (2/3)",
           "key": "twoThirds",
-          "heirs": "Kızlar (2+), Oğlan kızları"
+          "heirs": "İki veya daha fazla kız; Çocuksuz oğul kızları",
+          "condition": "Oğul yok. İki veya daha fazla kız 2/3'ü eşit paylaşır.",
+          "notes": "Kur'an 4:11. Tek kız 1/2 alır. İki veya daha fazla kız 2/3 paylaşır."
         },
         {
           "share": "Üçte biri (1/3)",
           "key": "third",
-          "heirs": "Anne (çocuklu), Baba (Ummariyyatan)"
+          "heirs": "Anne (çocuklu), Baba (Ummariyyatan)",
+          "condition": "Anne: torun mirasçılarla. Baba: sadece Ummariyye senaryosunda.",
+          "notes": "Annenin üçte biri: Kur'an 4:11. Babanın üçte biri: sadece özel Ummariyye durumunda."
         },
         {
           "share": "Altıda biri (1/6)",
           "key": "sixth",
-          "heirs": "Anne (çocuksuz), Baba, Büyükanne, Büyükbaba, Kardeşler (Ummariyyatan)"
+          "heirs": "Anne (çocuksuz), Baba, Büyükanne, Büyükbaba, Kardeşler (Ummariyyatan)",
+          "condition": "Anne: torun mirasçı yok. Baba: normal durum. Büyükanne/Büyükbaba: her zaman.",
+          "notes": "Annenin altıda biri: Kur'an 4:11. Babanın altıda biri: Kur'an 4:11. Büyükanne/Büyükbaba: icma."
         }
       ],
       "hijabTable": [
-        { "blocked": "Karı", "blocker": "Kız", "type": "Kız Karıyı Engeller" },
         {
-          "blocked": "Karı",
-          "blocker": "Oğlanın Kızı",
-          "type": "Oğlanın Kızı Karıyı Engeller"
+          "blocked": "Eş",
+          "blocker": "Kız",
+          "type": "Kız Eşi Engeller",
+          "reason": "Kızın varlığı eşi 1/4'ten 1/8'e düşürür"
         },
         {
-          "blocked": "Karı",
+          "blocked": "Eş",
+          "blocker": "Oğul Kızı",
+          "type": "Oğul Kızı Eşi Engeller",
+          "reason": "Oğul kızı eşi 1/4'ten 1/8'e düşürür"
+        },
+        {
+          "blocked": "Eş",
           "blocker": "Baba",
-          "type": "Baba Karıyı Engeller"
+          "type": "Baba Eşi Engeller",
+          "reason": "Babanın varlığı eşin hesaplamasını değiştirir"
         },
         {
-          "blocked": "Karı",
+          "blocked": "Eş",
           "blocker": "Anne",
-          "type": "Anne Karıyı Engeller"
+          "type": "Anne Eşi Engeller",
+          "reason": "Annenin varlığı bazı senaryolarda eşin payını etkiler"
         },
         {
           "blocked": "Anne",
           "blocker": "Baba",
-          "type": "Baba Anneyi Engeller"
+          "type": "Baba Anneyi Engeller",
+          "reason": "Baba annenin payını 1/3'ten 1/6'ya düşürür"
         },
         {
           "blocked": "Anne",
-          "blocker": "Oğlanın Oğlu",
-          "type": "Oğlanın Oğlu Anneyi Engeller"
+          "blocker": "Oğul Oğlu",
+          "type": "Oğul Oğlu Anneyi Engeller",
+          "reason": "Oğul oğlu annenin payını 1/3'ten 1/6'ya düşürür"
         },
         {
           "blocked": "Kız Kardeş",
           "blocker": "Baba",
-          "type": "Baba Kız Kardeşi Engeller"
+          "type": "Baba Kız Kardeşi Engeller",
+          "reason": "Baba kız kardeşi tamamen hariç tutar"
         },
         {
-          "blocked": "Anne Kardeş",
+          "blocked": "Anne Tarafından Kız Kardeş",
           "blocker": "Baba",
-          "type": "Baba Anne Kardeşi Engeller"
+          "type": "Baba Anne Tarafından Kız Kardeşi Engeller",
+          "reason": "Baba anne tarafından kız kardeşi tamamen hariç tutar"
         },
         {
-          "blocked": "Anne Kardeş",
-          "blocker": "Oğlanın Oğlu",
-          "type": "Oğlanın Oğlu Anne Kardeşi Engeller"
+          "blocked": "Anne Tarafından Kız Kardeş",
+          "blocker": "Oğul Oğlu",
+          "type": "Oğul Oğlu Anne Tarafından Kız Kardeşi Engeller",
+          "reason": "Oğul oğlu anne tarafından kız kardeşi tamamen hariç tutar"
+        }
+      ],
+      "hijabPartialTable": [
+        {
+          "blocked": "Anne",
+          "blocker": "Baba",
+          "reducedFrom": "1/3",
+          "reducedTo": "1/6",
+          "reason": "Baba annenin payını 1/3'ten 1/6'ya düşürür"
+        },
+        {
+          "blocked": "Anne",
+          "blocker": "Oğul Oğlu",
+          "reducedFrom": "1/3",
+          "reducedTo": "1/6",
+          "reason": "Oğul oğlu annenin payını 1/3'ten 1/6'ya düşürür"
+        },
+        {
+          "blocked": "Eş",
+          "blocker": "Kız",
+          "reducedFrom": "1/4",
+          "reducedTo": "1/8",
+          "reason": "Kız eşi 1/4'ten 1/8'e düşürür"
+        },
+        {
+          "blocked": "Eş",
+          "blocker": "Oğul Kızı",
+          "reducedFrom": "1/4",
+          "reducedTo": "1/8",
+          "reason": "Oğul kızı eşi 1/4'ten 1/8'e düşürür"
+        },
+        {
+          "blocked": "Büyükanne",
+          "blocker": "Baba",
+          "reducedFrom": "1/6",
+          "reducedTo": "1/12",
+          "reason": "Baba büyükanne'nin payını 1/6'dan 1/12'ye düşürür"
         }
       ]
     },

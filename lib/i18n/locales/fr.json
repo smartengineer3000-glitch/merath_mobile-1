@@ -175,15 +175,83 @@
     "fiqhExplanationFallback": "Les explications jurisprudentielles détaillées pour ce calcul seront disponibles dans une prochaine mise à jour.",
     "fiqhRules": {
       "title": "Règles Fiqh de la Succession Islamique",
+      "intro": "Référence complète des règles de succession islamique pour les quatre écoles sunnites. Cette section couvre les règles comparatives des écoles, les cas spéciaux, les parts fixes (Fard) et les règles de blocage (Hijab).",
       "madhabRules": "Règles Spécifiques au Madhab",
+      "comparativeTitle": "Différences Comparatives entre les Madhhabs",
+      "comparativeIntro": "Différences clés dans la manière dont les quatre madhhabs traitent les scénarios critiques de succession :",
+      "comparativeTableHeaders": {
+        "issue": "Problème",
+        "shafii": "Shafii",
+        "hanafi": "Hanafi",
+        "maliki": "Maliki",
+        "hanbali": "Hanbali"
+      },
+      "comparativeTable": [
+        {
+          "issue": "Grand-père + Frères",
+          "shafii": "Le grand-père bloque les frères",
+          "hanafi": "Le grand-père bloque les frères",
+          "maliki": "Le grand-père partage avec les frères (1/6 au grand-père, le reste aux frères)",
+          "hanbali": "Le grand-père partage avec les frères (1/6 au grand-père, le reste aux frères)"
+        },
+        {
+          "issue": "Retour au Conjoint (Radd)",
+          "shafii": "Pas de retour au conjoint",
+          "hanafi": "Retour au conjoint s'il n'y a pas d'héritiers résiduaires",
+          "maliki": "Pas de retour au conjoint si d'autres héritiers existent",
+          "hanbali": "Retour au conjoint uniquement s'il n'y a pas d'héritiers résiduaires"
+        },
+        {
+          "issue": "Retour (Général)",
+          "shafii": "Retour aux héritiers à parts fixes non-conjoints",
+          "hanafi": "Retour à tous les héritiers à parts fixes y compris le conjoint",
+          "maliki": "Pas de retour au conjoint si d'autres héritiers existent",
+          "hanbali": "Retour au conjoint uniquement s'il n'y a pas d'héritiers résiduaires"
+        },
+        {
+          "issue": "Mushtarakah (Frères avec Mère)",
+          "shafii": "Frères et mère partagent équitablement",
+          "hanafi": "Frères exclus de la Mushtarakah",
+          "maliki": "Frères et mère partagent équitablement",
+          "hanbali": "Frères et mère partagent équitablement"
+        },
+        {
+          "issue": "Part de la Mère en Umariyyah",
+          "shafii": "La mère reçoit 1/3 de la succession nette",
+          "hanafi": "La mère reçoit 1/3 de la succession nette",
+          "maliki": "La mère reçoit 1/3 de la succession nette",
+          "hanbali": "La mère reçoit 1/3 de la succession nette"
+        },
+        {
+          "issue": "Parents du Sang (Dhawu al-Arham)",
+          "shafii": "Héritent selon le Coran 4:11",
+          "hanafi": "Héritent via Tanzeel (Coran 4:33)",
+          "maliki": "Pas d'héritage pour les parents du sang",
+          "hanbali": "Héritent s'il n'y a pas d'oncle paternel"
+        },
+        {
+          "issue": "Fils de la Sœur (Akdariyya)",
+          "shafii": "Hérite via l'Akdariyya quand le grand-père bloque la lignée paternelle",
+          "hanafi": "Pas explicitement inclus",
+          "maliki": "Pas explicitement inclus",
+          "hanbali": "Hérite s'il n'y a pas d'oncle paternel"
+        }
+      ],
       "specialCases": "Cas Spéciaux",
+      "specialCasesIntro": "Le droit de la succession islamique comprend plusieurs règles spéciales appliquées dans les scénarios non standard :",
       "fixedShares": "Parts Fixes (Fard)",
+      "fixedSharesIntro": "Parts fixes (Fard) coraniques pour chaque type d'héritier. Ce sont les montants principaux de succession déterminés par la Charia.",
       "hijabRules": "Règles de Blocage (Hijab)",
+      "hijabIntro": "Les règles de blocage (Hijab) déterminent quand la présence d'un héritier empêche un autre héritier de recevoir sa part :",
+      "hijabPartialTitle": "Blocage Partiel (Tahat al-Hijab)",
+      "hijabPartialIntro": "Règles de blocage partiel où l'héritier bloqué reçoit une part réduite au lieu d'être totalement exclu :",
       "activeMadhab": "Madhab Actif",
       "active": "ACTIF",
       "tableHeaders": {
         "share": "Part (Fard)",
         "whoReceives": "Bénéficiaire",
+        "condition": "Condition",
+        "notes": "Notes",
         "blocked": "Bloqué",
         "blocker": "Bloqueur",
         "description": "Description"
@@ -234,98 +302,182 @@
       "specialCasesList": {
         "umariyyatan": {
           "title": "Umariyyatan (Règle d'Omar)",
-          "description": "Lorsqu'il n'y a que le conjoint, le père et la mère sans descendant, le père reçoit le montant restant."
+          "description": "Lorsqu'il n'y a que le conjoint, le père et la mère sans descendant, le père reçoit le montant restant.",
+          "conditions": "Pas d'héritiers descendants",
+          "applicable": "Les quatre madhhabs"
         },
         "awl": {
           "title": "Al-Awl (Augmentation Proportionnelle)",
-          "description": "Appliqué lorsque les parts fixes dépassent le net successoral. Chaque part est réduite proportionnellement."
+          "description": "Appliqué lorsque les parts fixes dépassent le net successoral. Chaque part est réduite proportionnellement.",
+          "conditions": "Les parts fixes totales dépassent le net successoral",
+          "applicable": "Les quatre madhhabs"
         },
         "radd": {
           "title": "Al-Radd (Retour du Surplus)",
-          "description": "L'excédent après calcul est redistribué aux héritiers à parts fixes. Le conjoint ne reçoit le Radd que s'il n'y a pas d'héritiers résiduels."
+          "description": "L'excédent après calcul est redistribué aux héritiers à parts fixes. Le conjoint ne reçoit le Radd que s'il n'y a pas d'héritiers résiduels.",
+          "conditions": "Un surplus reste après distribution",
+          "applicable": "Shafii : non-conjoints ; Hanafi/Hanbali : conjoint inclus sans héritiers résiduels ; Maliki : pas de retour au conjoint si d'autres héritiers existent"
         },
         "musharraka": {
           "title": "Musharraka (Succession Partagée)",
-          "description": "Les frères partagent également en présence de la mère. Applicable aux madhhabs Shafii et Maliki."
+          "description": "Les frères partagent également en présence de la mère. Applicable aux madhhabs Shafii et Maliki.",
+          "conditions": "Mère présente avec frères et/ou sœurs",
+          "applicable": "Shafii et Maliki"
         },
         "akdariyya": {
           "title": "Akdariyya (Règle du Fils de la Sœur)",
-          "description": "Le fils de la sœur peut hériter par une règle spéciale lorsque le grand-père bloque la lignée paternelle."
+          "description": "Le fils de la sœur peut hériter par une règle spéciale lorsque le grand-père bloque la lignée paternelle.",
+          "conditions": "Grand-père présent, pas de père ni de fils, fils de la sœur est l'héritier mâle le plus proche",
+          "applicable": "Shafii et Hanbali"
         },
-        "asabaWithOthers": {
-          "title": "Asaba avec Autres Héritiers",
-          "description": "Lorsqu'il y a des filles, la sœur devient héritière résiduelle."
+        "ta'seeb": {
+          "title": "Ta'sib (Succession Résiduaire)",
+          "description": "Quand des filles existent, la sœur devient une héritière résiduaire (Asaba) héritant de la succession restante.",
+          "conditions": "Filles présentes avec sœurs et pas de fils",
+          "applicable": "Les quatre madhhabs"
+        },
+        "grandfatherSiblings": {
+          "title": "Grand-père avec Frères",
+          "description": "Selon les madhhabs Maliki et Hanafi, le grand-père partage avec les frères. Selon les madhhabs Shafii et Hanafi, le grand-père bloque complètement les frères.",
+          "conditions": "Grand-père et frères tous présents",
+          "applicable": "Maliki et Hanafi : partage ; Shafii et Hanbali : blocage"
         }
       },
       "fixedSharesList": [
         {
           "share": "Moitié (1/2)",
           "key": "half",
-          "heirs": "Filles (1 fille), Marié (sans enfant)"
+          "heirs": "Une seule fille ; Mari sans enfants",
+          "condition": "Une seule fille (pas de fils) ; ou mari sans héritiers descendants",
+          "notes": "La moitié de la fille : Coran 4:11. La moitié du mari : Coran 4:12."
         },
         {
           "share": "Quart (1/4)",
           "key": "quarter",
-          "heirs": "Épouse (sans enfant), Marié (sans enfant)"
+          "heirs": "Épouse sans enfants ; Mari sans enfants",
+          "condition": "Pas d'héritiers descendants",
+          "notes": "Le quart de l'épouse : Coran 4:12. Le quart du mari : Coran 4:12."
         },
         {
           "share": "Huitième (1/8)",
           "key": "eighth",
-          "heirs": "Épouse (avec enfant)"
+          "heirs": "Épouse avec enfants",
+          "condition": "Le défunt a des héritiers descendants",
+          "notes": "Le huitième de l'épouse : Coran 4:12. Réduit du quart quand il y a des enfants."
         },
         {
-          "share": "Deux tiers (2/3)",
+          "share": "Deux Tiers (2/3)",
           "key": "twoThirds",
-          "heirs": "Filles (2+), Filles du fils"
+          "heirs": "Deux filles ou plus ; Filles du fils sans fils",
+          "condition": "Pas de fils. Deux filles ou plus partagent 2/3 équitablement.",
+          "notes": "Coran 4:11. Une seule fille reçoit 1/2. Deux ou plus partagent 2/3."
         },
         {
           "share": "Tiers (1/3)",
           "key": "third",
-          "heirs": "Mère (avec enfant), Père (Umariyyatan)"
+          "heirs": "Mère avec enfants ; Père en Umariyyah",
+          "condition": "Mère : avec héritiers descendants. Père : uniquement en Umariyyah.",
+          "notes": "Le tiers de la mère : Coran 4:11. Le tiers du père : uniquement en Umariyyah."
         },
         {
           "share": "Sixième (1/6)",
           "key": "sixth",
-          "heirs": "Mère (sans enfant), Père, Grand-mère, Grand-père, Frères (Umariyyatan)"
+          "heirs": "Mère sans enfants ; Père ; Grand-mère ; Grand-père ; Frères en Umariyyah",
+          "condition": "Mère : sans héritiers descendants. Père : cas normal. Grand-mère/Grand-père : toujours.",
+          "notes": "Le sixième de la mère : Coran 4:11. Le sixième du père : Coran 4:11. Grand-mère/Grand-père : consensus."
         }
       ],
       "hijabTable": [
         {
           "blocked": "Épouse",
           "blocker": "Fille",
-          "type": "Fille bloque Épouse"
+          "type": "Fille bloque l'Épouse",
+          "reason": "La présence de la fille réduit l'épouse de 1/4 à 1/8"
         },
         {
           "blocked": "Épouse",
           "blocker": "Fille du Fils",
-          "type": "Fille du Fils bloque Épouse"
+          "type": "Fille du fils bloque l'Épouse",
+          "reason": "La fille du fils réduit l'épouse de 1/4 à 1/8"
         },
         {
           "blocked": "Épouse",
           "blocker": "Père",
-          "type": "Père bloque Épouse"
+          "type": "Père bloque l'Épouse",
+          "reason": "La présence du père modifie le calcul de la part de l'épouse"
         },
         {
           "blocked": "Épouse",
           "blocker": "Mère",
-          "type": "Mère bloque Épouse"
+          "type": "Mère bloque l'Épouse",
+          "reason": "La présence de la mère affecte la part de l'épouse"
         },
-        { "blocked": "Mère", "blocker": "Père", "type": "Père bloque Mère" },
+        {
+          "blocked": "Mère",
+          "blocker": "Père",
+          "type": "Père bloque la Mère",
+          "reason": "Le père réduit la mère de 1/3 à 1/6"
+        },
         {
           "blocked": "Mère",
           "blocker": "Fils du Fils",
-          "type": "Fils du Fils bloque Mère"
+          "type": "Fils du fils bloque la Mère",
+          "reason": "Le fils du fils réduit la mère de 1/3 à 1/6"
         },
-        { "blocked": "Sœur", "blocker": "Père", "type": "Père bloque Sœur" },
         {
-          "blocked": "Sœur de Mère",
+          "blocked": "Sœur Paternelle",
           "blocker": "Père",
-          "type": "Père bloque Sœur de Mère"
+          "type": "Père bloque la Sœur Paternelle",
+          "reason": "Le père exclut complètement la sœur paternelle"
         },
         {
-          "blocked": "Sœur de Mère",
+          "blocked": "Sœur Maternelle",
+          "blocker": "Père",
+          "type": "Père bloque la Sœur Maternelle",
+          "reason": "Le père exclut complètement la sœur maternelle"
+        },
+        {
+          "blocked": "Sœur Maternelle",
           "blocker": "Fils du Fils",
-          "type": "Fils du Fils bloque Sœur de Mère"
+          "type": "Fils du fils bloque la Sœur Maternelle",
+          "reason": "Le fils du fils exclut complètement la sœur maternelle"
+        }
+      ],
+      "hijabPartialTable": [
+        {
+          "blocked": "Mère",
+          "blocker": "Père",
+          "reducedFrom": "1/3",
+          "reducedTo": "1/6",
+          "reason": "Le père réduit la mère de 1/3 à 1/6"
+        },
+        {
+          "blocked": "Mère",
+          "blocker": "Fils du Fils",
+          "reducedFrom": "1/3",
+          "reducedTo": "1/6",
+          "reason": "Le fils du fils réduit la mère de 1/3 à 1/6"
+        },
+        {
+          "blocked": "Épouse",
+          "blocker": "Fille",
+          "reducedFrom": "1/4",
+          "reducedTo": "1/8",
+          "reason": "La fille réduit l'épouse de 1/4 à 1/8"
+        },
+        {
+          "blocked": "Épouse",
+          "blocker": "Fille du Fils",
+          "reducedFrom": "1/4",
+          "reducedTo": "1/8",
+          "reason": "La fille du fils réduit l'épouse de 1/4 à 1/8"
+        },
+        {
+          "blocked": "Grand-mère",
+          "blocker": "Père",
+          "reducedFrom": "1/6",
+          "reducedTo": "1/12",
+          "reason": "Le père réduit la grand-mère de 1/6 à 1/12"
         }
       ]
     },

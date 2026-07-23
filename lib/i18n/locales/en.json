@@ -175,15 +175,83 @@
     "fiqhExplanationFallback": "Detailed fiqh explanations for this calculation will be available in a future update.",
     "fiqhRules": {
       "title": "Islamic Inheritance Fiqh Rules",
+      "intro": "Comprehensive reference for Islamic inheritance rules across the four Sunni madhhabs. This section covers comparative madhab rulings, special cases, fixed shares (Fard), and blocking rules (Hijab).",
       "madhabRules": "Madhab-Specific Rules",
+      "comparativeTitle": "Comparative Madhab Differences",
+      "comparativeIntro": "Key differences in how the four madhhabs handle critical inheritance scenarios:",
+      "comparativeTableHeaders": {
+        "issue": "Issue",
+        "shafii": "Shafii",
+        "hanafi": "Hanafi",
+        "maliki": "Maliki",
+        "hanbali": "Hanbali"
+      },
+      "comparativeTable": [
+        {
+          "issue": "Grandfather + Paternal Siblings",
+          "shafii": "Grandfather blocks siblings",
+          "hanafi": "Grandfather blocks siblings",
+          "maliki": "Grandfather shares with siblings (1/6 to grandfather, rest to siblings)",
+          "hanbali": "Grandfather shares with siblings (1/6 to grandfather, rest to siblings)"
+        },
+        {
+          "issue": "Spouse Radd (Return of Surplus)",
+          "shafii": "No Radd to spouse",
+          "hanafi": "Radd to spouse if no residuary heirs",
+          "maliki": "No Radd to spouse if other heirs exist",
+          "hanbali": "Radd to spouse only when no residuary heirs"
+        },
+        {
+          "issue": "Radd (General)",
+          "shafii": "Radd to non-spouse fixed-share heirs",
+          "hanafi": "Radd to all fixed-share heirs including spouse",
+          "maliki": "No Radd to spouse when other heirs exist",
+          "hanbali": "Radd to spouse only when no residuary heirs"
+        },
+        {
+          "issue": "Mushtarakah (Full + Maternal Siblings with Mother)",
+          "shafii": "Full and maternal siblings share equally",
+          "hanafi": "Brothers excluded from Mushtarakah",
+          "maliki": "Full and maternal siblings share equally",
+          "hanbali": "Full and maternal siblings share equally"
+        },
+        {
+          "issue": "Mother's Share in Umariyyatan",
+          "shafii": "Mother gets 1/3 of net estate",
+          "hanafi": "Mother gets 1/3 of net estate",
+          "maliki": "Mother gets 1/3 of net estate",
+          "hanbali": "Mother gets 1/3 of net estate"
+        },
+        {
+          "issue": "Paternal/Blood Relatives (Dhawu al-Arham)",
+          "shafii": "Inherit via Qur'an 4:11",
+          "hanafi": "Inherit via Tanzeel (Qur'an 4:33)",
+          "maliki": "No inheritance for blood relatives",
+          "hanbali": "Inherit when no paternal uncle"
+        },
+        {
+          "issue": "Sister's Son (Akdariyya)",
+          "shafii": "Inherits via Akdariyya when grandfather blocks father's line",
+          "hanafi": "Not explicitly included",
+          "maliki": "Not explicitly included",
+          "hanbali": "Inherits when no paternal uncle"
+        }
+      ],
       "specialCases": "Special Cases",
+      "specialCasesIntro": "Islamic inheritance law includes several special rules applied in non-standard scenarios:",
       "fixedShares": "Fixed Shares (Fard)",
+      "fixedSharesIntro": "Qur'anic fixed shares (Fard) for each heir type. These are the primary inheritance amounts determined by Sharia.",
       "hijabRules": "Blocking Rules (Hijab)",
+      "hijabIntro": "Hijab (blocking) rules determine when an heir's presence prevents another heir from receiving their share:",
+      "hijabPartialTitle": "Partial Blocking (Tahat al-Hijab)",
+      "hijabPartialIntro": "Partial blocking rules where the blocked heir receives a reduced share instead of being fully excluded:",
       "activeMadhab": "Active Madhab",
       "active": "ACTIVE",
       "tableHeaders": {
         "share": "Share (Fard)",
         "whoReceives": "Who Receives It",
+        "condition": "Condition",
+        "notes": "Notes",
         "blocked": "Blocked",
         "blocker": "Blocker",
         "description": "Description"
@@ -234,106 +302,182 @@
       "specialCasesList": {
         "umariyyatan": {
           "title": "Umariyyatan (Umar's Rule)",
-          "description": "When only spouse, father, and mother remain with no descendant heirs, the father receives the remaining amount after the spouse gets 1/4 and the mother gets 1/3 of the net estate."
+          "description": "When only spouse, father, and mother remain with no descendant heirs, the father receives the remaining amount after the spouse gets 1/4 and the mother gets 1/3 of the net estate.",
+          "conditions": "No descendant heirs exist (no children, grandchildren, etc.)",
+          "applicable": "All four madhhabs"
         },
         "awl": {
           "title": "Al-Awl (Proportional Increase)",
-          "description": "Applied when the total fixed shares exceed the net estate. Each heir's share is reduced proportionally so that the total equals 100% of the estate."
+          "description": "Applied when the total fixed shares exceed the net estate. Each heir's share is reduced proportionally so that the total equals 100% of the estate.",
+          "conditions": "Total fixed shares exceed net estate",
+          "applicable": "All four madhhabs"
         },
         "radd": {
           "title": "Al-Radd (Return Surplus)",
-          "description": "When there is a surplus after all shares are calculated, it returns to fixed-share heirs (excluding spouse) in proportion to their shares. Spouse only gets Radd if there are no residuary heirs (Hanafi/Hanbali)."
+          "description": "When there is a surplus after all shares are calculated, it returns to fixed-share heirs (excluding spouse) in proportion to their shares. Spouse only gets Radd if there are no residuary heirs (Hanafi/Hanbali).",
+          "conditions": "Surplus remains after all shares are distributed",
+          "applicable": "Shafii: non-spouse heirs; Hanafi/Hanbali: spouse included when no residuary heirs; Maliki: no Radd to spouse when other heirs exist"
         },
         "musharraka": {
           "title": "Musharraka (Shared Inheritance)",
-          "description": "Full and maternal siblings share equally when a mother is present. Applicable to Shafii and Maliki madhhabs."
+          "description": "Full and maternal siblings share equally when a mother is present. Applicable to Shafii and Maliki madhhabs.",
+          "conditions": "Mother is present with full and/or maternal siblings",
+          "applicable": "Shafii and Maliki"
         },
         "akdariyya": {
           "title": "Akdariyya (Sister's Son Rule)",
-          "description": "The sister's son (grandson of the deceased) can inherit through a special rule when the grandfather blocks the father's line but the sister's son is the closest male heir."
+          "description": "The sister's son (grandson of the deceased) can inherit through a special rule when the grandfather blocks the father's line but the sister's son is the closest male heir.",
+          "conditions": "Grandfather present, no father or sons, sister's son is closest male heir",
+          "applicable": "Shafii and Hanbali"
         },
-        "asabaWithOthers": {
-          "title": "Asaba with Other Heirs",
-          "description": "When daughters exist, the sister becomes a residuary heir (Asaba) inheriting the remaining estate after the daughters receive their 2/3 shares."
+        "ta'seeb": {
+          "title": "Ta'seeb (Residuary Inheritance)",
+          "description": "When daughters exist, the sister becomes a residuary heir (Asaba) inheriting the remaining estate after the daughters receive their 2/3 shares.",
+          "conditions": "Daughters present with sisters and no sons",
+          "applicable": "All four madhhabs"
+        },
+        "grandfatherSiblings": {
+          "title": "Grandfather with Paternal Siblings",
+          "description": "Under Maliki and Hanafi madhhabs, the grandfather shares with paternal siblings: grandfather receives 1/6 and siblings receive the remainder. Under Shafii and Hanafi, the grandfather blocks the siblings entirely.",
+          "conditions": "Grandfather and paternal siblings both present",
+          "applicable": "Maliki and Hanafi: sharing; Shafii and Hanbali: blocking"
         }
       },
       "fixedSharesList": [
         {
           "share": "Half (1/2)",
           "key": "half",
-          "heirs": "Daughters (1 daughter), Husband (no children)"
+          "heirs": "Single daughter; Husband without children",
+          "condition": "One daughter only (no sons); or Husband with no descendant heirs",
+          "notes": "Daughter's half is Quranic (4:11). Husband's half is Quranic (4:12)."
         },
         {
           "share": "Quarter (1/4)",
           "key": "quarter",
-          "heirs": "Wife (no children), Husband (no children)"
+          "heirs": "Wife without children; Husband without children",
+          "condition": "No descendant heirs (no children, grandchildren, etc.)",
+          "notes": "Wife's quarter: Quran 4:12. Husband's quarter: Quran 4:12."
         },
         {
           "share": "Eighth (1/8)",
           "key": "eighth",
-          "heirs": "Wife (with children)"
+          "heirs": "Wife with children",
+          "condition": "Deceased has descendant heirs (children, grandchildren, etc.)",
+          "notes": "Wife's eighth: Quran 4:12. Reduces from quarter when children exist."
         },
         {
           "share": "Two-Thirds (2/3)",
           "key": "twoThirds",
-          "heirs": "Daughters (2+), Son's daughters"
+          "heirs": "Two or more daughters; Son's daughters without sons",
+          "condition": "No sons. Two or more daughters share 2/3 equally.",
+          "notes": "Quran 4:11. Single daughter gets 1/2. Two or more share 2/3."
         },
         {
           "share": "Third (1/3)",
           "key": "third",
-          "heirs": "Mother (with children), Father (Umariyyatan)"
+          "heirs": "Mother with children; Father in Umariyyatan",
+          "condition": "Mother: with descendant heirs. Father: only in Umariyyatan scenario.",
+          "notes": "Mother's third: Quran 4:11. Father's third: only in Umariyyatan special case."
         },
         {
           "share": "Sixth (1/6)",
           "key": "sixth",
-          "heirs": "Mother (no children), Father, Grandmother, Grandfather, Siblings (Umariyyatan)"
+          "heirs": "Mother without children; Father; Grandmother; Grandfather; Siblings in Umariyyatan",
+          "condition": "Mother: no descendant heirs. Father: normal case. Grandmother/Grandfather: always.",
+          "notes": "Mother's sixth: Quran 4:11. Father's sixth: Quran 4:11. Grandparents: consensus."
         }
       ],
       "hijabTable": [
         {
           "blocked": "Wife",
           "blocker": "Daughter",
-          "type": "Daughter blocks Wife"
+          "type": "Daughter blocks Wife",
+          "reason": "Daughter's presence reduces wife from 1/4 to 1/8"
         },
         {
           "blocked": "Wife",
           "blocker": "Daughter of Son",
-          "type": "Daughter of Son blocks Wife"
+          "type": "Daughter of Son blocks Wife",
+          "reason": "Daughter of son reduces wife from 1/4 to 1/8"
         },
         {
           "blocked": "Wife",
           "blocker": "Father",
-          "type": "Father blocks Wife"
+          "type": "Father blocks Wife",
+          "reason": "Father's presence changes wife's share calculation"
         },
         {
           "blocked": "Wife",
           "blocker": "Mother",
-          "type": "Mother blocks Wife"
+          "type": "Mother blocks Wife",
+          "reason": "Mother's presence affects wife's share in certain scenarios"
         },
         {
           "blocked": "Mother",
           "blocker": "Father",
-          "type": "Father blocks Mother"
+          "type": "Father blocks Mother",
+          "reason": "Father reduces mother from 1/3 to 1/6"
         },
         {
           "blocked": "Mother",
           "blocker": "Son of Son",
-          "type": "Son of Son blocks Mother"
+          "type": "Son of Son blocks Mother",
+          "reason": "Son of son reduces mother from 1/3 to 1/6"
         },
         {
           "blocked": "Paternal Sister",
           "blocker": "Father",
-          "type": "Father blocks Paternal Sister"
+          "type": "Father blocks Paternal Sister",
+          "reason": "Father completely excludes paternal sister"
         },
         {
           "blocked": "Maternal Sister",
           "blocker": "Father",
-          "type": "Father blocks Maternal Sister"
+          "type": "Father blocks Maternal Sister",
+          "reason": "Father completely excludes maternal sister"
         },
         {
           "blocked": "Maternal Sister",
           "blocker": "Son of Son",
-          "type": "Son of Son blocks Maternal Sister"
+          "type": "Son of Son blocks Maternal Sister",
+          "reason": "Son of son completely excludes maternal sister"
+        }
+      ],
+      "hijabPartialTable": [
+        {
+          "blocked": "Mother",
+          "blocker": "Father",
+          "reducedFrom": "1/3",
+          "reducedTo": "1/6",
+          "reason": "Father reduces mother from 1/3 to 1/6"
+        },
+        {
+          "blocked": "Mother",
+          "blocker": "Son of Son",
+          "reducedFrom": "1/3",
+          "reducedTo": "1/6",
+          "reason": "Son of son reduces mother from 1/3 to 1/6"
+        },
+        {
+          "blocked": "Wife",
+          "blocker": "Daughter",
+          "reducedFrom": "1/4",
+          "reducedTo": "1/8",
+          "reason": "Daughter reduces wife from 1/4 to 1/8"
+        },
+        {
+          "blocked": "Wife",
+          "blocker": "Daughter of Son",
+          "reducedFrom": "1/4",
+          "reducedTo": "1/8",
+          "reason": "Daughter of son reduces wife from 1/4 to 1/8"
+        },
+        {
+          "blocked": "Grandmother",
+          "blocker": "Father",
+          "reducedFrom": "1/6",
+          "reducedTo": "1/12",
+          "reason": "Father reduces grandmother from 1/6 to 1/12"
         }
       ]
     },

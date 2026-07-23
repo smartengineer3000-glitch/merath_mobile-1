@@ -175,15 +175,83 @@
     "fiqhExplanationFallback": "Detaillierte rechtsgelehrte Erklärungen zu dieser Berechnung werden in einem zukünftigen Update verfügbar sein.",
     "fiqhRules": {
       "title": "Islamische Erbrecht Fiqh-Regeln",
+      "intro": "Umfassende Referenz für islamische Erbrechtsregeln in den vier sunnitischen Madhhabs. Dieser Abschnitt umfasst vergleichende Madhab-Regelungen, besondere Fälle, feste Anteile (Fard) und Blockierungsregeln (Hijab).",
       "madhabRules": "Madhab-spezifische Regeln",
+      "comparativeTitle": "Vergleichende Madhab-Unterschiede",
+      "comparativeIntro": "Wesentliche Unterschiede in der Art und Weise, wie die vier Madhhabs kritische Erbfallszenarien behandeln:",
+      "comparativeTableHeaders": {
+        "issue": "Thema",
+        "shafii": "Shafii",
+        "hanafi": "Hanafi",
+        "maliki": "Maliki",
+        "hanbali": "Hanbali"
+      },
+      "comparativeTable": [
+        {
+          "issue": "Großvater + Geschwister",
+          "shafii": "Großvater blockiert Geschwister",
+          "hanafi": "Großvater blockiert Geschwister",
+          "maliki": "Großvater teilt sich mit Geschwistern (1/6 an Großvater, Rest an Geschwister)",
+          "hanbali": "Großvater teilt sich mit Geschwistern (1/6 an Großvater, Rest an Geschwister)"
+        },
+        {
+          "issue": "Rückkehr an Ehepartner (Radd)",
+          "shafii": "Keine Rückkehr an Ehepartner",
+          "hanafi": "Rückkehr an Ehepartner wenn keine Erben aus dem Nachlass",
+          "maliki": "Keine Rückkehr an Ehepartner wenn andere Erben vorhanden",
+          "hanbali": "Rückkehr an Ehepartner nur wenn keine Erben aus dem Nachlass"
+        },
+        {
+          "issue": "Rückkehr (Allgemein)",
+          "shafii": "Rückkehr an nicht-Ehepartner mit festem Anteil",
+          "hanafi": "Rückkehr an alle Erben mit festem Anteil einschließlich Ehepartner",
+          "maliki": "Keine Rückkehr an Ehepartner wenn andere Erben vorhanden",
+          "hanbali": "Rückkehr an Ehepartner nur wenn keine Erben aus dem Nachlass"
+        },
+        {
+          "issue": "Mushtarakah (Geschwister mit Mutter)",
+          "shafii": "Geschwister teilen sich gleichmäßig",
+          "hanafi": "Brüder von Mushtarakah ausgeschlossen",
+          "maliki": "Geschwister teilen sich gleichmäßig",
+          "hanbali": "Geschwister teilen sich gleichmäßig"
+        },
+        {
+          "issue": "Anteil der Mutter in Umariyyah",
+          "shafii": "Mutter erhält 1/3 des Nettonachlasses",
+          "hanafi": "Mutter erhält 1/3 des Nettonachlasses",
+          "maliki": "Mutter erhält 1/3 des Nettonachlasses",
+          "hanbali": "Mutter erhält 1/3 des Nettonachlasses"
+        },
+        {
+          "issue": "Blutsverwandte (Dhawu al-Arham)",
+          "shafii": "Erben gemäß Koran 4:11",
+          "hanafi": "Erben über Tanzeel (Koran 4:33)",
+          "maliki": "Kein Erbrecht für Blutsverwandte",
+          "hanbali": "Erben wenn kein Onkel mütterlicherseits"
+        },
+        {
+          "issue": "Sohn der Schwester (Akdariyya)",
+          "shafii": "Erbt über Akdariyya wenn Großvater die väterliche Linie blockiert",
+          "hanafi": "Nicht ausdrücklich enthalten",
+          "maliki": "Nicht ausdrücklich enthalten",
+          "hanbali": "Erbt wenn kein Onkel mütterlicherseits"
+        }
+      ],
       "specialCases": "Besondere Fälle",
+      "specialCasesIntro": "Das islamische Erbrecht enthält mehrere Sonderregeln, die in nicht-standardisierten Szenarien angewendet werden:",
       "fixedShares": "Feste Anteile (Fard)",
+      "fixedSharesIntro": "Koranische feste Anteile (Fard) für jeden Erbtyp. Dies sind die Hauptvermögenswerte des Nachlasses, die durch die Scharia festgelegt werden.",
       "hijabRules": "Blockierungsregeln (Hijab)",
+      "hijabIntro": "Hijab-Regeln (Blockierung) bestimmen, wann die Anwesenheit eines Erben einen anderen Erben daran hindert, seinen Anteil zu erhalten:",
+      "hijabPartialTitle": "Teilweise Blockierung (Tahat al-Hijab)",
+      "hijabPartialIntro": "Teilweise Blockierungsregeln, bei denen der blockierte Erbe einen reduzierten Anteil erhält, anstatt vollständig ausgeschlossen zu werden:",
       "activeMadhab": "Aktives Madhab",
       "active": "AKTIV",
       "tableHeaders": {
         "share": "Anteil (Fard)",
-        "whoReceives": "Empfänger",
+        "whoReceives": "Wer Empfängt",
+        "condition": "Bedingung",
+        "notes": "Hinweise",
         "blocked": "Blockiert",
         "blocker": "Blockierer",
         "description": "Beschreibung"
@@ -193,20 +261,20 @@
           "name": "Shafii",
           "color": "#2e7d32",
           "rules": [
-            "Radd geht an Nicht-Ehepartner-Erben mit festem Anteil",
-            "Großvater blockiert Brüder",
-            "Blutsverwandte erben",
-            "Brüder teilen in Musharraka",
-            "Schwestersohn erbt über Akdariyya"
+            "Rückkehr (Radd) geht an nicht-Ehepartner mit festem Anteil",
+            "Großvater blockiert Geschwister",
+            "Blutsverwandte erben (Koran 4:11)",
+            "Vollgeschwister und Muttergeschwister teilen sich in Musharraka",
+            "Sohn der Schwester erbt über Akdariyya"
           ]
         },
         "hanafi": {
           "name": "Hanafi",
           "color": "#c62828",
           "rules": [
-            "Rard geht an Ehepartner",
-            "Großvater blockiert Brüder",
-            "Blutsverwandte erben über Tanzeel",
+            "Rückkehr geht an Ehepartner mit festem Anteil",
+            "Großvater blockiert Geschwister",
+            "Blutsverwandte erben über Tanzeel (Koran 4:33)",
             "Brüder von Musharraka ausgeschlossen"
           ]
         },
@@ -214,126 +282,202 @@
           "name": "Maliki",
           "color": "#6a1b9a",
           "rules": [
-            "Kein Rard an Ehepartner bei anderen Erben",
-            "Großvater teilt mit Brüdern",
-            "Keine Blutsverwandten erben",
-            "Brüder teilen in Musharraka"
+            "Keine Rückkehr an Ehepartner wenn andere Erben vorhanden",
+            "Großvater teilt sich mit Geschwistern",
+            "Kein Erbrecht für Blutsverwandte (Dhawu al-Arham)",
+            "Vollgeschwister und Muttergeschwister teilen sich in Musharraka"
           ]
         },
         "hanbali": {
           "name": "Hanbali",
           "color": "#e65100",
           "rules": [
-            "Rard an Ehepartner nur ohne Nachlass-Erben",
-            "Großvater teilt mit Brüdern",
+            "Rückkehr an Ehepartner nur wenn keine Erben aus dem Nachlass",
+            "Großvater teilt sich mit Geschwistern",
             "Blutsverwandte erben",
-            "Schwestersohn erbt ohne Onkel"
+            "Sohn der Schwester erbt wenn kein Onkel vorhanden"
           ]
         }
       },
       "specialCasesList": {
         "umariyyatan": {
-          "title": "Umariyyatans (Umars Regel)",
-          "description": "Nur Ehepartner, Vater und Mutter vorhanden ohne Nachkommen, erhält der Vater den verbleibenden Betrag."
+          "title": "Umariyyatan (Umars Regel)",
+          "description": "Wenn nur Ehepartner, Vater und Mutter übrig bleiben und keine Nachkommen vorhanden sind, erhält der Vater den verbleibenden Betrag, nachdem der Ehepartner 1/4 und die Mutter 1/3 des Nettonachlasses erhalten hat.",
+          "conditions": "Keine Nachkommen vorhanden (keine Kinder, Enkel, usw.)",
+          "applicable": "Alle vier Madhhabs"
         },
         "awl": {
-          "title": "Al-Awl (Proportionale Erhöhung)",
-          "description": "Angewendet wenn feste Anteile den Nettobetrag überschreiten. Jeder Anteil wird proportional reduziert."
+          "title": "Al-Awl (Proportionale Reduzierung)",
+          "description": "Wird angewendet, wenn die Gesamtsumme der festen Anteile den Nettonachlass übersteigt. Der Anteil jedes Erben wird proportional reduziert, sodass die Gesamtsumme 100% des Nachlasses ausmacht.",
+          "conditions": "Gesamtsumme der festen Anteile übersteigt den Nettonachlass",
+          "applicable": "Alle vier Madhhabs"
         },
         "radd": {
           "title": "Al-Radd (Rückkehr des Überschusses)",
-          "description": "Überschuss nach Berechnung wird an Erben mit festen Anteilen zurückgegeben. Ehepartner erhält Rard nur ohne Nachlass-Erben."
+          "description": "Wenn nach der Berechnung aller Anteile ein Überschuss verbleibt, kehrt dieser an Erben mit festem Anteil (außer Ehepartner) proportional zu ihren Anteilen zurück. Der Ehepartner erhält nur dann Radd, wenn keine Erben aus dem Nachlass vorhanden sind (Hanafi/Hanbali).",
+          "conditions": "Ein Überschuss bleibt nach Verteilung aller Anteile",
+          "applicable": "Shafii: Nicht-Ehepartner; Hanafi/Hanbali: Ehepartner eingeschlossen wenn keine Erben aus dem Nachlass; Maliki: Keine Rückkehr an Ehepartner wenn andere Erben vorhanden"
         },
         "musharraka": {
-          "title": "Musharraka (Gemeinsame Erbschaft)",
-          "description": "Brüder teilen gleichmäßig bei Anwesenheit der Mutter. Gilt für Shafii und Maliki."
+          "title": "Musharraka (Gemeinsame Vererbung)",
+          "description": "Vollgeschwister und Muttergeschwister teilen sich gleichmäßig, wenn eine Mutter vorhanden ist. Gilt für die Madhhabs Shafii und Maliki.",
+          "conditions": "Mutter vorhanden mit Vollgeschwistern und/oder Muttergeschwistern",
+          "applicable": "Shafii und Maliki"
         },
         "akdariyya": {
-          "title": "Akdariyya (Schwestersohn-Regel)",
-          "description": "Schwestersohn kann über spezielle Regel erben wenn Großvater die väterliche Linie blockiert."
+          "title": "Akdariyya (Sohn-der-Schwester-Regel)",
+          "description": "Der Sohn der Schwester (Enkel des Verstorbenen) kann über eine Sonderregel erben, wenn der Großvater die väterliche Linie blockiert, aber der Sohn der Schwester der nächste männliche Erbe ist.",
+          "conditions": "Großvater vorhanden, kein Vater oder Söhne, Sohn der Schwester ist der nächste männliche Erbe",
+          "applicable": "Shafii und Hanbali"
         },
-        "asabaWithOthers": {
-          "title": "Asaba mit anderen Erben",
-          "description": "Wenn Töchter vorhanden sind, wird die Schwester zur Nachlass-Erbin."
+        "ta'seeb": {
+          "title": "Ta'sib (Nachlassvererbung)",
+          "description": "Wenn Töchter vorhanden sind, wird die Schwester zur residuarischen Erbin (Asaba) und erbt den verbleibenden Nachlass, nachdem die Töchter ihre 2/3-Anteile erhalten haben.",
+          "conditions": "Töchter vorhanden mit Schwestern und keine Söhne",
+          "applicable": "Alle vier Madhhabs"
+        },
+        "grandfatherSiblings": {
+          "title": "Großvater mit Geschwistern",
+          "description": "Nach den Madhhabs Maliki und Hanafi teilt sich der Großvater mit den Geschwistern: Großvater erhält 1/6 und die Geschwister erhalten den Rest. Nach den Madhhabs Shafii und Hanafi blockiert der Großvater die Geschwister vollständig.",
+          "conditions": "Großvater und Geschwister beide vorhanden",
+          "applicable": "Maliki und Hanafi: Teilung; Shafii und Hanbali: Blockierung"
         }
       },
       "fixedSharesList": [
         {
           "share": "Hälfte (1/2)",
           "key": "half",
-          "heirs": "Töchter (1 Tochter), Ehemann (ohne Kinder)"
+          "heirs": "Eine einzige Tochter; Ehemann ohne Kinder",
+          "condition": "Nur eine Tochter (keine Söhne); oder Ehemann ohne Nachkommen",
+          "notes": "Hälfte der Tochter: Koran 4:11. Hälfte des Ehemanns: Koran 4:12."
         },
         {
           "share": "Viertel (1/4)",
           "key": "quarter",
-          "heirs": "Ehefrau (ohne Kinder), Ehemann (ohne Kinder)"
+          "heirs": "Ehepartnerin ohne Kinder; Ehemann ohne Kinder",
+          "condition": "Keine Nachkommen (keine Kinder, Enkel, usw.)",
+          "notes": "Viertel der Ehepartnerin: Koran 4:12. Viertel des Ehemanns: Koran 4:12."
         },
         {
           "share": "Achtel (1/8)",
           "key": "eighth",
-          "heirs": "Ehefrau (mit Kindern)"
+          "heirs": "Ehepartnerin mit Kindern",
+          "condition": "Der Verstorbene hat Nachkommen (Kinder, Enkel, usw.)",
+          "notes": "Achtel der Ehepartnerin: Koran 4:12. Reduziert von Viertel wenn Kinder vorhanden."
         },
         {
-          "share": "Zweidrittel (2/3)",
+          "share": "Zwei Drittel (2/3)",
           "key": "twoThirds",
-          "heirs": "Töchter (2+), Enkelkinder"
+          "heirs": "Zwei oder mehr Töchter; Töchter des Sohnes ohne Söhne",
+          "condition": "Keine Söhne. Zwei oder mehr Töchter teilen 2/3 gleichmäßig.",
+          "notes": "Koran 4:11. Eine einzige Tochter erhält 1/2. Zwei oder mehr teilen 2/3."
         },
         {
           "share": "Drittel (1/3)",
           "key": "third",
-          "heirs": "Mutter (mit Kindern), Vater (Umariyyatan)"
+          "heirs": "Mutter mit Kindern; Vater in Umariyyah",
+          "condition": "Mutter: mit Nachkommen. Vater: nur im Umariyyah-Szenario.",
+          "notes": "Drittel der Mutter: Koran 4:11. Drittel des Vaters: nur im besonderen Umariyyah-Fall."
         },
         {
           "share": "Sechstel (1/6)",
           "key": "sixth",
-          "heirs": "Mutter (ohne Kinder), Vater, Großmutter, Großvater, Geschwister (Umariyyatan)"
+          "heirs": "Mutter ohne Kinder; Vater; Großmutter; Großvater; Geschwister in Umariyyah",
+          "condition": "Mutter: ohne Nachkommen. Vater: Normalfall. Großmutter/Großvater: immer.",
+          "notes": "Sechstel der Mutter: Koran 4:11. Sechstel des Vaters: Koran 4:11. Großmutter/Großvater: Konsens."
         }
       ],
       "hijabTable": [
         {
-          "blocked": "Ehefrau",
+          "blocked": "Ehepartnerin",
           "blocker": "Tochter",
-          "type": "Tochter blockiert Ehefrau"
+          "type": "Tochter blockiert Ehepartnerin",
+          "reason": "Anwesenheit der Tochter reduziert Ehepartnerin von 1/4 auf 1/8"
         },
         {
-          "blocked": "Ehefrau",
-          "blocker": "Enkelin",
-          "type": "Enkelin blockiert Ehefrau"
+          "blocked": "Ehepartnerin",
+          "blocker": "Tochter des Sohnes",
+          "type": "Tochter des Sohnes blockiert Ehepartnerin",
+          "reason": "Tochter des Sohnes reduziert Ehepartnerin von 1/4 auf 1/8"
         },
         {
-          "blocked": "Ehefrau",
+          "blocked": "Ehepartnerin",
           "blocker": "Vater",
-          "type": "Vater blockiert Ehefrau"
+          "type": "Vater blockiert Ehepartnerin",
+          "reason": "Anwesenheit des Vaters ändert die Berechnung des Ehepartneranteils"
         },
         {
-          "blocked": "Ehefrau",
+          "blocked": "Ehepartnerin",
           "blocker": "Mutter",
-          "type": "Mutter blockiert Ehefrau"
+          "type": "Mutter blockiert Ehepartnerin",
+          "reason": "Anwesenheit der Mutter beeinflusst den Ehepartneranteil in bestimmten Szenarien"
         },
         {
           "blocked": "Mutter",
           "blocker": "Vater",
-          "type": "Vater blockiert Mutter"
+          "type": "Vater blockiert Mutter",
+          "reason": "Vater reduziert Mutter von 1/3 auf 1/6"
         },
         {
           "blocked": "Mutter",
-          "blocker": "Enkel",
-          "type": "Enkel blockiert Mutter"
+          "blocker": "Sohn des Sohnes",
+          "type": "Sohn des Sohnes blockiert Mutter",
+          "reason": "Sohn des Sohnes reduziert Mutter von 1/3 auf 1/6"
         },
         {
-          "blocked": "Schwester",
+          "blocked": "Vollschwester",
           "blocker": "Vater",
-          "type": "Vater blockiert Schwester"
+          "type": "Vater blockiert Vollschwester",
+          "reason": "Vater schließt Vollschwester vollständig aus"
         },
         {
-          "blocked": "Halbschwester",
+          "blocked": "Muttergeschwister",
           "blocker": "Vater",
-          "type": "Vater blockiert Halbschwester"
+          "type": "Vater blockiert Muttergeschwister",
+          "reason": "Vater schließt Muttergeschwister vollständig aus"
         },
         {
-          "blocked": "Halbschwester",
-          "blocker": "Enkel",
-          "type": "Enkel blockiert Halbschwester"
+          "blocked": "Muttergeschwister",
+          "blocker": "Sohn des Sohnes",
+          "type": "Sohn des Sohnes blockiert Muttergeschwister",
+          "reason": "Sohn des Sohnes schließt Muttergeschwister vollständig aus"
+        }
+      ],
+      "hijabPartialTable": [
+        {
+          "blocked": "Mutter",
+          "blocker": "Vater",
+          "reducedFrom": "1/3",
+          "reducedTo": "1/6",
+          "reason": "Vater reduziert Mutter von 1/3 auf 1/6"
+        },
+        {
+          "blocked": "Mutter",
+          "blocker": "Sohn des Sohnes",
+          "reducedFrom": "1/3",
+          "reducedTo": "1/6",
+          "reason": "Sohn des Sohnes reduziert Mutter von 1/3 auf 1/6"
+        },
+        {
+          "blocked": "Ehepartnerin",
+          "blocker": "Tochter",
+          "reducedFrom": "1/4",
+          "reducedTo": "1/8",
+          "reason": "Tochter reduziert Ehepartnerin von 1/4 auf 1/8"
+        },
+        {
+          "blocked": "Ehepartnerin",
+          "blocker": "Tochter des Sohnes",
+          "reducedFrom": "1/4",
+          "reducedTo": "1/8",
+          "reason": "Tochter des Sohnes reduziert Ehepartnerin von 1/4 auf 1/8"
+        },
+        {
+          "blocked": "Großmutter",
+          "blocker": "Vater",
+          "reducedFrom": "1/6",
+          "reducedTo": "1/12",
+          "reason": "Vater reduziert Großmutter von 1/6 auf 1/12"
         }
       ]
     },
