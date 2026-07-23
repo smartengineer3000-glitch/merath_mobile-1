@@ -588,12 +588,13 @@ Located in `engine/compute-confidence.ts`. Returns a score from 50 to 100.
 confidence = 100
 
 DEDUCTIONS:
-  heirCount > 8:         -10  (complex family)
-  heirCount > 5:          -5  (moderate complexity)
+  heirCount > 12:         -10  (very complex family)
+  heirCount > 8:           -5  (complex family)
+  heirCount > 5:           -3  (moderate complexity)
   fraction total deviation > 0.01 from 1:  -30  (mathematical anomaly)
   invariantFailed:        → confidence = 0  (conservation violated)
   3+ generations present: -5  (deep lineage)
-  Distant heirs present: -8  (uncles, cousins, nephews)
+  Distant heirs present: -3  (dhawu al-arham, valid but complex)
   Grandfather with siblings: -5  (madhab-dependent, uncertain)
   Multiple wives (>1):    -3
 

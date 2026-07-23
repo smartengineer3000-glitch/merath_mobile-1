@@ -11,11 +11,14 @@ export function calculateConfidence(
   const factors: string[] = [];
 
   const heirCount = Object.values(heirs).filter((v) => v && v > 0).length;
-  if (heirCount > 8) {
+  if (heirCount > 12) {
     confidence -= 10;
-    factors.push("عدد كبير من الورثة (أكثر من 8)");
-  } else if (heirCount > 5) {
+    factors.push("عدد كبير جداً من الورثة (أكثر من 12)");
+  } else if (heirCount > 8) {
     confidence -= 5;
+    factors.push("عدد كبير من الورثة (9-12)");
+  } else if (heirCount > 5) {
+    confidence -= 3;
     factors.push("عدد متوسط من الورثة (6-8)");
   }
 
@@ -66,7 +69,7 @@ export function calculateConfidence(
     (key) => (heirs[key as keyof HeirsData] || 0) > 0,
   );
   if (hasDistantHeirs) {
-    confidence -= 8;
+    confidence -= 3;
     factors.push("وجود ورثة من الدرجات البعيدة");
   }
 
