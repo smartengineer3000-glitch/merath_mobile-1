@@ -74,64 +74,6 @@ export default function ComparisonResultsScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* Overview cards */}
-        <View style={styles.overviewRow}>
-          {results.map((r, i) => {
-            const total = r.shares.reduce((sum, s) => sum + s.amount, 0);
-            return (
-              <Card key={i} variant="elevated" style={styles.overviewCard}>
-                <View style={styles.overviewHeader}>
-                  <View
-                    style={[
-                      styles.overviewDot,
-                      {
-                        backgroundColor:
-                          MADHAB_COLORS[r.madhab] || theme.colors.primary.main,
-                      },
-                    ]}
-                  />
-                  <Text
-                    style={[
-                      styles.overviewMadhabName,
-                      {
-                        color: theme.colors.neutral.dark200,
-                        fontFamily: theme.fontFamily.english,
-                      },
-                    ]}
-                    numberOfLines={1}
-                  >
-                    {r.madhhabName}
-                  </Text>
-                </View>
-                <Text
-                  style={[
-                    styles.overviewAmount,
-                    {
-                      color: theme.colors.neutral.dark300,
-                      fontFamily: theme.fontFamily.english,
-                    },
-                  ]}
-                  numberOfLines={1}
-                  adjustsFontSizeToFit
-                >
-                  {formatCurrency(total)}
-                </Text>
-                <Text
-                  style={[
-                    styles.overviewShares,
-                    {
-                      color: theme.colors.neutral.light400,
-                      fontFamily: theme.fontFamily.english,
-                    },
-                  ]}
-                >
-                  {r.shares.length} {t("results.shares")}
-                </Text>
-              </Card>
-            );
-          })}
-        </View>
-
         {/* Comparison Table */}
         <Card variant="elevated" style={styles.card}>
           <SectionHeader title={t("comparison.shareComparison")} />
@@ -594,20 +536,6 @@ function computeDifferences(
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { padding: 16, paddingBottom: 32 },
-
-  // Overview cards
-  overviewRow: { flexDirection: "row", gap: 8, marginBottom: 16 },
-  overviewCard: { flex: 1, minWidth: 80 },
-  overviewHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    marginTop: 8,
-  },
-  overviewDot: { width: 8, height: 8, borderRadius: 4 },
-  overviewMadhabName: { fontSize: 11, fontWeight: "600", flexShrink: 1 },
-  overviewAmount: { fontSize: 13, fontWeight: "800", marginTop: 4 },
-  overviewShares: { fontSize: 10, marginTop: 2 },
 
   card: { marginBottom: 16 },
 
