@@ -373,8 +373,8 @@
     "dark": "Sombre",
     "light": "Clair",
     "decimalPlaces": "décimales",
-    "testEngine": "Tester le moteur",
-    "testEngineDesc": "Exécuter plus de 40 cas de test"
+    "testEngine": "Vérifier le moteur",
+    "testEngineDesc": "Vérifier la précision des calculs"
   },
   "language": {
     "title": "Langue",
@@ -515,8 +515,8 @@
     "ms": "ms"
   },
   "engineTest": {
-    "title": "Résultats des tests du moteur",
-    "info": "Exécuter plus de 40 cas de test réels dans les 4 madhhabs",
+    "title": "Vérification du moteur",
+    "info": "Exécutez des scénarios d'héritage réels pour vérifier la précision",
     "runAll": "Exécuter tous les tests",
     "rerun": "Re-exécuter les tests",
     "running": "Exécution des tests...",

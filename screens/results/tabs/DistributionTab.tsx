@@ -9,7 +9,10 @@ import {
   formatPercentage,
 } from "../../../lib/utils/formatters";
 import type { CalculationResult } from "../../../lib/inheritance/types";
-import { getHeirI18nKey } from "../../../lib/inheritance/utils";
+import {
+  getHeirI18nKey,
+  getHeirGroupColor,
+} from "../../../lib/inheritance/utils";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -235,10 +238,7 @@ export function DistributionTab({ result }: DistributionTabProps) {
               const fractionStr = share.fraction
                 ? `${share.fraction.numerator}/${share.fraction.denominator}`
                 : "-";
-              const isEven = index % 2 === 0;
-              const rowBg = isEven
-                ? theme.colors.background.light
-                : theme.colors.neutral.light50;
+              const groupColor = getHeirGroupColor(share.key || "");
               const shareTypeColor =
                 SHARE_TYPE_COLORS[share.type || ""] ||
                 theme.colors.neutral.light400;
@@ -259,7 +259,8 @@ export function DistributionTab({ result }: DistributionTabProps) {
                     style={[
                       styles.dataRow,
                       {
-                        backgroundColor: rowBg,
+                        backgroundColor: groupColor.bg,
+                        borderLeftColor: groupColor.border,
                         borderBottomColor: theme.colors.neutral.light100,
                       },
                     ]}
@@ -544,6 +545,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 6,
     borderBottomWidth: StyleSheet.hairlineWidth,
+    borderLeftWidth: 3,
     alignItems: "center",
   },
   cellWrapper: {

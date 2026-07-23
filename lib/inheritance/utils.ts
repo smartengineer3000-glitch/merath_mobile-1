@@ -191,3 +191,76 @@ const HEIR_I18N_KEY_MAP: Record<string, string> = {
 export function getHeirI18nKey(engineKey: string): string {
   return HEIR_I18N_KEY_MAP[engineKey] || engineKey;
 }
+
+// ── Heir Group Colors ──────────────────────────────────────────────────────
+// Subtle background tints + accent border for professional table row coloring.
+// Each heir category gets a unique color family.
+
+export interface HeirGroupColor {
+  bg: string;
+  border: string;
+}
+
+const HEIR_GROUP_MAP: Record<string, string> = {
+  husband: "spouse",
+  wife: "spouse",
+  son: "children",
+  daughter: "children",
+  grandson: "children",
+  granddaughter: "children",
+  father: "parents",
+  mother: "parents",
+  grandfather: "grandparents",
+  grandmother: "grandparents",
+  grandmother_mother: "grandparents",
+  grandmother_father: "grandparents",
+  full_brother: "siblings",
+  full_sister: "siblings",
+  half_brother_paternal: "siblings",
+  half_sister_paternal: "siblings",
+  paternal_brother: "siblings",
+  paternal_sister: "siblings",
+  maternal_brother: "maternal",
+  maternal_sister: "maternal",
+  half_brother_maternal: "maternal",
+  half_sister_maternal: "maternal",
+  nephew_from_brother: "extended",
+  niece_from_brother: "extended",
+  uncle_paternal: "extended",
+  uncle_maternal: "extended",
+  aunt_paternal: "extended",
+  aunt_maternal: "extended",
+  full_nephew: "extended",
+  paternal_nephew: "extended",
+  full_cousin: "extended",
+  paternal_cousin: "extended",
+  maternal_uncle: "extended",
+  maternal_aunt: "extended",
+  paternal_aunt: "extended",
+  daughter_son: "extended",
+  daughter_daughter: "extended",
+  sister_children: "extended",
+  shared_siblings: "siblings",
+  treasury: "treasury",
+};
+
+const HEIR_GROUP_COLORS: Record<string, HeirGroupColor> = {
+  spouse: { bg: "#FFFBEB", border: "#F59E0B" },
+  children: { bg: "#F0FDF4", border: "#22C55E" },
+  parents: { bg: "#EFF6FF", border: "#3B82F6" },
+  grandparents: { bg: "#EEF2FF", border: "#6366F1" },
+  siblings: { bg: "#FAF5FF", border: "#A855F7" },
+  maternal: { bg: "#FFF1F2", border: "#F43F5E" },
+  extended: { bg: "#F0FDFA", border: "#14B8A6" },
+  treasury: { bg: "#FFF7ED", border: "#F97316" },
+};
+
+const DEFAULT_GROUP_COLOR: HeirGroupColor = {
+  bg: "#F9FAFB",
+  border: "#D1D5DB",
+};
+
+export function getHeirGroupColor(heirKey: string): HeirGroupColor {
+  const group = HEIR_GROUP_MAP[heirKey];
+  return HEIR_GROUP_COLORS[group] || DEFAULT_GROUP_COLOR;
+}

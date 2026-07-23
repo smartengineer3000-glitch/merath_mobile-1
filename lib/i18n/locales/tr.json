@@ -377,8 +377,8 @@
     "dark": "Koyu",
     "light": "Açık",
     "decimalPlaces": "ondalık basamak",
-    "testEngine": "Motor Testi",
-    "testEngineDesc": "40'tan fazla test senaryosu çalıştır"
+    "testEngine": "Motoru Doğrula",
+    "testEngineDesc": "Hesaplama doğruluğunu doğrula"
   },
   "language": {
     "title": "Dil",
@@ -519,8 +519,8 @@
     "ms": "ms"
   },
   "engineTest": {
-    "title": "Motor Test Sonuçları",
-    "info": "4 mezhepte 40'tan fazla gerçek dünya miras test senaryosu çalıştırın",
+    "title": "Motor Doğrulama",
+    "info": "4 mezhebin tümünde gerçek dünya miras senaryolarını çalıştırarak doğruluğu doğrulayın",
     "runAll": "Tüm Testleri Çalıştır",
     "rerun": "Testleri Tekrar Çalıştır",
     "running": "Testler çalıştırılıyor...",

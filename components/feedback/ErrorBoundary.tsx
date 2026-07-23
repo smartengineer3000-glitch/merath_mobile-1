@@ -35,7 +35,9 @@ export class ErrorBoundary extends Component<
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({ errorInfo });
-    console.error("[ErrorBoundary]", error, errorInfo);
+    if (__DEV__) {
+      console.error("[ErrorBoundary]", error, errorInfo);
+    }
   }
 
   handleRetry = () => {
@@ -66,7 +68,7 @@ export class ErrorBoundary extends Component<
               {i18next.t("error.description")}
             </Text>
 
-            {this.state.error && (
+            {this.state.error && __DEV__ && (
               <View
                 style={[
                   styles.errorBox,
@@ -97,36 +99,38 @@ export class ErrorBoundary extends Component<
               </View>
             )}
 
-            {this.state.errorInfo && this.state.errorInfo.componentStack && (
-              <View
-                style={[
-                  styles.errorBox,
-                  {
-                    backgroundColor: theme.colors.neutral.light50,
-                    borderColor: theme.colors.neutral.light200,
-                    borderRadius: theme.borderRadius.md,
-                  },
-                ]}
-              >
-                <Text
+            {this.state.errorInfo &&
+              this.state.errorInfo.componentStack &&
+              __DEV__ && (
+                <View
                   style={[
-                    styles.errorBoxTitle,
-                    { color: theme.colors.neutral.dark200 },
+                    styles.errorBox,
+                    {
+                      backgroundColor: theme.colors.neutral.light50,
+                      borderColor: theme.colors.neutral.light200,
+                      borderRadius: theme.borderRadius.md,
+                    },
                   ]}
                 >
-                  {i18next.t("error.componentStack")}
-                </Text>
-                <Text
-                  selectable
-                  style={[
-                    styles.errorBoxMessage,
-                    { color: theme.colors.neutral.dark100 },
-                  ]}
-                >
-                  {this.state.errorInfo.componentStack}
-                </Text>
-              </View>
-            )}
+                  <Text
+                    style={[
+                      styles.errorBoxTitle,
+                      { color: theme.colors.neutral.dark200 },
+                    ]}
+                  >
+                    {i18next.t("error.componentStack")}
+                  </Text>
+                  <Text
+                    selectable
+                    style={[
+                      styles.errorBoxMessage,
+                      { color: theme.colors.neutral.dark100 },
+                    ]}
+                  >
+                    {this.state.errorInfo.componentStack}
+                  </Text>
+                </View>
+              )}
 
             <TouchableOpacity
               onPress={this.handleRetry}

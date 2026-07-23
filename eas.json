@@ -24,8 +24,7 @@
       "autoIncrement": true,
       "ignorePaths": [".expo"],
       "android": {
-        "buildType": "apk",
-        "gradleCommand": ":app:assembleRelease",
+        "buildType": "app-bundle",
         "env": {
           "EAS_BUILD_COMPRESS": "true"
         }

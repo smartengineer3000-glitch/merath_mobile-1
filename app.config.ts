@@ -5,7 +5,7 @@ const appScheme = "merath";
 
 const env = {
   appName: "حاسبة المواريث الشرعية (تطبيق جوال)",
-  appSlug: "mertahmobile", // ✅ Updated to match new slug
+  appSlug: "merathmobile",
   logoUrl: "",
   scheme: appScheme,
   androidPackage: bundleId,
@@ -16,7 +16,7 @@ const config: ExpoConfig = {
   owner: "merath_mobile", // ✅ Added owner from project details
 
   name: env.appName,
-  slug: env.appSlug, // Now uses 'mertah_mobile'
+  slug: env.appSlug,
   version: "1.1.3",
   orientation: "portrait",
   icon: "./assets/icon.png",

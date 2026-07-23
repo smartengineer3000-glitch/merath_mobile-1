@@ -1,5 +1,12 @@
 import React from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  Linking,
+  I18nManager,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { useTranslation } from "react-i18next";
@@ -7,6 +14,8 @@ import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
 import { Card, SectionHeader } from "../../components/ui";
 import { Ionicons } from "../../lib/icons";
 import { APP_VERSION } from "../../lib/config";
+
+const PRIVACY_POLICY_URL = "https://merath-app.github.io/privacy-policy";
 
 export default function AboutScreen() {
   const { theme } = useAppTheme();
@@ -19,6 +28,19 @@ export default function AboutScreen() {
     { icon: "language", title: t("about.feature3") },
     { icon: "document-text", title: t("about.feature4") },
     { icon: "share-social", title: t("about.feature5") },
+  ];
+
+  const links = [
+    {
+      icon: "shield-checkmark",
+      title: t("about.privacy"),
+      onPress: () => Linking.openURL(PRIVACY_POLICY_URL),
+    },
+    {
+      icon: "flask",
+      title: t("settings.testEngine"),
+      onPress: () => navigation.navigate("EngineTest"),
+    },
   ];
 
   return (
@@ -125,6 +147,52 @@ export default function AboutScreen() {
           ))}
         </Card>
 
+        {/* Links */}
+        <Card variant="elevated" style={styles.card}>
+          {links.map((link, i) => (
+            <React.Fragment key={i}>
+              {i > 0 && (
+                <View
+                  style={[
+                    styles.divider,
+                    { backgroundColor: theme.colors.neutral.light100 },
+                  ]}
+                />
+              )}
+              <View style={styles.featureRow}>
+                <View
+                  style={[
+                    styles.featureIcon,
+                    { backgroundColor: theme.colors.primary.lighter },
+                  ]}
+                >
+                  <Ionicons
+                    name={link.icon as any}
+                    size={22}
+                    color={theme.colors.primary.main}
+                  />
+                </View>
+                <Text
+                  style={[
+                    styles.featureTitle,
+                    {
+                      color: theme.colors.neutral.dark200,
+                      fontFamily: theme.fontFamily.english,
+                    },
+                  ]}
+                >
+                  {link.title}
+                </Text>
+                <Ionicons
+                  name={I18nManager.isRTL ? "chevron-back" : "chevron-forward"}
+                  size={16}
+                  color={theme.colors.neutral.light400}
+                />
+              </View>
+            </React.Fragment>
+          ))}
+        </Card>
+
         {/* Copyright */}
         <Text
           style={[
@@ -173,5 +241,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   featureTitle: { fontSize: 13, fontWeight: "500", flex: 1 },
+  divider: { height: 1, marginHorizontal: 0 },
   copyright: { fontSize: 11, textAlign: "center", marginTop: 8 },
 });

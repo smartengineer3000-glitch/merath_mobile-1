@@ -7,7 +7,11 @@ import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
 import { Card, SectionHeader, Badge } from "../../components/ui";
 import { formatCurrency } from "../../lib/utils/formatters";
 import type { CalculationResult } from "../../lib/inheritance/types";
-import { MADHAB_COLORS, getHeirI18nKey } from "../../lib/inheritance/utils";
+import {
+  MADHAB_COLORS,
+  getHeirI18nKey,
+  getHeirGroupColor,
+} from "../../lib/inheritance/utils";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -220,16 +224,15 @@ export default function ComparisonResultsScreen() {
 
               {/* Data rows */}
               {allHeirs.map((heirKey, rowIdx) => {
-                const isEven = rowIdx % 2 === 0;
+                const groupColor = getHeirGroupColor(heirKey);
                 return (
                   <View
                     key={heirKey}
                     style={[
                       styles.tableRow,
                       {
-                        backgroundColor: isEven
-                          ? theme.colors.background.light
-                          : theme.colors.neutral.light50,
+                        backgroundColor: groupColor.bg,
+                        borderLeftColor: groupColor.border,
                         borderBottomColor: theme.colors.neutral.light100,
                       },
                     ]}
@@ -268,7 +271,7 @@ export default function ComparisonResultsScreen() {
                               styles.cellWrapper,
                               styles.colMadhab,
                               styles.cellEmpty,
-                              { backgroundColor: bgColor + "60", borderColor },
+                              { backgroundColor: bgColor + "B0", borderColor },
                             ]}
                           >
                             <Text
@@ -293,7 +296,7 @@ export default function ComparisonResultsScreen() {
                           style={[
                             styles.cellWrapper,
                             styles.colMadhab,
-                            { backgroundColor: bgColor + "40", borderColor },
+                            { backgroundColor: bgColor + "90", borderColor },
                           ]}
                         >
                           <Text
@@ -669,6 +672,7 @@ const styles = StyleSheet.create({
   tableRow: {
     flexDirection: "row",
     borderBottomWidth: StyleSheet.hairlineWidth,
+    borderLeftWidth: 3,
     alignItems: "center",
   },
   cellWrapper: {

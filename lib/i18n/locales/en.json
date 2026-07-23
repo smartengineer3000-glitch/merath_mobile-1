@@ -381,8 +381,8 @@
     "dark": "Dark",
     "light": "Light",
     "decimalPlaces": "decimal places",
-    "testEngine": "Test Engine",
-    "testEngineDesc": "Run 40+ test cases"
+    "testEngine": "Verify Engine",
+    "testEngineDesc": "Verify calculation accuracy"
   },
   "language": {
     "title": "Language",
@@ -503,8 +503,8 @@
     "increase": "Increase"
   },
   "engineTest": {
-    "title": "Engine Test Results",
-    "info": "Run 40+ real-world inheritance test cases across all 4 madhhabs",
+    "title": "Engine Verification",
+    "info": "Run real-world inheritance scenarios across all 4 madhhabs to verify accuracy",
     "runAll": "Run All Tests",
     "rerun": "Re-run Tests",
     "running": "Running tests...",

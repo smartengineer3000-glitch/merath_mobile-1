@@ -381,8 +381,8 @@
     "dark": "Dunkel",
     "light": "Hell",
     "decimalPlaces": "Dezimalstellen",
-    "testEngine": "Motor testen",
-    "testEngineDesc": "Über 40 Testszenarien ausführen"
+    "testEngine": "Motor verifizieren",
+    "testEngineDesc": "Berechnungsgenauigkeit überprüfen"
   },
   "language": {
     "title": "Sprache",
@@ -523,8 +523,8 @@
     "ms": "ms"
   },
   "engineTest": {
-    "title": "Motor-Testergebnisse",
-    "info": "Über 40 reale Erbschaftstestszenarien in allen 4 Madhabs ausführen",
+    "title": "Motorüberprüfung",
+    "info": "Führen Sie reale Erbschaftsszenarien aus, um die Genauigkeit zu überprüfen",
     "runAll": "Alle Tests ausführen",
     "rerun": "Tests erneut ausführen",
     "running": "Tests werden ausgeführt...",

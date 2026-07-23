@@ -120,13 +120,9 @@ const AppContent = () => {
     "PlusJakartaSans-Bold": require("./node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-700-normal.woff"),
   });
 
-  // ===== FIX: Monitor network changes =====
+  // ===== Monitor network changes =====
   useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state) => {
-      // Network status monitoring for future use
-      console.log("Network status:", state.isConnected, state.type);
-    });
-
+    const unsubscribe = NetInfo.addEventListener(() => {});
     return () => unsubscribe();
   }, []);
 

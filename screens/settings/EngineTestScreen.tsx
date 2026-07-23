@@ -780,11 +780,29 @@ export default function EngineTestScreen() {
         {results.length === 0 && !running && (
           <Card variant="elevated" style={styles.card}>
             <View style={styles.centerContent}>
-              <Ionicons
-                name="flask"
-                size={48}
-                color={theme.colors.primary.main}
-              />
+              <View
+                style={[
+                  styles.iconCircle,
+                  { backgroundColor: theme.colors.primary.lighter },
+                ]}
+              >
+                <Ionicons
+                  name="shield-checkmark"
+                  size={40}
+                  color={theme.colors.primary.main}
+                />
+              </View>
+              <Text
+                style={[
+                  styles.infoTitle,
+                  {
+                    color: theme.colors.neutral.dark300,
+                    fontFamily: theme.fontFamily.english,
+                  },
+                ]}
+              >
+                {t("engineTest.title")}
+              </Text>
               <Text
                 style={[
                   styles.infoText,
@@ -1095,6 +1113,15 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     gap: 12,
   },
+  iconCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 4,
+  },
+  infoTitle: { fontSize: 18, fontWeight: "700", textAlign: "center" },
   infoText: { fontSize: 14, textAlign: "center", lineHeight: 20 },
   runButton: { marginTop: 8, minWidth: 180 },
   rerunButton: { marginTop: 8 },

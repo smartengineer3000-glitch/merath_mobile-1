@@ -333,49 +333,6 @@ export default function SettingsScreen() {
         <Card variant="elevated" style={styles.card}>
           <TouchableOpacity
             style={styles.row}
-            onPress={() => navigation.navigate("EngineTest")}
-            activeOpacity={0.7}
-          >
-            <View style={styles.rowLeft}>
-              <Ionicons
-                name="flask"
-                size={20}
-                color={theme.colors.success.main}
-              />
-              <View style={styles.rowText}>
-                <Text
-                  style={[
-                    styles.rowLabel,
-                    {
-                      color: theme.colors.neutral.dark200,
-                      fontFamily: theme.fontFamily.english,
-                    },
-                  ]}
-                >
-                  {t("settings.testEngine")}
-                </Text>
-                <Text
-                  style={[
-                    styles.rowSublabel,
-                    {
-                      color: theme.colors.neutral.light400,
-                      fontFamily: theme.fontFamily.english,
-                    },
-                  ]}
-                >
-                  {t("settings.testEngineDesc")}
-                </Text>
-              </View>
-            </View>
-            <Ionicons
-              name={I18nManager.isRTL ? "chevron-back" : "chevron-forward"}
-              size={18}
-              color={theme.colors.neutral.light400}
-            />
-          </TouchableOpacity>
-          <Divider />
-          <TouchableOpacity
-            style={styles.row}
             onPress={() => navigation.navigate("About")}
             activeOpacity={0.7}
           >
