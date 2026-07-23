@@ -180,6 +180,14 @@
       "fixedShares": "فیکس حصے (فرض)",
       "hijabRules": "حجب کے قواعد",
       "activeMadhab": "فعال مذهب",
+      "active": "فعال",
+      "tableHeaders": {
+        "share": " حصّ (فرض)",
+        "whoReceives": "جسے ملتا ہے",
+        "blocked": "محجوب",
+        "blocker": "محجوب کرنے والا",
+        "description": "تفصیل"
+      },
       "madhabs": {
         "shafii": {
           "name": "شافعی",
@@ -527,7 +535,8 @@
     "radd": "رد",
     "computed": "محاسبہ شدہ",
     "expected": "متوقع",
-    "na": "غ/م"
+    "na": "غ/م",
+    "calculationFailed": "حساب ناکام ہو گیا"
   },
   "events": {
     "title": "سرگرمی لاگ",

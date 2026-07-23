@@ -209,7 +209,7 @@ export function ExportTab({ result, scenario }: ExportTabProps) {
     <div class="header">
       <div class="header-top">
         <div>
-          <h1 class="app-name">Merath</h1>
+          <h1 class="app-name">${t("app.name")}</h1>
           <p class="app-subtitle">${t("export.appName")}</p>
         </div>
         <div style="text-align:right">

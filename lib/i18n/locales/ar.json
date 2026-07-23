@@ -180,6 +180,14 @@
       "fixedShares": "النصيب الثابت (الفرض)",
       "hijabRules": "قواعد الحجب",
       "activeMadhab": "المذهب النشط",
+      "active": "نشط",
+      "tableHeaders": {
+        "share": "النصيب (فرض)",
+        "whoReceives": "من يحصل عليه",
+        "blocked": "محجوب",
+        "blocker": "المحجوب بسبب",
+        "description": "الوصف"
+      },
       "madhabs": {
         "shafii": {
           "name": "الشافعي",
@@ -527,7 +535,8 @@
     "radd": "رد",
     "computed": "محسوب",
     "expected": "متوقع",
-    "na": "غ/م"
+    "na": "غ/م",
+    "calculationFailed": "فشل الحساب"
   },
   "events": {
     "title": "سجل النشاط",

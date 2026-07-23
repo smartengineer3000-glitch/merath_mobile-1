@@ -180,6 +180,14 @@
       "fixedShares": "Fixed Shares (Fard)",
       "hijabRules": "Blocking Rules (Hijab)",
       "activeMadhab": "Active Madhab",
+      "active": "ACTIVE",
+      "tableHeaders": {
+        "share": "Share (Fard)",
+        "whoReceives": "Who Receives It",
+        "blocked": "Blocked",
+        "blocker": "Blocker",
+        "description": "Description"
+      },
       "madhabs": {
         "shafii": {
           "name": "Shafii",
@@ -523,7 +531,8 @@
     "radd": "RADD",
     "computed": "computed",
     "expected": "expected",
-    "na": "N/A"
+    "na": "N/A",
+    "calculationFailed": "Calculation failed"
   },
   "common": {
     "ok": "OK",

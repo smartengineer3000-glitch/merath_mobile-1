@@ -14,6 +14,7 @@ import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
 import { Card, Badge, Button } from "../../components/ui";
 import { Ionicons } from "../../lib/icons";
 import { EnhancedInheritanceCalculationEngine } from "../../lib/inheritance/enhanced-engine-complete";
+import i18next from "../../lib/i18n";
 import type {
   EstateData,
   HeirsData,
@@ -688,7 +689,7 @@ function runSingleTest(tc: TestCase): TestResult {
 
   if (!result.success) {
     passed = false;
-    error = result.error || "Calculation failed";
+    error = result.error || i18next.t("engineTest.calculationFailed");
   } else {
     for (const [key, expectedVal] of Object.entries(tc.expected)) {
       const computedVal = computed[key];

@@ -15,7 +15,8 @@ import { Card, SectionHeader } from "../../components/ui";
 import { Ionicons } from "../../lib/icons";
 import { APP_VERSION } from "../../lib/config";
 
-const PRIVACY_POLICY_URL = "https://smartengineer3000-glitch.github.io/merath_mobile-1/";
+const PRIVACY_POLICY_URL =
+  "https://smartengineer3000-glitch.github.io/merath_mobile-1/";
 
 export default function AboutScreen() {
   const { theme } = useAppTheme();

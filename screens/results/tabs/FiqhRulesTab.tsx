@@ -121,7 +121,7 @@ export function FiqhRulesTab({ result }: FiqhRulesTabProps) {
                     ]}
                   >
                     <Text style={[styles.activeBadgeText, { color }]}>
-                      ACTIVE
+                      {t("results.fiqhRules.active")}
                     </Text>
                   </View>
                 )}
@@ -213,7 +213,7 @@ export function FiqhRulesTab({ result }: FiqhRulesTabProps) {
                     { color: theme.colors.primary.dark, width: 120 },
                   ]}
                 >
-                  Share (Fard)
+                  {t("results.fiqhRules.tableHeaders.share")}
                 </Text>
                 <Text
                   style={[
@@ -222,7 +222,7 @@ export function FiqhRulesTab({ result }: FiqhRulesTabProps) {
                     { color: theme.colors.primary.dark, width: 220 },
                   ]}
                 >
-                  Who Receives It
+                  {t("results.fiqhRules.tableHeaders.whoReceives")}
                 </Text>
               </View>
               {fiqhRules.fixedSharesList.map((item: any, i: number) => (
@@ -285,7 +285,7 @@ export function FiqhRulesTab({ result }: FiqhRulesTabProps) {
                     { color: theme.colors.primary.dark, width: 120 },
                   ]}
                 >
-                  Blocked
+                  {t("results.fiqhRules.tableHeaders.blocked")}
                 </Text>
                 <Text
                   style={[
@@ -294,7 +294,7 @@ export function FiqhRulesTab({ result }: FiqhRulesTabProps) {
                     { color: theme.colors.primary.dark, width: 120 },
                   ]}
                 >
-                  Blocker
+                  {t("results.fiqhRules.tableHeaders.blocker")}
                 </Text>
                 <Text
                   style={[
@@ -303,7 +303,7 @@ export function FiqhRulesTab({ result }: FiqhRulesTabProps) {
                     { color: theme.colors.primary.dark, width: 180 },
                   ]}
                 >
-                  Description
+                  {t("results.fiqhRules.tableHeaders.description")}
                 </Text>
               </View>
               {fiqhRules.hijabTable.map((item: any, i: number) => (

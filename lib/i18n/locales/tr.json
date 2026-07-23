@@ -180,6 +180,14 @@
       "fixedShares": "Sabit Paylar (Ferz)",
       "hijabRules": "Engelleme Kuralları (Hicap)",
       "activeMadhab": "Aktif Mezhep",
+      "active": "AKTİF",
+      "tableHeaders": {
+        "share": "Pay (Fard)",
+        "whoReceives": "Kim Alır",
+        "blocked": "Engellenen",
+        "blocker": "Engelleyen",
+        "description": "Açıklama"
+      },
       "madhabs": {
         "shafii": {
           "name": "Şafii",
@@ -539,7 +547,8 @@
     "radd": "RADD",
     "computed": "hesaplanan",
     "expected": "beklenen",
-    "na": "YOK"
+    "na": "YOK",
+    "calculationFailed": "Hesaplama başarısız"
   },
   "events": {
     "title": "Etkinlik Günlüğü",
