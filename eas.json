@@ -1,7 +1,8 @@
 {
   "cli": {
     "version": ">= 16.28.0",
-    "appVersionSource": "remote"
+    "appVersionSource": "remote",
+    "packageManager": "npm"
   },
   "build": {
     "development": {
@@ -16,10 +17,12 @@
       "android": {
         "buildType": "apk"
       },
-      "autoIncrement": true
+      "autoIncrement": true,
+      "ignorePaths": [".expo"]
     },
     "production": {
       "autoIncrement": true,
+      "ignorePaths": [".expo"],
       "android": {
         "buildType": "apk",
         "gradleCommand": ":app:assembleRelease",
@@ -33,6 +36,7 @@
     },
     "production-aab": {
       "autoIncrement": true,
+      "ignorePaths": [".expo"],
       "android": {
         "buildType": "app-bundle"
       }
