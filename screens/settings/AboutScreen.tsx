@@ -16,7 +16,7 @@ import { Ionicons } from "../../lib/icons";
 import { APP_VERSION } from "../../lib/config";
 
 const PRIVACY_POLICY_URL =
-  "https://smartengineer3000-glitch.github.io/merath_mobile-1/";
+  "https://smartengineer3000-glitch.github.io/merath_mobile-1/docs/index.html";
 
 export default function AboutScreen() {
   const { theme } = useAppTheme();
@@ -40,7 +40,7 @@ export default function AboutScreen() {
     {
       icon: "flask",
       title: t("settings.testEngine"),
-      onPress: () => navigation.navigate("EngineTest"),
+      onPress: () => navigation.getParent()?.navigate("EngineTest"),
     },
   ];
 

@@ -6,12 +6,14 @@ import {
   TouchableOpacity,
   StyleSheet,
   I18nManager,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "../../lib/context/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../../lib/context/SettingsContext";
 import { useMadhab } from "../../lib/context/MadhabContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AnimatedHeader } from "../../components/layout/AnimatedHeader";
 import { Card, AppSwitch, Divider, Badge } from "../../components/ui";
 import { Ionicons } from "../../lib/icons";
@@ -22,8 +24,8 @@ export default function SettingsScreen() {
   const { theme, toggleTheme, mode } = useAppTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<any>();
-  const { state, setNotifications, setAutoSave } = useSettings();
-  const { madhab } = useMadhab();
+  const { state, setNotifications, setAutoSave, resetSettings } = useSettings();
+  const { madhab, setMadhab } = useMadhab();
 
   const currentLang = languages[state.language as Language];
 
@@ -160,7 +162,31 @@ export default function SettingsScreen() {
           {t("settings.calculationPreferences").toUpperCase()}
         </Text>
         <Card variant="elevated" style={styles.card}>
-          <TouchableOpacity style={styles.row} activeOpacity={0.7}>
+          <TouchableOpacity
+            style={styles.row}
+            onPress={() => {
+              Alert.alert(t("settings.defaultMadhab"), t("madhab.selection"), [
+                { text: "Cancel", style: "cancel" },
+                {
+                  text: t("madhab.hanafi"),
+                  onPress: () => setMadhab("hanafi"),
+                },
+                {
+                  text: t("madhab.shafii"),
+                  onPress: () => setMadhab("shafii"),
+                },
+                {
+                  text: t("madhab.maliki"),
+                  onPress: () => setMadhab("maliki"),
+                },
+                {
+                  text: t("madhab.hanbali"),
+                  onPress: () => setMadhab("hanbali"),
+                },
+              ]);
+            }}
+            activeOpacity={0.7}
+          >
             <View style={styles.rowLeft}>
               <Ionicons
                 name="book"
@@ -261,7 +287,13 @@ export default function SettingsScreen() {
             onValueChange={setNotifications}
           />
           <Divider />
-          <TouchableOpacity style={styles.row} activeOpacity={0.7}>
+          <TouchableOpacity
+            style={styles.row}
+            onPress={() => {
+              Alert.alert(t("settings.exportData"), t("settings.comingSoon"));
+            }}
+            activeOpacity={0.7}
+          >
             <View style={styles.rowLeft}>
               <Ionicons
                 name="download"
@@ -289,7 +321,32 @@ export default function SettingsScreen() {
             />
           </TouchableOpacity>
           <Divider />
-          <TouchableOpacity style={styles.row} activeOpacity={0.7}>
+          <TouchableOpacity
+            style={styles.row}
+            onPress={() => {
+              Alert.alert(
+                t("settings.clearAllData"),
+                t("settings.clearAllDataConfirm"),
+                [
+                  { text: "Cancel", style: "cancel" },
+                  {
+                    text: t("settings.clearAllData"),
+                    style: "destructive",
+                    onPress: async () => {
+                      try {
+                        await AsyncStorage.clear();
+                        resetSettings();
+                        Alert.alert("", t("settings.dataCleared"));
+                      } catch {
+                        Alert.alert("", t("settings.exportFailed"));
+                      }
+                    },
+                  },
+                ],
+              );
+            }}
+            activeOpacity={0.7}
+          >
             <View style={styles.rowLeft}>
               <Ionicons
                 name="trash"
