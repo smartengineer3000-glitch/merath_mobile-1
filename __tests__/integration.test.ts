@@ -96,7 +96,7 @@ describe("Heir data integrity", () => {
 
 describe("Navigation structure", () => {
   it("defines 4 main tabs", () => {
-    const tabs = ["calculator", "comparison", "history", "settings"];
+    const tabs = ["calculator", "comparison", "engineTest", "settings"];
     expect(tabs.length).toBe(4);
   });
 
@@ -105,7 +105,7 @@ describe("Navigation structure", () => {
       "Calculator",
       "Results",
       "Comparison",
-      "History",
+      "EngineTest",
       "Settings",
     ];
     expect(screens.length).toBe(5);

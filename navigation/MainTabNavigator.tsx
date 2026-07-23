@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CalculatorStack } from "./CalculatorStack";
-import { HistoryStack } from "./HistoryStack";
+import { EngineTestStack } from "./EngineTestStack";
 import { ComparisonStack } from "./ComparisonStack";
 import { SettingsStack } from "./SettingsStack";
 import { useCalculationStore } from "../lib/context/CalculationContext";
@@ -15,7 +15,7 @@ const Tab = createBottomTabNavigator();
 
 const TAB_ICONS: Record<string, { focused: string; default: string }> = {
   Calculator: { focused: "calculator", default: "calculator-outline" },
-  History: { focused: "list", default: "list-outline" },
+  EngineTest: { focused: "flask", default: "flask-outline" },
   Compare: { focused: "git-compare", default: "git-compare-outline" },
   Settings: { focused: "settings", default: "settings-outline" },
 };
@@ -64,9 +64,9 @@ export function MainTabNavigator() {
         options={{ tabBarLabel: t("navigation.calculator") }}
       />
       <Tab.Screen
-        name="History"
-        component={HistoryStack}
-        options={{ tabBarLabel: t("navigation.history") }}
+        name="EngineTest"
+        component={EngineTestStack}
+        options={{ tabBarLabel: t("navigation.engineTest") }}
       />
       <Tab.Screen
         name="Compare"
